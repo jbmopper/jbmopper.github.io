@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+.astro/
+
+# Env (keys stay local)
+.env
+.env.local
+.env.*.local
+
+# Editor / OS
+.DS_Store
+*.log

@@ -1,0 +1,94 @@
+---
+import { ViewTransitions } from 'astro:transitions';
+import Chatbot from '../components/Chatbot.svelte';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Portfolio' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <ViewTransitions />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/projects">Projects</a>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <Chatbot client:load transition:persist="chatbot" />
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --color-bg: #0f0f0e;
+    --color-surface: #1a1a18;
+    --color-text: #e8e6e3;
+    --color-muted: #8b8685;
+    --color-accent: #7c9c6b;
+    --color-accent-dim: #5a7350;
+    --font-sans: 'DM Sans', system-ui, sans-serif;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    background: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .site-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .site-header nav {
+    display: flex;
+    gap: 1.5rem;
+    max-width: 60rem;
+    margin: 0 auto;
+  }
+
+  .site-header a {
+    color: var(--color-muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+  }
+
+  .site-header a:hover {
+    color: var(--color-accent);
+  }
+
+  main {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+</style>

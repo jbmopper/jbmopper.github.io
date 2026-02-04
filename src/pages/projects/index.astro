@@ -1,0 +1,62 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { projects } from '../../data/projects';
+---
+
+<Layout title="Projects" description="Project writeups and Marimo notebooks">
+  <h1>Projects</h1>
+  <p class="intro">
+    Writeups and links to interactive Marimo WASM notebooks. Add entries in
+    <code>src/data/projects.ts</code>; export notebooks to <code>public/notebooks/</code>.
+  </p>
+
+  <ul class="project-list">
+    {projects.map((p) => (
+      <li>
+        <a href={`/projects/${p.slug}`}>{p.title}</a>
+        <p class="project-desc">{p.description}</p>
+      </li>
+    ))}
+  </ul>
+
+  <p><a href="/">← Home</a></p>
+</Layout>
+
+<style>
+  .intro {
+    color: var(--color-muted);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .project-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem 0;
+  }
+
+  .project-list li {
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .project-list li:last-child {
+    border-bottom: none;
+  }
+
+  .project-list a {
+    color: var(--color-accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .project-list a:hover {
+    text-decoration: underline;
+  }
+
+  .project-desc {
+    margin: 0.35rem 0 0 0;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+  }
+</style>
