@@ -44,7 +44,7 @@ def _(mo):
                 with urllib.request.urlopen(url) as f:
                     return f.read().decode()
 
-    def _read_public_file(mo, filename: str) -> str:
+    def read_public_file(mo, filename: str) -> str:
         """Read a file from public/; works locally (path) and in WASM (URL)."""
         loc = mo.notebook_location()
         if loc is None:
@@ -72,7 +72,7 @@ def _(mo):
         with open(path) as f:
             return f.read()
 
-    return (_read_public_file,)
+    return (read_public_file,)
 
 
 @app.cell(hide_code=True)
@@ -975,7 +975,7 @@ def _(mo):
 
 
 @app.cell
-def _(mo, svg_vars, svg_zoom, _read_public_file):
+def _(mo, svg_vars, svg_zoom, read_public_file):
     def _show_svg_error(e, attempted: str = "public/cs336_forward.svg"):
         err_msg = str(e).replace("<", "&lt;").replace(">", "&gt;")
         err_type = type(e).__name__
@@ -991,7 +991,7 @@ def _(mo, svg_vars, svg_zoom, _read_public_file):
 
     _svg_load_error = None
     try:
-        _svg_raw = _read_public_file(mo, "cs336_forward.svg")
+        _svg_raw = read_public_file(mo, "cs336_forward.svg")
     except Exception as e:
         try:
             _loc = mo.notebook_location()

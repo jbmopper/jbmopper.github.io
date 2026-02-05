@@ -69,12 +69,12 @@ Export **small, focused** notebooks (e.g. one notebook that only produces a char
 
 ### Including data files (e.g. SVG) in WASM exports
 
-Put assets in a **`public/`** folder next to the notebook (e.g. `content/notebooks/public/cs336_forward.svg`). The export script and CI **copy** that folder into `public/notebooks/<name>/public/` so the WASM notebook can load files over HTTP. In the browser, `mo.notebook_location()` returns a **URL**, not a filesystem path, so **`open(path)` fails**—use the notebook’s `_read_public_file(mo, filename)` helper (or equivalent) that fetches via URL when given a URL path:
+Put assets in a **`public/`** folder next to the notebook (e.g. `content/notebooks/public/cs336_forward.svg`). The export script and CI **copy** that folder into `public/notebooks/<name>/public/` so the WASM notebook can load files over HTTP. In the browser, `mo.notebook_location()` returns a **URL**, not a filesystem path, so **`open(path)` fails**—use the notebook’s `read_public_file(mo, filename)` helper (or equivalent) that fetches via URL when given a URL path:
 
 ```python
 import urllib.request
 
-def _read_public_file(mo, filename: str) -> str:
+def read_public_file(mo, filename: str) -> str:
     """Read a file from public/; works locally (path) and in WASM (URL)."""
     loc = mo.notebook_location()
     path = loc / "public" / filename
@@ -86,11 +86,11 @@ def _read_public_file(mo, filename: str) -> str:
         return f.read()
 
 # In your cell, e.g. for an SVG:
-svg = _read_public_file(mo, "cs336_forward.svg")
+svg = read_public_file(mo, "cs336_forward.svg")
 # then substitute template vars and use mo.Html(container_html) as before
 ```
 
-Use `_read_public_file(mo, "cs336_forward.svg")` instead of `open(mo.notebook_location() / "public" / "cs336_forward.svg").read()` so the exported notebook can load the file over HTTP.
+Use `read_public_file(mo, "cs336_forward.svg")` instead of `open(mo.notebook_location() / "public" / "cs336_forward.svg").read()` so the exported notebook can load the file over HTTP.
 
 ## Deploy
 
