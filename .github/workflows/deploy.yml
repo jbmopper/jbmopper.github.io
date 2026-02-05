@@ -17,6 +17,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Python (uv)
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Export Marimo notebooks
+        run: |
+          uv sync
+          uv run marimo export html-wasm content/notebooks/local_tiny.py -o public/notebooks/local_tiny --mode run
+
       - name: Install, build, and upload
         uses: withastro/action@v5
         with:
