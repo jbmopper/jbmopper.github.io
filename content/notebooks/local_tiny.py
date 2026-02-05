@@ -13,6 +13,7 @@ def _():
 @app.cell
 def _(mo):
     import urllib.request
+    from urllib.parse import urlparse, urlunparse
 
     def _read_public_file(mo, filename: str) -> str:
         """Read a file from public/; works locally (path) and in WASM (URL)."""
@@ -20,7 +21,21 @@ def _(mo):
         path = loc / "public" / filename
         path_str = str(path)
         if path_str.startswith(("http://", "https://")):
-            with urllib.request.urlopen(path_str) as f:
+            # In WASM, notebook_location() returns the page URL (e.g. .../index.html).
+            # Path becomes .../index.html/public/filename (404). Use directory as base.
+            parsed = urlparse(path_str)
+            segments = [s for s in parsed.path.split("/") if s]
+            try:
+                i = segments.index("public")
+                base_segments = segments[:i]
+            except ValueError:
+                base_segments = segments
+            if base_segments and "." in base_segments[-1]:
+                base_segments = base_segments[:-1]
+            base_path = "/" + "/".join(base_segments) + "/" if base_segments else "/"
+            base_url = urlunparse((parsed.scheme, parsed.netloc, base_path, "", "", ""))
+            url = f"{base_url}public/{filename}"
+            with urllib.request.urlopen(url) as f:
                 return f.read().decode()
         with open(path) as f:
             return f.read()
