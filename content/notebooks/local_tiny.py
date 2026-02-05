@@ -15,40 +15,46 @@ def _(mo):
     import urllib.request
     from urllib.parse import urlparse, urlunparse
 
+    # Base URL when notebook_location() is None (e.g. some WASM contexts)
+    _PUBLIC_BASE_URL = "https://jbmopper.github.io/notebooks/local_tiny/public"
+
+    def _normalize_to_public_url(segments, filename):
+        """Segments (no empty); return path like /notebooks/local_tiny/public/filename."""
+        try:
+            i = segments.index("public")
+            base = segments[:i]
+        except ValueError:
+            base = segments
+        if base and "." in base[-1]:
+            base = base[:-1]
+        return "/" + "/".join(base) + "/public/" + filename if base else "/public/" + filename
+
     def _read_public_file(mo, filename: str) -> str:
         """Read a file from public/; works locally (path) and in WASM (URL or path)."""
         loc = mo.notebook_location()
+        if loc is None:
+            url = f"{_PUBLIC_BASE_URL}/{filename}"
+            with urllib.request.urlopen(url) as f:
+                return f.read().decode()
         path = loc / "public" / filename
         path_str = str(path)
-
-        def _normalize_to_public_url(segments):
-            """Segments (no empty); return path like /notebooks/local_tiny/public/filename."""
-            try:
-                i = segments.index("public")
-                base = segments[:i]
-            except ValueError:
-                base = segments
-            if base and "." in base[-1]:
-                base = base[:-1]
-            return "/" + "/".join(base) + "/public/" + filename if base else "/public/" + filename
 
         if path_str.startswith(("http://", "https://")):
             parsed = urlparse(path_str)
             segments = [s for s in parsed.path.split("/") if s]
-            base_path = _normalize_to_public_url(segments)
+            base_path = _normalize_to_public_url(segments, filename)
             url = urlunparse((parsed.scheme, parsed.netloc, base_path, "", "", ""))
             with urllib.request.urlopen(url) as f:
                 return f.read().decode()
         if path_str.startswith("/"):
-            # WASM with path-only location (no scheme); need origin from browser.
             try:
                 from js import window
                 origin = window.location.origin
             except Exception:
-                origin = ""
+                origin = "https://jbmopper.github.io"
             segments = [s for s in path_str.split("/") if s]
-            path_only = _normalize_to_public_url(segments)
-            url = (origin or "https://jbmopper.github.io") + path_only
+            path_only = _normalize_to_public_url(segments, filename)
+            url = origin + path_only
             with urllib.request.urlopen(url) as f:
                 return f.read().decode()
         with open(path) as f:
@@ -958,24 +964,38 @@ def _(mo):
 
 @app.cell
 def _(mo, svg_vars, svg_zoom, _read_public_file):
-    svg = _read_public_file(mo, "cs336_forward.svg")
+    try:
+        svg = _read_public_file(mo, "cs336_forward.svg")
+    except Exception as e:
+        try:
+            loc = mo.notebook_location()
+            attempted = str(loc / "public" / "cs336_forward.svg") if loc else "public/cs336_forward.svg"
+        except Exception:
+            attempted = "public/cs336_forward.svg"
+        mo.Html(f"""
+        <div style="padding:1rem; border:1px solid #e0e0e0; border-radius:8px; background:#fff8f8;">
+            <strong>Could not load architecture SVG.</strong><br/>
+            Ensure <code>public/cs336_forward.svg</code> is served next to the notebook
+            (e.g. at <code>/notebooks/local_tiny/public/cs336_forward.svg</code>).
+            <pre style="margin-top:0.5rem; font-size:0.85em;">{type(e).__name__}: {e}</pre>
+            <small>Tried: {attempted}</small>
+        </div>
+        """)
+        return
 
     # Substitute all template variables from svg_vars
     for key, value in svg_vars.items():
         svg = svg.replace(f"{{{{{key}}}}}", str(value))
 
-    # inject font styling into the SVG
+    # Inject font styling into the SVG (after opening <svg>)
     font_style = """
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-    text {
-      font-family: "Inter", system-ui, -apple-system, sans-serif;
-    }
+    text { font-family: "Inter", system-ui, -apple-system, sans-serif; }
     </style>
     """
     svg = svg.replace(">", f">{font_style}", 1)
 
-    # Wrap in a scrollable container with zoom
     zoom_pct = svg_zoom.value
     container_html = f"""
     <div style="
@@ -996,7 +1016,6 @@ def _(mo, svg_vars, svg_zoom, _read_public_file):
         </div>
     </div>
     """
-
     mo.Html(container_html)
     return
 

@@ -26,6 +26,10 @@ jobs:
         run: |
           uv sync
           uv run marimo export html-wasm content/notebooks/local_tiny.py -o public/notebooks/local_tiny --mode run
+      - name: Copy notebook public assets
+        run: |
+          mkdir -p public/notebooks/local_tiny/public
+          cp -r content/notebooks/public/. public/notebooks/local_tiny/public/
 
       - name: Install, build, and upload
         uses: withastro/action@v5

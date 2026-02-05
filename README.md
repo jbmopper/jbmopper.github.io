@@ -62,13 +62,13 @@ Export **small, focused** notebooks (e.g. one notebook that only produces a char
 
 - **Source:** `.py` notebooks and a `public/` folder (assets like SVG) live in `content/notebooks/`. File layout here is the canonical one for the site; it differs from other repos (e.g. CS336).
 - **Python env:** Use [uv](https://docs.astral.sh/uv/) and the project venv: run `uv sync` (creates `.venv` from `pyproject.toml`; marimo, polars, plotly). The Node build does not need marimo.
-- Prefer **small, focused** notebooks and export each to its own path under `public/notebooks/<name>/`. Run `npm run export-notebooks` or `uv run marimo export html-wasm content/notebooks/<name>.py -o public/notebooks/<name> --mode run`. One output dir per notebook.
+- Prefer **small, focused** notebooks and export each to its own path under `public/notebooks/<name>/`. Run `npm run export-notebooks` (which exports and copies `content/notebooks/public/` into the output so SVG/data files load in WASM). One output dir per notebook.
 - A CI step can run exports on push; for now run locally and commit outputs under `public/notebooks/`.
 - Reference from project pages via the `embeds` array in `src/data/projects.ts` (or legacy `notebook` for a single full-page-style embed).
 
 ### Including data files (e.g. SVG) in WASM exports
 
-Put assets in a **`public/`** folder **next to the notebook** (e.g. `content/notebooks/public/cs336_forward.svg`). When you export, that folder is copied into the export directory. In the browser (WASM), `mo.notebook_location()` returns a **URL**, not a filesystem path, so **`open(path)` fails**. Load the file in a way that works both locally and in WASM:
+Put assets in a **`public/`** folder next to the notebook (e.g. `content/notebooks/public/cs336_forward.svg`). The export script and CI **copy** that folder into `public/notebooks/<name>/public/` so the WASM notebook can load files over HTTP. In the browser, `mo.notebook_location()` returns a **URL**, not a filesystem path, so **`open(path)` fails**—use the notebook’s `_read_public_file(mo, filename)` helper (or equivalent) that fetches via URL when given a URL path:
 
 ```python
 import urllib.request
