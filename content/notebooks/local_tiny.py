@@ -16,25 +16,39 @@ def _(mo):
     from urllib.parse import urlparse, urlunparse
 
     def _read_public_file(mo, filename: str) -> str:
-        """Read a file from public/; works locally (path) and in WASM (URL)."""
+        """Read a file from public/; works locally (path) and in WASM (URL or path)."""
         loc = mo.notebook_location()
         path = loc / "public" / filename
         path_str = str(path)
-        if path_str.startswith(("http://", "https://")):
-            # In WASM, notebook_location() returns the page URL (e.g. .../index.html).
-            # Path becomes .../index.html/public/filename (404). Use directory as base.
-            parsed = urlparse(path_str)
-            segments = [s for s in parsed.path.split("/") if s]
+
+        def _normalize_to_public_url(segments):
+            """Segments (no empty); return path like /notebooks/local_tiny/public/filename."""
             try:
                 i = segments.index("public")
-                base_segments = segments[:i]
+                base = segments[:i]
             except ValueError:
-                base_segments = segments
-            if base_segments and "." in base_segments[-1]:
-                base_segments = base_segments[:-1]
-            base_path = "/" + "/".join(base_segments) + "/" if base_segments else "/"
-            base_url = urlunparse((parsed.scheme, parsed.netloc, base_path, "", "", ""))
-            url = f"{base_url}public/{filename}"
+                base = segments
+            if base and "." in base[-1]:
+                base = base[:-1]
+            return "/" + "/".join(base) + "/public/" + filename if base else "/public/" + filename
+
+        if path_str.startswith(("http://", "https://")):
+            parsed = urlparse(path_str)
+            segments = [s for s in parsed.path.split("/") if s]
+            base_path = _normalize_to_public_url(segments)
+            url = urlunparse((parsed.scheme, parsed.netloc, base_path, "", "", ""))
+            with urllib.request.urlopen(url) as f:
+                return f.read().decode()
+        if path_str.startswith("/"):
+            # WASM with path-only location (no scheme); need origin from browser.
+            try:
+                from js import window
+                origin = window.location.origin
+            except Exception:
+                origin = ""
+            segments = [s for s in path_str.split("/") if s]
+            path_only = _normalize_to_public_url(segments)
+            url = (origin or "https://jbmopper.github.io") + path_only
             with urllib.request.urlopen(url) as f:
                 return f.read().decode()
         with open(path) as f:
