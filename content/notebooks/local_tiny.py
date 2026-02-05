@@ -979,7 +979,7 @@ def _(mo, svg_vars, svg_zoom, _read_public_file):
     def _show_svg_error(e, attempted: str = "public/cs336_forward.svg"):
         err_msg = str(e).replace("<", "&lt;").replace(">", "&gt;")
         err_type = type(e).__name__
-        mo.Html(f"""
+        return mo.Html(f"""
         <div style="padding:1rem; border:2px solid #c00; border-radius:8px; background:#fff5f5; color:#333;">
             <strong>Could not load architecture SVG.</strong><br/>
             Ensure <code>public/cs336_forward.svg</code> is served next to the notebook
@@ -1002,7 +1002,7 @@ def _(mo, svg_vars, svg_zoom, _read_public_file):
         _svg_raw = None
 
     if _svg_load_error is not None:
-        _show_svg_error(_svg_load_error[0], _svg_load_error[1])
+        _out = _show_svg_error(_svg_load_error[0], _svg_load_error[1])
     else:
         try:
             for _k, _v in svg_vars.items():
@@ -1029,9 +1029,10 @@ def _(mo, svg_vars, svg_zoom, _read_public_file):
             </div>
         </div>
         """
-            mo.Html(_container_html)
+            _out = mo.Html(_container_html)
         except Exception as e:
-            _show_svg_error(e, "after loading SVG (render step)")
+            _out = _show_svg_error(e, "after loading SVG (render step)")
+    _out
 
 
 @app.cell(hide_code=True)
