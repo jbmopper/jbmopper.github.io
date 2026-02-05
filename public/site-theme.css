@@ -1,0 +1,28 @@
+/**
+ * Single source of truth for portfolio site theme.
+ * Used by: Astro layout (link from Layout.astro) and Marimo notebooks (link from head.html).
+ * Edit this file only; site and notebooks stay in sync by loading it.
+ */
+:root {
+  --color-bg: #0f0f0e;
+  --color-surface: #1a1a18;
+  --color-text: #e8e6e3;
+  --color-muted: #8b8685;
+  --color-accent: #7c9c6b;
+  --color-accent-dim: #5a7350;
+  --font-sans: "DM Sans", system-ui, sans-serif;
+}
+
+/* Marimo: use site fonts and colors so notebooks match the rest of the site */
+:root {
+  --marimo-monospace-font: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, monospace;
+  --marimo-text-font: var(--font-sans);
+  --marimo-heading-font: var(--font-sans);
+}
+
+/* Marimo body/container overrides (when Marimo injects into the page) */
+body {
+  font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: var(--color-text);
+}

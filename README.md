@@ -59,6 +59,12 @@ Export **small, focused** notebooks (e.g. one notebook that only produces a char
 
 2. **Export small Marimo outputs** to `public/notebooks/` (one file or subdir per embed so paths stay stable), then set `embeds: [{ path: "my-chart/index.html", title: "Results" }]` (and add more objects for more charts/tables). Each embed is rendered as its own section with optional heading and iframe; you can set `height` (e.g. `"400px"`) per embed if needed.
 
+## Theme and look-and-feel sync (site + notebooks)
+
+- **Single source of truth:** `public/site-theme.css` defines the palette and fonts (`:root` variables and Marimo overrides). The Astro layout and all Marimo notebooks load this file so they stay in sync.
+- **Site:** `Layout.astro` links to Google Fonts (DM Sans) and `/site-theme.css`. Layout-specific styles (header, main) stay in the layout and use the same variables.
+- **Notebooks:** Each notebook should set `html_head_file="head.html"` in `marimo.App(...)`. The file `content/notebooks/head.html` injects the same font and `<link rel="stylesheet" href="/site-theme.css">` into the exported HTML. When the notebook is served from the same origin (e.g. GitHub Pages), it loads the same theme. **To change colors or fonts, edit only `public/site-theme.css`.**
+
 ## Marimo notebooks
 
 - **Source:** `.py` notebooks and a `public/` folder (assets like SVG) live in `content/notebooks/`. File layout here is the canonical one for the site; it differs from other repos (e.g. CS336).

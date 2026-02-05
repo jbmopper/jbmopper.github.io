@@ -10,4 +10,8 @@ Under [about]({{insert link to about page}}) you can find information about me! 
 
 Under [projects]({{insert link to projects page}}) you can find projects relating to this phase of my career.  These are focused on deep learning and LLMs.  Javascript is required to fully enjoy these presentations.
 
-Last and certainly least is [musings]({{insert link to musings page}}) where, if the mood strikes, I will produce some worksafe "deep thoughts" (literally the deepest) on current technologies and "this moment" as such.  If the [about]({{insert link to about page}}) is the detritus of the *cogito*, then perhaps [musings]({{insert link to musings page}}) contains ... the tritus?  Nine out of ten bots approve.
+Last and certainly least is [musings]({{insert link to musings page}}) where, if the mood strikes, I will produce some worksafe "deep thoughts" (literally the deepest) on current technologies and "this moment" as such.  If the [about]({{insert link to about page}}) is the detritus of the *cogito*, then perhaps [musings]({{insert link to musings page}}) contains ... the tritus?  Nine out of ten bots agree.
+
+## Contact
+
+Feel free to contact me via [linkedin](https://linkedin.com/in/jbmopper).  More contact options coming soon! 
