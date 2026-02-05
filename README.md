@@ -45,6 +45,31 @@ Projects are listed on the [Projects](/projects) page and each has a detail page
 - A CI step can run this for all notebooks; for now run locally and commit the outputs under `public/notebooks/`.
 - Link from project pages by setting `notebook: "<name>/index.html"` in `src/data/projects.ts`.
 
+### Including data files (e.g. SVG) in WASM exports
+
+Put assets in a **`public/`** folder **next to the notebook** (e.g. `content/notebooks/public/cs336_forward.svg`). When you export, that folder is copied into the export directory. In the browser (WASM), `mo.notebook_location()` returns a **URL**, not a filesystem path, so **`open(path)` fails**. Load the file in a way that works both locally and in WASM:
+
+```python
+import urllib.request
+
+def _read_public_file(mo, filename: str) -> str:
+    """Read a file from public/; works locally (path) and in WASM (URL)."""
+    loc = mo.notebook_location()
+    path = loc / "public" / filename
+    path_str = str(path)
+    if path_str.startswith(("http://", "https://")):
+        with urllib.request.urlopen(path_str) as f:
+            return f.read().decode()
+    with open(path) as f:
+        return f.read()
+
+# In your cell, e.g. for an SVG:
+svg = _read_public_file(mo, "cs336_forward.svg")
+# then substitute template vars and use mo.Html(container_html) as before
+```
+
+Use `_read_public_file(mo, "cs336_forward.svg")` instead of `open(mo.notebook_location() / "public" / "cs336_forward.svg").read()` so the exported notebook can load the file over HTTP.
+
 ## Deploy
 
 Push to `main`; GitHub Actions builds and deploys to GitHub Pages. Repo is `jbmopper.github.io` so the site is at the root URL. `.nojekyll` is in `public/` so Jekyll does not process the site.

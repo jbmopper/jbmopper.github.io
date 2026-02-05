@@ -20,7 +20,7 @@ export const projects: Project[] = [
     title: "local-tiny (test)",
     description: "Architecture analysis on the M4",
     notebook: "local_tiny/index.html",
-    body: "<p>This is a writeup??</p>",
+    body: "<p>This is a writeup?? </p>",
   },
 ];
 
