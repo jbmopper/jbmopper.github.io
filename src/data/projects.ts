@@ -15,6 +15,13 @@ export const projects: Project[] = [
     description: "A placeholder project. Add real entries and export Marimo notebooks to public/notebooks/.",
     body: "<p>Replace this with your writeup. When you add a notebook, set <code>notebook: \"your-notebook.html\"</code> in <code>src/data/projects.ts</code> and export with <code>marimo export html-wasm content/notebooks/your-notebook.py -o public/notebooks --mode run</code>.</p>",
   },
+  {
+    slug: "local-tiny",
+    title: "local-tiny (test)",
+    description: "Architecture analysis on the M4",
+    notebook: "local_tiny/index.html",
+    body: "<p>This is a writeup??</p>",
+  },
 ];
 
 export function getProjectBySlug(slug: string): Project | undefined {
