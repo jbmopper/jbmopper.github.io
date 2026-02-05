@@ -28,9 +28,10 @@ This creates a `.venv` with marimo, polars, plotly (see `pyproject.toml`). Expor
 
 ```bash
 npm run export-notebooks
-# or for one notebook:
+# or for one notebook (then copy content/notebooks/public/ into the output dir):
 uv run marimo export html-wasm content/notebooks/local_tiny.py -o public/notebooks/local_tiny --mode run
 ```
+**Important:** The live site (e.g. GitHub Pages) serves the **exported** files under `public/notebooks/`, not the source `.py`. After changing a notebook, run `npm run export-notebooks` and **commit the updated `public/notebooks/<name>/`** (including `index.html` and `public/` assets) so the deployed app includes your changes.
 
 ## Env (optional)
 
@@ -94,6 +95,10 @@ Use `_read_public_file(mo, "cs336_forward.svg")` instead of `open(mo.notebook_lo
 ## Deploy
 
 Push to `main`; GitHub Actions builds and deploys to GitHub Pages. Repo is `jbmopper.github.io` so the site is at the root URL. `.nojekyll` is in `public/` so Jekyll does not process the site.
+
+**You can use either local export or CI** for the notebooks: the workflow runs `npm run export-notebooks` (marimo export + copy of `content/notebooks/public/`) in CI, so you don’t have to run it locally before every push. If you do run it locally, commit the updated `public/notebooks/` so the site reflects it until the next CI run.
+
+**Important – Pages must use GitHub Actions:** In the repo **Settings → Pages → Build and deployment**, set **Source** to **GitHub Actions** (not “Deploy from a branch”). If Source is “Deploy from a branch”, GitHub runs its built-in **Jekyll** workflow (“pages-build-deployment”) and the build fails (this repo is Astro, not Jekyll). With Source = **GitHub Actions**, the workflow in `.github/workflows/deploy.yml` runs: checkout → export marimo notebooks → copy notebook assets → Astro build → deploy.
 
 ## Plan
 

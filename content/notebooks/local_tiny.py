@@ -964,6 +964,17 @@ def _(mo):
 
 @app.cell
 def _(mo, svg_vars, svg_zoom, _read_public_file):
+    def _show_svg_error(e, attempted: str = "public/cs336_forward.svg"):
+        mo.Html(f"""
+        <div style="padding:1rem; border:2px solid #c00; border-radius:8px; background:#fff5f5; color:#333;">
+            <strong>Could not load architecture SVG.</strong><br/>
+            Ensure <code>public/cs336_forward.svg</code> is served next to the notebook
+            (e.g. <code>/notebooks/local_tiny/public/cs336_forward.svg</code>).
+            <pre style="margin-top:0.5rem; font-size:0.85em; overflow:auto;">{type(e).__name__}: {e}</pre>
+            <small>Tried: {attempted}</small>
+        </div>
+        """)
+
     try:
         svg = _read_public_file(mo, "cs336_forward.svg")
     except Exception as e:
@@ -972,51 +983,46 @@ def _(mo, svg_vars, svg_zoom, _read_public_file):
             attempted = str(loc / "public" / "cs336_forward.svg") if loc else "public/cs336_forward.svg"
         except Exception:
             attempted = "public/cs336_forward.svg"
-        mo.Html(f"""
-        <div style="padding:1rem; border:1px solid #e0e0e0; border-radius:8px; background:#fff8f8;">
-            <strong>Could not load architecture SVG.</strong><br/>
-            Ensure <code>public/cs336_forward.svg</code> is served next to the notebook
-            (e.g. at <code>/notebooks/local_tiny/public/cs336_forward.svg</code>).
-            <pre style="margin-top:0.5rem; font-size:0.85em;">{type(e).__name__}: {e}</pre>
-            <small>Tried: {attempted}</small>
-        </div>
-        """)
+        _show_svg_error(e, attempted)
         return
 
-    # Substitute all template variables from svg_vars
-    for key, value in svg_vars.items():
-        svg = svg.replace(f"{{{{{key}}}}}", str(value))
+    try:
+        # Substitute all template variables from svg_vars
+        for key, value in svg_vars.items():
+            svg = svg.replace(f"{{{{{key}}}}}", str(value))
 
-    # Inject font styling into the SVG (after opening <svg>)
-    font_style = """
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-    text { font-family: "Inter", system-ui, -apple-system, sans-serif; }
-    </style>
-    """
-    svg = svg.replace(">", f">{font_style}", 1)
+        # Inject font styling into the SVG (after opening <svg>)
+        font_style = """
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        text { font-family: "Inter", system-ui, -apple-system, sans-serif; }
+        </style>
+        """
+        svg = svg.replace(">", f">{font_style}", 1)
 
-    zoom_pct = svg_zoom.value
-    container_html = f"""
-    <div style="
-        width: 100%;
-        height: 600px;
-        overflow: auto;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        background: #fafafa;
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-    ">
+        zoom_pct = svg_zoom.value
+        container_html = f"""
         <div style="
-            transform: scale({zoom_pct / 100});
-            transform-origin: top left;
-            padding: 16px;
+            width: 100%;
+            height: 600px;
+            overflow: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fafafa;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         ">
-            {svg}
+            <div style="
+                transform: scale({zoom_pct / 100});
+                transform-origin: top left;
+                padding: 16px;
+            ">
+                {svg}
+            </div>
         </div>
-    </div>
-    """
-    mo.Html(container_html)
+        """
+        mo.Html(container_html)
+    except Exception as e:
+        _show_svg_error(e, "after loading SVG (render step)")
     return
 
 
