@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
-  },
+"preview": "astro preview",
+    "export-notebooks": "uv run marimo export html-wasm content/notebooks/local_tiny.py -o public/notebooks/local_tiny --mode run"
+},
   "dependencies": {
     "astro": "^4.16.0",
     "@astrojs/svelte": "^5.1.0",

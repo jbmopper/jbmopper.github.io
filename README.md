@@ -11,9 +11,25 @@ Portfolio site: Astro, Svelte mushroom chatbot, Marimo WASM notebooks, GitHub Pa
 
 ## Setup
 
+**Site (Node):**
+
 ```bash
 npm install
 npm run dev
+```
+
+**Notebooks (Python / uv):** Install [uv](https://docs.astral.sh/uv/) then from the repo root:
+
+```bash
+uv sync
+```
+
+This creates a `.venv` with marimo, polars, plotly (see `pyproject.toml`). Export notebooks with:
+
+```bash
+npm run export-notebooks
+# or for one notebook:
+uv run marimo export html-wasm content/notebooks/local_tiny.py -o public/notebooks/local_tiny --mode run
 ```
 
 ## Env (optional)
@@ -24,26 +40,31 @@ Copy `.env.example` to `.env` and set `PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_S
 
 Projects are listed on the [Projects](/projects) page and each has a detail page at `/projects/<slug>`.
 
-1. **Add an entry** in `src/data/projects.ts` in the `projects` array. Each project needs:
+### Page design: narrative first, embeds as components
+
+Project pages are **Astro-owned**: the main text, structure, and links live in normal HTML/content (`body`). Notebooks are used as **small, focused embeds** (e.g. one chart, one dataframe, one interactive widget), not as whole-page “open this notebook” experiences. So:
+
+- **Bulk text, subpages, links** → normal webpage content in `body` (or Content Collections later).
+- **Dataframes, charts, interactive bits** → one or more Marimo (or other) exports, each embedded in its own section below the narrative.
+
+Export **small, focused** notebooks (e.g. one notebook that only produces a chart, another that only shows a table) and reference them in the `embeds` array. Each embed gets a section with an optional title and an “Open in new tab” link.
+
+1. **Add an entry** in `src/data/projects.ts` in the `projects` array. Each project has:
    - `slug` – URL segment (e.g. `"my-analysis"` → `/projects/my-analysis`)
    - `title` – display name
    - `description` – short blurb (shown on the projects list)
-   - `body` (optional) – HTML writeup on the project detail page
-   - `notebook` (optional) – path under `/notebooks/` for a Marimo WASM export (e.g. `"my-notebook/index.html"`)
+   - `body` (optional) – main narrative HTML on the project detail page
+   - `embeds` (optional) – list of `{ path, title?, height? }` for notebook-derived blocks (path under `/notebooks/`, e.g. `"m4-chart.html"` or `"local_tiny/index.html"`). Legacy single `notebook` is still supported and treated as one embed.
 
-2. **Optional: attach a Marimo notebook**  
-   Export the notebook to its **own subdirectory** under `public/notebooks/` (so each export has its own `index.html` and they don’t overwrite each other):
-   ```bash
-   marimo export html-wasm content/notebooks/<name>.py -o public/notebooks/<name> --mode run
-   ```
-   Then set `notebook: "<name>/index.html"` for that project in `src/data/projects.ts`. The project page will show an “Open interactive notebook” link and an iframe embedding the notebook.
+2. **Export small Marimo outputs** to `public/notebooks/` (one file or subdir per embed so paths stay stable), then set `embeds: [{ path: "my-chart/index.html", title: "Results" }]` (and add more objects for more charts/tables). Each embed is rendered as its own section with optional heading and iframe; you can set `height` (e.g. `"400px"`) per embed if needed.
 
 ## Marimo notebooks
 
-- Put source `.py` marimo notebooks in `content/notebooks/`.
-- Export to WASM into **one subdirectory per notebook**: `marimo export html-wasm content/notebooks/<name>.py -o public/notebooks/<name> --mode run` (or `--mode edit`). Using the same `-o` dir for multiple notebooks overwrites `index.html`.
-- A CI step can run this for all notebooks; for now run locally and commit the outputs under `public/notebooks/`.
-- Link from project pages by setting `notebook: "<name>/index.html"` in `src/data/projects.ts`.
+- **Source:** `.py` notebooks and a `public/` folder (assets like SVG) live in `content/notebooks/`. File layout here is the canonical one for the site; it differs from other repos (e.g. CS336).
+- **Python env:** Use [uv](https://docs.astral.sh/uv/) and the project venv: run `uv sync` (creates `.venv` from `pyproject.toml`; marimo, polars, plotly). The Node build does not need marimo.
+- Prefer **small, focused** notebooks and export each to its own path under `public/notebooks/<name>/`. Run `npm run export-notebooks` or `uv run marimo export html-wasm content/notebooks/<name>.py -o public/notebooks/<name> --mode run`. One output dir per notebook.
+- A CI step can run exports on push; for now run locally and commit outputs under `public/notebooks/`.
+- Reference from project pages via the `embeds` array in `src/data/projects.ts` (or legacy `notebook` for a single full-page-style embed).
 
 ### Including data files (e.g. SVG) in WASM exports
 

@@ -1,0 +1,21 @@
+[project]
+name = "jbmopper.github.io"
+version = "0.0.1"
+description = "Portfolio site and marimo notebook exports"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "marimo>=0.19",
+    "polars>=0.20",
+    "plotly>=5.18",
+]
+
+[project.optional-dependencies]
+# Uncomment if a notebook needs these for local run/export only (not WASM)
+# dev = ["torch", "pytest"]
+
+[dependency-groups]
+dev = []
+
+[tool.uv.sources]
+# Pinned sources if needed later
