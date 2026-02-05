@@ -29,13 +29,27 @@ def _(mo):
             base = base[:-1]
         return "/" + "/".join(base) + "/public/" + filename if base else "/public/" + filename
 
+    def _fetch_url(url: str) -> str:
+        """Fetch URL and return body as string. Uses Pyodide in browser (urllib doesn't work there)."""
+        try:
+            from pyodide.http import open_url
+            f = open_url(url)
+            return f.read()
+        except Exception:
+            try:
+                from pyodide.http import pyxhr
+                r = pyxhr.get(url)
+                return r.text if hasattr(r, "text") else r.content.decode()
+            except Exception:
+                with urllib.request.urlopen(url) as f:
+                    return f.read().decode()
+
     def _read_public_file(mo, filename: str) -> str:
-        """Read a file from public/; works locally (path) and in WASM (URL or path)."""
+        """Read a file from public/; works locally (path) and in WASM (URL)."""
         loc = mo.notebook_location()
         if loc is None:
             url = f"{_PUBLIC_BASE_URL}/{filename}"
-            with urllib.request.urlopen(url) as f:
-                return f.read().decode()
+            return _fetch_url(url)
         path = loc / "public" / filename
         path_str = str(path)
 
@@ -44,8 +58,7 @@ def _(mo):
             segments = [s for s in parsed.path.split("/") if s]
             base_path = _normalize_to_public_url(segments, filename)
             url = urlunparse((parsed.scheme, parsed.netloc, base_path, "", "", ""))
-            with urllib.request.urlopen(url) as f:
-                return f.read().decode()
+            return _fetch_url(url)
         if path_str.startswith("/"):
             try:
                 from js import window
@@ -55,8 +68,7 @@ def _(mo):
             segments = [s for s in path_str.split("/") if s]
             path_only = _normalize_to_public_url(segments, filename)
             url = origin + path_only
-            with urllib.request.urlopen(url) as f:
-                return f.read().decode()
+            return _fetch_url(url)
         with open(path) as f:
             return f.read()
 
@@ -965,12 +977,14 @@ def _(mo):
 @app.cell
 def _(mo, svg_vars, svg_zoom, _read_public_file):
     def _show_svg_error(e, attempted: str = "public/cs336_forward.svg"):
+        err_msg = str(e).replace("<", "&lt;").replace(">", "&gt;")
+        err_type = type(e).__name__
         mo.Html(f"""
         <div style="padding:1rem; border:2px solid #c00; border-radius:8px; background:#fff5f5; color:#333;">
             <strong>Could not load architecture SVG.</strong><br/>
             Ensure <code>public/cs336_forward.svg</code> is served next to the notebook
             (e.g. <code>/notebooks/local_tiny/public/cs336_forward.svg</code>).
-            <pre style="margin-top:0.5rem; font-size:0.85em; overflow:auto;">{type(e).__name__}: {e}</pre>
+            <pre style="margin-top:0.5rem; font-size:0.85em; overflow:auto;">{err_type}: {err_msg}</pre>
             <small>Tried: {attempted}</small>
         </div>
         """)
