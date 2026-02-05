@@ -989,33 +989,28 @@ def _(mo, svg_vars, svg_zoom, _read_public_file):
         </div>
         """)
 
+    _svg_load_error = None
     try:
-        svg = _read_public_file(mo, "cs336_forward.svg")
+        _svg_raw = _read_public_file(mo, "cs336_forward.svg")
     except Exception as e:
         try:
-            loc = mo.notebook_location()
-            attempted = str(loc / "public" / "cs336_forward.svg") if loc else "public/cs336_forward.svg"
+            _loc = mo.notebook_location()
+            _attempted = str(_loc / "public" / "cs336_forward.svg") if _loc else "public/cs336_forward.svg"
         except Exception:
-            attempted = "public/cs336_forward.svg"
-        _show_svg_error(e, attempted)
-        return
+            _attempted = "public/cs336_forward.svg"
+        _svg_load_error = (e, _attempted)
+        _svg_raw = None
 
-    try:
-        # Substitute all template variables from svg_vars
-        for key, value in svg_vars.items():
-            svg = svg.replace(f"{{{{{key}}}}}", str(value))
-
-        # Inject font styling into the SVG (after opening <svg>)
-        font_style = """
-        <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-        text { font-family: "Inter", system-ui, -apple-system, sans-serif; }
-        </style>
-        """
-        svg = svg.replace(">", f">{font_style}", 1)
-
-        zoom_pct = svg_zoom.value
-        container_html = f"""
+    if _svg_load_error is not None:
+        _show_svg_error(_svg_load_error[0], _svg_load_error[1])
+    else:
+        try:
+            for _k, _v in svg_vars.items():
+                _svg_raw = _svg_raw.replace(f"{{{{{_k}}}}}", str(_v))
+            _font_style = "\n    <style>\n    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');\n    text { font-family: \"Inter\", system-ui, -apple-system, sans-serif; }\n    </style>\n    "
+            _svg_raw = _svg_raw.replace(">", f">{_font_style}", 1)
+            _zoom_pct = svg_zoom.value
+            _container_html = f"""
         <div style="
             width: 100%;
             height: 600px;
@@ -1026,18 +1021,17 @@ def _(mo, svg_vars, svg_zoom, _read_public_file):
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         ">
             <div style="
-                transform: scale({zoom_pct / 100});
+                transform: scale({_zoom_pct / 100});
                 transform-origin: top left;
                 padding: 16px;
             ">
-                {svg}
+                {_svg_raw}
             </div>
         </div>
         """
-        mo.Html(container_html)
-    except Exception as e:
-        _show_svg_error(e, "after loading SVG (render step)")
-    return
+            mo.Html(_container_html)
+        except Exception as e:
+            _show_svg_error(e, "after loading SVG (render step)")
 
 
 @app.cell(hide_code=True)
