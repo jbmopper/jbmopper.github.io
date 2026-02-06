@@ -19,7 +19,7 @@ notebook-helpers = { path = "notebook_helpers" }
 # dev = ["torch", "pytest"]
 
 [dependency-groups]
-dev = ["ruff>=0.8"]
+dev = ["ruff>=0.8", "pytest>=8"]
 
 # Ruff: one linter/formatter for Python (replaces Pylint, Flake8, Black, isort).
 # Run: uv run ruff check .   and   uv run ruff format .
@@ -36,3 +36,7 @@ ignore = ["E501"]
 
 [tool.ruff.format]
 quote-style = "double"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["notebook_helpers/tests"]

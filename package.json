@@ -5,15 +5,19 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-"preview": "astro preview",
-    "export-notebooks": "bash scripts/export-notebooks.sh"
-},
+    "preview": "astro preview",
+    "test": "vitest run",
+    "export-notebooks": "bash scripts/export-notebooks.sh",
+    "verify-exports": "tsx scripts/verify-exports.ts"
+  },
   "dependencies": {
     "astro": "^4.16.0",
     "@astrojs/svelte": "^5.1.0",
     "svelte": "^4.0.0"
   },
   "devDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^2.0.0",
+    "tsx": "^4.19.0"
   }
 }

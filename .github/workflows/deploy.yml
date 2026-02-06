@@ -17,15 +17,40 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install deps and test
+        run: |
+          npm ci
+          npm run test
+
       - name: Set up Python (uv)
         uses: astral-sh/setup-uv@v4
         with:
           version: "latest"
 
-      - name: Export Marimo notebooks
+      - name: Python deps and pytest
         run: |
           uv sync
-          bash scripts/export-notebooks.sh
+          uv run pytest -v
+
+      - name: Marimo check
+        run: |
+          for f in content/notebooks/*/*.py; do
+            [ -f "$f" ] || continue
+            echo "Checking $f"
+            uv run marimo check "$f" || exit 1
+          done
+
+      - name: Export Marimo notebooks
+        run: bash scripts/export-notebooks.sh
+
+      - name: Verify exports
+        run: npm run verify-exports
 
       - name: Install, build, and upload
         uses: withastro/action@v5
