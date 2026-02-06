@@ -12,65 +12,13 @@ def _():
 
 @app.cell
 def _(mo):
-    import urllib.request
-    from urllib.parse import urlparse, urlunparse
+    from notebook_helpers import read_public_file as _read_public_file
 
-    # Base URL when notebook_location() is None (e.g. some WASM contexts)
+    # When notebook_location() is None (e.g. WASM), this base URL is used for public/ assets.
     _PUBLIC_BASE_URL = "https://jbmopper.github.io/notebooks/local-tiny/public"
 
-    def _normalize_to_public_url(segments, filename):
-        """Segments (no empty); return path like /notebooks/local-tiny/public/filename."""
-        try:
-            i = segments.index("public")
-            base = segments[:i]
-        except ValueError:
-            base = segments
-        if base and "." in base[-1]:
-            base = base[:-1]
-        return "/" + "/".join(base) + "/public/" + filename if base else "/public/" + filename
-
-    def _fetch_url(url: str) -> str:
-        """Fetch URL and return body as string. In WASM, Pyodide provides http; locally urllib works."""
-        try:
-            from pyodide.http import open_url  # type: ignore[import-untyped]
-            f = open_url(url)
-            return f.read()
-        except Exception:
-            try:
-                from pyodide.http import pyxhr  # type: ignore[import-untyped]
-                r = pyxhr.get(url)
-                return r.text if hasattr(r, "text") else r.content.decode()
-            except Exception:
-                with urllib.request.urlopen(url) as f:
-                    return f.read().decode()
-
     def read_public_file(mo, filename: str) -> str:
-        """Read a file from public/; works locally (path) and in WASM (URL)."""
-        loc = mo.notebook_location()
-        if loc is None:
-            url = f"{_PUBLIC_BASE_URL}/{filename}"
-            return _fetch_url(url)
-        path = loc / "public" / filename
-        path_str = str(path)
-
-        if path_str.startswith(("http://", "https://")):
-            parsed = urlparse(path_str)
-            segments = [s for s in parsed.path.split("/") if s]
-            base_path = _normalize_to_public_url(segments, filename)
-            url = urlunparse((parsed.scheme, parsed.netloc, base_path, "", "", ""))
-            return _fetch_url(url)
-        if path_str.startswith("/"):
-            try:
-                from js import window
-                origin = window.location.origin
-            except Exception:
-                origin = "https://jbmopper.github.io"
-            segments = [s for s in path_str.split("/") if s]
-            path_only = _normalize_to_public_url(segments, filename)
-            url = origin + path_only
-            return _fetch_url(url)
-        with open(path) as f:
-            return f.read()
+        return _read_public_file(mo, filename, public_base_url=_PUBLIC_BASE_URL)
 
     return (read_public_file,)
 

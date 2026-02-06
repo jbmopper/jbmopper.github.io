@@ -6,9 +6,13 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "marimo>=0.19",
+    "notebook-helpers",
     "polars>=0.20",
     "plotly>=5.18",
 ]
+
+[tool.uv.sources]
+notebook-helpers = { path = "notebook_helpers" }
 
 [project.optional-dependencies]
 # Uncomment if a notebook needs these for local run/export only (not WASM)
@@ -16,9 +20,6 @@ dependencies = [
 
 [dependency-groups]
 dev = ["ruff>=0.8"]
-
-[tool.uv.sources]
-# Pinned sources if needed later
 
 # Ruff: one linter/formatter for Python (replaces Pylint, Flake8, Black, isort).
 # Run: uv run ruff check .   and   uv run ruff format .

@@ -33,7 +33,7 @@
   <button
     type="button"
     class="mushroom-trigger"
-    onclick={toggle}
+    on:click={toggle}
     aria-label={open ? 'Close chat' : 'Open chat'}
     aria-expanded={open}
   >
@@ -45,7 +45,7 @@
     <aside class="chat-panel">
       <div class="chat-panel-header">
         <span>Chat</span>
-        <button type="button" class="close-btn" onclick={toggle} aria-label="Close">×</button>
+        <button type="button" class="close-btn" on:click={toggle} aria-label="Close">×</button>
       </div>
       <div class="chat-panel-body">
         <p class="placeholder">

@@ -78,6 +78,7 @@ version = "0.0.1"
 source = { virtual = "." }
 dependencies = [
     { name = "marimo" },
+    { name = "notebook-helpers" },
     { name = "plotly" },
     { name = "polars" },
 ]
@@ -90,6 +91,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "marimo", specifier = ">=0.19" },
+    { name = "notebook-helpers", directory = "notebook_helpers" },
     { name = "plotly", specifier = ">=5.18" },
     { name = "polars", specifier = ">=0.20" },
 ]
@@ -292,6 +294,11 @@ sdist = { url = "https://files.pythonhosted.org/packages/fc/6f/713be67779028d482
 wheels = [
     { url = "https://files.pythonhosted.org/packages/03/cc/7cb74758e6df95e0c4e1253f203b6dd7f348bf2f29cf89e9210a2416d535/narwhals-2.16.0-py3-none-any.whl", hash = "sha256:846f1fd7093ac69d63526e50732033e86c30ea0026a44d9b23991010c7d1485d", size = 443951, upload-time = "2026-02-02T10:30:58.635Z" },
 ]
+
+[[package]]
+name = "notebook-helpers"
+version = "0.0.1"
+source = { directory = "notebook_helpers" }
 
 [[package]]
 name = "packaging"
