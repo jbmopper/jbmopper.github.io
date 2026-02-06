@@ -30,14 +30,14 @@ def _(mo):
         return "/" + "/".join(base) + "/public/" + filename if base else "/public/" + filename
 
     def _fetch_url(url: str) -> str:
-        """Fetch URL and return body as string. Uses Pyodide in browser (urllib doesn't work there)."""
+        """Fetch URL and return body as string. In WASM, Pyodide provides http; locally urllib works."""
         try:
-            from pyodide.http import open_url
+            from pyodide.http import open_url  # type: ignore[import-untyped]
             f = open_url(url)
             return f.read()
         except Exception:
             try:
-                from pyodide.http import pyxhr
+                from pyodide.http import pyxhr  # type: ignore[import-untyped]
                 r = pyxhr.get(url)
                 return r.text if hasattr(r, "text") else r.content.decode()
             except Exception:
