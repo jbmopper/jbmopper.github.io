@@ -13,9 +13,9 @@ import { projects, getProjectNotebooksDir } from "../src/data/projects";
 const root = join(fileURLToPath(import.meta.url), "..", "..");
 
 /**
- * Patterns that must not appear in exported notebook HTML.
- * The export script inlines notebook_helpers before export; if this still appears,
- * the inliner did not run or the export is stale.
+ * Patterns that must not appear in exported notebook HTML (e.g. imports of
+ * local modules that are not bundled in WASM). Notebooks are self-contained;
+ * any helper code lives in the notebook itself.
  */
 const FORBIDDEN_IN_EXPORT = ["notebook_helpers"];
 
@@ -38,7 +38,7 @@ for (const project of projects) {
     if (html.includes(bad)) {
       console.error(
         `Export ${dir}: found "${bad}" in public/notebooks/${dir}/index.html. ` +
-          `Run "npm run export-notebooks" so the inliner runs (WASM cannot load that module).`
+          `WASM export cannot load that module; remove the reference and re-export.`
       );
       failed = true;
     }

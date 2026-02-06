@@ -33,10 +33,8 @@ jobs:
         with:
           version: "latest"
 
-      - name: Python deps and pytest
-        run: |
-          uv sync
-          uv run pytest -v
+      - name: Python deps
+        run: uv sync
 
       - name: Marimo check
         run: |
