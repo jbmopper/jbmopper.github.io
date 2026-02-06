@@ -14,7 +14,6 @@ def _():
 def _(mo):
     from notebook_helpers import read_public_file as _read_public_file
 
-    # When notebook_location() is None (e.g. WASM), this base URL is used for public/ assets.
     _PUBLIC_BASE_URL = "https://jbmopper.github.io/notebooks/local-tiny/public"
 
     def read_public_file(mo, filename: str) -> str:

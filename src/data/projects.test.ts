@@ -45,18 +45,18 @@ describe("getProjectNotebooksDir", () => {
 });
 
 describe("getProjectNotebookRootUrl", () => {
-  it("returns /notebooks/<dir>/ when project has notebooks", () => {
+  it("returns /notebooks/<dir>/index.html when project has notebooks", () => {
     const p: Project = {
       slug: "local-tiny",
       title: "Local",
       description: "d",
       notebooksDir: "local-tiny",
     };
-    expect(getProjectNotebookRootUrl(p)).toBe("/notebooks/local-tiny/");
+    expect(getProjectNotebookRootUrl(p)).toBe("/notebooks/local-tiny/index.html");
   });
 
   it("uses slug when notebooksDir not set", () => {
     const p: Project = { slug: "s", title: "S", description: "d" };
-    expect(getProjectNotebookRootUrl(p)).toBe("/notebooks/s/");
+    expect(getProjectNotebookRootUrl(p)).toBe("/notebooks/s/index.html");
   });
 });

@@ -47,5 +47,5 @@ export function getProjectNotebooksDir(project: Project): string | undefined {
 export function getProjectNotebookRootUrl(project: Project): string | null {
   const dir = getProjectNotebooksDir(project);
   if (!dir) return null;
-  return `/notebooks/${dir}/`;
+  return `/notebooks/${dir}/index.html`;
 }
