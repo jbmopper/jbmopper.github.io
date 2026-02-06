@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { projects } from '../../data/projects';
+import { projects, getProjectEmbeds, embedUrl } from '../../data/projects';
 ---
 
 <Layout title="Projects" description="Project writeups and Marimo notebooks">
@@ -11,12 +11,23 @@ import { projects } from '../../data/projects';
   </p>
 
   <ul class="project-list">
-    {projects.map((p) => (
-      <li>
-        <a href={`/projects/${p.slug}`}>{p.title}</a>
-        <p class="project-desc">{p.description}</p>
-      </li>
-    ))}
+    {projects.map((p) => {
+      const embeds = getProjectEmbeds(p);
+      const firstNotebookUrl = embeds.length > 0 ? embedUrl(embeds[0]) : null;
+      return (
+        <li>
+          <div class="project-row">
+            <a href={`/projects/${p.slug}`}>{p.title}</a>
+            {firstNotebookUrl && (
+              <a href={firstNotebookUrl} target="_blank" rel="noopener noreferrer" class="open-notebook">
+                Open notebook ↗
+              </a>
+            )}
+          </div>
+          <p class="project-desc">{p.description}</p>
+        </li>
+      );
+    })}
   </ul>
 
   <p><a href="/">← Home</a></p>
@@ -44,6 +55,13 @@ import { projects } from '../../data/projects';
     border-bottom: none;
   }
 
+  .project-row {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
   .project-list a {
     color: var(--color-accent);
     text-decoration: none;
@@ -52,6 +70,11 @@ import { projects } from '../../data/projects';
 
   .project-list a:hover {
     text-decoration: underline;
+  }
+
+  .open-notebook {
+    font-size: 0.9rem;
+    font-weight: 400;
   }
 
   .project-desc {

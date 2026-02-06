@@ -26,3 +26,15 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
 }
+
+/* Hide Marimo watermark/branding in exported run mode. The "Powered by" link
+   typically points to marimo.io; hiding it keeps the notebook matching the site.
+   If Marimo change their DOM, this selector may need updating. */
+a[href*="marimo.io"] {
+  display: none !important;
+}
+
+/* If the watermark is in a wrapper (e.g. a footer with data-testid), uncomment or add:
+   [data-testid="footer-marimo"],
+   footer [data-testid="marimo-branding"] { display: none !important; }
+*/
