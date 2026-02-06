@@ -28,10 +28,11 @@ This creates a `.venv` with marimo, polars, plotly (see `pyproject.toml`). Expor
 
 ```bash
 npm run export-notebooks
-# or for one notebook (then copy content/notebooks/public/ into the output dir):
-uv run marimo export html-wasm content/notebooks/local_tiny.py -o public/notebooks/local_tiny --mode run
 ```
-**Important:** The live site (e.g. GitHub Pages) serves the **exported** files under `public/notebooks/`, not the source `.py`. After changing a notebook, run `npm run export-notebooks` and **commit the updated `public/notebooks/<name>/`** (including `index.html` and `public/` assets) so the deployed app includes your changes.
+
+This runs `scripts/export-notebooks.sh`, which exports **per-project** notebook directories (see below). Each project has a root notebook that opens from the projects page; multi-notebook projects use the root as a landing page that links to the others.
+
+**Important:** The live site serves the **exported** files under `public/notebooks/`, not the source `.py`. After changing a notebook, run `npm run export-notebooks` and commit the updated `public/notebooks/<project>/` so the deployed app includes your changes.
 
 **Python linting:** This project uses [Ruff](https://docs.astral.sh/ruff/) (not Pylint). After `uv sync`, run `uv run ruff check .` and `uv run ruff format .`. In Cursor/VSCode, disable Pylint and use the Ruff extension (or set Python linting to Ruff) so the IDE matches.
 
@@ -43,23 +44,21 @@ Copy `.env.example` to `.env` and set `PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_S
 
 Projects are listed on the [Projects](/projects) page and each has a detail page at `/projects/<slug>`.
 
-### Page design: narrative first, embeds as components
+### How notebooks are organized (per-project directories)
 
-Project pages are **Astro-owned**: the main text, structure, and links live in normal HTML/content (`body`). Notebooks are used as **small, focused embeds** (e.g. one chart, one dataframe, one interactive widget), not as whole-page “open this notebook” experiences. So:
+- **Source:** Each project that has notebooks has a directory `content/notebooks/<project_dir>/` (the directory name usually matches the project’s `notebooksDir` or `slug` in `src/data/projects.ts`).
+  - **`index.py`** = root/landing notebook. Exported to `public/notebooks/<project_dir>/` so the project’s notebook URL is `/notebooks/<project_dir>/`. The projects page “Open notebook” link goes here.
+  - **Other `*.py`** in the same directory = sibling notebooks. Exported to `public/notebooks/<project_dir>/<name>/` (e.g. `architecture.py` → `/notebooks/local-tiny/architecture/`). The root notebook should act as a landing page and link to these (e.g. with `mo.md` or `mo.Html` with `<a href="/notebooks/local-tiny/architecture/">Architecture</a>`).
+  - **`public/`** inside the project dir (optional) holds assets (SVG, data files); it’s copied into each export for that project.
+- **Build:** Run `npm run export-notebooks` (or CI does it on push). The script finds every `content/notebooks/*/index.py` and exports that project’s notebooks into `public/notebooks/<project_dir>/`.
+- **Projects page:** In `src/data/projects.ts`, set `notebooksDir: "local-tiny"` (or omit it to default to `slug`) for any project that has a notebook directory. The projects list and project detail page show a single “Open notebook” link that opens the root notebook. Multi-notebook projects: users open the root, then use the landing content inside the notebook to jump to the others.
 
-- **Bulk text, subpages, links** → normal webpage content in `body` (or Content Collections later).
-- **Dataframes, charts, interactive bits** → one or more Marimo (or other) exports, each embedded in its own section below the narrative.
+### Adding a project with notebooks
 
-Export **small, focused** notebooks (e.g. one notebook that only produces a chart, another that only shows a table) and reference them in the `embeds` array. Each embed gets a section with an optional title and an “Open in new tab” link.
-
-1. **Add an entry** in `src/data/projects.ts` in the `projects` array. Each project has:
-   - `slug` – URL segment (e.g. `"my-analysis"` → `/projects/my-analysis`)
-   - `title` – display name
-   - `description` – short blurb (shown on the projects list)
-   - `body` (optional) – main narrative HTML on the project detail page
-   - `embeds` (optional) – list of `{ path, title?, height? }` for notebook-derived blocks (path under `/notebooks/`, e.g. `"m4-chart.html"` or `"local_tiny/index.html"`). Legacy single `notebook` is still supported and treated as one embed.
-
-2. **Export small Marimo outputs** to `public/notebooks/` (one file or subdir per embed so paths stay stable), then set `embeds: [{ path: "my-chart/index.html", title: "Results" }]` (and add more objects for more charts/tables). Each embed is rendered as its own section with optional heading and iframe; you can set `height` (e.g. `"400px"`) per embed if needed.
+1. **Add an entry** in `src/data/projects.ts`: `slug`, `title`, `description`, optional `body`, and `notebooksDir` (optional; defaults to `slug`) to point at the notebook directory name.
+2. **Create** `content/notebooks/<notebooksDir>/index.py` (the root/landing Marimo app). Add other `.py` files in the same dir for sibling notebooks. Optionally add `content/notebooks/<notebooksDir>/public/` for assets.
+3. **Run** `npm run export-notebooks` and commit the new `public/notebooks/<notebooksDir>/` output.
+4. In the root notebook, add markdown or HTML links to sibling notebooks (e.g. `/notebooks/local-tiny/architecture/`) so multi-notebook projects have a clear landing page.
 
 ## Theme and look-and-feel sync (site + notebooks)
 
@@ -69,15 +68,14 @@ Export **small, focused** notebooks (e.g. one notebook that only produces a char
 
 ## Marimo notebooks
 
-- **Source:** `.py` notebooks and a `public/` folder (assets like SVG) live in `content/notebooks/`. File layout here is the canonical one for the site; it differs from other repos (e.g. CS336).
+- **Source:** Each project’s notebooks live in `content/notebooks/<project_dir>/`: `index.py` (root/landing) and any other `*.py` (siblings). Optional `public/` inside that dir holds assets (SVG, data); the export script copies it into each export for that project.
 - **Python env:** Use [uv](https://docs.astral.sh/uv/) and the project venv: run `uv sync` (creates `.venv` from `pyproject.toml`; marimo, polars, plotly). The Node build does not need marimo.
-- Prefer **small, focused** notebooks and export each to its own path under `public/notebooks/<name>/`. Run `npm run export-notebooks` (which exports and copies `content/notebooks/public/` into the output so SVG/data files load in WASM). One output dir per notebook.
-- A CI step can run exports on push; for now run locally and commit outputs under `public/notebooks/`.
-- Reference from project pages via the `embeds` array in `src/data/projects.ts` (or legacy `notebook` for a single full-page-style embed).
+- Run `npm run export-notebooks` to export all project notebook dirs into `public/notebooks/<project_dir>/`. CI runs this on push.
+- The projects page and project detail page link to the **root** notebook only (`/notebooks/<project_dir>/`). For multi-notebook projects, the root notebook should be a landing page that links to the others.
 
 ### Including data files (e.g. SVG) in WASM exports
 
-Put assets in a **`public/`** folder next to the notebook (e.g. `content/notebooks/public/cs336_forward.svg`). The export script and CI **copy** that folder into `public/notebooks/<name>/public/` so the WASM notebook can load files over HTTP. In the browser, `mo.notebook_location()` returns a **URL**, not a filesystem path, so **`open(path)` fails**—use the notebook’s `read_public_file(mo, filename)` helper (or equivalent) that fetches via URL when given a URL path:
+Put assets in **`content/notebooks/<project_dir>/public/`** (e.g. `content/notebooks/local-tiny/public/cs336_forward.svg`). The export script copies that folder into each of that project’s exports so the WASM notebook can load files over HTTP. In the browser, `mo.notebook_location()` returns a **URL**, not a filesystem path, so **`open(path)` fails**—use the notebook’s `read_public_file(mo, filename)` helper (or equivalent) that fetches via URL when given a URL path:
 
 ```python
 import urllib.request
@@ -98,7 +96,7 @@ svg = read_public_file(mo, "cs336_forward.svg")
 # then substitute template vars and use mo.Html(container_html) as before
 ```
 
-Use `read_public_file(mo, "cs336_forward.svg")` instead of `open(mo.notebook_location() / "public" / "cs336_forward.svg").read()` so the exported notebook can load the file over HTTP.
+Use `read_public_file(mo, "cs336_forward.svg")` so the exported notebook loads the file over HTTP. Ensure the helper builds the correct public URL for your project (e.g. `/notebooks/local-tiny/public/...`).
 
 ## Deploy
 

@@ -16,10 +16,10 @@ def _(mo):
     from urllib.parse import urlparse, urlunparse
 
     # Base URL when notebook_location() is None (e.g. some WASM contexts)
-    _PUBLIC_BASE_URL = "https://jbmopper.github.io/notebooks/local_tiny/public"
+    _PUBLIC_BASE_URL = "https://jbmopper.github.io/notebooks/local-tiny/public"
 
     def _normalize_to_public_url(segments, filename):
-        """Segments (no empty); return path like /notebooks/local_tiny/public/filename."""
+        """Segments (no empty); return path like /notebooks/local-tiny/public/filename."""
         try:
             i = segments.index("public")
             base = segments[:i]
@@ -78,7 +78,7 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    # local_tiny.py
+    # local-tiny (root notebook)
     ## benchmarking/sizing/traning the net on tinystories, locally
 
     1. lay out the architecture and identify points of interest
@@ -983,7 +983,7 @@ def _(mo, svg_vars, svg_zoom, read_public_file):
         <div style="padding:1rem; border:2px solid #c00; border-radius:8px; background:#fff5f5; color:#333;">
             <strong>Could not load architecture SVG.</strong><br/>
             Ensure <code>public/cs336_forward.svg</code> is served next to the notebook
-            (e.g. <code>/notebooks/local_tiny/public/cs336_forward.svg</code>).
+            (e.g. <code>/notebooks/local-tiny/public/cs336_forward.svg</code>).
             <pre style="margin-top:0.5rem; font-size:0.85em; overflow:auto;">{err_type}: {err_msg}</pre>
             <small>Tried: {attempted}</small>
         </div>

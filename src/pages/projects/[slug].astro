@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getProjectEmbeds, embedUrl } from '../../data/projects';
+import { getProjectNotebookRootUrl } from '../../data/projects';
 
 export async function getStaticPaths() {
   const { projects } = await import('../../data/projects');
@@ -8,7 +8,7 @@ export async function getStaticPaths() {
 }
 
 const { project } = Astro.props;
-const embeds = getProjectEmbeds(project);
+const notebookRootUrl = getProjectNotebookRootUrl(project);
 ---
 
 <Layout title={project.title} description={project.description}>
@@ -22,22 +22,15 @@ const embeds = getProjectEmbeds(project);
       <div class="body" set:html={project.body} />
     )}
 
-    {embeds.length > 0 && (
-      <section class="embeds-section">
+    {notebookRootUrl && (
+      <section class="notebook-section">
         <h2>Notebooks</h2>
-        <ul class="embed-links">
-          {embeds.map((embed) => {
-            const url = embedUrl(embed);
-            const label = embed.title ?? project.title;
-            return (
-              <li>
-                <a href={url} target="_blank" rel="noopener noreferrer" class="embed-link">
-                  {label} ↗
-                </a>
-              </li>
-            );
-          })}
-        </ul>
+        <p class="notebook-intro">
+          Open the root notebook (landing page); from there you can follow links to other notebooks in this project.
+        </p>
+        <a href={notebookRootUrl} target="_blank" rel="noopener noreferrer" class="embed-link">
+          Open notebook ↗
+        </a>
       </section>
     )}
 
@@ -75,25 +68,21 @@ const embeds = getProjectEmbeds(project);
     font-size: 0.9em;
   }
 
-  .embeds-section {
+  .notebook-section {
     margin-top: 2rem;
     padding-top: 1.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  .embeds-section h2 {
+  .notebook-section h2 {
     font-size: 1.15rem;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .notebook-intro {
+    font-size: 0.95rem;
+    color: var(--color-muted);
     margin: 0 0 0.75rem 0;
-  }
-
-  .embed-links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .embed-links li {
-    margin-bottom: 0.5rem;
   }
 
   .embed-link {

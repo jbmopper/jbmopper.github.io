@@ -1,47 +1,36 @@
 /**
- * One embedded Marimo (or other) export: a chart, table, or small interactive.
- * Export small, focused notebooks to public/notebooks/ and reference by path.
+ * Project notebooks live under content/notebooks/<notebooksDir>/:
+ *   index.py = root/landing notebook (exported to public/notebooks/<notebooksDir>/)
+ *   other .py = sibling notebooks (exported to public/notebooks/<notebooksDir>/<name>/)
+ * The root notebook is the entry point; it can link to the others from within Marimo.
  */
-export interface ProjectEmbed {
-  /** Path under /notebooks/, e.g. "m4-chart.html" or "local_tiny/index.html". */
-  path: string;
-  /** Optional section heading above the embed (e.g. "Results", "Data preview"). */
-  title?: string;
-  /** Optional CSS height for the iframe, e.g. "400px" or "50vh". Defaults to a moderate height so the page stays readable. */
-  height?: string;
-}
-
 export interface Project {
   slug: string;
   title: string;
   description: string;
-  /** Main narrative: bulk text, structure, links. HTML for now; Content Collection later if needed. */
+  /** Main narrative on the project detail page. HTML for now. */
   body?: string;
   /**
-   * Optional list of notebook-derived embeds (charts, tables, widgets).
-   * Page design: narrative first (body), then each embed as its own section.
-   * Use small, focused Marimo exports per embed rather than one big notebook-as-page.
+   * If set, this project has notebooks. Directory name under content/notebooks/
+   * (and under public/notebooks/ after export). Defaults to slug.
+   * The root notebook is at /notebooks/<notebooksDir>/ (index.py).
    */
-  embeds?: ProjectEmbed[];
-  /**
-   * @deprecated Prefer `embeds: [{ path, title }]`. If set, treated as a single full-page-style embed for backward compatibility.
-   */
-  notebook?: string;
+  notebooksDir?: string;
 }
 
 export const projects: Project[] = [
   {
     slug: "example",
     title: "Example project",
-    description: "A placeholder project. Add real entries and export Marimo notebooks to public/notebooks/.",
-    body: "<p>Replace this with your writeup. Add <code>embeds</code> for small notebook outputs (e.g. one chart, one table) and keep the main story in <code>body</code>.</p>",
+    description: "A placeholder project. Add real entries and notebook dirs under content/notebooks/.",
+    body: "<p>Replace this with your writeup. Set <code>notebooksDir</code> and add <code>content/notebooks/&lt;dir&gt;/index.py</code> for the root notebook.</p>",
   },
   {
     slug: "local-tiny",
     title: "local-tiny (test)",
     description: "Architecture analysis on the M4",
     body: "<p>This is a writeup?? </p>",
-    embeds: [{ path: "local_tiny/index.html", title: "Notebook" }],
+    notebooksDir: "local-tiny",
   },
 ];
 
@@ -49,13 +38,14 @@ export function getProjectBySlug(slug: string): Project | undefined {
   return projects.find((p) => p.slug === slug);
 }
 
-/** All embeds for a project: from `embeds` array, or a single entry from legacy `notebook`. */
-export function getProjectEmbeds(project: Project): ProjectEmbed[] {
-  if (project.embeds?.length) return project.embeds;
-  if (project.notebook) return [{ path: project.notebook, title: "Notebook" }];
-  return [];
+/** Base directory for this project's notebooks (e.g. "local-tiny"). Undefined if no notebooks. */
+export function getProjectNotebooksDir(project: Project): string | undefined {
+  return project.notebooksDir ?? project.slug;
 }
 
-export function embedUrl(embed: ProjectEmbed): string {
-  return `/notebooks/${embed.path}`;
+/** URL for the root/landing notebook. Use for "Open notebook" on index and project page. */
+export function getProjectNotebookRootUrl(project: Project): string | null {
+  const dir = getProjectNotebooksDir(project);
+  if (!dir) return null;
+  return `/notebooks/${dir}/`;
 }

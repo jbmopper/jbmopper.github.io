@@ -1,25 +1,25 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { projects, getProjectEmbeds, embedUrl } from '../../data/projects';
+import { projects, getProjectNotebookRootUrl } from '../../data/projects';
 ---
 
 <Layout title="Projects" description="Project writeups and Marimo notebooks">
   <h1>Projects</h1>
   <p class="intro">
-    Writeups and links to interactive Marimo WASM notebooks. Add entries in
-    <code>src/data/projects.ts</code>; export each notebook to its own subdirectory under <code>public/notebooks/</code> (e.g. <code>public/notebooks/my-notebook/</code>).
+    Writeups and links to interactive Marimo WASM notebooks. Each project can have a
+    <code>notebooksDir</code>; its root notebook lives at <code>content/notebooks/&lt;dir&gt;/index.py</code>
+    and opens from here. Multi-notebook projects use the root as a landing page that links to the others.
   </p>
 
   <ul class="project-list">
     {projects.map((p) => {
-      const embeds = getProjectEmbeds(p);
-      const firstNotebookUrl = embeds.length > 0 ? embedUrl(embeds[0]) : null;
+      const notebookUrl = getProjectNotebookRootUrl(p);
       return (
         <li>
           <div class="project-row">
             <a href={`/projects/${p.slug}`}>{p.title}</a>
-            {firstNotebookUrl && (
-              <a href={firstNotebookUrl} target="_blank" rel="noopener noreferrer" class="open-notebook">
+            {notebookUrl && (
+              <a href={notebookUrl} target="_blank" rel="noopener noreferrer" class="open-notebook">
                 Open notebook ↗
               </a>
             )}
