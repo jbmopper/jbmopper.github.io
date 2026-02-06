@@ -20,11 +20,63 @@
   --marimo-heading-font: var(--font-sans);
 }
 
+/* Map Radix/slate variables Marimo uses so dark theme actually uses our palette */
+:root {
+  --background: var(--color-bg);
+  --color: var(--color-text);
+  --slate-1: var(--color-surface);
+  --slate-2: #252522;
+  --slate-3: #2e2e2b;
+  --slate-4: #383835;
+  --slate-5: #52514d;
+  --slate-6: #6b6a65;
+  --slate-7: #85837d;
+  --slate-8: #9e9c96;
+  --slate-9: #b8b5ae;
+  --slate-10: var(--color-muted);
+  --slate-11: var(--color-text);
+  --slate-12: var(--color-text);
+  --primary: var(--color-accent);
+}
+
 /* Marimo body/container overrides (when Marimo injects into the page) */
 body {
   font-family: var(--font-sans);
-  background: var(--color-bg);
-  color: var(--color-text);
+  background: var(--color-bg) !important;
+  color: var(--color-text) !important;
+}
+
+/* Force notebook app root and content to use theme (overrides Marimo defaults) */
+#root,
+#root [data-marimo-app],
+.mo-markdown-renderer,
+.markdown {
+  background: var(--color-bg) !important;
+  color: var(--color-text) !important;
+}
+
+/* Lists and text in markdown: ensure readable contrast */
+.mo-markdown-renderer ol,
+.mo-markdown-renderer ul,
+.mo-markdown-renderer li,
+.mo-markdown-renderer p,
+.mo-markdown-renderer h1,
+.mo-markdown-renderer h2,
+.mo-markdown-renderer h3,
+.mo-markdown-renderer h4,
+.mo-markdown-renderer h5,
+.mo-markdown-renderer h6,
+.markdown ol,
+.markdown ul,
+.markdown li,
+.markdown p,
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  color: var(--color-text) !important;
 }
 
 /* Hide Marimo watermark/branding in exported run mode. The "Powered by" link
