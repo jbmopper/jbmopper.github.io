@@ -6,20 +6,18 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "marimo>=0.19",
-    "notebook-helpers",
     "polars>=0.20",
     "plotly>=5.18",
 ]
 
 [tool.uv.sources]
-notebook-helpers = { path = "notebook_helpers" }
 
 [project.optional-dependencies]
 # Uncomment if a notebook needs these for local run/export only (not WASM)
 # dev = ["torch", "pytest"]
 
 [dependency-groups]
-dev = ["ruff>=0.8", "pytest>=8"]
+dev = ["ruff>=0.8"]
 
 # Ruff: one linter/formatter for Python (replaces Pylint, Flake8, Black, isort).
 # Run: uv run ruff check .   and   uv run ruff format .
@@ -36,7 +34,3 @@ ignore = ["E501"]
 
 [tool.ruff.format]
 quote-style = "double"
-
-[tool.pytest.ini_options]
-pythonpath = ["."]
-testpaths = ["notebook_helpers/tests"]

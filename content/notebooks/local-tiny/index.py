@@ -12,14 +12,29 @@ def _():
 
 @app.cell
 def _(mo):
-    from notebook_helpers import read_public_file as _read_public_file
+    def get_public_resource(mo, filename: str) -> bytes:
+        import urllib.request
+        from pathlib import Path
 
-    _PUBLIC_BASE_URL = "https://jbmopper.github.io/notebooks/local-tiny/public"
+        loc = mo.notebook_location()
+        # Path relative to the notebook: ./public/<filename>
+        rel_path = f"public/{filename}"
+
+        if isinstance(loc, Path):
+            # Local execution: loc is a Path object
+            return (loc / rel_path).read_bytes()
+        else:
+            # WASM execution: loc is a URL string
+            if loc is None:
+                return b""
+            url = f"{str(loc).rstrip('/')}/{rel_path}"
+            return urllib.request.urlopen(url).read()
 
     def read_public_file(mo, filename: str) -> str:
-        return _read_public_file(mo, filename, public_base_url=_PUBLIC_BASE_URL)
+        """Helper to read a public file as a string (e.g. for SVG/Text)."""
+        return get_public_resource(mo, filename).decode()
 
-    return (read_public_file,)
+    return get_public_resource, read_public_file
 
 
 @app.cell(hide_code=True)

@@ -1,9 +1,0 @@
-[project]
-name = "notebook-helpers"
-version = "0.0.1"
-description = "Shared helpers for Marimo notebooks (read_public_file, etc.)"
-requires-python = ">=3.11"
-dependencies = []
-
-[tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["F401"]  # re-exports
