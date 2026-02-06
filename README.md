@@ -33,6 +33,8 @@ uv run marimo export html-wasm content/notebooks/local_tiny.py -o public/noteboo
 ```
 **Important:** The live site (e.g. GitHub Pages) serves the **exported** files under `public/notebooks/`, not the source `.py`. After changing a notebook, run `npm run export-notebooks` and **commit the updated `public/notebooks/<name>/`** (including `index.html` and `public/` assets) so the deployed app includes your changes.
 
+**Python linting:** This project uses [Ruff](https://docs.astral.sh/ruff/) (not Pylint). After `uv sync`, run `uv run ruff check .` and `uv run ruff format .`. In Cursor/VSCode, disable Pylint and use the Ruff extension (or set Python linting to Ruff) so the IDE matches.
+
 ## Env (optional)
 
 Copy `.env.example` to `.env` and set `PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` when you add Turnstile. Backend API base can go in `PUBLIC_API_BASE` when you have it.

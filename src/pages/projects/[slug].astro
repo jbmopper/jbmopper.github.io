@@ -22,26 +22,24 @@ const embeds = getProjectEmbeds(project);
       <div class="body" set:html={project.body} />
     )}
 
-    {embeds.map((embed) => {
-      const url = embedUrl(embed);
-      const height = embed.height ?? 'min(420px, 50vh)';
-      return (
-        <section class="embed-section">
-          <div class="embed-header">
-            {embed.title && <h2>{embed.title}</h2>}
-            <a href={url} target="_blank" rel="noopener noreferrer" class="embed-open">
-              Open in new tab ↗
-            </a>
-          </div>
-          <iframe
-            title={embed.title ?? project.title}
-            src={url}
-            class="embed-iframe"
-            style={`height: ${height}`}
-          />
-        </section>
-      );
-    })}
+    {embeds.length > 0 && (
+      <section class="embeds-section">
+        <h2>Notebooks</h2>
+        <ul class="embed-links">
+          {embeds.map((embed) => {
+            const url = embedUrl(embed);
+            const label = embed.title ?? project.title;
+            return (
+              <li>
+                <a href={url} target="_blank" rel="noopener noreferrer" class="embed-link">
+                  {label} ↗
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    )}
 
     <p class="back"><a href="/projects">← All projects</a></p>
   </article>
@@ -77,42 +75,35 @@ const embeds = getProjectEmbeds(project);
     font-size: 0.9em;
   }
 
-  .embed-section {
+  .embeds-section {
     margin-top: 2rem;
     padding-top: 1.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  .embed-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 0.5rem;
+  .embeds-section h2 {
+    font-size: 1.15rem;
+    margin: 0 0 0.75rem 0;
   }
 
-  .embed-section h2 {
-    font-size: 1.15rem;
+  .embed-links {
+    list-style: none;
+    padding: 0;
     margin: 0;
   }
 
-  .embed-open {
+  .embed-links li {
+    margin-bottom: 0.5rem;
+  }
+
+  .embed-link {
     color: var(--color-accent);
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
 
-  .embed-open:hover {
+  .embed-link:hover {
     text-decoration: underline;
-  }
-
-  .embed-iframe {
-    width: 100%;
-    min-height: 280px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    background: var(--color-surface);
   }
 
   .back {

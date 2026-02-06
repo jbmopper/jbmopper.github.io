@@ -15,7 +15,23 @@ dependencies = [
 # dev = ["torch", "pytest"]
 
 [dependency-groups]
-dev = []
+dev = ["ruff>=0.8"]
 
 [tool.uv.sources]
 # Pinned sources if needed later
+
+# Ruff: one linter/formatter for Python (replaces Pylint, Flake8, Black, isort).
+# Run: uv run ruff check .   and   uv run ruff format .
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"content/notebooks/*.py" = ["N806"]
+
+[tool.ruff.format]
+quote-style = "double"
