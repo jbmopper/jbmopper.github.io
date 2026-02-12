@@ -1,0 +1,131 @@
+---
+import {ClientRouter} from "astro:transitions";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {title = "jbmopper.github.io | Portfolio Site", description = "Portfolio site"} = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <ClientRouter />
+    <header class="site-header">
+      <a class="brand" href="/">jbmopper.github.io</a>
+      <nav class="nav-links">
+        <a href="/#welcome">Welcome</a>
+        <a href="/#projects">Projects</a>
+        <a href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">Contact</a>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer>© {year} jbmopper.github.io</footer>
+  </body>
+</html>
+
+<style>
+  :root {
+    --bg-0: #0c1118;
+    --bg-1: #141b24;
+    --surface: #1a2330;
+    --surface-2: #202c3b;
+    --text-0: #edf2f7;
+    --text-1: #b7c2d0;
+    --accent: #65d9c6;
+    --stroke: #2d3e50;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    min-height: 100%;
+    background:
+      radial-gradient(1200px 600px at 100% -10%, #1a3850 0%, transparent 60%),
+      radial-gradient(900px 500px at -10% 10%, #2a1f3e 0%, transparent 55%),
+      var(--bg-0);
+    color: var(--text-0);
+    font-family: "Manrope", "Segoe UI", sans-serif;
+  }
+
+  body {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--stroke);
+    background: color-mix(in srgb, var(--bg-0) 86%, transparent);
+    backdrop-filter: blur(8px);
+  }
+
+  .brand {
+    color: var(--text-0);
+    text-decoration: none;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .nav-links a {
+    color: var(--text-1);
+    text-decoration: none;
+    font-size: 0.95rem;
+  }
+
+  .nav-links a:hover {
+    color: var(--accent);
+  }
+
+  main {
+    width: min(1080px, 100% - 2rem);
+    margin: 2rem auto 3rem;
+  }
+
+  footer {
+    border-top: 1px solid var(--stroke);
+    color: var(--text-1);
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 720px) {
+    .site-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .nav-links {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+</style>

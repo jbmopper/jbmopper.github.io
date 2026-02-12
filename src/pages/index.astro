@@ -1,0 +1,112 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const deepLearningDescription =
+  "Fundamentals of deep learning, including transformer implementation in Pytorch, training and inference, performance analysis, hyperparameter tuning, and architectural variations (ablations).";
+---
+
+<BaseLayout title="jbmopper.github.io | Portfolio Site" description="AI Engineer portfolio site">
+  <section class="hero">
+    <p class="eyebrow">Portfolio Site</p>
+    <h1>jbmopper.github.io</h1>
+    <p class="intro">
+      Building practical, high-signal AI systems and the tooling to understand, benchmark, and ship them.
+    </p>
+    <div class="link-row">
+      <a href="#welcome">Welcome</a>
+      <a href="#projects">Projects</a>
+      <a href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">Contact</a>
+    </div>
+  </section>
+
+  <section id="welcome" class="panel">
+    <h2>Welcome</h2>
+    <p>
+      This site is under active rebuild. It serves as a technical portfolio focused on model implementation,
+      profiling, and performance-driven iteration.
+    </p>
+  </section>
+
+  <section id="projects" class="panel">
+    <h2>Projects</h2>
+    <article class="project-card">
+      <h3>
+        <a href="/projects/deep-learning-fundamentals/">Deep Learning Fundamentals</a>
+      </h3>
+      <p>{deepLearningDescription}</p>
+    </article>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    display: grid;
+    gap: 1rem;
+    padding: 1.5rem;
+    border: 1px solid var(--stroke);
+    border-radius: 14px;
+    background: linear-gradient(130deg, color-mix(in srgb, var(--surface) 86%, transparent), var(--surface-2));
+  }
+
+  .eyebrow {
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.9rem, 4vw, 2.9rem);
+  }
+
+  .intro {
+    margin: 0;
+    color: var(--text-1);
+    max-width: 65ch;
+  }
+
+  .link-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .link-row a {
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--stroke);
+    border-radius: 999px;
+    text-decoration: none;
+    color: var(--text-0);
+  }
+
+  .link-row a:hover {
+    border-color: var(--accent);
+  }
+
+  .panel {
+    margin-top: 1.25rem;
+    padding: 1.25rem;
+    border: 1px solid var(--stroke);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--surface) 80%, transparent);
+  }
+
+  .panel h2 {
+    margin: 0 0 0.75rem;
+  }
+
+  .project-card h3 {
+    margin: 0 0 0.5rem;
+  }
+
+  .project-card a {
+    color: var(--accent);
+  }
+
+  .project-card p {
+    margin: 0;
+    color: var(--text-1);
+  }
+</style>

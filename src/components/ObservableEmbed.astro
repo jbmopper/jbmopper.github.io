@@ -1,0 +1,91 @@
+---
+interface Props {
+  modulePath: string;
+  exportName: string;
+  options?: Record<string, unknown>;
+}
+
+const {modulePath, exportName, options = {}} = Astro.props;
+const serializedOptions = JSON.stringify(options);
+---
+
+<div class="observable-embed-host" data-module-path={modulePath} data-export-name={exportName} data-options={serializedOptions}></div>
+<script is:inline>
+  (() => {
+    const root = document.currentScript?.previousElementSibling;
+    if (!(root instanceof HTMLElement)) return;
+
+    const modulePath = root.dataset.modulePath;
+    const exportName = root.dataset.exportName;
+    const options = JSON.parse(root.dataset.options || "{}");
+
+    if (!modulePath || !exportName) return;
+
+    const state = (window.__observableEmbedState = window.__observableEmbedState || {mounted: 0, errors: []});
+    let mountedNode = null;
+    let cleaned = false;
+
+    const observer = new MutationObserver(() => {
+      if (!document.body.contains(root)) {
+        cleanup();
+        observer.disconnect();
+      }
+    });
+    observer.observe(document.body, {childList: true, subtree: true});
+
+    async function mount() {
+      try {
+        const mod = await import(/* @vite-ignore */ modulePath);
+        const renderFn = mod[exportName];
+        if (typeof renderFn !== "function") {
+          throw new Error(`Export ${exportName} is not a function`);
+        }
+
+        const node = await renderFn(options);
+        if (!(node instanceof Element)) {
+          throw new Error(`Export ${exportName} did not return a DOM node`);
+        }
+
+        if (cleaned) return;
+        mountedNode = node;
+        root.appendChild(node);
+        state.mounted += 1;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        state.errors.push({modulePath, exportName, message});
+        root.innerHTML = `<p class="embed-error">Embed failed: ${message}</p>`;
+      }
+    }
+
+    function cleanup() {
+      if (cleaned) return;
+      cleaned = true;
+
+      if (mountedNode) {
+        mountedNode.remove();
+        state.mounted = Math.max(0, state.mounted - 1);
+      }
+    }
+
+    document.addEventListener("astro:before-swap", cleanup);
+    window.addEventListener("beforeunload", cleanup, {once: true});
+
+    mount();
+  })();
+</script>
+
+<style>
+  .observable-embed-host {
+    width: 100%;
+    display: block;
+  }
+
+  .embed-error {
+    margin: 0;
+    padding: 0.75rem;
+    border: 1px dashed #7f2f2f;
+    border-radius: 8px;
+    color: #ffb6b6;
+    background: #2a1111;
+  }
+</style>

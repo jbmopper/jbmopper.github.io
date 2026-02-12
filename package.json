@@ -1,0 +1,22 @@
+{
+  "name": "jbmopper-github-io",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "verify:observable": "node scripts/verify-observable-export.mjs",
+    "test:e2e": "playwright test",
+    "test:ci": "npm run verify:observable && npm run build && npm run test:e2e"
+  },
+  "dependencies": {
+    "astro": "^5.3.0",
+    "@astrojs/svelte": "^7.0.0",
+    "svelte": "^5.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.1"
+  }
+}
