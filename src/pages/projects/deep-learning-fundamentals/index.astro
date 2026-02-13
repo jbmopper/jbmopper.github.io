@@ -40,6 +40,46 @@ import ObservableEmbed from "../../../components/ObservableEmbed.astro";
         options={{datasets: ["micro", "train"], metric: "latency_ms", topN: 10}}
       />
     </section>
+
+    <section class="panel">
+      <h2>Ablations</h2>
+      <p>Ablation study results and history comparison.</p>
+      <ObservableEmbed
+        modulePath="/observable/embed/ablations.js"
+        exportName="renderAblations"
+        options={{}}
+      />
+    </section>
+
+    <section class="panel">
+      <h2>LR Sweep</h2>
+      <p>Learning rate sweep analysis and loss thresholds.</p>
+      <ObservableEmbed
+        modulePath="/observable/embed/lr-sweep.js"
+        exportName="renderLrSweep"
+        options={{}}
+      />
+    </section>
+
+    <section class="panel">
+      <h2>Perf Empirical</h2>
+      <p>Empirical performance comparison (MPS vs GPU, training and micro).</p>
+      <ObservableEmbed
+        modulePath="/observable/embed/perf-empirical.js"
+        exportName="renderPerfEmpirical"
+        options={{}}
+      />
+    </section>
+
+    <section class="panel">
+      <h2>Perf Expected</h2>
+      <p>Expected performance from model specs and FLOP/memory estimates.</p>
+      <ObservableEmbed
+        modulePath="/observable/embed/perf-expected.js"
+        exportName="renderPerfExpected"
+        options={{}}
+      />
+    </section>
   </article>
 </BaseLayout>
 

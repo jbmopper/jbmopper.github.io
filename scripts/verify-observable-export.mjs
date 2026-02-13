@@ -5,6 +5,10 @@ const PROJECT_ROOT = "/Users/juliusmopper/Dev/jbmopper.github.io";
 const required = [
   "public/observable/embed/nsys.js",
   "public/observable/embed/benchmarks.js",
+  "public/observable/embed/ablations.js",
+  "public/observable/embed/lr-sweep.js",
+  "public/observable/embed/perf-empirical.js",
+  "public/observable/embed/perf-expected.js",
   "public/observable/_observablehq",
   "public/observable/_file"
 ];

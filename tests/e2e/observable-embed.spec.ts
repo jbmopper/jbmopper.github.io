@@ -14,15 +14,15 @@ test("embedded observable modules mount", async ({page}) => {
   await page.goto("/projects/deep-learning-fundamentals/");
   await expect(page.getByRole("heading", {name: "Deep Learning Fundamentals"})).toBeVisible();
   await expect(page.getByText("NSYS Trace Analysis")).toBeVisible({timeout: 60_000});
-  await expect(page.getByText("Benchmark Analysis")).toBeVisible({timeout: 60_000});
-  await expect.poll(() => page.evaluate(() => (window as any).__observableEmbedState?.mounted ?? 0)).toBe(2);
+  await expect(page.getByText("Benchmark Explorer")).toBeVisible({timeout: 60_000});
+  await expect.poll(() => page.evaluate(() => (window as any).__observableEmbedState?.mounted ?? 0)).toBe(6);
 
   expect(failedResponses).toEqual([]);
 });
 
 test("embedded observable modules clean up on route change", async ({page}) => {
   await page.goto("/projects/deep-learning-fundamentals/");
-  await expect.poll(() => page.evaluate(() => (window as any).__observableEmbedState?.mounted ?? 0)).toBe(2);
+  await expect.poll(() => page.evaluate(() => (window as any).__observableEmbedState?.mounted ?? 0)).toBe(6);
 
   await page.click('a[href="/projects/deep-learning-fundamentals/notes/"]');
   await expect(page.getByRole("heading", {name: "Deep Learning Fundamentals Notes"})).toBeVisible();

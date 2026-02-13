@@ -1,0 +1,14 @@
+---
+description: "Observable→Astro wiring runbook — use when user asks to wire/update Observable embeds from ns_obv"
+alwaysApply: false
+---
+
+# Observable wiring workflow
+
+When the user asks to wire new Observable outputs into the Astro site, or to run the Observable wiring workflow:
+
+1. **Read and follow** the full runbook in **agent-observable-wiring.md** at the project root.
+2. Execute its steps in order (build in ns_obv, export, verify, wire mounts, update e2e if needed, validate).
+3. Do not hand-edit `public/observable/`; it is generated from ns_obv.
+
+If this rule is active, treat agent-observable-wiring.md as the single source of truth for this workflow.
