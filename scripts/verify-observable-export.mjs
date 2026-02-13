@@ -6,7 +6,6 @@ const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(SCRIPT_DIR, "..");
 const required = [
   "public/observable/embed/nsys.js",
-  "public/observable/embed/benchmarks.js",
   "public/observable/embed/ablations.js",
   "public/observable/embed/lr-sweep.js",
   "public/observable/embed/perf-empirical.js",

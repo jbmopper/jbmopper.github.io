@@ -90,7 +90,8 @@ test("embedded observable modules clean up on route change", async ({page}) => {
   await page.goto("/projects/deep-learning-fundamentals/nsys/");
   await expectEmbedMounted(page, 1);
 
-  await page.click('a[href="/projects/deep-learning-fundamentals/notes/"]');
+  // Navigate directly so this test does not depend on dev-only nav links.
+  await page.goto("/projects/deep-learning-fundamentals/notes/");
   await expect(page.getByRole("heading", {name: "Deep Learning Fundamentals Notes"})).toBeVisible();
 
   await expect

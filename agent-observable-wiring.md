@@ -36,8 +36,8 @@ Use this runbook when wiring new Observable outputs from `ns_obv` into Astro pag
      - `src/pages/projects/deep-learning-fundamentals/[section].astro`
      - Section registry: `src/config/deep-learning-fundamentals-sections.ts`
      - Exactly one `ObservableEmbed` per section route.
-   - Keep section organization aligned to Observable TOC order from
-     `/Users/juliusmopper/Dev/ns_obv/src/overview/index.md`:
+  - Keep section organization aligned to Observable TOC order from
+    `/Users/juliusmopper/Dev/ns_obv/src/llm-fundamentals/index.md`:
      1. `perf-expected` -> `renderPerfExpected`
      2. `perf-empirical` -> `renderPerfEmpirical`
      3. `nsys` -> `renderNsys`
@@ -45,7 +45,7 @@ Use this runbook when wiring new Observable outputs from `ns_obv` into Astro pag
      5. `ablations` -> `renderAblations`
    - `modulePath` must point to `/observable/embed/<module>.js`.
    - `exportName` must match the exported render function in that module.
-   - Keep compatibility `renderBenchmarks` off the main TOC routes unless a dedicated compatibility route is requested.
+  - Keep compatibility alias modules off the main TOC routes unless a dedicated compatibility route is requested.
 
 5. If adding a new Astro route/page, create a new `.astro` page under `src/pages/...` and mount `ObservableEmbed` there.
 

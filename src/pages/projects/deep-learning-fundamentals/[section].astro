@@ -3,6 +3,8 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import ObservableEmbed from "../../../components/ObservableEmbed.astro";
 import {dlfSections, type DlfSection} from "../../../config/deep-learning-fundamentals-sections";
 
+const showDevRoutes = import.meta.env.DEV;
+
 export function getStaticPaths() {
   return dlfSections.map((section) => ({
     params: {section: section.slug},
@@ -21,8 +23,8 @@ const {section} = Astro.props as {section: DlfSection};
       <p>{section.description}</p>
       <nav>
         <a href="/projects/deep-learning-fundamentals/">Back to overview</a>
-        <a href="/observable/">Observable sandbox</a>
-        <a href="/projects/deep-learning-fundamentals/notes/">Notes route</a>
+        {showDevRoutes && <a href="/observable/">Observable sandbox</a>}
+        {showDevRoutes && <a href="/projects/deep-learning-fundamentals/notes/">Notes route</a>}
       </nav>
     </header>
 

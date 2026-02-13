@@ -1,6 +1,8 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import {dlfSections} from "../../../config/deep-learning-fundamentals-sections";
+
+const showDevRoutes = import.meta.env.DEV;
 ---
 
 <BaseLayout
@@ -17,8 +19,8 @@ import {dlfSections} from "../../../config/deep-learning-fundamentals-sections";
       </p>
       <nav>
         <a href="/">Back home</a>
-        <a href="/observable/">Observable sandbox</a>
-        <a href="/projects/deep-learning-fundamentals/notes/">Notes route</a>
+        {showDevRoutes && <a href="/observable/">Observable sandbox</a>}
+        {showDevRoutes && <a href="/projects/deep-learning-fundamentals/notes/">Notes route</a>}
       </nav>
     </header>
 

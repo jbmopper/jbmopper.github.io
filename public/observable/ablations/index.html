@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="generator" content="Observable Framework v1.13.3">
-<title>Ablations | NSYS + Benchmark Sandbox</title>
+<title>Ablations | Project Writeup Sandbox</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
 <link rel="preload" as="style" href="../_observablehq/theme-air,near-midnight,alt,wide.db1cdf55.css">
@@ -13,7 +13,7 @@
 <link rel="modulepreload" href="../_observablehq/client.96fe71ba.js">
 <link rel="modulepreload" href="../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../_import/embed/ablations.672d8cd7.js">
+<link rel="modulepreload" href="../_import/embed/ablations.e2f73cf4.js">
 <link rel="modulepreload" href="../_import/components/data-utils.e2caa41c.js">
 <link rel="modulepreload" href="../_import/components/dom-utils.aaca454b.js">
 <link rel="modulepreload" href="../_npm/@observablehq/plot@0.6.17/7c43807f.js">
@@ -63,11 +63,11 @@
 import {define} from "../_observablehq/client.96fe71ba.js";
 import {registerFile} from "../_observablehq/stdlib.43270668.js";
 
-registerFile("../data/raw/benchmarks/ablations_history.parquet", {"name":"../data/raw/benchmarks/ablations_history.parquet","path":"../_file/data/raw/benchmarks/ablations_history.fa92f106.parquet","lastModified":1770966612260,"size":389841});
-registerFile("../data/raw/benchmarks/ablations_main.parquet", {"name":"../data/raw/benchmarks/ablations_main.parquet","path":"../_file/data/raw/benchmarks/ablations_main.684150ce.parquet","lastModified":1770966612255,"size":32700});
+registerFile("../data/raw/benchmarks/ablations_history.parquet", {"name":"../data/raw/benchmarks/ablations_history.parquet","path":"../_file/data/raw/benchmarks/ablations_history.fa92f106.parquet","lastModified":1770927469232,"size":389841});
+registerFile("../data/raw/benchmarks/ablations_main.parquet", {"name":"../data/raw/benchmarks/ablations_main.parquet","path":"../_file/data/raw/benchmarks/ablations_main.684150ce.parquet","lastModified":1770927469233,"size":32700});
 
 define({id: "6ba58f0a", outputs: ["renderAblations"], body: async () => {
-const {renderAblations} = await import("../_import/embed/ablations.672d8cd7.js");
+const {renderAblations} = await import("../_import/embed/ablations.e2f73cf4.js");
 
 return {renderAblations};
 }});
@@ -86,16 +86,11 @@ await renderAblations()
 <nav id="observablehq-sidebar">
   <ol>
     <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
-    <li class="observablehq-link"><a href="../">NSYS + Benchmark Sandbox</a></li>
+    <li class="observablehq-link"><a href="../">Project Writeup Sandbox</a></li>
   </ol>
   <ol>
-    <li class="observablehq-link"><a href="../overview/">Overview</a></li>
-    <li class="observablehq-link"><a href="../perf-expected/">Perf Expected</a></li>
-    <li class="observablehq-link"><a href="../perf-empirical/">Perf Empirical</a></li>
-    <li class="observablehq-link"><a href="../nsys/">NSYS</a></li>
-    <li class="observablehq-link"><a href="../lr-sweep/">LR Sweep</a></li>
-    <li class="observablehq-link observablehq-link-active"><a href="./">Ablations</a></li>
-    <li class="observablehq-link"><a href="../benchmarks/">Benchmarks</a></li>
+    <li class="observablehq-link"><a href="../">Projects</a></li>
+    <li class="observablehq-link"><a href="../llm-fundamentals/">LLM Fundamentals</a></li>
   </ol>
 </nav>
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
@@ -106,8 +101,7 @@ await renderAblations()
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:2cc8ed16:--></div>
 </main>
 <footer id="observablehq-footer">
-<nav><a rel="prev" href="../lr-sweep/"><span>LR Sweep</span></a><a rel="next" href="../benchmarks/"><span>Benchmarks</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-13T00:10:13">Feb 13, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-13T12:41:11">Feb 13, 2026</a>.</div>
 </footer>
 </div>
 </body>

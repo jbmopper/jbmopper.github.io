@@ -6,16 +6,16 @@ import {formatBytes, formatMs} from "../components/data-utils.e2caa41c.js";
 import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.aaca454b.js";
 
 const TRACE_ATTACHMENTS = {
-  bad_head_size: FileAttachment({"name":"../../data/raw/traces/bad_head_size_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/bad_head_size_nsys.0e5fcf94.parquet","lastModified":1770966612176,"size":699507}, import.meta.url),
-  bandwidth_bound: FileAttachment({"name":"../../data/raw/traces/bandwidth_bound_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/bandwidth_bound_nsys.0570a4e8.parquet","lastModified":1770966612181,"size":526034}, import.meta.url),
-  compute_bound: FileAttachment({"name":"../../data/raw/traces/compute_bound_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/compute_bound_nsys.9be21553.parquet","lastModified":1770966612186,"size":1020491}, import.meta.url),
-  deep_sequential: FileAttachment({"name":"../../data/raw/traces/deep_sequential_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/deep_sequential_nsys.4ed702eb.parquet","lastModified":1770966612200,"size":3186034}, import.meta.url),
-  latency_bound: FileAttachment({"name":"../../data/raw/traces/latency_bound_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/latency_bound_nsys.5b9c4edd.parquet","lastModified":1770966612207,"size":1104236}, import.meta.url),
-  misaligned_dims: FileAttachment({"name":"../../data/raw/traces/misaligned_dims_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/misaligned_dims_nsys.e0e9fef3.parquet","lastModified":1770966612212,"size":834}, import.meta.url),
-  model_a: FileAttachment({"name":"../../data/raw/traces/model_a_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/model_a_nsys.7c95f1f4.parquet","lastModified":1770966612218,"size":294932}, import.meta.url),
-  model_b: FileAttachment({"name":"../../data/raw/traces/model_b_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/model_b_nsys.d909797c.parquet","lastModified":1770966612226,"size":1231233}, import.meta.url),
-  vocab_bottleneck: FileAttachment({"name":"../../data/raw/traces/vocab_bottleneck_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/vocab_bottleneck_nsys.c6e0b393.parquet","lastModified":1770966612235,"size":509294}, import.meta.url),
-  wide_ffn: FileAttachment({"name":"../../data/raw/traces/wide_ffn_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/wide_ffn_nsys.e3df5806.parquet","lastModified":1770966612245,"size":715444}, import.meta.url)
+  bad_head_size: FileAttachment({"name":"../../data/raw/traces/bad_head_size_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/bad_head_size_nsys.0e5fcf94.parquet","lastModified":1770920604380,"size":699507}, import.meta.url),
+  bandwidth_bound: FileAttachment({"name":"../../data/raw/traces/bandwidth_bound_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/bandwidth_bound_nsys.0570a4e8.parquet","lastModified":1770920604381,"size":526034}, import.meta.url),
+  compute_bound: FileAttachment({"name":"../../data/raw/traces/compute_bound_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/compute_bound_nsys.9be21553.parquet","lastModified":1770920604383,"size":1020491}, import.meta.url),
+  deep_sequential: FileAttachment({"name":"../../data/raw/traces/deep_sequential_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/deep_sequential_nsys.4ed702eb.parquet","lastModified":1770920604387,"size":3186034}, import.meta.url),
+  latency_bound: FileAttachment({"name":"../../data/raw/traces/latency_bound_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/latency_bound_nsys.5b9c4edd.parquet","lastModified":1770920604389,"size":1104236}, import.meta.url),
+  misaligned_dims: FileAttachment({"name":"../../data/raw/traces/misaligned_dims_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/misaligned_dims_nsys.e0e9fef3.parquet","lastModified":1770920604389,"size":834}, import.meta.url),
+  model_a: FileAttachment({"name":"../../data/raw/traces/model_a_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/model_a_nsys.7c95f1f4.parquet","lastModified":1770920604390,"size":294932}, import.meta.url),
+  model_b: FileAttachment({"name":"../../data/raw/traces/model_b_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/model_b_nsys.d909797c.parquet","lastModified":1770920604391,"size":1231233}, import.meta.url),
+  vocab_bottleneck: FileAttachment({"name":"../../data/raw/traces/vocab_bottleneck_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/vocab_bottleneck_nsys.c6e0b393.parquet","lastModified":1770920604392,"size":509294}, import.meta.url),
+  wide_ffn: FileAttachment({"name":"../../data/raw/traces/wide_ffn_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/wide_ffn_nsys.e3df5806.parquet","lastModified":1770920604393,"size":715444}, import.meta.url)
 };
 
 const TRACE_NAMES = Object.keys(TRACE_ATTACHMENTS);

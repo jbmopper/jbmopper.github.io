@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="generator" content="Observable Framework v1.13.3">
-<title>Empirical Performance | NSYS + Benchmark Sandbox</title>
+<title>Empirical Performance | Project Writeup Sandbox</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
 <link rel="preload" as="style" href="../_observablehq/theme-air,near-midnight,alt,wide.db1cdf55.css">
@@ -13,7 +13,7 @@
 <link rel="modulepreload" href="../_observablehq/client.96fe71ba.js">
 <link rel="modulepreload" href="../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../_import/embed/perf-empirical.9ea7c6fb.js">
+<link rel="modulepreload" href="../_import/embed/perf-empirical.af390cd3.js">
 <link rel="modulepreload" href="../_import/components/data-utils.e2caa41c.js">
 <link rel="modulepreload" href="../_import/components/dom-utils.aaca454b.js">
 <link rel="modulepreload" href="../_npm/@observablehq/plot@0.6.17/7c43807f.js">
@@ -63,15 +63,15 @@
 import {define} from "../_observablehq/client.96fe71ba.js";
 import {registerFile} from "../_observablehq/stdlib.43270668.js";
 
-registerFile("../data/raw/benchmarks/gpu_comp_history.parquet", {"name":"../data/raw/benchmarks/gpu_comp_history.parquet","path":"../_file/data/raw/benchmarks/gpu_comp_history.4a516c8a.parquet","lastModified":1770966612267,"size":189583});
-registerFile("../data/raw/benchmarks/gpu_comp_main.parquet", {"name":"../data/raw/benchmarks/gpu_comp_main.parquet","path":"../_file/data/raw/benchmarks/gpu_comp_main.8b657d6c.parquet","lastModified":1770966612262,"size":26614});
-registerFile("../data/raw/benchmarks/micro_benchmarks_20260126_130256.json", {"name":"../data/raw/benchmarks/micro_benchmarks_20260126_130256.json","mimeType":"application/json","path":"../_file/data/raw/benchmarks/micro_benchmarks_20260126_130256.0003d6fe.json","lastModified":1770966612363,"size":2403});
-registerFile("../data/raw/benchmarks/mps_comp_history.parquet", {"name":"../data/raw/benchmarks/mps_comp_history.parquet","path":"../_file/data/raw/benchmarks/mps_comp_history.81dcba33.parquet","lastModified":1770966612289,"size":220323});
-registerFile("../data/raw/benchmarks/mps_comp_main.parquet", {"name":"../data/raw/benchmarks/mps_comp_main.parquet","path":"../_file/data/raw/benchmarks/mps_comp_main.ccc27b69.parquet","lastModified":1770966612274,"size":25521});
-registerFile("../data/raw/benchmarks/train_benchmark_20260127_092323.json", {"name":"../data/raw/benchmarks/train_benchmark_20260127_092323.json","mimeType":"application/json","path":"../_file/data/raw/benchmarks/train_benchmark_20260127_092323.e80aa474.json","lastModified":1770966612382,"size":1945563});
+registerFile("../data/raw/benchmarks/gpu_comp_history.parquet", {"name":"../data/raw/benchmarks/gpu_comp_history.parquet","path":"../_file/data/raw/benchmarks/gpu_comp_history.4a516c8a.parquet","lastModified":1770927469233,"size":189583});
+registerFile("../data/raw/benchmarks/gpu_comp_main.parquet", {"name":"../data/raw/benchmarks/gpu_comp_main.parquet","path":"../_file/data/raw/benchmarks/gpu_comp_main.8b657d6c.parquet","lastModified":1770927469234,"size":26614});
+registerFile("../data/raw/benchmarks/micro_benchmarks_20260126_130256.json", {"name":"../data/raw/benchmarks/micro_benchmarks_20260126_130256.json","mimeType":"application/json","path":"../_file/data/raw/benchmarks/micro_benchmarks_20260126_130256.0003d6fe.json","lastModified":1770920604377,"size":2403});
+registerFile("../data/raw/benchmarks/mps_comp_history.parquet", {"name":"../data/raw/benchmarks/mps_comp_history.parquet","path":"../_file/data/raw/benchmarks/mps_comp_history.81dcba33.parquet","lastModified":1770927469238,"size":220323});
+registerFile("../data/raw/benchmarks/mps_comp_main.parquet", {"name":"../data/raw/benchmarks/mps_comp_main.parquet","path":"../_file/data/raw/benchmarks/mps_comp_main.ccc27b69.parquet","lastModified":1770927469238,"size":25521});
+registerFile("../data/raw/benchmarks/train_benchmark_20260127_092323.json", {"name":"../data/raw/benchmarks/train_benchmark_20260127_092323.json","mimeType":"application/json","path":"../_file/data/raw/benchmarks/train_benchmark_20260127_092323.e80aa474.json","lastModified":1770920604379,"size":1945563});
 
 define({id: "10468027", outputs: ["renderPerfEmpirical"], body: async () => {
-const {renderPerfEmpirical} = await import("../_import/embed/perf-empirical.9ea7c6fb.js");
+const {renderPerfEmpirical} = await import("../_import/embed/perf-empirical.af390cd3.js");
 
 return {renderPerfEmpirical};
 }});
@@ -90,16 +90,11 @@ await renderPerfEmpirical()
 <nav id="observablehq-sidebar">
   <ol>
     <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
-    <li class="observablehq-link"><a href="../">NSYS + Benchmark Sandbox</a></li>
+    <li class="observablehq-link"><a href="../">Project Writeup Sandbox</a></li>
   </ol>
   <ol>
-    <li class="observablehq-link"><a href="../overview/">Overview</a></li>
-    <li class="observablehq-link"><a href="../perf-expected/">Perf Expected</a></li>
-    <li class="observablehq-link observablehq-link-active"><a href="./">Perf Empirical</a></li>
-    <li class="observablehq-link"><a href="../nsys/">NSYS</a></li>
-    <li class="observablehq-link"><a href="../lr-sweep/">LR Sweep</a></li>
-    <li class="observablehq-link"><a href="../ablations/">Ablations</a></li>
-    <li class="observablehq-link"><a href="../benchmarks/">Benchmarks</a></li>
+    <li class="observablehq-link"><a href="../">Projects</a></li>
+    <li class="observablehq-link"><a href="../llm-fundamentals/">LLM Fundamentals</a></li>
   </ol>
 </nav>
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
@@ -110,8 +105,7 @@ await renderPerfEmpirical()
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:17967627:--></div>
 </main>
 <footer id="observablehq-footer">
-<nav><a rel="prev" href="../perf-expected/"><span>Perf Expected</span></a><a rel="next" href="../nsys/"><span>NSYS</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-13T00:10:13">Feb 13, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-13T12:41:11">Feb 13, 2026</a>.</div>
 </footer>
 </div>
 </body>
