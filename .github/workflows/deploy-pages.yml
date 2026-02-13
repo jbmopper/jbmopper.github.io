@@ -24,28 +24,11 @@ jobs:
       - name: Checkout website repo
         uses: actions/checkout@v4
 
-      - name: Checkout Observable source repo
-        uses: actions/checkout@v4
-        with:
-          repository: jbmopper/ns_obv
-          path: ns_obv
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: npm
-
-      - name: Install and build Observable source
-        run: |
-          npm ci --prefix ns_obv
-          npm run build --prefix ns_obv
-
-      - name: Copy Observable dist into website public assets
-        run: |
-          rm -rf public/observable
-          mkdir -p public/observable
-          cp -R ns_obv/dist/. public/observable/
 
       - name: Install website dependencies
         run: npm ci

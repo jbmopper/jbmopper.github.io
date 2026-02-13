@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.3">
+<title>Project Overview | NSYS + Benchmark Sandbox</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
+<link rel="preload" as="style" href="../_observablehq/theme-air,near-midnight,alt,wide.db1cdf55.css">
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
+<link rel="stylesheet" type="text/css" href="../_observablehq/theme-air,near-midnight,alt,wide.db1cdf55.css">
+<link rel="modulepreload" href="../_observablehq/client.96fe71ba.js">
+<link rel="modulepreload" href="../_observablehq/runtime.e080113b.js">
+<link rel="modulepreload" href="../_observablehq/stdlib.43270668.js">
+<script type="module">
+
+import "../_observablehq/client.96fe71ba.js";
+
+</script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="../">NSYS + Benchmark Sandbox</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link observablehq-link-active"><a href="./">Overview</a></li>
+    <li class="observablehq-link"><a href="../perf-expected/">Perf Expected</a></li>
+    <li class="observablehq-link"><a href="../perf-empirical/">Perf Empirical</a></li>
+    <li class="observablehq-link"><a href="../nsys/">NSYS</a></li>
+    <li class="observablehq-link"><a href="../lr-sweep/">LR Sweep</a></li>
+    <li class="observablehq-link"><a href="../ablations/">Ablations</a></li>
+    <li class="observablehq-link"><a href="../benchmarks/">Benchmarks</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<main id="observablehq-main" class="observablehq">
+<h1 id="large-language-models-and-deep-learning-fundamentals" tabindex="-1"><a class="observablehq-header-anchor" href="#large-language-models-and-deep-learning-fundamentals">Large Language Models and Deep Learning Fundamentals</a></h1>
+<p>This route mirrors the notebook TOC and links to each technical section.</p>
+<h2 id="project-components" tabindex="-1"><a class="observablehq-header-anchor" href="#project-components">Project Components</a></h2>
+<ol>
+<li><a href="../perf-expected/">Architecture and Expected Performance Analysis</a></li>
+<li><a href="../perf-empirical/">Benchmarks and Empirical Performance Analysis</a></li>
+<li><a href="../nsys/">NVIDIA CUDA NSYS Trace Analysis</a></li>
+<li><a href="../lr-sweep/">Learning Parameter Sweeps</a></li>
+<li><a href="../ablations/">Architectural Variations (Ablations)</a></li>
+</ol>
+<h2 id="embed-endpoints" tabindex="-1"><a class="observablehq-header-anchor" href="#embed-endpoints">Embed Endpoints</a></h2>
+<ul>
+<li><code>/embed/perf-expected.js</code> -&gt; <code>renderPerfExpected</code></li>
+<li><code>/embed/perf-empirical.js</code> -&gt; <code>renderPerfEmpirical</code></li>
+<li><code>/embed/nsys.js</code> -&gt; <code>renderNsys</code></li>
+<li><code>/embed/lr-sweep.js</code> -&gt; <code>renderLrSweep</code></li>
+<li><code>/embed/ablations.js</code> -&gt; <code>renderAblations</code></li>
+<li><code>/embed/benchmarks.js</code> -&gt; <code>renderBenchmarks</code> (compatibility summary)</li>
+</ul>
+</main>
+<footer id="observablehq-footer">
+<nav><a rel="prev" href="../"><span>NSYS + Benchmark Sandbox</span></a><a rel="next" href="../perf-expected/"><span>Perf Expected</span></a></nav>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-12T17:26:24">Feb 12, 2026</a>.</div>
+</footer>
+</div>
+</body>
+</html>

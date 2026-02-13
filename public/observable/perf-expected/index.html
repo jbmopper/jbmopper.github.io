@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.3">
+<title>Architecture and Expected Performance | NSYS + Benchmark Sandbox</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
+<link rel="preload" as="style" href="../_observablehq/theme-air,near-midnight,alt,wide.db1cdf55.css">
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
+<link rel="stylesheet" type="text/css" href="../_observablehq/theme-air,near-midnight,alt,wide.db1cdf55.css">
+<link rel="modulepreload" href="../_observablehq/client.96fe71ba.js">
+<link rel="modulepreload" href="../_observablehq/runtime.e080113b.js">
+<link rel="modulepreload" href="../_observablehq/stdlib.43270668.js">
+<link rel="modulepreload" href="../_import/embed/perf-expected.9ef58861.js">
+<link rel="modulepreload" href="../_import/components/perf-estimates.d771a94d.js">
+<link rel="modulepreload" href="../_import/components/dom-utils.aaca454b.js">
+<script type="module">
+
+import {define} from "../_observablehq/client.96fe71ba.js";
+
+define({id: "8a4c1288", outputs: ["renderPerfExpected"], body: async () => {
+const {renderPerfExpected} = await import("../_import/embed/perf-expected.9ef58861.js");
+
+return {renderPerfExpected};
+}});
+
+define({id: "01a07022", inputs: ["renderPerfExpected","display"], body: async (renderPerfExpected,display) => {
+display(await(
+await renderPerfExpected()
+))
+}});
+
+</script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="../">NSYS + Benchmark Sandbox</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link"><a href="../overview/">Overview</a></li>
+    <li class="observablehq-link observablehq-link-active"><a href="./">Perf Expected</a></li>
+    <li class="observablehq-link"><a href="../perf-empirical/">Perf Empirical</a></li>
+    <li class="observablehq-link"><a href="../nsys/">NSYS</a></li>
+    <li class="observablehq-link"><a href="../lr-sweep/">LR Sweep</a></li>
+    <li class="observablehq-link"><a href="../ablations/">Ablations</a></li>
+    <li class="observablehq-link"><a href="../benchmarks/">Benchmarks</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<main id="observablehq-main" class="observablehq">
+<h1 id="architecture-and-expected-performance-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#architecture-and-expected-performance-analysis">Architecture and Expected Performance Analysis</a></h1>
+<div class="observablehq observablehq--block"><!--:8a4c1288:--></div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:01a07022:--></div>
+</main>
+<footer id="observablehq-footer">
+<nav><a rel="prev" href="../overview/"><span>Overview</span></a><a rel="next" href="../perf-empirical/"><span>Perf Empirical</span></a></nav>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-12T17:26:24">Feb 12, 2026</a>.</div>
+</footer>
+</div>
+</body>
+</html>
