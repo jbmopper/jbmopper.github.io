@@ -70,7 +70,12 @@ test("overview and section routes follow separate-page embed structure", async (
   });
   expect(overviewLinks).toEqual(sections.map((section) => section.title));
 
-  for (const section of sections) {
+  await page.click(`a[href="${sections[0].path}"]`);
+  await expect(page.getByRole("heading", {name: sections[0].title})).toBeVisible({timeout: 60_000});
+  await expect(page.locator(".observable-embed-host")).toHaveAttribute("data-module-path", sections[0].modulePath);
+  await expectEmbedMounted(page, 1);
+
+  for (const section of sections.slice(1)) {
     await page.goto(section.path);
     await expect(page.getByRole("heading", {name: section.title})).toBeVisible({timeout: 60_000});
     await expect(page.locator(".observable-embed-host")).toHaveAttribute("data-module-path", section.modulePath);

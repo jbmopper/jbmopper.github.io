@@ -10,7 +10,7 @@ const serializedOptions = JSON.stringify(options);
 ---
 
 <div class="observable-embed-host" data-module-path={modulePath} data-export-name={exportName} data-options={serializedOptions}></div>
-<script is:inline>
+<script is:inline data-astro-rerun>
   (() => {
     const root = document.currentScript?.previousElementSibling;
     if (!(root instanceof HTMLElement)) return;
@@ -28,7 +28,6 @@ const serializedOptions = JSON.stringify(options);
     const observer = new MutationObserver(() => {
       if (!document.body.contains(root)) {
         cleanup();
-        observer.disconnect();
       }
     });
     observer.observe(document.body, {childList: true, subtree: true});
@@ -65,6 +64,10 @@ const serializedOptions = JSON.stringify(options);
         mountedNode.remove();
         state.mounted = Math.max(0, state.mounted - 1);
       }
+
+      observer.disconnect();
+      document.removeEventListener("astro:before-swap", cleanup);
+      window.removeEventListener("beforeunload", cleanup);
     }
 
     document.addEventListener("astro:before-swap", cleanup);
