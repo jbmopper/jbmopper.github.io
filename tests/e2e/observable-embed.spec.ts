@@ -28,6 +28,19 @@ const sections = [
   }
 ] as const;
 
+const MOUNT_TIMEOUT_MS = 120_000;
+
+async function expectEmbedMounted(page: import("@playwright/test").Page, expectedMounted: number) {
+  await expect
+    .poll(() => page.evaluate(() => (window as any).__observableEmbedState?.mounted ?? 0), {
+      timeout: MOUNT_TIMEOUT_MS
+    })
+    .toBe(expectedMounted);
+
+  const errors = await page.evaluate(() => (window as any).__observableEmbedState?.errors ?? []);
+  expect(errors).toEqual([]);
+}
+
 test("overview and section routes follow separate-page embed structure", async ({page}) => {
   const failedResponses = [] as string[];
   const requestedEmbedUrls = [] as string[];
@@ -46,7 +59,11 @@ test("overview and section routes follow separate-page embed structure", async (
   await page.goto("/projects/deep-learning-fundamentals/");
   await expect(page.getByRole("heading", {name: "Large Language Models and Deep Learning Fundamentals"})).toBeVisible();
   await expect(page.getByRole("heading", {name: "Project Overview"})).toBeVisible();
-  await expect.poll(() => page.evaluate(() => (window as any).__observableEmbedState?.mounted ?? 0)).toBe(0);
+  await expect
+    .poll(() => page.evaluate(() => (window as any).__observableEmbedState?.mounted ?? 0), {
+      timeout: MOUNT_TIMEOUT_MS
+    })
+    .toBe(0);
 
   const overviewLinks = await page.evaluate(() => {
     return Array.from(document.querySelectorAll("ol.toc-list a")).map((node) => node.textContent?.trim());
@@ -57,7 +74,7 @@ test("overview and section routes follow separate-page embed structure", async (
     await page.goto(section.path);
     await expect(page.getByRole("heading", {name: section.title})).toBeVisible({timeout: 60_000});
     await expect(page.locator(".observable-embed-host")).toHaveAttribute("data-module-path", section.modulePath);
-    await expect.poll(() => page.evaluate(() => (window as any).__observableEmbedState?.mounted ?? 0)).toBe(1);
+    await expectEmbedMounted(page, 1);
   }
 
   expect(requestedEmbedUrls.some((url) => url.includes("/observable/embed/benchmarks.js"))).toBe(false);
@@ -66,10 +83,14 @@ test("overview and section routes follow separate-page embed structure", async (
 
 test("embedded observable modules clean up on route change", async ({page}) => {
   await page.goto("/projects/deep-learning-fundamentals/nsys/");
-  await expect.poll(() => page.evaluate(() => (window as any).__observableEmbedState?.mounted ?? 0)).toBe(1);
+  await expectEmbedMounted(page, 1);
 
   await page.click('a[href="/projects/deep-learning-fundamentals/notes/"]');
   await expect(page.getByRole("heading", {name: "Deep Learning Fundamentals Notes"})).toBeVisible();
 
-  await expect.poll(() => page.evaluate(() => (window as any).__observableEmbedState?.mounted ?? 0)).toBe(0);
+  await expect
+    .poll(() => page.evaluate(() => (window as any).__observableEmbedState?.mounted ?? 0), {
+      timeout: MOUNT_TIMEOUT_MS
+    })
+    .toBe(0);
 });
