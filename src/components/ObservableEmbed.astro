@@ -23,57 +23,80 @@ const serializedOptions = JSON.stringify(options);
 
     const state = (window.__observableEmbedState = window.__observableEmbedState || {mounted: 0, errors: []});
     let mountedNode = null;
-    let cleaned = false;
+    let mountPromise = null;
+    let disposed = false;
 
-    const observer = new MutationObserver(() => {
-      if (!document.body.contains(root)) {
-        cleanup();
-      }
-    });
-    observer.observe(document.body, {childList: true, subtree: true});
+    function teardownMountedNode() {
+      if (!mountedNode) return;
+      mountedNode.remove();
+      mountedNode = null;
+      state.mounted = Math.max(0, state.mounted - 1);
+    }
 
-    async function mount() {
+    async function mountIfNeeded() {
+      if (disposed || mountedNode || mountPromise || !document.body.contains(root)) return;
       try {
-        const mod = await import(/* @vite-ignore */ modulePath);
-        const renderFn = mod[exportName];
-        if (typeof renderFn !== "function") {
-          throw new Error(`Export ${exportName} is not a function`);
-        }
+        mountPromise = (async () => {
+          const mod = await import(/* @vite-ignore */ modulePath);
+          const renderFn = mod[exportName];
+          if (typeof renderFn !== "function") {
+            throw new Error(`Export ${exportName} is not a function`);
+          }
 
-        const node = await renderFn(options);
-        if (!(node instanceof Element)) {
-          throw new Error(`Export ${exportName} did not return a DOM node`);
-        }
+          const node = await renderFn(options);
+          if (!(node instanceof Element)) {
+            throw new Error(`Export ${exportName} did not return a DOM node`);
+          }
 
-        if (cleaned) return;
-        mountedNode = node;
-        root.appendChild(node);
-        state.mounted += 1;
+          if (disposed || !document.body.contains(root)) return;
+          mountedNode = node;
+          root.appendChild(node);
+          state.mounted += 1;
+        })();
+        await mountPromise;
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         state.errors.push({modulePath, exportName, message});
         root.innerHTML = `<p class="embed-error">Embed failed: ${message}</p>`;
+      } finally {
+        mountPromise = null;
       }
     }
 
-    function cleanup() {
-      if (cleaned) return;
-      cleaned = true;
+    function handleBeforeSwap() {
+      // During client-side navigation we teardown to avoid stale DOM and
+      // then remount on the next page-load/pageshow event if this host returns.
+      teardownMountedNode();
+    }
 
-      if (mountedNode) {
-        mountedNode.remove();
-        state.mounted = Math.max(0, state.mounted - 1);
-      }
+    function remountAfterNavigation() {
+      void mountIfNeeded();
+    }
 
+    function dispose() {
+      if (disposed) return;
+      disposed = true;
+      teardownMountedNode();
       observer.disconnect();
-      document.removeEventListener("astro:before-swap", cleanup);
-      window.removeEventListener("beforeunload", cleanup);
+      document.removeEventListener("astro:before-swap", handleBeforeSwap);
+      document.removeEventListener("astro:page-load", remountAfterNavigation);
+      window.removeEventListener("pageshow", remountAfterNavigation);
+      window.removeEventListener("beforeunload", dispose);
     }
 
-    document.addEventListener("astro:before-swap", cleanup);
-    window.addEventListener("beforeunload", cleanup, {once: true});
+    const observer = new MutationObserver(() => {
+      if (!document.body.contains(root)) {
+        dispose();
+      }
+    });
+    observer.observe(document.body, {childList: true, subtree: true});
 
-    mount();
+    document.addEventListener("astro:before-swap", handleBeforeSwap);
+    document.addEventListener("astro:page-load", remountAfterNavigation);
+    window.addEventListener("pageshow", remountAfterNavigation);
+    window.addEventListener("beforeunload", dispose, {once: true});
+
+    void mountIfNeeded();
   })();
 </script>
 

@@ -99,3 +99,23 @@ test("embedded observable modules clean up on route change", async ({page}) => {
     })
     .toBe(0);
 });
+
+test("browser back-forward restores embed content without manual reload", async ({page}) => {
+  const section = sections[2];
+  await page.goto("/projects/deep-learning-fundamentals/");
+  await page.click(`a[href="${section.path}"]`);
+  await expect(page.getByRole("heading", {name: section.title})).toBeVisible({timeout: 60_000});
+  await expectEmbedMounted(page, 1);
+
+  await page.goBack();
+  await expect(page.getByRole("heading", {name: "Project Overview"})).toBeVisible({timeout: 60_000});
+  await expect
+    .poll(() => page.evaluate(() => (window as any).__observableEmbedState?.mounted ?? 0), {
+      timeout: MOUNT_TIMEOUT_MS
+    })
+    .toBe(0);
+
+  await page.goForward();
+  await expect(page.getByRole("heading", {name: section.title})).toBeVisible({timeout: 60_000});
+  await expectEmbedMounted(page, 1);
+});
