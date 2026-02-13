@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import ObservableEmbed from "../../../components/ObservableEmbed.astro";
+import {dlfSections} from "../../../config/deep-learning-fundamentals-sections";
 ---
 
 <BaseLayout
@@ -10,75 +10,31 @@ import ObservableEmbed from "../../../components/ObservableEmbed.astro";
   <article class="project-root">
     <header class="panel">
       <p class="eyebrow">Project</p>
-      <h1>Deep Learning Fundamentals</h1>
+      <h1>Large Language Models and Deep Learning Fundamentals</h1>
       <p>
-        Technical deep dive into transformer implementation, training behavior, profiling traces, and architecture
-        experiments.
+        Technical deep dive into transformer implementation, expected-vs-observed performance, profiling traces,
+        hyperparameter sweeps, and architecture ablations.
       </p>
       <nav>
         <a href="/">Back home</a>
+        <a href="/observable/">Observable sandbox</a>
         <a href="/projects/deep-learning-fundamentals/notes/">Notes route</a>
       </nav>
     </header>
 
     <section class="panel">
-      <h2>NSYS Trace Explorer</h2>
-      <p>Kernel and memory event diagnostics exported from Observable and mounted in Astro.</p>
-      <ObservableEmbed
-        modulePath="/observable/embed/nsys.js"
-        exportName="renderNsys"
-        options={{initialTraces: ["model_a", "model_b", "misaligned_dims"], timelineBucketMs: 5, topK: 8}}
-      />
-    </section>
-
-    <section class="panel">
-      <h2>Benchmark Explorer</h2>
-      <p>Filtered benchmark narrative with workload and model-slice controls.</p>
-      <ObservableEmbed
-        modulePath="/observable/embed/benchmarks.js"
-        exportName="renderBenchmarks"
-        options={{datasets: ["micro", "train"], metric: "latency_ms", topN: 10}}
-      />
-    </section>
-
-    <section class="panel">
-      <h2>Ablations</h2>
-      <p>Ablation study results and history comparison.</p>
-      <ObservableEmbed
-        modulePath="/observable/embed/ablations.js"
-        exportName="renderAblations"
-        options={{}}
-      />
-    </section>
-
-    <section class="panel">
-      <h2>LR Sweep</h2>
-      <p>Learning rate sweep analysis and loss thresholds.</p>
-      <ObservableEmbed
-        modulePath="/observable/embed/lr-sweep.js"
-        exportName="renderLrSweep"
-        options={{}}
-      />
-    </section>
-
-    <section class="panel">
-      <h2>Perf Empirical</h2>
-      <p>Empirical performance comparison (MPS vs GPU, training and micro).</p>
-      <ObservableEmbed
-        modulePath="/observable/embed/perf-empirical.js"
-        exportName="renderPerfEmpirical"
-        options={{}}
-      />
-    </section>
-
-    <section class="panel">
-      <h2>Perf Expected</h2>
-      <p>Expected performance from model specs and FLOP/memory estimates.</p>
-      <ObservableEmbed
-        modulePath="/observable/embed/perf-expected.js"
-        exportName="renderPerfExpected"
-        options={{}}
-      />
+      <h2>Project Overview</h2>
+      <p>Each section below has its own Astro route and mounts exactly one exported Observable module.</p>
+      <ol class="toc-list">
+        {
+          dlfSections.map((section) => (
+            <li>
+              <a href={`/projects/deep-learning-fundamentals/${section.slug}/`}>{section.title}</a>
+              <p>{section.description}</p>
+            </li>
+          ))
+        }
+      </ol>
     </section>
   </article>
 </BaseLayout>
@@ -137,5 +93,21 @@ import ObservableEmbed from "../../../components/ObservableEmbed.astro";
 
   section p {
     margin-top: 0;
+  }
+
+  .toc-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .toc-list a {
+    color: var(--accent);
+  }
+
+  .toc-list p {
+    margin: 0.35rem 0 0;
+    color: var(--text-1);
   }
 </style>

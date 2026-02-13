@@ -1,4 +1,4 @@
-import "../_import/embed/perf-empirical.af390cd3.js";
+import "../_import/embed/perf-empirical.9ea7c6fb.js";
 import "../_import/components/data-utils.e2caa41c.js";
 import "../_import/components/dom-utils.aaca454b.js";
 import "../_observablehq/stdlib.43270668.js";
@@ -44,4 +44,4 @@ import "../_npm/binary-search-bounds@2.0.5/cbf6ba23.js";
 import "../_npm/internmap@2.0.3/e08981d9.js";
 import "../_npm/delaunator@5.0.1/02d43215.js";
 import "../_npm/robust-predicates@3.0.2/aa00730b.js";
-export * from "../_import/embed/benchmarks.7358e9e6.js";
+export * from "../_import/embed/benchmarks.215eebeb.js";

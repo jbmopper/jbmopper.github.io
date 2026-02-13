@@ -10,6 +10,7 @@ Use this runbook when wiring new Observable outputs from `ns_obv` into Astro pag
 - `ns_obv` is the Observable source/build repo.
 - `jbmopper.github.io` is the Astro website repo.
 - `public/observable/` in this repo is generated and gitignored. Never hand-edit it.
+- Astro project pages under `src/pages/projects/deep-learning-fundamentals/` are the composition layer.
 
 ## Standard Wiring Flow
 1. Build Observable artifacts from source repo.
@@ -26,17 +27,34 @@ Use this runbook when wiring new Observable outputs from `ns_obv` into Astro pag
    - `npm run verify:observable`
 
 4. Wire module mounts into Astro route.
-   - Primary page: `src/pages/projects/deep-learning-fundamentals/index.astro`
-   - Mount with `ObservableEmbed`:
-     - `modulePath` must point to `/observable/embed/<module>.js`
-     - `exportName` must match the exported render function in that module
-     - `options` must match the function's supported options
+   - Architecture lock: **multi-route Astro pages, not one giant page with all embeds**.
+   - Overview route:
+     - `src/pages/projects/deep-learning-fundamentals/index.astro`
+     - Contains project framing and links to section routes.
+     - Must not mount multiple technical embeds.
+   - Section routes:
+     - `src/pages/projects/deep-learning-fundamentals/[section].astro`
+     - Section registry: `src/config/deep-learning-fundamentals-sections.ts`
+     - Exactly one `ObservableEmbed` per section route.
+   - Keep section organization aligned to Observable TOC order from
+     `/Users/juliusmopper/Dev/ns_obv/src/overview/index.md`:
+     1. `perf-expected` -> `renderPerfExpected`
+     2. `perf-empirical` -> `renderPerfEmpirical`
+     3. `nsys` -> `renderNsys`
+     4. `lr-sweep` -> `renderLrSweep`
+     5. `ablations` -> `renderAblations`
+   - `modulePath` must point to `/observable/embed/<module>.js`.
+   - `exportName` must match the exported render function in that module.
+   - Keep compatibility `renderBenchmarks` off the main TOC routes unless a dedicated compatibility route is requested.
 
 5. If adding a new Astro route/page, create a new `.astro` page under `src/pages/...` and mount `ObservableEmbed` there.
 
 6. Update e2e assertions when module UI text changes.
    - File: `tests/e2e/observable-embed.spec.ts`
-   - Keep assertions aligned with real headings rendered by embeds.
+   - Assert overview route has no "all embeds mounted" behavior.
+   - Assert each section route mounts exactly one expected embed module.
+   - Assert cleanup works on route change.
+   - Assert no unexpected compatibility embeds are loaded on primary section routes.
 
 7. Validate locally.
    - `npm ci`
@@ -60,6 +78,10 @@ This is why `public/observable` can stay in `.gitignore`.
 - E2E fails on missing text like `Benchmark Analysis`:
   - The embed module changed its heading/content. Update test expectations in
     `tests/e2e/observable-embed.spec.ts`.
+
+- Astro and Observable organization drift:
+  - Verify `src/config/deep-learning-fundamentals-sections.ts` route/module map matches `ns_obv` TOC order and embed exports.
+  - Do not re-introduce a single-page multi-embed layout unless explicitly requested.
 
 - Deploy workflow cannot check out `jbmopper/ns_obv`:
   - If private, provide a repo-read PAT secret and use it in checkout `token:`.

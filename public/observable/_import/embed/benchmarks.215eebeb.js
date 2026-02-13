@@ -1,4 +1,4 @@
-import {renderPerfEmpirical} from "./perf-empirical.af390cd3.js";
+import {renderPerfEmpirical} from "./perf-empirical.9ea7c6fb.js";
 
 export async function renderBenchmarks(options = {}) {
   const mergedOptions = {
