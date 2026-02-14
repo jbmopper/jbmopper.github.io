@@ -1,3 +1,11 @@
+/*
+ * Canonical theme tokens for both Observable + Astro.
+ * - Observable consumes this file directly via astro-bridge-theme.css.
+ * - Astro consumes the synced copy at jbmopper.github.io/src/styles/theme-tokens.css
+ *   after running `npm run export:astro`.
+ *
+ * Quick-edit guide: see docs/theme-knobs.md
+ */
 :root {
   /* Core palette */
   --bg-0: #0c1118;
