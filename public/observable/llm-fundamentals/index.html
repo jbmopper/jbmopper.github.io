@@ -7,9 +7,9 @@
 <title>llm fundamentals | Project Writeup Sandbox</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
-<link rel="preload" as="style" href="../_observablehq/theme-air,near-midnight,alt,wide.db1cdf55.css">
+<link rel="preload" as="style" href="../_import/astro-bridge-theme.1614bf1c.css">
 <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
-<link rel="stylesheet" type="text/css" href="../_observablehq/theme-air,near-midnight,alt,wide.db1cdf55.css">
+<link rel="stylesheet" type="text/css" href="../_import/astro-bridge-theme.1614bf1c.css">
 <link rel="modulepreload" href="../_observablehq/client.96fe71ba.js">
 <link rel="modulepreload" href="../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../_observablehq/stdlib.43270668.js">
@@ -35,6 +35,9 @@ import "../_observablehq/client.96fe71ba.js";
 </nav>
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
+<header id="observablehq-header">
+<a class="portfolio-home-link" href="../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">← Back to Home</a>
+</header>
 <main id="observablehq-main" class="observablehq">
 <h1 id="large-language-models-and-deep-learning-fundamentals" tabindex="-1"><a class="observablehq-header-anchor" href="#large-language-models-and-deep-learning-fundamentals">Large Language Models and Deep Learning Fundamentals</a></h1>
 <h2 id="table-of-contents" tabindex="-1"><a class="observablehq-header-anchor" href="#table-of-contents">Table of Contents</a></h2>
@@ -47,8 +50,8 @@ import "../_observablehq/client.96fe71ba.js";
 <li><a href="../perf-expected/">Architecture and Expected Performance Analysis</a></li>
 <li><a href="../perf-empirical/">Benchmarks and Empirical Performance Analysis</a></li>
 <li><a href="../nsys/">Nvidia CUDA Nsys Trace Analysis</a></li>
-<li><a href="./lr_sweep_analysis/">Learning Parameter Sweeps</a></li>
-<li><a href="./ablations_analysis/">Architectural Variations (Ablations)</a></li>
+<li><a href="../lr-sweep/">Learning Parameter Sweeps</a></li>
+<li><a href="../ablations/">Architectural Variations (Ablations)</a></li>
 </ol>
 </li>
 <li>Conclusions and Loose End</li>
@@ -89,15 +92,15 @@ import "../_observablehq/client.96fe71ba.js";
 <p>Implementation of the decoder drove home how the Transofrmer itself just outputs token probabilities, and sparked a strong interest in this less-glamourous but nonetheless fundamental part of LLM systems.  The decoder here is a simple top-p/nucleus sampler.  We should provide sample outputs, but the results of a 17-million parameter model trained on the "tinystories" dataset are about what one would expect.</p>
 <h3 id="2-architecture-and-expected-performance-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#2-architecture-and-expected-performance-analysis">2. Architecture and Expected Performance Analysis</a></h3>
 <p>An in-depth documentation of the architecture and memory and compute accounting was conducted.  The goal was to experiment with and visualize model parameter combinations on both Apple Silicon/MPS and the RTX 4090 (Ada Lovelace) systems.  Both systems have 24GB of RAM (unified or VRAM) but differ considerably in actual model size and throughput as the 4090 has superior memory bandwidth and supports bfloat16 and automatic mixed precision, as well as CUDA and <code>torch.compile()</code> via inductor.</p>
-<p>Open notebook: <a href="../perf-expected">Architecture and Expected Performance</a></p>
+<p>Open notebook: <a href="../perf-expected/">Architecture and Expected Performance</a></p>
 <h3 id="3-benchmarks-and-empirical-performance-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#3-benchmarks-and-empirical-performance-analysis">3. Benchmarks and Empirical Performance Analysis</a></h3>
-<p>Open notebook: <a href="../perf-empirical/l">Empirical Benchmarks</a></p>
+<p>Open notebook: <a href="../perf-empirical/">Empirical Benchmarks</a></p>
 <h3 id="4-nvidia-cuda-nsys-trace-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#4-nvidia-cuda-nsys-trace-analysis">4. Nvidia CUDA Nsys Trace Analysis</a></h3>
 <p>Open notebook: <a href="../nsys/">Nsys Timeline and Kernel Analysis</a></p>
 <h3 id="5-learning-parameter-sweeps" tabindex="-1"><a class="observablehq-header-anchor" href="#5-learning-parameter-sweeps">5. Learning Parameter Sweeps</a></h3>
 <p>Open notebook: <a href="../lr-sweep/">Learning Rate Sweep Analysis</a></p>
 <h3 id="6-architectural-variations-ablations" tabindex="-1"><a class="observablehq-header-anchor" href="#6-architectural-variations-ablations">6. Architectural Variations (Ablations)</a></h3>
-<p>Open notebook: <a href="./ablations_analysis/">Ablation Analysis</a></p>
+<p>Open notebook: <a href="../ablations/">Ablation Analysis</a></p>
 <hr>
 <h1 id="llm-fundamentals" tabindex="-1"><a class="observablehq-header-anchor" href="#llm-fundamentals">llm fundamentals</a></h1>
 <p>This project page mirrors the notebook TOC and links to each technical section.</p>
@@ -122,7 +125,7 @@ import "../_observablehq/client.96fe71ba.js";
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="../"><span>Project Writeup Sandbox</span></a><a rel="next" href="../data-playground/"><span>Data Playground</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-13T17:42:08">Feb 13, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-13T19:27:56">Feb 13, 2026</a>.</div>
 </footer>
 </div>
 </body>

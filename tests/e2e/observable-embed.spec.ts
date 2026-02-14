@@ -30,6 +30,20 @@ const sections = [
 
 const MOUNT_TIMEOUT_MS = 120_000;
 
+test("landing project link opens notebook and returns home", async ({page}) => {
+  await page.goto("/");
+  await page.click('a[href="/observable/llm-fundamentals/"]');
+  await expect(page).toHaveURL(/\/observable\/llm-fundamentals\/(?:index\.html)?$/);
+  await expect(page.getByRole("heading", {name: "Large Language Models and Deep Learning Fundamentals"})).toBeVisible();
+
+  const backHomeLink = page.getByRole("link", {name: /Back to Home/});
+  await expect(backHomeLink).toBeVisible();
+  await backHomeLink.click();
+
+  await expect(page).toHaveURL("/");
+  await expect(page.getByRole("heading", {name: "jbmopper.github.io"})).toBeVisible();
+});
+
 async function expectEmbedMounted(page: import("@playwright/test").Page, expectedMounted: number) {
   await expect
     .poll(() => page.evaluate(() => (window as any).__observableEmbedState?.mounted ?? 0), {
