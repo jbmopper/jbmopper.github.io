@@ -35,18 +35,11 @@ const year = new Date().getFullYear();
   </body>
 </html>
 
-<style>
-  :root {
-    --bg-0: #0c1118;
-    --bg-1: #141b24;
-    --surface: #1a2330;
-    --surface-2: #202c3b;
-    --text-0: #edf2f7;
-    --text-1: #b7c2d0;
-    --accent: #65d9c6;
-    --stroke: #2d3e50;
-  }
+<style is:global>
+  @import "../styles/theme-tokens.css";
+</style>
 
+<style>
   * {
     box-sizing: border-box;
   }
@@ -60,7 +53,7 @@ const year = new Date().getFullYear();
       radial-gradient(900px 500px at -10% 10%, #2a1f3e 0%, transparent 55%),
       var(--bg-0);
     color: var(--text-0);
-    font-family: "Manrope", "Segoe UI", sans-serif;
+    font-family: var(--font-sans);
   }
 
   body {

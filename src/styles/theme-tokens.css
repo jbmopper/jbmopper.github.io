@@ -1,0 +1,62 @@
+:root {
+  /* Core palette */
+  --bg-0: #0c1118;
+  --bg-1: #141b24;
+  --surface: #1a2330;
+  --surface-2: #202c3b;
+  --text-0: #edf2f7;
+  --text-1: #b7c2d0;
+  --accent: #65d9c6;
+  --stroke: #2d3e50;
+
+  /* Typography */
+  --font-sans: "Manrope", "Segoe UI", sans-serif;
+  --font-serif: "Source Serif 4", "Iowan Old Style", "Apple Garamond", "Palatino Linotype", "Times New Roman", serif;
+
+  /* Space scale */
+  --space-1: 0.35rem;
+  --space-2: 0.6rem;
+  --space-3: 0.9rem;
+  --space-4: 1.2rem;
+  --space-5: 1.8rem;
+  --space-6: 2.4rem;
+
+  /* Content rhythm */
+  --prose-max: 74ch;
+  --prose-max-wide: 88ch;
+  --prose-leading: 1.7;
+  --heading-leading: 1.2;
+  --list-indent: clamp(1.2rem, 2vw, 1.65rem);
+  --radius-md: 12px;
+
+  /* Observable bridge aliases */
+  --bridge-bg-0: var(--bg-0);
+  --bridge-surface-0: var(--surface);
+  --bridge-text-0: var(--text-0);
+  --bridge-text-1: var(--text-1);
+  --bridge-accent: var(--accent);
+  --bridge-stroke: var(--stroke);
+  --bridge-space-1: var(--space-1);
+  --bridge-space-2: var(--space-2);
+  --bridge-space-3: var(--space-3);
+  --bridge-space-4: var(--space-4);
+  --bridge-space-5: var(--space-5);
+  --bridge-space-6: var(--space-6);
+  --bridge-list-indent: var(--list-indent);
+  --bridge-prose-max: var(--prose-max);
+  --bridge-prose-max-wide: var(--prose-max-wide);
+  --bridge-leading: var(--prose-leading);
+  --bridge-heading-leading: var(--heading-leading);
+  --bridge-radius: var(--radius-md);
+
+  /* Observable framework token mapping */
+  --theme-background: var(--bridge-bg-0);
+  --theme-background-alt: var(--bridge-surface-0);
+  --theme-foreground: var(--bridge-text-0);
+  --theme-foreground-alt: var(--bridge-text-0);
+  --theme-foreground-muted: var(--bridge-text-1);
+  --theme-foreground-faint: var(--bridge-stroke);
+  --theme-foreground-fainter: var(--bridge-stroke);
+  --theme-foreground-faintest: var(--bridge-stroke);
+  --theme-foreground-focus: var(--bridge-accent);
+}
