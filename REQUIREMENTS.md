@@ -50,4 +50,24 @@ Stack
 
 Site: Astro (static), @astrojs/svelte, View Transitions via ClientRouter
 Chatbot: Svelte component in root layout with client:load and transition:persist="chatbot"; session ID and (future) chat history in sessionStorage
+
 Backend (not wired yet): Lambda + API Gateway + Cloudflare Turnstile + LLM (e.g. Gemini)
+
+--- 
+
+A fixed container won’t share in-memory state across Astro and Observable pages (or across reloads). You need persisted/session identity.
+Best pattern:
+- Client conversation key in localStorage (or cookie) like conversationId.
+- Widget boot on any page:
+    - read existing conversationId
+    - if missing, call backend to create one
+    - resume conversation from backend using that id
+- Backend (Lambda/API) stores conversation state keyed by conversationId (and optionally user/session id).
+- Optional tab-level behavior: use sessionStorage for ephemeral UI state (open/closed, draft text), while keeping conversation history server-side.
+So yes:
+- localStorage/cookie = continuity across contexts/pages
+- Lambda/backend = authoritative state + multi-turn memory
+Minimal safeguards:
+- Sign or validate conversation IDs (don’t trust arbitrary client IDs).
+- Add TTL/cleanup and rate limits.
+- If auth exists, bind conversation to user id; if anonymous, treat as untrusted and scoped.

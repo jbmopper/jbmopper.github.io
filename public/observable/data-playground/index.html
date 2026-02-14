@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="generator" content="Observable Framework v1.13.3">
-<title>Ablations | Project Writeup Sandbox</title>
+<title>Data Playground | Project Writeup Sandbox</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
 <link rel="preload" as="style" href="../_observablehq/theme-air,near-midnight,alt,wide.db1cdf55.css">
@@ -13,7 +13,7 @@
 <link rel="modulepreload" href="../_observablehq/client.96fe71ba.js">
 <link rel="modulepreload" href="../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../_import/embed/ablations.e2f73cf4.js">
+<link rel="modulepreload" href="../_import/embed/data-playground.89f367d3.js">
 <link rel="modulepreload" href="../_import/components/data-utils.e2caa41c.js">
 <link rel="modulepreload" href="../_import/components/dom-utils.aaca454b.js">
 <link rel="modulepreload" href="../_npm/@observablehq/plot@0.6.17/7c43807f.js">
@@ -63,18 +63,38 @@
 import {define} from "../_observablehq/client.96fe71ba.js";
 import {registerFile} from "../_observablehq/stdlib.43270668.js";
 
+registerFile("../data/manifest.json", {"name":"../data/manifest.json","mimeType":"application/json","path":"../_file/data/manifest.589b314f.json","lastModified":1771016742389,"size":14702});
 registerFile("../data/raw/benchmarks/ablations_history.parquet", {"name":"../data/raw/benchmarks/ablations_history.parquet","path":"../_file/data/raw/benchmarks/ablations_history.fa92f106.parquet","lastModified":1770927469232,"size":389841});
 registerFile("../data/raw/benchmarks/ablations_main.parquet", {"name":"../data/raw/benchmarks/ablations_main.parquet","path":"../_file/data/raw/benchmarks/ablations_main.684150ce.parquet","lastModified":1770927469233,"size":32700});
+registerFile("../data/raw/benchmarks/gpu_comp_history.parquet", {"name":"../data/raw/benchmarks/gpu_comp_history.parquet","path":"../_file/data/raw/benchmarks/gpu_comp_history.4a516c8a.parquet","lastModified":1770927469233,"size":189583});
+registerFile("../data/raw/benchmarks/gpu_comp_main.parquet", {"name":"../data/raw/benchmarks/gpu_comp_main.parquet","path":"../_file/data/raw/benchmarks/gpu_comp_main.8b657d6c.parquet","lastModified":1770927469234,"size":26614});
+registerFile("../data/raw/benchmarks/lr_sweeps_history.parquet", {"name":"../data/raw/benchmarks/lr_sweeps_history.parquet","path":"../_file/data/raw/benchmarks/lr_sweeps_history.ca369050.parquet","lastModified":1770927469237,"size":2077247});
+registerFile("../data/raw/benchmarks/lr_sweeps_main.parquet", {"name":"../data/raw/benchmarks/lr_sweeps_main.parquet","path":"../_file/data/raw/benchmarks/lr_sweeps_main.f6fefad8.parquet","lastModified":1770920604377,"size":15604});
+registerFile("../data/raw/benchmarks/micro_benchmarks_20260126_130256.json", {"name":"../data/raw/benchmarks/micro_benchmarks_20260126_130256.json","mimeType":"application/json","path":"../_file/data/raw/benchmarks/micro_benchmarks_20260126_130256.0003d6fe.json","lastModified":1770920604377,"size":2403});
+registerFile("../data/raw/benchmarks/mps_comp_history.parquet", {"name":"../data/raw/benchmarks/mps_comp_history.parquet","path":"../_file/data/raw/benchmarks/mps_comp_history.81dcba33.parquet","lastModified":1770927469238,"size":220323});
+registerFile("../data/raw/benchmarks/mps_comp_main.parquet", {"name":"../data/raw/benchmarks/mps_comp_main.parquet","path":"../_file/data/raw/benchmarks/mps_comp_main.ccc27b69.parquet","lastModified":1770927469238,"size":25521});
+registerFile("../data/raw/benchmarks/train_benchmark_20260127_092323.json", {"name":"../data/raw/benchmarks/train_benchmark_20260127_092323.json","mimeType":"application/json","path":"../_file/data/raw/benchmarks/train_benchmark_20260127_092323.e80aa474.json","lastModified":1770920604379,"size":1945563});
+registerFile("../data/raw/traces/bad_head_size_nsys.parquet", {"name":"../data/raw/traces/bad_head_size_nsys.parquet","path":"../_file/data/raw/traces/bad_head_size_nsys.0e5fcf94.parquet","lastModified":1770920604380,"size":699507});
+registerFile("../data/raw/traces/bandwidth_bound_nsys.parquet", {"name":"../data/raw/traces/bandwidth_bound_nsys.parquet","path":"../_file/data/raw/traces/bandwidth_bound_nsys.0570a4e8.parquet","lastModified":1770920604381,"size":526034});
+registerFile("../data/raw/traces/compute_bound_nsys.parquet", {"name":"../data/raw/traces/compute_bound_nsys.parquet","path":"../_file/data/raw/traces/compute_bound_nsys.9be21553.parquet","lastModified":1770920604383,"size":1020491});
+registerFile("../data/raw/traces/deep_sequential_nsys.parquet", {"name":"../data/raw/traces/deep_sequential_nsys.parquet","path":"../_file/data/raw/traces/deep_sequential_nsys.4ed702eb.parquet","lastModified":1770920604387,"size":3186034});
+registerFile("../data/raw/traces/latency_bound_nsys.parquet", {"name":"../data/raw/traces/latency_bound_nsys.parquet","path":"../_file/data/raw/traces/latency_bound_nsys.5b9c4edd.parquet","lastModified":1770920604389,"size":1104236});
+registerFile("../data/raw/traces/misaligned_dims_nsys.parquet", {"name":"../data/raw/traces/misaligned_dims_nsys.parquet","path":"../_file/data/raw/traces/misaligned_dims_nsys.e0e9fef3.parquet","lastModified":1770920604389,"size":834});
+registerFile("../data/raw/traces/model_a_nsys.parquet", {"name":"../data/raw/traces/model_a_nsys.parquet","path":"../_file/data/raw/traces/model_a_nsys.7c95f1f4.parquet","lastModified":1770920604390,"size":294932});
+registerFile("../data/raw/traces/model_b_nsys.parquet", {"name":"../data/raw/traces/model_b_nsys.parquet","path":"../_file/data/raw/traces/model_b_nsys.d909797c.parquet","lastModified":1770920604391,"size":1231233});
+registerFile("../data/raw/traces/nsys_sqlite_table_inventory.md", {"name":"../data/raw/traces/nsys_sqlite_table_inventory.md","mimeType":"text/markdown","path":"../_file/data/raw/traces/nsys_sqlite_table_inventory.8a62282f.md","lastModified":1770920604391,"size":25493});
+registerFile("../data/raw/traces/vocab_bottleneck_nsys.parquet", {"name":"../data/raw/traces/vocab_bottleneck_nsys.parquet","path":"../_file/data/raw/traces/vocab_bottleneck_nsys.c6e0b393.parquet","lastModified":1770920604392,"size":509294});
+registerFile("../data/raw/traces/wide_ffn_nsys.parquet", {"name":"../data/raw/traces/wide_ffn_nsys.parquet","path":"../_file/data/raw/traces/wide_ffn_nsys.e3df5806.parquet","lastModified":1770920604393,"size":715444});
 
-define({id: "6ba58f0a", outputs: ["renderAblations"], body: async () => {
-const {renderAblations} = await import("../_import/embed/ablations.e2f73cf4.js");
+define({id: "8fa71402", outputs: ["renderDataPlayground"], body: async () => {
+const {renderDataPlayground} = await import("../_import/embed/data-playground.89f367d3.js");
 
-return {renderAblations};
+return {renderDataPlayground};
 }});
 
-define({id: "2cc8ed16", inputs: ["renderAblations","display"], body: async (renderAblations,display) => {
+define({id: "7f0eccc5", inputs: ["renderDataPlayground","display"], body: async (renderDataPlayground,display) => {
 display(await(
-await renderAblations()
+await renderDataPlayground()
 ))
 }});
 
@@ -91,17 +111,18 @@ await renderAblations()
   <ol>
     <li class="observablehq-link"><a href="../">Projects</a></li>
     <li class="observablehq-link"><a href="../llm-fundamentals/">LLM Fundamentals</a></li>
-    <li class="observablehq-link"><a href="../data-playground/">Data Playground</a></li>
+    <li class="observablehq-link observablehq-link-active"><a href="./">Data Playground</a></li>
   </ol>
 </nav>
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <main id="observablehq-main" class="observablehq">
-<h1 id="ablation-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#ablation-analysis">Ablation Analysis</a></h1>
-<div class="observablehq observablehq--block"><!--:6ba58f0a:--></div>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:2cc8ed16:--></div>
+<h1 id="data-playground" tabindex="-1"><a class="observablehq-header-anchor" href="#data-playground">Data Playground</a></h1>
+<div class="observablehq observablehq--block"><!--:8fa71402:--></div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:7f0eccc5:--></div>
 </main>
 <footer id="observablehq-footer">
+<nav><a rel="prev" href="../llm-fundamentals/"><span>LLM Fundamentals</span></a></nav>
 <div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-13T17:42:08">Feb 13, 2026</a>.</div>
 </footer>
 </div>

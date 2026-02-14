@@ -30,11 +30,75 @@ import "../_observablehq/client.96fe71ba.js";
   <ol>
     <li class="observablehq-link"><a href="../">Projects</a></li>
     <li class="observablehq-link observablehq-link-active"><a href="./">LLM Fundamentals</a></li>
+    <li class="observablehq-link"><a href="../data-playground/">Data Playground</a></li>
   </ol>
 </nav>
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <main id="observablehq-main" class="observablehq">
+<h1 id="large-language-models-and-deep-learning-fundamentals" tabindex="-1"><a class="observablehq-header-anchor" href="#large-language-models-and-deep-learning-fundamentals">Large Language Models and Deep Learning Fundamentals</a></h1>
+<h2 id="table-of-contents" tabindex="-1"><a class="observablehq-header-anchor" href="#table-of-contents">Table of Contents</a></h2>
+<ol>
+<li><a href="#intro">Introduction</a></li>
+<li><a href="#learnings">Knowledge Gained (Learnings)</a></li>
+<li><a href="#project">Project Components</a>
+<ol>
+<li>Project Overview and Discussion</li>
+<li><a href="../perf-expected/">Architecture and Expected Performance Analysis</a></li>
+<li><a href="../perf-empirical/">Benchmarks and Empirical Performance Analysis</a></li>
+<li><a href="../nsys/">Nvidia CUDA Nsys Trace Analysis</a></li>
+<li><a href="./lr_sweep_analysis/">Learning Parameter Sweeps</a></li>
+<li><a href="./ablations_analysis/">Architectural Variations (Ablations)</a></li>
+</ol>
+</li>
+<li>Conclusions and Loose End</li>
+</ol>
+<h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction <a id="intro"></a></a></h2>
+<p>This project is an exercise intended to bring your humble author up to speed with the current state (give or take 6 months) of large language model fundamentals including not only their design and function, but also their implementation, tuning, benchmarking, profiling, and deployment.</p>
+<p>To this end, the primary assginment from the <a href="https://stanford-cs336.github.io/spring2025/" target="_blank" rel="noopener noreferrer">Stanford CS336 course</a> "Language Modeling from Scratch" was chosen as a launching point.  This <a href="https://github.com/stanford-cs336/assignment1-basics/tree/main" target="_blank" rel="noopener noreferrer">assignment</a> is the course's eponymous from-scratch language model.  It is a "blank-sheet" exercise consisting primarily of unit tests which describe class and function interfaces and expected outputs; within these guardrails the student is expected to write all the code, utilizing only base PyTorch classes such as <code>nn.Module</code>.  In addition, exercises are suggested for profiling parts of the system, conducting parameter sweeps, and architecture variations/ablations.</p>
+<p>What differs between this project and the assignment, and justify presenting it as a separate work, is, for one, this write-up, which is much more extensive and polished than the assignment submissions.  But more broadly that that, the work here encompasses significant efforts to understand and document the model architecture, calcluate expected performance, benchmark performance, and compare performance between the Apple Silicon/MPS implementation and the CUDA implementation run on RTX 4090 GPUs, among other elements discussed below.</p>
+<h2 id="knowledge-gained-learnings" tabindex="-1"><a class="observablehq-header-anchor" href="#knowledge-gained-learnings">Knowledge Gained (Learnings) <a id="learnings"></a></a></h2>
+<h3 id="before" tabindex="-1"><a class="observablehq-header-anchor" href="#before">Before</a></h3>
+<p>Prior to the project, you author's knowledge was not insubstantial.  Many years of probability, linear algebra, statistics, and econometrics provided a solid background to read and understand papers.  More recently, a distance learning certificate in Macnine Learning was completed.  This course was a stripped-down version of the <a href="https://www.cs.cornell.edu/courses/cs4780/2021fa/" target="_blank" rel="noopener noreferrer">Cornell CS 4780 "Introduction to Machine Learning"</a> course which covered core topics in machine learning with a focus on multilayer perceptrons.</p>
+<p>On the applied side, various CS courses had been taken, courses which used C++ and provided both basics of the subject as an undergrad, and an introduction to algorithms and complexity analysis at the graduate level.  Econometric work was usually done in STATA, with some Matlab sprinkled in.  Work experienced expanded the languages used to include Go/Golang (for concurrent scripting) and Python and Julia for data analysis.  The Machine Learning course provided a more structured introduction to NumPy, and there was plenty of command-line work at home and reading through Java and Javascript/React codebases on the job.</p>
+<h3 id="after" tabindex="-1"><a class="observablehq-header-anchor" href="#after">After</a></h3>
+<p>Core goals were to gain familiarity with PyTorch and deep learning processing.  Ineed, given the open-ended nature of the assignment, early implementations that provided correct outputs as simple functions later had to be rewritten when the understanding of the role of the compute graph operating through the <code>nn.Parameter</code> class was achieved.  More broadly, a deeper understanding of Python's application of Object Orietned Programming, including things like the use of <code>@dataclass</code> and method resolution order and syntax quirks stemming from Python's interpreted design was gained.</p>
+<p>Another goal achieved was a deep understanding of LLM architectures that can perhaps only be gained by implementing one.  The implementation included many current architectural practices such as a gated activation (SwiGLU) function, rotary positional embedding (RoPE), the attention mechanism itself, a byte-pair encoder, a somewhat outdated second-moment optimizer (AdamW), learning rate scheduler, and a nucleus/top-p sampling decoder.  Implementation built knowledge of points of practice regarding numerical stability (softmax, multinomial), efficient matrix operations (concatenating the QKV projection matrices), and the use of the <code>einx</code> package to enjoy the power and flexibility of a state-of-the-art Einstein Summation and contraction-path optimizer.</p>
+<p>After the implementation from tokenizing through decoding was complete, the focus shifted to the nitty-gritty of practical engineering: performance estimation, benchmarking, hyperparameter sweeps utilizing the popular <a href="https://wandb.ai" target="_blank" rel="noopener noreferrer">wandb</a> service, and of course, analyzing and communicating the results of this research, which was done using Marimo notebooks like this one.</p>
+<h3 id="papers-read-and-other-resources" tabindex="-1"><a class="observablehq-header-anchor" href="#papers-read-and-other-resources">Papers Read and Other Resources</a></h3>
+<p>A side effect of the coding-first approach taken to this project was that the assignment writeup was ignored in favor of implementation, which led to researching primary sources.  Useful texbooks included Jurafsky and Martin's <a href="https://web.stanford.edu/~jurafsky/slp3/ed3book_jan26.pdf" target="_blank" rel="noopener noreferrer">Speech and Language Processing</a> and Aggarwal's <a href="https://link.springer.com/book/10.1007/978-3-319-94463-0" target="_blank" rel="noopener noreferrer">Neural Networks and Deep Learning</a>.  Papers read included <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener noreferrer">Vaswani et al., 2017</a> of course, but also the <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener noreferrer">Su et al. 2023</a> RoPE paper, and most interestingly, <a href="https://transformer-circuits.pub/2021/framework/index.html" target="_blank" rel="noopener noreferrer">Elhage et al.'s</a> 2021 analysis of information flow between attention heads and the residual stream.</p>
+<p>The main downside to reading research is perhaps that it makes one want to do research.</p>
+<h3 id="notes-on-ai-assistant-use" tabindex="-1"><a class="observablehq-header-anchor" href="#notes-on-ai-assistant-use">Notes on AI Assistant Use</a></h3>
+<p>This is a complex topic.  It's been a somewhat vertiginous time, with these systems rapidly improving in capability; while avoiding AI use was (and often still is) desireable when this project was began in the fall, by late winter the effective use of AI assistants was recognized as a necessary skill in itself.</p>
+<p>The need to learn remains.  Certainly the primary and uncontested use of AI assistants is to replace the joys of pawing through reference documentation, conducting web searches for paradigmatic code, and the like.  But beyond that, lines must be drawn, and a few natural lines emerge.  The first was "campus rules".  Part of formal education is discovering when it would be beneficial to overall learning veolcity to discuss a problem with the study group, or go to office hours.  Such needs emerged with occasional issues, such as working through numerical stability issues or dealing with the tokenizer.</p>
+<p>Other uses of AI were more questionable, but justifiable, especially in light of current transitions in practice.  One major example is the use of assistants to retrofit the model class with conditional logic to handle the architecture variations for the ablation phase.  There wasn't much learning to be had there.  Another is handling scripts and configuration files for deployments and runs.  More questionable is offloading fiddly parts of the analysis workbooks, but human attention budgeting forces prioritization, for example understanding the engineering of deep learning systems, rather than this year's graphing APIs.</p>
+<p>So other core guidelines have emerged: one, most importantly, to be hands-on and aware when it comes to the things that ought to be learned.  Second, to be hands-on and aware for mission-critical parts of the system.  While one-off outputs and rote tasks can be offloaded to an assistant, code that needs to be performant and correct needs human attention.  And of course, the vision, quality, and communication of results are the responsibility of the human.</p>
+<h2 id="project-components" tabindex="-1"><a class="observablehq-header-anchor" href="#project-components">Project Components <a id="project"></a></a></h2>
+<h3 id="1-project-overview-and-discussion" tabindex="-1"><a class="observablehq-header-anchor" href="#1-project-overview-and-discussion">1. Project Overview and Discussion</a></h3>
+<p>The following is an overview of the work done for the project, beginning with a more general discussion of the project and proceeding to the most substantial part of the analysis, the architecture analysis, performance predictions, and benchmark results.  These analyses can be found by following the cickable links that will open interactive notebooks of wonder and insight, which the reader is encouraged to enjoy.  The final two parts of the analysis, learning rate sweeps and ablations, are were conducted per the suggestion of the source assignment and are included for completeness.</p>
+<p>Code for the project can be found [here]</p>
+<h4 id="the-bpe-tokenizer" tabindex="-1"><a class="observablehq-header-anchor" href="#the-bpe-tokenizer">The BPE Tokenizer</a></h4>
+<p>This is my tokenizer.  There are many like it, but this one is mine.  It's written in Python as a Python exercise.  It went through many iterations to reliably pass the time requirements of the unit tests, yet some advanced techniques like maintaining a priority queue of merge candidates were not implemented.</p>
+<p>To expand the tokenziation skillset learned, the code was containerized (Docker) with a "slim" Python image and run on an AWS EC2 instance and the results stored in S3.  This required hands-on work with various aspects of AWS, including managing IAM permissions and going through the request process for a faster instance.</p>
+<h4 id="the-transformer" tabindex="-1"><a class="observablehq-header-anchor" href="#the-transformer">The Transformer</a></h4>
+<p>As mentioned above, this implementation was <em>from scratch</em> in the sense that no PyTorch "jellybean" classes like <code>nn.Linear</code> were used, rather the <code>nn.Module</code> class was subclassed directly and the required integrations and logic were implemented, which generally involved an <code>__init__()</code> function and a <code>forward()</code> function containing the meat of the logic.</p>
+<h4 id="the-training-loop" tabindex="-1"><a class="observablehq-header-anchor" href="#the-training-loop">The Training Loop</a></h4>
+<p>Implementation of the training loop was where core ideas about Pytorch's deep learning architecture solidified.  Specifically, the wiring of <code>nn.Parameter</code> classes into the compute graph, the the role of the <code>state_dict</code> in training and checkpointing, became clear.  A cosine-annealing learning rate scheduler with warmup and an AdamW second-moment optimizer were implemented.  Hopefully updated versions of the course can move on to Muon and add gradient checkpointing.</p>
+<p>The implementation of the training loop also marked the beginning of adding coarse-grained benchmarks via <code>time.perf_counter()</code> and integration with WandB for monitoring various metrics during runs.</p>
+<h4 id="the-decoder" tabindex="-1"><a class="observablehq-header-anchor" href="#the-decoder">The Decoder</a></h4>
+<p>Implementation of the decoder drove home how the Transofrmer itself just outputs token probabilities, and sparked a strong interest in this less-glamourous but nonetheless fundamental part of LLM systems.  The decoder here is a simple top-p/nucleus sampler.  We should provide sample outputs, but the results of a 17-million parameter model trained on the "tinystories" dataset are about what one would expect.</p>
+<h3 id="2-architecture-and-expected-performance-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#2-architecture-and-expected-performance-analysis">2. Architecture and Expected Performance Analysis</a></h3>
+<p>An in-depth documentation of the architecture and memory and compute accounting was conducted.  The goal was to experiment with and visualize model parameter combinations on both Apple Silicon/MPS and the RTX 4090 (Ada Lovelace) systems.  Both systems have 24GB of RAM (unified or VRAM) but differ considerably in actual model size and throughput as the 4090 has superior memory bandwidth and supports bfloat16 and automatic mixed precision, as well as CUDA and <code>torch.compile()</code> via inductor.</p>
+<p>Open notebook: <a href="../perf-expected">Architecture and Expected Performance</a></p>
+<h3 id="3-benchmarks-and-empirical-performance-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#3-benchmarks-and-empirical-performance-analysis">3. Benchmarks and Empirical Performance Analysis</a></h3>
+<p>Open notebook: <a href="../perf-empirical/l">Empirical Benchmarks</a></p>
+<h3 id="4-nvidia-cuda-nsys-trace-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#4-nvidia-cuda-nsys-trace-analysis">4. Nvidia CUDA Nsys Trace Analysis</a></h3>
+<p>Open notebook: <a href="../nsys/">Nsys Timeline and Kernel Analysis</a></p>
+<h3 id="5-learning-parameter-sweeps" tabindex="-1"><a class="observablehq-header-anchor" href="#5-learning-parameter-sweeps">5. Learning Parameter Sweeps</a></h3>
+<p>Open notebook: <a href="../lr-sweep/">Learning Rate Sweep Analysis</a></p>
+<h3 id="6-architectural-variations-ablations" tabindex="-1"><a class="observablehq-header-anchor" href="#6-architectural-variations-ablations">6. Architectural Variations (Ablations)</a></h3>
+<p>Open notebook: <a href="./ablations_analysis/">Ablation Analysis</a></p>
+<hr>
 <h1 id="llm-fundamentals" tabindex="-1"><a class="observablehq-header-anchor" href="#llm-fundamentals">llm fundamentals</a></h1>
 <p>This project page mirrors the notebook TOC and links to each technical section.</p>
 <h2 id="toc" tabindex="-1"><a class="observablehq-header-anchor" href="#toc">TOC</a></h2>
@@ -44,6 +108,7 @@ import "../_observablehq/client.96fe71ba.js";
 <li><a href="../nsys/">NSYS trace analysis</a></li>
 <li><a href="../lr-sweep/">Learning-rate sweep analysis</a></li>
 <li><a href="../ablations/">Ablation analysis</a></li>
+<li><a href="../data-playground/">Data playground</a></li>
 </ul>
 <h2 id="embed-endpoints" tabindex="-1"><a class="observablehq-header-anchor" href="#embed-endpoints">Embed Endpoints</a></h2>
 <ul>
@@ -52,11 +117,12 @@ import "../_observablehq/client.96fe71ba.js";
 <li><code>/embed/nsys.js</code> -&gt; <code>renderNsys</code></li>
 <li><code>/embed/lr-sweep.js</code> -&gt; <code>renderLrSweep</code></li>
 <li><code>/embed/ablations.js</code> -&gt; <code>renderAblations</code></li>
+<li><code>/embed/data-playground.js</code> -&gt; <code>renderDataPlayground</code></li>
 </ul>
 </main>
 <footer id="observablehq-footer">
-<nav><a rel="prev" href="../"><span>Project Writeup Sandbox</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-13T12:41:11">Feb 13, 2026</a>.</div>
+<nav><a rel="prev" href="../"><span>Project Writeup Sandbox</span></a><a rel="next" href="../data-playground/"><span>Data Playground</span></a></nav>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-13T17:42:08">Feb 13, 2026</a>.</div>
 </footer>
 </div>
 </body>

@@ -3,6 +3,13 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import {dlfSections} from "../../../config/deep-learning-fundamentals-sections";
 
 const showDevRoutes = import.meta.env.DEV;
+let NotebookWriteup = null;
+
+try {
+  NotebookWriteup = (await import("../../../generated/deep-learning-fundamentals.md")).default;
+} catch {
+  NotebookWriteup = null;
+}
 ---
 
 <BaseLayout
@@ -14,8 +21,8 @@ const showDevRoutes = import.meta.env.DEV;
       <p class="eyebrow">Project</p>
       <h1>Large Language Models and Deep Learning Fundamentals</h1>
       <p>
-        Technical deep dive into transformer implementation, expected-vs-observed performance, profiling traces,
-        hyperparameter sweeps, and architecture ablations.
+        This Astro route mirrors the exported notebook writeup while preserving stable section routes for
+        interactive technical views.
       </p>
       <nav>
         <a href="/">Back home</a>
@@ -37,6 +44,26 @@ const showDevRoutes = import.meta.env.DEV;
           ))
         }
       </ol>
+    </section>
+
+    <section class="panel">
+      <h2>Notebook Writeup</h2>
+      <p>
+        Source of truth: <code>ns_obv/src/llm-fundamentals/index.md</code>. Run <code>npm run export:astro</code> in
+        <code>ns_obv</code> to refresh this content.
+      </p>
+      {
+        NotebookWriteup ? (
+          <div class="writeup">
+            <NotebookWriteup />
+          </div>
+        ) : (
+          <p class="missing-writeup">
+            Notebook markdown has not been synced yet. Run <code>npm run export:astro</code> in
+            <code> /Users/juliusmopper/Dev/ns_obv</code> and restart Astro dev.
+          </p>
+        )
+      }
     </section>
   </article>
 </BaseLayout>
@@ -111,5 +138,48 @@ const showDevRoutes = import.meta.env.DEV;
   .toc-list p {
     margin: 0.35rem 0 0;
     color: var(--text-1);
+  }
+
+  .missing-writeup {
+    margin: 0;
+    border: 1px dashed var(--stroke);
+    border-radius: 10px;
+    padding: 0.75rem;
+  }
+
+  .writeup {
+    margin-top: 0.8rem;
+  }
+
+  .writeup :global(h1) {
+    margin: 0.2rem 0 1rem;
+    font-size: clamp(1.5rem, 2.5vw, 2.1rem);
+  }
+
+  .writeup :global(h2) {
+    margin: 1.4rem 0 0.65rem;
+    font-size: 1.25rem;
+  }
+
+  .writeup :global(h3) {
+    margin: 1rem 0 0.5rem;
+    font-size: 1.06rem;
+  }
+
+  .writeup :global(p),
+  .writeup :global(li) {
+    line-height: 1.65;
+    max-width: 74ch;
+  }
+
+  .writeup :global(ul),
+  .writeup :global(ol) {
+    margin: 0.35rem 0 0.9rem 1.25rem;
+  }
+
+  .writeup :global(hr) {
+    border: 0;
+    border-top: 1px solid var(--stroke);
+    margin: 1.2rem 0;
   }
 </style>

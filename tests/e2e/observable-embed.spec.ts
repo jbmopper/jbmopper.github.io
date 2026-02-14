@@ -57,8 +57,8 @@ test("overview and section routes follow separate-page embed structure", async (
   });
 
   await page.goto("/projects/deep-learning-fundamentals/");
-  await expect(page.getByRole("heading", {name: "Large Language Models and Deep Learning Fundamentals"})).toBeVisible();
-  await expect(page.getByRole("heading", {name: "Project Overview"})).toBeVisible();
+  await expect(page.locator("header.panel h1")).toHaveText("Large Language Models and Deep Learning Fundamentals");
+  await expect(page.getByRole("heading", {name: "Project Overview", level: 2})).toBeVisible();
   await expect
     .poll(() => page.evaluate(() => (window as any).__observableEmbedState?.mounted ?? 0), {
       timeout: MOUNT_TIMEOUT_MS
@@ -109,7 +109,7 @@ test("browser back-forward restores embed content without manual reload", async 
   await expectEmbedMounted(page, 1);
 
   await page.goBack();
-  await expect(page.getByRole("heading", {name: "Project Overview"})).toBeVisible({timeout: 60_000});
+  await expect(page.getByRole("heading", {name: "Project Overview", level: 2})).toBeVisible({timeout: 60_000});
   await expect
     .poll(() => page.evaluate(() => (window as any).__observableEmbedState?.mounted ?? 0), {
       timeout: MOUNT_TIMEOUT_MS
