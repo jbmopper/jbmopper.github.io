@@ -16,31 +16,14 @@ const requiredSharedArtifacts = [
   "public/observable/_import",
   "public/observable/_file"
 ];
-const routeSetCandidates = [
-  {
-    name: "legacy",
-    routes: [
-      "llm-fundamentals",
-      "perf-expected",
-      "perf-empirical",
-      "nsys",
-      "lr-sweep",
-      "ablations",
-      "data-playground"
-    ]
-  },
-  {
-    name: "migrated",
-    routes: [
-      "projects/llm-fundamentals",
-      "projects/llm-fundamentals/perf-expected",
-      "projects/llm-fundamentals/perf-empirical",
-      "projects/llm-fundamentals/nsys",
-      "projects/llm-fundamentals/lr-sweep",
-      "projects/llm-fundamentals/ablations",
-      "projects/data-playground"
-    ]
-  }
+const requiredCanonicalRoutes = [
+  "projects/llm-fundamentals",
+  "projects/llm-fundamentals/perf-expected",
+  "projects/llm-fundamentals/perf-empirical",
+  "projects/llm-fundamentals/nsys",
+  "projects/llm-fundamentals/lr-sweep",
+  "projects/llm-fundamentals/ablations",
+  "projects/data-playground"
 ];
 
 async function pathExists(relativePath) {
@@ -59,38 +42,26 @@ async function assertExists(relativePath) {
   }
 }
 
-async function assertRouteSet() {
-  const failures = [];
-
-  for (const candidate of routeSetCandidates) {
-    const missing = [];
-
-    for (const route of candidate.routes) {
-      const routeIndexPath = `public/observable/${route}/index.html`;
-      if (!(await pathExists(routeIndexPath))) {
-        missing.push(routeIndexPath);
-      }
+async function assertCanonicalRoutes() {
+  const missing = [];
+  for (const route of requiredCanonicalRoutes) {
+    const routeIndexPath = `public/observable/${route}/index.html`;
+    if (!(await pathExists(routeIndexPath))) {
+      missing.push(routeIndexPath);
     }
-
-    if (missing.length === 0) {
-      return candidate.name;
-    }
-
-    failures.push({candidate: candidate.name, missing});
   }
 
-  const summary = failures
-    .map(({candidate, missing}) => `${candidate}: ${missing.join(", ")}`)
-    .join(" | ");
-  throw new Error(`Missing Observable route set. Expected one complete candidate (${summary}).`);
+  if (missing.length > 0) {
+    throw new Error(`Missing canonical Observable routes: ${missing.join(", ")}`);
+  }
 }
 
 async function main() {
   for (const item of requiredSharedArtifacts) {
     await assertExists(item);
   }
-  const resolvedRouteSet = await assertRouteSet();
-  console.log(`Observable artifact check passed (route set: ${resolvedRouteSet}).`);
+  await assertCanonicalRoutes();
+  console.log("Observable artifact check passed (canonical project routes found).");
 }
 
 main().catch((error) => {

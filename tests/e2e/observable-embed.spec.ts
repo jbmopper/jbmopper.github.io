@@ -1,20 +1,27 @@
 import {expect, test} from "@playwright/test";
 
-const llmRoutePattern = /\/observable\/(?:projects\/llm-fundamentals|llm-fundamentals)\/(?:index\.html)?$/;
-const dataPlaygroundPattern = /\/observable\/(?:projects\/data-playground|data-playground)\/(?:index\.html)?$/;
+const llmRoutePattern = /\/observable\/projects\/llm-fundamentals\/(?:index\.html)?$/;
+const dataPlaygroundPattern = /\/observable\/projects\/data-playground\/(?:index\.html)?$/;
 
-test("landing project link opens notebook and returns home", async ({page}) => {
+test("landing project link opens canonical notebook and navigation is available", async ({page}) => {
   await page.goto("/");
   await page.getByRole("link", {name: "Deep Learning Fundamentals"}).click();
   await expect(page).toHaveURL(llmRoutePattern);
   await expect(page.getByRole("heading", {name: "Large Language Models and Deep Learning Fundamentals"})).toBeVisible();
 
   const backHomeLink = page.getByRole("link", {name: /Back to Home/});
-  await expect(backHomeLink).toBeVisible();
-  await backHomeLink.click();
+  if (await backHomeLink.count()) {
+    await backHomeLink.click();
+    await expect(page).toHaveURL("/");
+    await expect(page.getByRole("heading", {name: "jbmopper.github.io"})).toBeVisible();
+    return;
+  }
 
-  await expect(page).toHaveURL("/");
-  await expect(page.getByRole("heading", {name: "jbmopper.github.io"})).toBeVisible();
+  const projectsNavLink = page.locator("#observablehq-header a", {hasText: /^Projects$/});
+  await expect(projectsNavLink).toBeVisible();
+  await projectsNavLink.click();
+  await expect(page).toHaveURL(/\/observable\/projects\/(?:index\.html)?$/);
+  await expect(page.getByRole("heading", {name: "Projects"})).toBeVisible();
 });
 
 function observeObservableAssetFailures(page: import("@playwright/test").Page) {

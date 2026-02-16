@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.3">
+<title>Learning-Rate Sweeps | Project Writeup Sandbox</title>
+
+<link rel="preload" as="style" href="../../../_import/astro-bridge-theme.32ddd78c.css">
+<link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.32ddd78c.css">
+<link rel="modulepreload" href="../../../_observablehq/client.96fe71ba.js">
+<link rel="modulepreload" href="../../../_observablehq/runtime.e080113b.js">
+<link rel="modulepreload" href="../../../_observablehq/stdlib.43270668.js">
+<link rel="modulepreload" href="../../../_import/embed/lr-sweep.23eb78c0.js">
+<link rel="modulepreload" href="../../../_import/components/dom-utils.aaca454b.js">
+<link rel="modulepreload" href="../../../_npm/@observablehq/plot@0.6.17/7c43807f.js">
+<link rel="modulepreload" href="../../../_npm/d3@7.9.0/e324157d.js">
+<link rel="modulepreload" href="../../../_npm/apache-arrow@21.1.0/63de76cd.js">
+<link rel="modulepreload" href="../../../_npm/parquet-wasm@0.7.1/68d81b68.js">
+<link rel="modulepreload" href="../../../_npm/isoformat@0.2.1/18cbf477.js">
+<link rel="modulepreload" href="../../../_npm/interval-tree-1d@1.0.4/53fe8176.js">
+<link rel="modulepreload" href="../../../_npm/d3-array@3.2.4/e93ca09f.js">
+<link rel="modulepreload" href="../../../_npm/d3-axis@3.0.0/0f2de24d.js">
+<link rel="modulepreload" href="../../../_npm/d3-brush@3.0.0/65eb105b.js">
+<link rel="modulepreload" href="../../../_npm/d3-chord@3.0.1/7ef8fb2e.js">
+<link rel="modulepreload" href="../../../_npm/d3-color@3.1.0/aeb57b94.js">
+<link rel="modulepreload" href="../../../_npm/d3-contour@4.0.2/1d2aed74.js">
+<link rel="modulepreload" href="../../../_npm/d3-delaunay@6.0.4/5ced1d52.js">
+<link rel="modulepreload" href="../../../_npm/d3-dispatch@3.0.1/9ba9c7f3.js">
+<link rel="modulepreload" href="../../../_npm/d3-drag@3.0.0/4202580c.js">
+<link rel="modulepreload" href="../../../_npm/d3-dsv@3.0.1/9cffc2bd.js">
+<link rel="modulepreload" href="../../../_npm/d3-ease@3.0.1/cdd7e898.js">
+<link rel="modulepreload" href="../../../_npm/d3-fetch@3.0.1/b4e2ad9a.js">
+<link rel="modulepreload" href="../../../_npm/d3-force@3.0.0/5e804d15.js">
+<link rel="modulepreload" href="../../../_npm/d3-format@3.1.2/3785bf2d.js">
+<link rel="modulepreload" href="../../../_npm/d3-geo@3.1.1/40599fb3.js">
+<link rel="modulepreload" href="../../../_npm/d3-hierarchy@3.1.2/e49e792c.js">
+<link rel="modulepreload" href="../../../_npm/d3-interpolate@3.0.1/8d1e5425.js">
+<link rel="modulepreload" href="../../../_npm/d3-path@3.1.0/20d3f133.js">
+<link rel="modulepreload" href="../../../_npm/d3-polygon@3.0.1/7553081f.js">
+<link rel="modulepreload" href="../../../_npm/d3-quadtree@3.0.1/0dfd751c.js">
+<link rel="modulepreload" href="../../../_npm/d3-random@3.0.1/3c90ee06.js">
+<link rel="modulepreload" href="../../../_npm/d3-scale@4.0.2/720b7f0a.js">
+<link rel="modulepreload" href="../../../_npm/d3-scale-chromatic@3.1.0/ba24c2e7.js">
+<link rel="modulepreload" href="../../../_npm/d3-selection@3.0.0/4d94e5b7.js">
+<link rel="modulepreload" href="../../../_npm/d3-shape@3.2.0/6d3a6726.js">
+<link rel="modulepreload" href="../../../_npm/d3-time@3.1.0/9f03c579.js">
+<link rel="modulepreload" href="../../../_npm/d3-time-format@4.1.0/07c9626f.js">
+<link rel="modulepreload" href="../../../_npm/d3-timer@3.0.1/b58a267d.js">
+<link rel="modulepreload" href="../../../_npm/d3-transition@3.0.1/004da2ac.js">
+<link rel="modulepreload" href="../../../_npm/d3-zoom@3.0.0/b5786b3f.js">
+<link rel="modulepreload" href="../../../_npm/tslib@2.8.1/b62a9c4a.js">
+<link rel="modulepreload" href="../../../_npm/flatbuffers@25.9.23/c82700c2.js">
+<link rel="modulepreload" href="../../../_npm/binary-search-bounds@2.0.5/cbf6ba23.js">
+<link rel="modulepreload" href="../../../_npm/internmap@2.0.3/e08981d9.js">
+<link rel="modulepreload" href="../../../_npm/delaunator@5.0.1/02d43215.js">
+<link rel="modulepreload" href="../../../_npm/robust-predicates@3.0.2/aa00730b.js">
+<script type="module">
+
+import {define} from "../../../_observablehq/client.96fe71ba.js";
+import {registerFile} from "../../../_observablehq/stdlib.43270668.js";
+
+registerFile("../../../data/raw/benchmarks/lr_sweeps_history.parquet", {"name":"../../../data/raw/benchmarks/lr_sweeps_history.parquet","path":"../../../_file/data/raw/benchmarks/lr_sweeps_history.ca369050.parquet","lastModified":1770927469237,"size":2077247});
+registerFile("../../../data/raw/benchmarks/lr_sweeps_main.parquet", {"name":"../../../data/raw/benchmarks/lr_sweeps_main.parquet","path":"../../../_file/data/raw/benchmarks/lr_sweeps_main.f6fefad8.parquet","lastModified":1770920604377,"size":15604});
+
+define({id: "2c33b9bf", outputs: ["renderLrSweep"], body: async () => {
+const {renderLrSweep} = await import("../../../_import/embed/lr-sweep.23eb78c0.js");
+
+return {renderLrSweep};
+}});
+
+define({id: "68812716", inputs: ["renderLrSweep","display"], body: async (renderLrSweep,display) => {
+display(await(
+await renderLrSweep()
+))
+}});
+
+</script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="../../../">Project Writeup Sandbox</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link"><a href="../../">Projects</a></li>
+    <li class="observablehq-link"><a href="../">LLM Fundamentals</a></li>
+    <li class="observablehq-link"><a href="../../data-playground/">Data Playground</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<header id="observablehq-header">
+<nav class="portfolio-top-links"><a class="portfolio-nav-link" href="https://juliusm.com/" target="_blank" rel="noopener noreferrer">Home</a><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; const path = window.location.pathname.replace(/^\/observable(?=\/|$)/, ''); const llm = /^\/(llm-fundamentals|perf-expected|perf-empirical|nsys|lr-sweep|ablations)(\/|$)/.test(path) || /^\/projects\/llm-fundamentals(\/|$)/.test(path); const playground = /^\/data-playground(\/|$)/.test(path) || /^\/projects\/data-playground(\/|$)/.test(path); const target = llm ? '/projects/llm-fundamentals/' : (playground ? '/projects/data-playground/' : '/projects/'); window.location.assign(window.location.origin + mount + target);">Current Project</a></nav>
+</header>
+<main id="observablehq-main" class="observablehq">
+<h1 id="learning-rate-sweep-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#learning-rate-sweep-analysis">Learning-Rate Sweep Analysis</a></h1>
+<div class="observablehq observablehq--block"><!--:2c33b9bf:--></div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:68812716:--></div>
+</main>
+<footer id="observablehq-footer">
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-16T15:12:00">Feb 16, 2026</a>.</div>
+</footer>
+</div>
+</body>
+</html>

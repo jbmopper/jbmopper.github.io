@@ -11,7 +11,7 @@ Keep Astro as the landing shell and publish Observable as static pages under `/o
 - Do not inject Astro header/footer/CSS/JS into exported Observable HTML.
 
 ## Canonical URL
-- Main notebook landing: `/observable/llm-fundamentals/`
+- Main notebook landing: `/observable/projects/llm-fundamentals/`
 
 ## Standard flow
 1. Build Observable source:
@@ -31,17 +31,17 @@ Keep Astro as the landing shell and publish Observable as static pages under `/o
    - `npm run test:e2e`
 
 ## Required behavior
-- Home project card links directly to `/observable/llm-fundamentals/`.
-- Notebook page exposes visible `Back to Home` link.
-- Back link returns to `/` on the same origin.
-- No broken notebook section links from `/observable/llm-fundamentals/`.
+- Home project card links directly to `/observable/projects/llm-fundamentals/`.
+- Notebook header exposes visible project navigation links.
+- `Projects` navigation returns to `/observable/projects/` on the same origin.
+- No broken notebook section links from `/observable/projects/llm-fundamentals/`.
 
 ## Common failures
 - `verify:observable` fails:
   - Export step not run or `public/observable` incomplete. Re-run build + export in `ns_obv`.
 
 - Notebook links broken:
-  - Fix source links in `ns_obv/src/llm-fundamentals/index.md` and rebuild/export.
+  - Fix source links in `ns_obv/src/projects/llm-fundamentals/index.md` and rebuild/export.
 
 - Styling drift:
   - Adjust Observable theme in `ns_obv` (`observablehq.config.js` + `src/astro-bridge-theme.css`), then rebuild/export.

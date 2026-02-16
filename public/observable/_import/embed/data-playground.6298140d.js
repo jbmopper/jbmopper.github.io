@@ -4,7 +4,7 @@ import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
 import {formatBytes} from "../components/data-utils.e2caa41c.js";
 import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.aaca454b.js";
 
-const MANIFEST_ATTACHMENT = FileAttachment({"name":"../../data/manifest.json","mimeType":"application/json","path":"../../_file/data/manifest.589b314f.json","lastModified":1771016742389,"size":14702}, import.meta.url);
+const MANIFEST_ATTACHMENT = FileAttachment({"name":"../../data/manifest.json","mimeType":"application/json","path":"../../_file/data/manifest.589b314f.json","lastModified":1771275386884,"size":14702}, import.meta.url);
 
 const ATTACHMENTS = {
   "traces/bad_head_size_nsys.parquet": FileAttachment({"name":"../../data/raw/traces/bad_head_size_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/bad_head_size_nsys.0e5fcf94.parquet","lastModified":1770920604380,"size":699507}, import.meta.url),
