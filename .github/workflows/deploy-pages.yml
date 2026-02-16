@@ -18,7 +18,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
 
     steps:
       - name: Checkout website repo
@@ -33,10 +33,11 @@ jobs:
       - name: Install website dependencies
         run: npm ci
 
-      - name: Verify Observable artifacts and build Astro
-        run: |
-          npm run verify:observable
-          npm run build
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run website CI checks
+        run: npm run test:ci
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

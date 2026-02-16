@@ -1,32 +1,12 @@
 import {expect, test} from "@playwright/test";
 
-const sections = [
-  {
-    path: "/observable/perf-expected/",
-    title: "Architecture and Expected Performance Analysis",
-  },
-  {
-    path: "/observable/perf-empirical/",
-    title: "Benchmarks and Empirical Performance Analysis",
-  },
-  {
-    path: "/observable/nsys/",
-    title: "NSYS Traces",
-  },
-  {
-    path: "/observable/lr-sweep/",
-    title: "Learning-Rate Sweep Analysis",
-  },
-  {
-    path: "/observable/ablations/",
-    title: "Ablation Analysis",
-  }
-] as const;
+const llmRoutePattern = /\/observable\/(?:projects\/llm-fundamentals|llm-fundamentals)\/(?:index\.html)?$/;
+const dataPlaygroundPattern = /\/observable\/(?:projects\/data-playground|data-playground)\/(?:index\.html)?$/;
 
 test("landing project link opens notebook and returns home", async ({page}) => {
   await page.goto("/");
-  await page.click('a[href="/observable/llm-fundamentals/"]');
-  await expect(page).toHaveURL(/\/observable\/llm-fundamentals\/(?:index\.html)?$/);
+  await page.getByRole("link", {name: "Deep Learning Fundamentals"}).click();
+  await expect(page).toHaveURL(llmRoutePattern);
   await expect(page.getByRole("heading", {name: "Large Language Models and Deep Learning Fundamentals"})).toBeVisible();
 
   const backHomeLink = page.getByRole("link", {name: /Back to Home/});
@@ -53,14 +33,56 @@ function observeObservableAssetFailures(page: import("@playwright/test").Page) {
   return failures;
 }
 
-test("observable technical sections render from canonical routes", async ({page}) => {
+async function collectNotebookLinks(page: import("@playwright/test").Page) {
+  return page.evaluate(({llmPatternSource}) => {
+    const llmPattern = new RegExp(llmPatternSource);
+    const links = new Set<string>();
+
+    for (const anchor of Array.from(document.querySelectorAll("a[href]"))) {
+      const href = anchor.getAttribute("href");
+      if (!href || href.startsWith("#")) {
+        continue;
+      }
+
+      const url = new URL(anchor.href, window.location.href);
+      if (url.origin !== window.location.origin) {
+        continue;
+      }
+
+      if (!url.pathname.startsWith("/observable/") || url.hash) {
+        continue;
+      }
+
+      if (url.pathname === "/observable/" || url.pathname === "/observable/index.html") {
+        continue;
+      }
+
+      if (llmPattern.test(url.pathname)) {
+        continue;
+      }
+
+      links.add(url.pathname);
+    }
+
+    return Array.from(links);
+  }, {llmPatternSource: llmRoutePattern.source});
+}
+
+test("observable notebook links render from canonical routes", async ({page}) => {
   const failures = observeObservableAssetFailures(page);
-  await page.goto("/observable/llm-fundamentals/");
+  await page.goto("/");
+  await page.getByRole("link", {name: "Deep Learning Fundamentals"}).click();
+  await expect(page).toHaveURL(llmRoutePattern);
   await expect(page.getByRole("heading", {name: "Large Language Models and Deep Learning Fundamentals"})).toBeVisible();
 
-  for (const section of sections) {
-    await page.goto(section.path);
-    await expect(page.getByRole("heading", {name: section.title})).toBeVisible({timeout: 60_000});
+  const linkedNotebookPaths = await collectNotebookLinks(page);
+  expect(linkedNotebookPaths.length).toBeGreaterThanOrEqual(6);
+  expect(linkedNotebookPaths.some((candidate) => dataPlaygroundPattern.test(candidate))).toBeTruthy();
+
+  for (const notebookPath of linkedNotebookPaths) {
+    const response = await page.goto(notebookPath);
+    expect(response?.status(), `Expected ${notebookPath} to load without error`).toBeLessThan(400);
+    await expect(page.locator("h1").first()).toBeVisible({timeout: 60_000});
   }
 
   expect(failures).toEqual([]);
