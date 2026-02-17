@@ -1,6 +1,8 @@
 .DS_Store
 node_modules/
 dist/
+!public/observable/_npm/katex@*/dist/
+!public/observable/_npm/katex@*/dist/**
 .astro/
 playwright-report/
 test-results/

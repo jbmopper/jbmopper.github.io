@@ -1,4 +1,4 @@
-import {stat} from "node:fs/promises";
+import {readFile, stat} from "node:fs/promises";
 import {fileURLToPath} from "node:url";
 import path from "node:path";
 
@@ -14,7 +14,8 @@ const requiredSharedArtifacts = [
   "public/observable/embed/data-playground.js",
   "public/observable/_observablehq",
   "public/observable/_import",
-  "public/observable/_file"
+  "public/observable/_file",
+  "public/observable/_npm"
 ];
 const requiredCanonicalRoutes = [
   "projects/llm-fundamentals",
@@ -56,11 +57,54 @@ async function assertCanonicalRoutes() {
   }
 }
 
+async function assertKatexAssets() {
+  const mathPagePath = "public/observable/projects/llm-fundamentals/perf-expected/index.html";
+  const mathPageAbsolutePath = path.join(PROJECT_ROOT, mathPagePath);
+  const mathPageHtml = await readFile(mathPageAbsolutePath, "utf8");
+
+  const katexCssMatches = [...mathPageHtml.matchAll(/href="([^"]*katex[^"]*\.css)"/g)].map((match) => match[1]);
+  if (katexCssMatches.length === 0) {
+    throw new Error(`No KaTeX stylesheet references found in ${mathPagePath}`);
+  }
+
+  const uniqueKatexCssMatches = [...new Set(katexCssMatches)];
+  for (const cssReference of uniqueKatexCssMatches) {
+    const cssAbsolutePath = path.resolve(path.dirname(mathPageAbsolutePath), cssReference);
+    try {
+      await stat(cssAbsolutePath);
+    } catch (error) {
+      throw new Error(`Missing KaTeX stylesheet asset referenced by ${mathPagePath}: ${cssReference}`);
+    }
+
+    const cssText = await readFile(cssAbsolutePath, "utf8");
+    const fontReferences = [...cssText.matchAll(/url\((?:'|")?([^'")]+)(?:'|")?\)/g)]
+      .map((match) => match[1])
+      .filter((fontPath) => fontPath.includes("fonts/") && !fontPath.startsWith("data:") && !fontPath.startsWith("http"));
+
+    if (fontReferences.length === 0) {
+      throw new Error(`No KaTeX font references found in stylesheet: ${path.relative(PROJECT_ROOT, cssAbsolutePath)}`);
+    }
+
+    const uniqueFontReferences = [...new Set(fontReferences)];
+    for (const fontReference of uniqueFontReferences) {
+      const fontAbsolutePath = path.resolve(path.dirname(cssAbsolutePath), fontReference);
+      try {
+        await stat(fontAbsolutePath);
+      } catch (error) {
+        throw new Error(
+          `Missing KaTeX font asset referenced by ${path.relative(PROJECT_ROOT, cssAbsolutePath)}: ${fontReference}`
+        );
+      }
+    }
+  }
+}
+
 async function main() {
   for (const item of requiredSharedArtifacts) {
     await assertExists(item);
   }
   await assertCanonicalRoutes();
+  await assertKatexAssets();
   console.log("Observable artifact check passed (canonical project routes found).");
 }
 
