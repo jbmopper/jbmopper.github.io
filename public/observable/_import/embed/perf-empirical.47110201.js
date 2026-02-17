@@ -217,7 +217,7 @@ function estimateParamCount(row) {
   );
 }
 
-async function loadEmpiricalData() {
+export async function loadEmpiricalData() {
   if (!empiricalDataPromise) {
     empiricalDataPromise = (async () => {
       const [
@@ -372,7 +372,7 @@ function makeRangeControl(labelText, min, max, step, value) {
   return {node: wrapper, input, output};
 }
 
-function metricValue(row, metric) {
+export function metricValue(row, metric) {
   if (metric === "Loss") return row.loss;
   if (metric === "Eval Loss") return row.eval_loss;
   if (metric === "Eval Perplexity") return row.eval_perplexity;
@@ -380,7 +380,7 @@ function metricValue(row, metric) {
   return row.step_s;
 }
 
-function metricLabel(metric) {
+export function metricLabel(metric) {
   if (metric === "Loss") return "Loss";
   if (metric === "Eval Loss") return "Eval Loss";
   if (metric === "Eval Perplexity") return "Eval Perplexity";
@@ -778,7 +778,7 @@ function renderDeviceComparisonSection(data, options = {}) {
   return host;
 }
 
-function buildSegmentedHistoryRows(historyRows, options) {
+export function buildSegmentedHistoryRows(historyRows, options) {
   const {
     selectedSeries,
     metric,
