@@ -6,8 +6,8 @@
 <meta name="generator" content="Observable Framework v1.13.3">
 <title>Architecture and Expected Performance | Project Writeup Sandbox</title>
 
-<link rel="preload" as="style" href="../../../_import/astro-bridge-theme.32ddd78c.css">
-<link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.32ddd78c.css">
+<link rel="preload" as="style" href="../../../_import/astro-bridge-theme.255eed1d.css">
+<link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.255eed1d.css">
 <link rel="modulepreload" href="../../../_observablehq/client.96fe71ba.js">
 <link rel="modulepreload" href="../../../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib.43270668.js">
@@ -49,15 +49,88 @@ await renderPerfExpected()
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <header id="observablehq-header">
-<nav class="portfolio-top-links"><a class="portfolio-nav-link" href="https://juliusm.com/" target="_blank" rel="noopener noreferrer">Home</a><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; const path = window.location.pathname.replace(/^\/observable(?=\/|$)/, ''); const llm = /^\/projects\/llm-fundamentals(\/|$)/.test(path); const playground = /^\/projects\/data-playground(\/|$)/.test(path); const target = llm ? '/projects/llm-fundamentals/' : (playground ? '/projects/data-playground/' : '/projects/'); window.location.assign(window.location.origin + mount + target);">Current Project</a></nav>
+<nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">Home</a><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a id="portfolio-current-project-link" class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; const path = window.location.pathname.replace(/^\/observable(?=\/|$)/, ''); const llm = /^\/projects\/llm-fundamentals(\/|$)/.test(path); const playground = /^\/projects\/data-playground(\/|$)/.test(path); const target = llm ? '/projects/llm-fundamentals/' : (playground ? '/projects/data-playground/' : '/projects/'); window.location.assign(window.location.origin + mount + target);">Current Project</a></nav><script>(function(){const path=window.location.pathname.replace(/^\/observable(?=\/|$)/,""); const link=document.getElementById("portfolio-current-project-link"); if(link && /^\/projects\/?$/.test(path)){link.remove();} for(const id of ["observablehq-sidebar-toggle","observablehq-sidebar-backdrop","observablehq-sidebar"]){const node=document.getElementById(id); if(node) node.remove();}})();</script>
 </header>
 <main id="observablehq-main" class="observablehq">
 <h1 id="architecture-and-expected-performance-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#architecture-and-expected-performance-analysis">Architecture and Expected Performance Analysis</a></h1>
+<h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
+<p>This document describes the architecture and expected performance.  The basic model design is a standard transformer with a core model dimension (<code>d_model</code> or $d_{model}$) which the attention heads subdivide such that each layer's number of heads $h = d_{model} / d_{head}$ or $d_k$, the head dimension, followed by a feedfoward layer that is up-projected to $d_{ffn}$ and down-projected back to $d_{model}$, in order to add the results of the layer back into the residual stream.  This is repeated for $L$ layers and the output is projected up to provide logits across the $V$ vocabulary elements, which are then used for inference.</p>
+<h3 id="model-architecture" tabindex="-1"><a class="observablehq-header-anchor" href="#model-architecture">Model Architecture</a></h3>
+<p>More concretely, the model consists of:</p>
+<ul>
+<li>
+<p>an embedding layer that brings $B$ batches of length $S$ input (token index) sequences up to $d_{model}$ to create an input $X \in \mathbb{R}^{B \times S \times d}$ and initializes the residual stream</p>
+</li>
+<li>
+<p>$L$ layers consisting of</p>
+<ul>
+<li>
+<p>an RMS norm on the embedded token with $S \times d_{model}$ weights $\gamma$,</p>
+<p>$$
+\mathrm{RMSNorm}(x) = \frac{x}{\mathrm{RMS}(x)} \cdot \gamma,
+\quad \mathrm{RMS}(x) = \sqrt{\frac{1}{d}\sum_{j=1}^{d} x_j^2 + \epsilon}
+$$</p>
+</li>
+<li>
+<p>projection of the input matrix $X$ by $W^Q, W^K, W^V \in \mathbb{R}^{d \times d_k}$ matrices</p>
+<p>$$
+Q = X W^Q, \quad K = X W^K, \quad V = X W^V
+$$</p>
+<p>however $W^Q, W^K, W^V$ were concatenated to reduce the number of matrix multiplication operatoins.  These were then split into the individual $d_k \times d_k$ matrices for each head.</p>
+</li>
+<li>
+<p>the $Q$ and $K$ matrices have the RoPE transform applied, with each rotation block applied to dimension pairs</p>
+<p>$$
+\mathrm{RoPE}(\mathbf{x}, t)<em>{2i:2i+2} = \begin{pmatrix}
+\cos \phi</em>{t,i} &amp; -\sin \phi_{t,i} \
+\sin \phi_{t,i} &amp; \cos \phi_{t,i}
+\end{pmatrix}
+\mathbf{x}_{2i:2i+2}
+$$</p>
+<p>where $t$ is the token position and $i$ indexes dimension pairs.  This implementation conserves memory at the cost of aditional compute (see below)</p>
+</li>
+<li>
+<p>scaled dot product attention is performed</p>
+<p>$$
+\mathrm{Attention}(Q, K, V) = \mathrm{softmax}!\left(\frac{Q K^\top}{\sqrt{d_k}}\right) V
+$$</p>
+<p>with causal masking applied to the $QK^T/\sqrt{d_k}$ matrix</p>
+</li>
+<li>
+<p>the attention outputs are concatenated and multiplied by output projectionwieight matrix $W^o$</p>
+</li>
+<li>
+<p>the result is added to the residual stream and an RMS norm is applied</p>
+</li>
+<li>
+<p>this is then put through a SWiGLU feedforward layer ($d_{ff}$)</p>
+<p>$$
+\mathrm{swiglu}(\mathbf{x}) =\left((\mathbf{x} \odot \sigma(\mathbf{x} w^{(1)})\odot(\mathbf{x} w^{(2)})\right) w^{(3)}
+$$</p>
+<p>where $\sigma$ is the sigmoid function and $\odot$ is componentwise or hadamard product</p>
+</li>
+</ul>
+</li>
+<li>
+<p>after $l$ of these layers, the result is again added to the residual stream and an rms norm is applied</p>
+</li>
+<li>
+<p>the result is projected up the the vocabulary dimenion by the language head, producing the output logits</p>
+</li>
+</ul>
+<h3 id="loss-function-optimizer-scheduler-and-tranining-details" tabindex="-1"><a class="observablehq-header-anchor" href="#loss-function-optimizer-scheduler-and-tranining-details">loss function, optimizer, scheduler, and tranining details</a></h3>
+<p>each token in the batch of sequences is used to predict the next token probabilities by converting the logits via softmax.  the cross-entropy loss</p>
+<p>$$
+\mathcal{l} = -\frac{1}{b s} \sum_{b=1}^{b} \sum_{s=1}^{s}\log p_\theta(y_{b,s} \mid x_{b,1:s})
+$$</p>
+<p>is then caclulated based on the actual next-token values.  this loss is then backpropagated, with the trainable parameters updated via the <a href="https://arxiv.org/abs/1711.05101" target="_blank" rel="noopener noreferrer">adamw optimizer</a>, which adds decoupled weight decay to the adam optimizer.</p>
+<p>the optimizer takes a learning rate parameter which was generated by a cosine-annealing learning rate scheduler returns the minimum up to maximum learning rates linearly during its warmup iterations, then returns learning rates decreasing according to a cosine schedule back to the minimum value for the final iteration.</p>
+<p>the model was trained in this fashion with evaluation losses and perplexity measured at intervals, and checkpoints generated of the latest and best-evaluating parameters.</p>
 <div class="observablehq observablehq--block"><!--:42f595d0:--></div>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:01a07022:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-16T19:32:51">Feb 16, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-16T20:57:17">Feb 16, 2026</a>.</div>
 </footer>
 </div>
 </body>

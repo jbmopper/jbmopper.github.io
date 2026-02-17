@@ -6,7 +6,7 @@ interface Props {
   description?: string;
 }
 
-const {title = "jbmopper.github.io | Portfolio Site", description = "Portfolio site"} = Astro.props;
+const {title = "juliusm.com | Portfolio Site", description = "Portfolio site"} = Astro.props;
 const year = new Date().getFullYear();
 ---
 
@@ -21,17 +21,17 @@ const year = new Date().getFullYear();
   <body>
     <ClientRouter />
     <header class="site-header">
-      <a class="brand" href="/">jbmopper.github.io</a>
+      <a class="brand" href="/">juliusm.com</a>
       <nav class="nav-links">
         <a href="/#welcome">Welcome</a>
-        <a href="/#projects">Projects</a>
+        <a href="/observable/projects/">Projects</a>
         <a href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">Contact</a>
       </nav>
     </header>
     <main>
       <slot />
     </main>
-    <footer>© {year} jbmopper.github.io</footer>
+    <footer>© {year} juliusm.com</footer>
   </body>
 </html>
 
