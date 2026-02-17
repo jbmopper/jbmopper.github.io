@@ -9,14 +9,6 @@ test("landing project link opens canonical notebook and navigation is available"
   await expect(page).toHaveURL(llmRoutePattern);
   await expect(page.getByRole("heading", {name: "Large Language Models and Deep Learning Fundamentals"})).toBeVisible();
 
-  const backHomeLink = page.getByRole("link", {name: /Back to Home/});
-  if (await backHomeLink.count()) {
-    await backHomeLink.click();
-    await expect(page).toHaveURL("/");
-    await expect(page.getByRole("heading", {name: "jbmopper.github.io"})).toBeVisible();
-    return;
-  }
-
   const projectsNavLink = page.locator("#observablehq-header a", {hasText: /^Projects$/});
   await expect(projectsNavLink).toBeVisible();
   await projectsNavLink.click();
