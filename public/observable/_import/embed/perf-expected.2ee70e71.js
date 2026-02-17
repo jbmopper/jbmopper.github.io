@@ -1,3 +1,4 @@
+import {FileAttachment} from "../../_observablehq/stdlib.43270668.js";
 import {
   calculateForwardFlops,
   calculateMemoryAccounting,
@@ -7,6 +8,7 @@ import {
 } from "../components/perf-estimates.d771a94d.js";
 import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.aaca454b.js";
 
+const MODEL_CONFIG_CATALOG = FileAttachment({"name":"../../data/raw/llm-fundamentals/model-config-catalog.json","mimeType":"application/json","path":"../../_file/data/raw/llm-fundamentals/model-config-catalog.3b260981.json","lastModified":1771314318102,"size":18447}, import.meta.url);
 const D_HEAD_CHOICES = [32, 64, 96, 128];
 const PLATFORM_OPTIONS = [
   {
@@ -142,6 +144,8 @@ function platformByValue(value) {
 function normalizedSpec(spec, index) {
   return {
     name: String(spec.name || `model_${index + 1}`),
+    category: String(spec.category || "custom"),
+    source: String(spec.source || "manual"),
     B: safeNumber(spec.B, 32),
     S: safeNumber(spec.S, 512),
     V: safeNumber(spec.V, 10_000),
@@ -157,6 +161,65 @@ function normalizedSpec(spec, index) {
   };
 }
 
+function catalogSpec(entry, index) {
+  return normalizedSpec(
+    {
+      name: entry?.name || entry?.id || `catalog_${index + 1}`,
+      category: entry?.category || "catalog",
+      source: entry?.source_key || entry?.source_file || "catalog",
+      B: entry?.batch_size,
+      S: entry?.seq_len,
+      V: entry?.vocab_size,
+      d_model: entry?.d_model,
+      n_heads: entry?.num_heads,
+      n_blocks: entry?.num_layers,
+      d_ff: entry?.d_ff,
+      d_head: entry?.d_head
+    },
+    index
+  );
+}
+
+function specKey(spec) {
+  const s = normalizedSpec(spec, 0);
+  return [
+    s.name,
+    s.B,
+    s.S,
+    s.V,
+    s.d_model,
+    s.d_head,
+    s.n_heads,
+    s.n_blocks,
+    s.d_ff,
+    s.wt_dtype,
+    s.ft_dtype,
+    s.grad_dtype,
+    s.use_amp
+  ].join("|");
+}
+
+function mergeUniqueSpecs(targetSpecs, incomingSpecs) {
+  const existing = new Set(targetSpecs.map((spec) => specKey(spec)));
+  for (const next of incomingSpecs) {
+    const key = specKey(next);
+    if (existing.has(key)) continue;
+    targetSpecs.push(next);
+    existing.add(key);
+  }
+}
+
+async function loadCatalogSpecs() {
+  try {
+    const catalog = await MODEL_CONFIG_CATALOG.json();
+    const rows = Array.isArray(catalog?.named_configs) ? catalog.named_configs : [];
+    return rows.map((entry, index) => catalogSpec(entry, index));
+  } catch (error) {
+    console.warn("Failed to load model config catalog:", error);
+    return [];
+  }
+}
+
 function compareRows(specs, ramBudgetGb) {
   return specs.map((spec, index) => {
     const s = normalizedSpec(spec, index);
@@ -168,6 +231,7 @@ function compareRows(specs, ramBudgetGb) {
 
     return {
       name: s.name,
+      category: s.category,
       B: s.B,
       S: s.S,
       V: s.V,
@@ -196,7 +260,7 @@ export async function renderPerfExpected(options = {}) {
   root.style.display = "grid";
   root.style.gap = "1rem";
 
-  const title = el("h2", "Architecture and Expected Performance");
+  const title = el("h2", "Model Spec Builder and Resource Estimator");
   title.style.margin = "0";
   const subtitle = el(
     "p",
@@ -213,8 +277,12 @@ export async function renderPerfExpected(options = {}) {
 
   root.append(title, subtitle, status, controlsHost, summaryHost, validationHost);
 
+  const catalogSpecs = await loadCatalogSpecs();
   const initialSpecs = Array.isArray(options.initialSpecs) ? options.initialSpecs : [];
   const specs = initialSpecs.map((spec, index) => normalizedSpec(spec, index));
+  if (specs.length === 0 && catalogSpecs.length > 0) {
+    specs.push(...catalogSpecs);
+  }
   const ramBudgetGb = safeNumber(options.ramBudgetGb, 24);
 
   const nameInput = textInputControl("Spec Name", "");
@@ -256,8 +324,18 @@ export async function renderPerfExpected(options = {}) {
   actions.style.flexWrap = "wrap";
 
   const addButton = button("Add Current Spec");
+  const loadCatalogButton = button("Merge Catalog Specs");
+  const replaceCatalogButton = button("Replace With Catalog");
   const clearButton = button("Clear Specs");
-  actions.append(addButton, clearButton);
+  actions.append(addButton, loadCatalogButton, replaceCatalogButton, clearButton);
+
+  const catalogInfo = el(
+    "p",
+    catalogSpecs.length > 0
+      ? `Catalog loaded: ${catalogSpecs.length} named model config(s).`
+      : "Catalog unavailable; using manual specs only."
+  );
+  catalogInfo.style.margin = "0";
 
   controlsHost.append(
     sectionHeading("Spec Builder"),
@@ -273,6 +351,7 @@ export async function renderPerfExpected(options = {}) {
     platformSelect.node,
     derivedInfo,
     platformInfo,
+    catalogInfo,
     actions
   );
 
@@ -354,6 +433,7 @@ export async function renderPerfExpected(options = {}) {
     summaryHost.appendChild(
       renderSimpleTable(rows, [
         {key: "name", label: "Model"},
+        {key: "category", label: "Category"},
         {key: "B", label: "B", align: "right"},
         {key: "S", label: "S", align: "right"},
         {key: "d_model", label: "d_model", align: "right"},
@@ -380,6 +460,17 @@ export async function renderPerfExpected(options = {}) {
 
   addButton.addEventListener("click", () => {
     specs.push(currentDraft());
+    renderTables();
+  });
+
+  loadCatalogButton.addEventListener("click", () => {
+    mergeUniqueSpecs(specs, catalogSpecs);
+    renderTables();
+  });
+
+  replaceCatalogButton.addEventListener("click", () => {
+    specs.length = 0;
+    specs.push(...catalogSpecs);
     renderTables();
   });
 

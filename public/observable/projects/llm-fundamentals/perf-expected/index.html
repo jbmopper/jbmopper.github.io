@@ -7,19 +7,235 @@
 <title>Architecture and Expected Performance | Project Writeup Sandbox</title>
 
 <link rel="preload" as="style" href="../../../_import/astro-bridge-theme.255eed1d.css">
+<link rel="preload" as="style" href="../../../_npm/katex@0.16.28/dist/katex.min.css">
 <link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.255eed1d.css">
-<link rel="modulepreload" href="../../../_observablehq/client.96fe71ba.js">
+<link rel="stylesheet" type="text/css" href="../../../_npm/katex@0.16.28/dist/katex.min.css">
+<link rel="modulepreload" href="../../../_observablehq/client.7c413535.js">
 <link rel="modulepreload" href="../../../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../../../_import/embed/perf-expected.9ef58861.js">
+<link rel="modulepreload" href="../../../_import/embed/perf-expected.2ee70e71.js">
+<link rel="modulepreload" href="../../../_observablehq/stdlib/tex.c79b643a.js">
 <link rel="modulepreload" href="../../../_import/components/perf-estimates.d771a94d.js">
 <link rel="modulepreload" href="../../../_import/components/dom-utils.aaca454b.js">
+<link rel="modulepreload" href="../../../_npm/katex@0.16.28/f76b8a99.js">
 <script type="module">
 
-import {define} from "../../../_observablehq/client.96fe71ba.js";
+import {define} from "../../../_observablehq/client.7c413535.js";
+import {registerFile} from "../../../_observablehq/stdlib.43270668.js";
+
+registerFile("../../../data/raw/llm-fundamentals/model-config-catalog.json", {"name":"../../../data/raw/llm-fundamentals/model-config-catalog.json","mimeType":"application/json","path":"../../../_file/data/raw/llm-fundamentals/model-config-catalog.3b260981.json","lastModified":1771314318102,"size":18447});
+
+define({id: "d4a5728a", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`d_{model}`
+))
+}});
+
+define({id: "bb937657", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`h = d_{model} / d_{head}`
+))
+}});
+
+define({id: "276a7cec", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`d_k`
+))
+}});
+
+define({id: "a769ade5", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`d_{ffn}`
+))
+}});
+
+define({id: "d4a5728a-1", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`d_{model}`
+))
+}});
+
+define({id: "256dca58", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`L`
+))
+}});
+
+define({id: "5e0ea1c6", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`V`
+))
+}});
+
+define({id: "e9422d4d", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`B`
+))
+}});
+
+define({id: "292babb6", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`S`
+))
+}});
+
+define({id: "d4a5728a-2", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`d_{model}`
+))
+}});
+
+define({id: "ea32e56a", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`X \in \mathbb{R}^{B \times S \times d}`
+))
+}});
+
+define({id: "256dca58-1", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`L`
+))
+}});
+
+define({id: "246395b1", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`S \times d_{model}`
+))
+}});
+
+define({id: "e123c38f", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`\gamma`
+))
+}});
+
+define({id: "63ea326f", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex.block`\mathrm{RMSNorm}(x) = \frac{x}{\mathrm{RMS}(x)} \cdot \gamma,
+\quad \mathrm{RMS}(x) = \sqrt{\frac{1}{d}\sum_{j=1}^{d} x_j^2 + \epsilon}`
+))
+}});
+
+define({id: "795b5447", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`X`
+))
+}});
+
+define({id: "28b66ad1", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`W^Q, W^K, W^V \in \mathbb{R}^{d \times d_k}`
+))
+}});
+
+define({id: "de85bd12", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex.block`Q = X W^Q, \quad K = X W^K, \quad V = X W^V`
+))
+}});
+
+define({id: "69bdf923", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`W^Q, W^K, W^V`
+))
+}});
+
+define({id: "7166cac1", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`d_k \times d_k`
+))
+}});
+
+define({id: "4dbdd942", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`Q`
+))
+}});
+
+define({id: "cf546aab", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`K`
+))
+}});
+
+define({id: "55d3103a", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex.block`\mathrm{RoPE}(\mathbf{x}, t)_{2i:2i+2} = \begin{pmatrix}
+\cos \phi_{t,i} & -\sin \phi_{t,i} \\
+\sin \phi_{t,i} & \cos \phi_{t,i}
+\end{pmatrix}
+\mathbf{x}_{2i:2i+2}`
+))
+}});
+
+define({id: "12149432", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`t`
+))
+}});
+
+define({id: "82e0ed16", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`i`
+))
+}});
+
+define({id: "0cd39a38", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex.block`\mathrm{Attention}(Q, K, V) = \mathrm{softmax}\!\left(\frac{Q K^\top}{\sqrt{d_k}}\right) V`
+))
+}});
+
+define({id: "6c97d1ad", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`QK^T/\sqrt{d_k}`
+))
+}});
+
+define({id: "f259510c", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`W^o`
+))
+}});
+
+define({id: "f3dc34f5", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`d_{ff}`
+))
+}});
+
+define({id: "ccd957df", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex.block`\mathrm{swiglu}(\mathbf{x}) =\left((\mathbf{x} \odot \sigma(\mathbf{x} w^{(1)})\odot(\mathbf{x} w^{(2)})\right) w^{(3)}`
+))
+}});
+
+define({id: "33a3efc4", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`\sigma`
+))
+}});
+
+define({id: "41aafa6a", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`\odot`
+))
+}});
+
+define({id: "029e9b61", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`l`
+))
+}});
+
+define({id: "197047c5", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex.block`\mathcal{l} = -\frac{1}{b s} \sum_{b=1}^{b} \sum_{s=1}^{s}\log p_\theta(y_{b,s} \mid x_{b,1:s})`
+))
+}});
 
 define({id: "42f595d0", outputs: ["renderPerfExpected"], body: async () => {
-const {renderPerfExpected} = await import("../../../_import/embed/perf-expected.9ef58861.js");
+const {renderPerfExpected} = await import("../../../_import/embed/perf-expected.2ee70e71.js");
 
 return {renderPerfExpected};
 }});
@@ -54,83 +270,147 @@ await renderPerfExpected()
 <main id="observablehq-main" class="observablehq">
 <h1 id="architecture-and-expected-performance-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#architecture-and-expected-performance-analysis">Architecture and Expected Performance Analysis</a></h1>
 <h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
-<p>This document describes the architecture and expected performance.  The basic model design is a standard transformer with a core model dimension (<code>d_model</code> or $d_{model}$) which the attention heads subdivide such that each layer's number of heads $h = d_{model} / d_{head}$ or $d_k$, the head dimension, followed by a feedfoward layer that is up-projected to $d_{ffn}$ and down-projected back to $d_{model}$, in order to add the results of the layer back into the residual stream.  This is repeated for $L$ layers and the output is projected up to provide logits across the $V$ vocabulary elements, which are then used for inference.</p>
+<p>This document describes the architecture and expected performance.  The basic model design is a standard transformer with a core model dimension (<code>d_model</code> or <observablehq-loading></observablehq-loading><!--:d4a5728a:-->) which the attention heads subdivide such that each layer's number of heads <observablehq-loading></observablehq-loading><!--:bb937657:--> or <observablehq-loading></observablehq-loading><!--:276a7cec:-->, the head dimension, followed by a feedfoward layer that is up-projected to <observablehq-loading></observablehq-loading><!--:a769ade5:--> and down-projected back to <observablehq-loading></observablehq-loading><!--:d4a5728a-1:-->, in order to add the results of the layer back into the residual stream.  This is repeated for <observablehq-loading></observablehq-loading><!--:256dca58:--> layers and the output is projected up to provide logits across the <observablehq-loading></observablehq-loading><!--:5e0ea1c6:--> vocabulary elements, which are then used for inference.</p>
 <h3 id="model-architecture" tabindex="-1"><a class="observablehq-header-anchor" href="#model-architecture">Model Architecture</a></h3>
 <p>More concretely, the model consists of:</p>
 <ul>
 <li>
-<p>an embedding layer that brings $B$ batches of length $S$ input (token index) sequences up to $d_{model}$ to create an input $X \in \mathbb{R}^{B \times S \times d}$ and initializes the residual stream</p>
+<p>an embedding layer that brings <observablehq-loading></observablehq-loading><!--:e9422d4d:--> batches of length <observablehq-loading></observablehq-loading><!--:292babb6:--> input (token index) sequences up to <observablehq-loading></observablehq-loading><!--:d4a5728a-2:--> to create an input <observablehq-loading></observablehq-loading><!--:ea32e56a:--> and initializes the residual stream</p>
 </li>
 <li>
-<p>$L$ layers consisting of</p>
+<p><observablehq-loading></observablehq-loading><!--:256dca58-1:--> layers consisting of</p>
 <ul>
 <li>
-<p>an RMS norm on the embedded token with $S \times d_{model}$ weights $\gamma$,</p>
-<p>$$
-\mathrm{RMSNorm}(x) = \frac{x}{\mathrm{RMS}(x)} \cdot \gamma,
-\quad \mathrm{RMS}(x) = \sqrt{\frac{1}{d}\sum_{j=1}^{d} x_j^2 + \epsilon}
-$$</p>
+<p>an RMS norm on the embedded token with <observablehq-loading></observablehq-loading><!--:246395b1:--> weights <observablehq-loading></observablehq-loading><!--:e123c38f:-->,</p>
+<observablehq-loading></observablehq-loading><!--:63ea326f:--></li>
+<li>
+<p>projection of the input matrix <observablehq-loading></observablehq-loading><!--:795b5447:--> by <observablehq-loading></observablehq-loading><!--:28b66ad1:--> matrices</p>
+<observablehq-loading></observablehq-loading><!--:de85bd12:--><p>however <observablehq-loading></observablehq-loading><!--:69bdf923:--> were concatenated to reduce the number of matrix multiplication operatoins.  These were then split into the individual <observablehq-loading></observablehq-loading><!--:7166cac1:--> matrices for each head.</p>
 </li>
 <li>
-<p>projection of the input matrix $X$ by $W^Q, W^K, W^V \in \mathbb{R}^{d \times d_k}$ matrices</p>
-<p>$$
-Q = X W^Q, \quad K = X W^K, \quad V = X W^V
-$$</p>
-<p>however $W^Q, W^K, W^V$ were concatenated to reduce the number of matrix multiplication operatoins.  These were then split into the individual $d_k \times d_k$ matrices for each head.</p>
-</li>
-<li>
-<p>the $Q$ and $K$ matrices have the RoPE transform applied, with each rotation block applied to dimension pairs</p>
-<p>$$
-\mathrm{RoPE}(\mathbf{x}, t)<em>{2i:2i+2} = \begin{pmatrix}
-\cos \phi</em>{t,i} &amp; -\sin \phi_{t,i} \
-\sin \phi_{t,i} &amp; \cos \phi_{t,i}
-\end{pmatrix}
-\mathbf{x}_{2i:2i+2}
-$$</p>
-<p>where $t$ is the token position and $i$ indexes dimension pairs.  This implementation conserves memory at the cost of aditional compute (see below)</p>
+<p>the <observablehq-loading></observablehq-loading><!--:4dbdd942:--> and <observablehq-loading></observablehq-loading><!--:cf546aab:--> matrices have the RoPE transform applied, with each rotation block applied to dimension pairs</p>
+<observablehq-loading></observablehq-loading><!--:55d3103a:--><p>where <observablehq-loading></observablehq-loading><!--:12149432:--> is the token position and <observablehq-loading></observablehq-loading><!--:82e0ed16:--> indexes dimension pairs.  This implementation conserves memory at the cost of aditional compute (see below)</p>
 </li>
 <li>
 <p>scaled dot product attention is performed</p>
-<p>$$
-\mathrm{Attention}(Q, K, V) = \mathrm{softmax}!\left(\frac{Q K^\top}{\sqrt{d_k}}\right) V
-$$</p>
-<p>with causal masking applied to the $QK^T/\sqrt{d_k}$ matrix</p>
+<observablehq-loading></observablehq-loading><!--:0cd39a38:--><p>with causal masking applied to the <observablehq-loading></observablehq-loading><!--:6c97d1ad:--> matrix</p>
 </li>
 <li>
-<p>the attention outputs are concatenated and multiplied by output projectionwieight matrix $W^o$</p>
+<p>the attention outputs are concatenated and multiplied by output projectionwieight matrix <observablehq-loading></observablehq-loading><!--:f259510c:--></p>
 </li>
 <li>
 <p>the result is added to the residual stream and an RMS norm is applied</p>
 </li>
 <li>
-<p>this is then put through a SWiGLU feedforward layer ($d_{ff}$)</p>
-<p>$$
-\mathrm{swiglu}(\mathbf{x}) =\left((\mathbf{x} \odot \sigma(\mathbf{x} w^{(1)})\odot(\mathbf{x} w^{(2)})\right) w^{(3)}
-$$</p>
-<p>where $\sigma$ is the sigmoid function and $\odot$ is componentwise or hadamard product</p>
+<p>this is then put through a SWiGLU feedforward layer (<observablehq-loading></observablehq-loading><!--:f3dc34f5:-->)</p>
+<observablehq-loading></observablehq-loading><!--:ccd957df:--><p>where <observablehq-loading></observablehq-loading><!--:33a3efc4:--> is the sigmoid function and <observablehq-loading></observablehq-loading><!--:41aafa6a:--> is componentwise or Hadamard product</p>
 </li>
 </ul>
 </li>
 <li>
-<p>after $l$ of these layers, the result is again added to the residual stream and an rms norm is applied</p>
+<p>after <observablehq-loading></observablehq-loading><!--:029e9b61:--> of these layers, the result is again added to the residual stream and an rms norm is applied</p>
 </li>
 <li>
 <p>the result is projected up the the vocabulary dimenion by the language head, producing the output logits</p>
 </li>
 </ul>
-<h3 id="loss-function-optimizer-scheduler-and-tranining-details" tabindex="-1"><a class="observablehq-header-anchor" href="#loss-function-optimizer-scheduler-and-tranining-details">loss function, optimizer, scheduler, and tranining details</a></h3>
-<p>each token in the batch of sequences is used to predict the next token probabilities by converting the logits via softmax.  the cross-entropy loss</p>
-<p>$$
-\mathcal{l} = -\frac{1}{b s} \sum_{b=1}^{b} \sum_{s=1}^{s}\log p_\theta(y_{b,s} \mid x_{b,1:s})
-$$</p>
-<p>is then caclulated based on the actual next-token values.  this loss is then backpropagated, with the trainable parameters updated via the <a href="https://arxiv.org/abs/1711.05101" target="_blank" rel="noopener noreferrer">adamw optimizer</a>, which adds decoupled weight decay to the adam optimizer.</p>
-<p>the optimizer takes a learning rate parameter which was generated by a cosine-annealing learning rate scheduler returns the minimum up to maximum learning rates linearly during its warmup iterations, then returns learning rates decreasing according to a cosine schedule back to the minimum value for the final iteration.</p>
-<p>the model was trained in this fashion with evaluation losses and perplexity measured at intervals, and checkpoints generated of the latest and best-evaluating parameters.</p>
+<h3 id="loss-function-optimizer-scheduler-and-tranining-details" tabindex="-1"><a class="observablehq-header-anchor" href="#loss-function-optimizer-scheduler-and-tranining-details">Loss Function, Optimizer, Scheduler, and Tranining Details</a></h3>
+<p>Each token in the batch of sequences is used to predict the next token probabilities by converting the logits via softmax.  the cross-entropy loss</p>
+<span><observablehq-loading></observablehq-loading><!--:197047c5:--></span><p>is then caclulated based on the actual next-token values.  this loss is then backpropagated, with the trainable parameters updated via the <a href="https://arxiv.org/abs/1711.05101" target="_blank" rel="noopener noreferrer">adamw optimizer</a>, which adds decoupled weight decay to the adam optimizer.</p>
+<p>The optimizer takes a learning rate parameter which was generated by a cosine-annealing learning rate scheduler returns the minimum up to maximum learning rates linearly during its warmup iterations, then returns learning rates decreasing according to a cosine schedule back to the minimum value for the final iteration.</p>
+<p>The model was trained in this fashion with evaluation losses and perplexity measured at intervals, and checkpoints generated of the latest and best-evaluating parameters.</p>
+<h3 id="expected-performance" tabindex="-1"><a class="observablehq-header-anchor" href="#expected-performance">Expected Performance</a></h3>
+<h4 id="platforms" tabindex="-1"><a class="observablehq-header-anchor" href="#platforms">Platforms</a></h4>
+<p>Two platforms were used, an Apple M4 base model with 10 GPU cores and 24GB of unified RAM, and the Nvidia RTX 4090, which also has 24GB of RAM available.  The M4 was used for local development, testing, and exploration, then the debugged models were run on the 4090 to explore performance differences, ..., and for a series of tests stressing the hardware for the sake of examining Nsys (profiling) traces.</p>
+<p>Here is a summary of the systems' differences:</p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Apple M4 (10-core GPU, 24GB unified)</th>
+<th>NVIDIA RTX 4090</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Architecture</td>
+<td>Apple Silicon (ARM + integrated GPU)</td>
+<td>Ada Lovelace (AD102)</td>
+</tr>
+<tr>
+<td>GPU Cores</td>
+<td>10 integrated GPU cores</td>
+<td>16,384 CUDA cores</td>
+</tr>
+<tr>
+<td>Tensor Units</td>
+<td>Apple AMX / GPU matrix units</td>
+<td>4th-gen Tensor Cores</td>
+</tr>
+<tr>
+<td>VRAM / Memory</td>
+<td>24 GB unified LPDDR5</td>
+<td>24 GB GDDR6X (dedicated)</td>
+</tr>
+<tr>
+<td>Memory Bandwidth</td>
+<td>~120 GB/s (shared)</td>
+<td>~1,008 GB/s</td>
+</tr>
+<tr>
+<td>Training Precision</td>
+<td>FP32 (for stability)</td>
+<td>AMP (automatic mixed precision)</td>
+</tr>
+<tr>
+<td>Software Stack</td>
+<td>PyTorch MPS, Metal</td>
+<td>CUDA, cuDNN, TensorRT</td>
+</tr>
+<tr>
+<td>Compilation</td>
+<td>No</td>
+<td>Yes (Inductor)</td>
+</tr>
+<tr>
+<td>FP32 Throughput</td>
+<td>~3–4 TFLOPS (est., GPU)</td>
+<td>~82 TFLOPS</td>
+</tr>
+<tr>
+<td>FP16 / BF16</td>
+<td>Accelerated (unstable)</td>
+<td>~330 TFLOPS (Tensor Core)</td>
+</tr>
+<tr>
+<td>INT8</td>
+<td>Limited acceleration</td>
+<td>~660+ TOPS (Tensor Core)</td>
+</tr>
+<tr>
+<td>Power Draw</td>
+<td>~20–30W typical</td>
+<td>~450W peak</td>
+</tr>
+<tr>
+<td>Multi-GPU Scaling</td>
+<td>No</td>
+<td>Yes (NVLink not on 4090, but multi-GPU via PCIe)</td>
+</tr>
+<tr>
+<td>Primary Strength</td>
+<td>Efficiency, portability</td>
+<td>Raw training throughput</td>
+</tr>
+</tbody>
+</table>
+<p>While the available RAM on both systems is the same, the memory bandwidth differ by nearly an oder of magnitude.  Additionally, the RTX's automatic mixed precision significantly reduces the amount of memory needed, as the model activations and gradients can be stored in the bfloat16 format, while the M4 requires full float32 for stabiity.</p>
+<p>The RTX enjoys similar benefits</p>
 <div class="observablehq observablehq--block"><!--:42f595d0:--></div>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:01a07022:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-16T20:57:17">Feb 16, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-17T01:25:39">Feb 17, 2026</a>.</div>
 </footer>
 </div>
 </body>
