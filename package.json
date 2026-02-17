@@ -7,7 +7,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "verify:observable": "node scripts/verify-observable-export.mjs",
+    "postprocess:observable": "node scripts/postprocess-observable-export.mjs",
+    "verify:observable": "npm run postprocess:observable && node scripts/verify-observable-export.mjs",
     "test:e2e": "playwright test",
     "test:ci": "npm run verify:observable && npm run build && npm run test:e2e"
   },

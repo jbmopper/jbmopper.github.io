@@ -26,6 +26,11 @@ const requiredCanonicalRoutes = [
   "projects/llm-fundamentals/ablations",
   "projects/data-playground"
 ];
+const expectedBaseHrefByPage = new Map([
+  ["public/observable/index.html", "/observable/"],
+  ["public/observable/projects/index.html", "/observable/projects/"],
+  ["public/observable/projects/llm-fundamentals/perf-expected/index.html", "/observable/projects/llm-fundamentals/perf-expected/"]
+]);
 
 async function pathExists(relativePath) {
   const absolutePath = path.join(PROJECT_ROOT, relativePath);
@@ -54,6 +59,17 @@ async function assertCanonicalRoutes() {
 
   if (missing.length > 0) {
     throw new Error(`Missing canonical Observable routes: ${missing.join(", ")}`);
+  }
+}
+
+async function assertBaseHrefs() {
+  for (const [relativeHtmlPath, expectedBaseHref] of expectedBaseHrefByPage.entries()) {
+    const absoluteHtmlPath = path.join(PROJECT_ROOT, relativeHtmlPath);
+    const html = await readFile(absoluteHtmlPath, "utf8");
+
+    if (!html.includes(`<base href="${expectedBaseHref}">`)) {
+      throw new Error(`Missing expected <base> tag in ${relativeHtmlPath}: <base href="${expectedBaseHref}">`);
+    }
   }
 }
 
@@ -104,6 +120,7 @@ async function main() {
     await assertExists(item);
   }
   await assertCanonicalRoutes();
+  await assertBaseHrefs();
   await assertKatexAssets();
   console.log("Observable artifact check passed (canonical project routes found).");
 }
