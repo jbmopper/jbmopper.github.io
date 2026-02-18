@@ -3,6 +3,7 @@ import * as Plot from "../../_npm/@observablehq/plot@0.6.17/7c43807f.js";
 import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
 import {formatMs, normalizeRunLabel} from "../components/data-utils.e2caa41c.js";
 import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.aaca454b.js";
+import {calculateForwardFlops, calculateTrainingStepFlops} from "../components/perf-estimates.d771a94d.js";
 
 const ATTACHMENTS = {
   mps_main: FileAttachment({"name":"../../data/raw/benchmarks/mps_comp_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/mps_comp_main.ccc27b69.parquet","lastModified":1770927469238,"size":25521}, import.meta.url),
@@ -408,6 +409,15 @@ function clampRowLimit(value, fallback) {
   return n;
 }
 
+function collapsible(summaryText) {
+  const details = el("details");
+  const summary = el("summary", summaryText);
+  summary.style.cursor = "pointer";
+  summary.style.fontWeight = "600";
+  details.appendChild(summary);
+  return details;
+}
+
 function rowLimitNote(displayed, total) {
   const text =
     displayed >= total
@@ -430,7 +440,7 @@ function uniqueSortedNumeric(rows, key) {
 function renderTrainGridSection(data, options = {}) {
   const {trainRows, trainRaw} = data;
   const host = card();
-  host.appendChild(sectionHeading("Train Benchmark Grid (MPS)"));
+  host.appendChild(sectionHeading("Training Benchmark Grid (MPS)"));
 
   if (trainRows.length === 0) {
     host.appendChild(emptyState("No train benchmark JSON rows available."));
@@ -587,7 +597,7 @@ function renderTrainGridSection(data, options = {}) {
       Plot.dot(plotted, {
         x: xKey,
         y: yKey,
-        fill: colorKey,
+        fill: (d) => String(d[colorKey]),
         r:
           sizeKey === "(fixed)"
             ? 4
@@ -595,6 +605,7 @@ function renderTrainGridSection(data, options = {}) {
                 const v = Number(d[sizeKey]);
                 return Number.isFinite(v) ? Math.max(2.5, Math.min(10, 1.5 + Math.sqrt(Math.max(v, 0)) / 4)) : 4;
               },
+        title: (d) => `B=${d.batch_size} S=${d.seq_len} d=${d.d_model} h=${d.num_heads} L=${d.num_layers} d_ff=${d.d_ff}\ntok/s=${Number(d.tokens_per_sec).toFixed(1)}  ms=${Number(d.median_ms).toFixed(1)}  mem=${Number(d.est_memory_gb).toFixed(2)}GB  params=${Number(d.num_params_m).toFixed(1)}M`,
         tip: true
       })
     ];
@@ -608,7 +619,7 @@ function renderTrainGridSection(data, options = {}) {
         height: 380,
         x: {label: axisLabels[xKey] || xKey, grid: true},
         y: {label: axisLabels[yKey] || yKey, grid: true},
-        color: {legend: true},
+        color: {type: "categorical", scheme: "observable10", legend: true},
         marks
       })
     );
@@ -618,7 +629,8 @@ function renderTrainGridSection(data, options = {}) {
       .sort((a, b) => d3.descending(a.tokens_per_sec, b.tokens_per_sec) || d3.ascending(a.est_memory_gb, b.est_memory_gb))
       .slice(0, tableLimit);
 
-    tableHost.append(
+    const details = collapsible("expand to view table of individual observations");
+    details.append(
       rowLimitNote(tableRows.length, plotted.length),
       renderSimpleTable(tableRows, [
         {key: "batch_size", label: "Batch", align: "right"},
@@ -635,6 +647,7 @@ function renderTrainGridSection(data, options = {}) {
         {key: "ffn_ratio", label: "ffn x", align: "right", format: (v) => Number(v).toFixed(2)}
       ])
     );
+    tableHost.appendChild(details);
   };
 
   const listeners = [
@@ -653,6 +666,226 @@ function renderTrainGridSection(data, options = {}) {
   sizeByControl.select.addEventListener("change", refresh);
   chartModeControl.select.addEventListener("change", refresh);
   tableLimitControl.input.addEventListener("input", refresh);
+
+  refresh();
+  return host;
+}
+
+function renderExpectedVsActualSection(data, options = {}) {
+  const M4_FP32_TFLOPS = 3.2;
+  const TRAIN_BENCH_VOCAB_SIZE = 10000;
+  const {trainRows} = data;
+  const host = card();
+  host.appendChild(sectionHeading("Expected vs Actual Performance"));
+
+  if (trainRows.length === 0) {
+    host.appendChild(emptyState("No train benchmark rows available."));
+    return host;
+  }
+
+  const batchValues = uniqueSortedNumeric(trainRows, "batch_size");
+  const seqValues = uniqueSortedNumeric(trainRows, "seq_len");
+  const dModelValues = uniqueSortedNumeric(trainRows, "d_model");
+  const dHeadValues = uniqueSortedNumeric(trainRows, "d_head");
+  const numHeadsValues = uniqueSortedNumeric(trainRows, "num_heads");
+  const numLayersValues = uniqueSortedNumeric(trainRows, "num_layers");
+  const dFfValues = uniqueSortedNumeric(trainRows, "d_ff");
+
+  const batchControl = checkboxGroup(batchValues, batchValues, "eva-batch", "Batch size (B)");
+  const seqControl = checkboxGroup(seqValues, seqValues, "eva-seq", "Sequence length (S)");
+  const dModelControl = checkboxGroup(dModelValues, dModelValues, "eva-dm", "d_model");
+  const dHeadControl = checkboxGroup(dHeadValues, dHeadValues, "eva-dh", "d_head");
+  const numHeadsControl = checkboxGroup(numHeadsValues, numHeadsValues, "eva-nh", "heads");
+  const numLayersControl = checkboxGroup(numLayersValues, numLayersValues, "eva-nl", "layers");
+  const dFfControl = checkboxGroup(dFfValues, dFfValues, "eva-ff", "d_ff");
+  const colorByControl = selectControl("Dot color", [
+    {label: "Batch size (B)", value: "batch_size"},
+    {label: "Sequence length (S)", value: "seq_len"}
+  ], "batch_size");
+
+  const allEva = computeExpectedVsActual(trainRows);
+  const maxObserved = d3.max(allEva, (d) => d.actual_step_s) ?? 10;
+  const maxExpected = d3.max(allEva, (d) => d.expected_step_s) ?? 10;
+  const stepRes = Math.pow(10, Math.floor(Math.log10(Math.max(maxObserved, maxExpected))) - 2);
+  const maxObservedControl = makeRangeControl("Max observed step (s)", 0, maxObserved, stepRes, maxObserved);
+  const maxExpectedControl = makeRangeControl("Max expected step (s)", 0, maxExpected, stepRes, maxExpected);
+  maxObservedControl.input.addEventListener("input", () => { maxObservedControl.output.textContent = Number(maxObservedControl.input.value).toFixed(3); });
+  maxExpectedControl.input.addEventListener("input", () => { maxExpectedControl.output.textContent = Number(maxExpectedControl.input.value).toFixed(3); });
+  maxObservedControl.output.textContent = Number(maxObserved).toFixed(3);
+  maxExpectedControl.output.textContent = Number(maxExpected).toFixed(3);
+
+  const filters = el("div");
+  filters.style.display = "grid";
+  filters.style.gap = "0.5rem";
+  filters.append(
+    batchControl.node, seqControl.node, dModelControl.node, dHeadControl.node,
+    numHeadsControl.node, numLayersControl.node, dFfControl.node, colorByControl.node,
+    maxObservedControl.node, maxExpectedControl.node
+  );
+  host.appendChild(filters);
+
+  const chartStepHost = el("div");
+  chartStepHost.className = "card";
+  const chartThroughputHost = el("div");
+  chartThroughputHost.className = "card";
+  const chartParamsHost = el("div");
+  chartParamsHost.className = "card";
+  const tableHost = el("div");
+  host.append(chartStepHost, chartThroughputHost, chartParamsHost, tableHost);
+
+  function computeExpectedVsActual(filtered) {
+    return filtered.map((row) => {
+      const fwd = calculateForwardFlops(
+        row.batch_size, row.seq_len, TRAIN_BENCH_VOCAB_SIZE,
+        row.d_model, row.num_heads, row.num_layers, row.d_ff
+      );
+      const train = calculateTrainingStepFlops(fwd.total);
+      const expectedStepS = train.total_TFLOPs / M4_FP32_TFLOPS;
+      const tokensPerIteration = row.batch_size * row.seq_len;
+      const expectedTokensPerSec = tokensPerIteration / expectedStepS;
+      const actualParamsMPerSec = row.median_s > 0 ? row.num_params_m / row.median_s : NaN;
+      const expectedParamsMPerSec = expectedStepS > 0 ? row.num_params_m / expectedStepS : NaN;
+      const modelSpec = `B=${row.batch_size}, S=${row.seq_len}, d_model=${row.d_model}, d_head=${row.d_head}, h=${row.num_heads}, L=${row.num_layers}, d_ff=${row.d_ff}`;
+      return {
+        batch_size: row.batch_size, seq_len: row.seq_len,
+        d_model: row.d_model, d_head: row.d_head,
+        num_heads: row.num_heads, num_layers: row.num_layers, d_ff: row.d_ff,
+        model_spec: modelSpec,
+        est_memory_gb: row.est_memory_gb, num_params_m: row.num_params_m,
+        tokens_per_iteration: tokensPerIteration,
+        actual_step_s: row.median_s, expected_step_s: expectedStepS,
+        actual_tokens_per_sec: row.tokens_per_sec,
+        expected_tokens_per_sec: expectedTokensPerSec,
+        actual_params_m_per_sec: actualParamsMPerSec,
+        expected_params_m_per_sec: expectedParamsMPerSec,
+        step_ratio_actual_over_expected: row.median_s / expectedStepS,
+        throughput_ratio_actual_over_expected: row.tokens_per_sec / expectedTokensPerSec,
+        params_ratio_actual_over_expected: actualParamsMPerSec / expectedParamsMPerSec
+      };
+    });
+  }
+
+  function buildDiagonalScatter(hostEl, rows, xKey, yKey, xLabel, yLabel, emptyMsg, colorBy, scaleOpts = {}) {
+    clearNode(hostEl);
+    const colorLabel = colorBy === "batch_size" ? "Batch size (B)" : "Sequence length (S)";
+    const fillValue = (d) => (colorBy === "batch_size" ? `B=${d.batch_size}` : `S=${d.seq_len}`);
+    const scatterRows = rows
+      .filter((d) => Number.isFinite(d[xKey]) && d[xKey] > 0)
+      .filter((d) => Number.isFinite(d[yKey]) && d[yKey] > 0);
+    if (scatterRows.length === 0) {
+      hostEl.appendChild(emptyState(emptyMsg));
+      return;
+    }
+    const colorDomain = [...new Set(scatterRows.map(fillValue))]
+      .sort((a, b) => {
+        const na = parseFloat(a.replace(/\D+/, ""));
+        const nb = parseFloat(b.replace(/\D+/, ""));
+        return (na || 0) - (nb || 0);
+      });
+    const xMin = d3.min(scatterRows, (d) => d[xKey]);
+    const xMax = d3.max(scatterRows, (d) => d[xKey]);
+    const yMin = d3.min(scatterRows, (d) => d[yKey]);
+    const yMax = d3.max(scatterRows, (d) => d[yKey]);
+    const minDiag = Math.max(xMin ?? NaN, yMin ?? NaN);
+    const maxDiag = Math.min(xMax ?? NaN, yMax ?? NaN);
+    const diagRows =
+      Number.isFinite(minDiag) && Number.isFinite(maxDiag) && maxDiag > minDiag
+        ? [{v: minDiag}, {v: maxDiag}]
+        : [];
+    hostEl.appendChild(
+      Plot.plot({
+        width: 920,
+        height: 380,
+        x: {label: xLabel, grid: true, type: scaleOpts.logX ? "log" : "linear"},
+        y: {label: yLabel, grid: true, type: scaleOpts.logY ? "log" : "linear"},
+        color: {legend: true, label: colorLabel, domain: colorDomain},
+        marks: [
+          Plot.dot(scatterRows, {
+            x: xKey, y: yKey, fill: fillValue, title: "model_spec", r: 3.8, tip: true
+          }),
+          ...(diagRows.length > 0
+            ? [Plot.line(diagRows, {x: "v", y: "v", stroke: "var(--theme-foreground-muted)", strokeDasharray: "4 4"})]
+            : [])
+        ]
+      })
+    );
+  }
+
+  const refresh = () => {
+    const selectedBatch = asNumericSet(batchControl.getSelected());
+    const selectedSeq = asNumericSet(seqControl.getSelected());
+    const selectedDModel = asNumericSet(dModelControl.getSelected());
+    const selectedDHead = asNumericSet(dHeadControl.getSelected());
+    const selectedNumHeads = asNumericSet(numHeadsControl.getSelected());
+    const selectedNumLayers = asNumericSet(numLayersControl.getSelected());
+    const selectedDFf = asNumericSet(dFfControl.getSelected());
+    const colorBy = colorByControl.select.value;
+
+    const filtered = trainRows
+      .filter((d) => selectedBatch.has(d.batch_size))
+      .filter((d) => selectedSeq.has(d.seq_len))
+      .filter((d) => selectedDModel.has(d.d_model))
+      .filter((d) => selectedDHead.has(d.d_head))
+      .filter((d) => selectedNumHeads.has(d.num_heads))
+      .filter((d) => selectedNumLayers.has(d.num_layers))
+      .filter((d) => selectedDFf.has(d.d_ff));
+
+    const maxObs = safeNumber(maxObservedControl.input.value, Infinity);
+    const maxExp = safeNumber(maxExpectedControl.input.value, Infinity);
+    const evaRows = computeExpectedVsActual(filtered)
+      .filter((d) => d.actual_step_s <= maxObs)
+      .filter((d) => d.expected_step_s <= maxExp);
+
+    buildDiagonalScatter(
+      chartStepHost, evaRows,
+      "expected_step_s", "actual_step_s",
+      "Expected iteration time (s)", "Observed iteration time (s)",
+      "No rows available for expected-vs-observed iteration-time chart.", colorBy,
+      {logX: true}
+    );
+    buildDiagonalScatter(
+      chartThroughputHost, evaRows,
+      "expected_tokens_per_sec", "actual_tokens_per_sec",
+      "Expected throughput (tok/s)", "Observed throughput (tok/s)",
+      "No rows available for expected-vs-observed throughput chart.", colorBy
+    );
+    buildDiagonalScatter(
+      chartParamsHost, evaRows,
+      "expected_params_m_per_sec", "actual_params_m_per_sec",
+      "Expected model params / sec (M)", "Observed model params / sec (M)",
+      "No rows available for expected-vs-observed model-params/sec chart.", colorBy
+    );
+
+    clearNode(tableHost);
+    if (evaRows.length > 0) {
+      const details = collapsible("expand to view expected-vs-observed table");
+      details.append(
+        renderSimpleTable(evaRows, [
+          {key: "batch_size", label: "B", align: "right"},
+          {key: "seq_len", label: "S", align: "right"},
+          {key: "d_model", label: "d_model", align: "right"},
+          {key: "d_head", label: "d_k", align: "right"},
+          {key: "num_heads", label: "h", align: "right"},
+          {key: "num_layers", label: "L", align: "right"},
+          {key: "d_ff", label: "d_ff", align: "right"},
+          {key: "tokens_per_iteration", label: "tok/iter", align: "right", format: (v) => Number(v).toFixed(0)},
+          {key: "actual_step_s", label: "actual step (s)", align: "right", format: (v) => Number(v).toFixed(4)},
+          {key: "expected_step_s", label: "expected step (s)", align: "right", format: (v) => Number(v).toFixed(4)},
+          {key: "actual_tokens_per_sec", label: "actual tok/s", align: "right", format: (v) => Number(v).toFixed(1)},
+          {key: "expected_tokens_per_sec", label: "expected tok/s", align: "right", format: (v) => Number(v).toFixed(1)},
+          {key: "step_ratio_actual_over_expected", label: "actual/expected step", align: "right", format: (v) => `${Number(v).toFixed(2)}x`},
+          {key: "throughput_ratio_actual_over_expected", label: "actual/expected tok/s", align: "right", format: (v) => `${Number(v).toFixed(2)}x`}
+        ])
+      );
+      tableHost.appendChild(details);
+    }
+  };
+
+  const filterListeners = [batchControl, seqControl, dModelControl, dHeadControl, numHeadsControl, numLayersControl, dFfControl];
+  for (const ctrl of filterListeners) ctrl.onChange(refresh);
+  colorByControl.select.addEventListener("change", refresh);
+  maxObservedControl.input.addEventListener("input", refresh);
+  maxExpectedControl.input.addEventListener("input", refresh);
 
   refresh();
   return host;
@@ -734,7 +967,17 @@ function renderDeviceComparisonSection(data, options = {}) {
           height: Math.min(420, 140 + sorted.length * 48),
           marginLeft: 220,
           x: {label: `${speedLabel} speedup`, grid: true},
-          marks: [Plot.barX(sorted, {y: "model_label", x: speedMetric, tip: true})]
+          marks: [
+            Plot.ruleX([1], {stroke: "var(--theme-foreground-faint)", strokeDasharray: "4 4"}),
+            Plot.barX(sorted, {y: "model_label", x: speedMetric, fill: "var(--theme-foreground-focus)", tip: true}),
+            Plot.text(sorted, {
+              y: "model_label",
+              x: speedMetric,
+              text: (d) => `${d[speedMetric].toFixed(2)}\u00d7`,
+              dx: 4,
+              textAnchor: "start"
+            })
+          ]
         })
       );
     }
@@ -746,7 +989,8 @@ function renderDeviceComparisonSection(data, options = {}) {
     if (tableRows.length === 0) {
       tableHost.appendChild(emptyState("No comparison rows to tabulate."));
     } else {
-      tableHost.append(
+      const details = collapsible("expand to view comparison table");
+      details.append(
         rowLimitNote(tableRows.length, filteredSpeedups.length),
         renderSimpleTable(tableRows, [
           {key: "model_label", label: "Model"},
@@ -768,6 +1012,7 @@ function renderDeviceComparisonSection(data, options = {}) {
           }
         ])
       );
+      tableHost.appendChild(details);
     }
   };
 
@@ -995,7 +1240,8 @@ function renderTrainingCurvesSection(data, options = {}) {
 
     const tableLimit = clampRowLimit(tableLimitControl.input.value, 300);
     const limited = filtered.slice(0, tableLimit);
-    tableHost.append(
+    const details = collapsible("expand to view training curve data");
+    details.append(
       rowLimitNote(limited.length, filtered.length),
       renderSimpleTable(limited, [
         {key: "series_verbose", label: "Series"},
@@ -1009,6 +1255,7 @@ function renderTrainingCurvesSection(data, options = {}) {
         }
       ])
     );
+    tableHost.appendChild(details);
   };
 
   seriesControl.onChange(refresh);
@@ -1076,6 +1323,10 @@ export async function renderPerfEmpiricalTrainBenchmark(options = {}) {
   return renderSection(renderTrainGridSection, options);
 }
 
+export async function renderPerfEmpiricalExpectedVsActual(options = {}) {
+  return renderSection(renderExpectedVsActualSection, options);
+}
+
 export async function renderPerfEmpiricalDeviceComparison(options = {}) {
   return renderSection(renderDeviceComparisonSection, options);
 }
@@ -1120,6 +1371,7 @@ export async function renderPerfEmpirical(options = {}) {
   const includeDiagnostics = Boolean(options.includeDiagnostics);
 
   if (includeTrain) root.appendChild(renderTrainGridSection(data, options));
+  if (includeTrain) root.appendChild(renderExpectedVsActualSection(data, options));
   root.appendChild(renderDeviceComparisonSection(data, options));
   if (includeCurves) root.appendChild(renderTrainingCurvesSection(data, options));
   if (includeDiagnostics) root.appendChild(renderDiagnosticsSection(data, options));

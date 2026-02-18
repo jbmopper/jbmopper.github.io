@@ -7,21 +7,22 @@
 <title>Empirical Performance | Project Writeup Sandbox</title>
 
 <link rel="preload" as="style" href="../../../_import/astro-bridge-theme.255eed1d.css">
-<link rel="preload" as="style" href="../../../_observablehq/stdlib/inputs.ea9fd553.css">
+<link rel="preload" as="style" href="../../../_npm/katex@0.16.28/dist/katex.min.css">
 <link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.255eed1d.css">
-<link rel="stylesheet" type="text/css" href="../../../_observablehq/stdlib/inputs.ea9fd553.css">
+<link rel="stylesheet" type="text/css" href="../../../_npm/katex@0.16.28/dist/katex.min.css">
 <link rel="modulepreload" href="../../../_observablehq/client.cbf2d9f3.js">
 <link rel="modulepreload" href="../../../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../../../_npm/@observablehq/plot@0.6.17/7c43807f.js">
-<link rel="modulepreload" href="../../../_npm/d3@7.9.0/e324157d.js">
-<link rel="modulepreload" href="../../../_import/embed/perf-empirical.47110201.js">
-<link rel="modulepreload" href="../../../_npm/htl@0.3.1/72f4716c.js">
-<link rel="modulepreload" href="../../../_observablehq/stdlib/inputs.7f302853.js">
+<link rel="modulepreload" href="../../../_import/embed/perf-empirical.6e5843d3.js">
+<link rel="modulepreload" href="../../../_observablehq/stdlib/tex.c79b643a.js">
 <link rel="modulepreload" href="../../../_import/components/data-utils.e2caa41c.js">
 <link rel="modulepreload" href="../../../_import/components/dom-utils.aaca454b.js">
+<link rel="modulepreload" href="../../../_import/components/perf-estimates.d771a94d.js">
+<link rel="modulepreload" href="../../../_npm/@observablehq/plot@0.6.17/7c43807f.js">
+<link rel="modulepreload" href="../../../_npm/d3@7.9.0/e324157d.js">
 <link rel="modulepreload" href="../../../_npm/apache-arrow@21.1.0/63de76cd.js">
 <link rel="modulepreload" href="../../../_npm/parquet-wasm@0.7.1/68d81b68.js">
+<link rel="modulepreload" href="../../../_npm/katex@0.16.28/f76b8a99.js">
 <link rel="modulepreload" href="../../../_npm/isoformat@0.2.1/18cbf477.js">
 <link rel="modulepreload" href="../../../_npm/interval-tree-1d@1.0.4/53fe8176.js">
 <link rel="modulepreload" href="../../../_npm/d3-array@3.2.4/e93ca09f.js">
@@ -72,370 +73,106 @@ registerFile("../../../data/raw/benchmarks/mps_comp_history.parquet", {"name":".
 registerFile("../../../data/raw/benchmarks/mps_comp_main.parquet", {"name":"../../../data/raw/benchmarks/mps_comp_main.parquet","path":"../../../_file/data/raw/benchmarks/mps_comp_main.ccc27b69.parquet","lastModified":1770927469238,"size":25521});
 registerFile("../../../data/raw/benchmarks/train_benchmark_20260127_092323.json", {"name":"../../../data/raw/benchmarks/train_benchmark_20260127_092323.json","mimeType":"application/json","path":"../../../_file/data/raw/benchmarks/train_benchmark_20260127_092323.e80aa474.json","lastModified":1770920604379,"size":1945563});
 
-define({id: "854b4f71", outputs: ["Plot","d3","loadEmpiricalData","buildSegmentedHistoryRows","metricValue","metricLabel"], body: async () => {
-const [Plot, d3, {loadEmpiricalData, buildSegmentedHistoryRows, metricValue, metricLabel}] = await Promise.all([import("../../../_npm/@observablehq/plot@0.6.17/7c43807f.js"), import("../../../_npm/d3@7.9.0/e324157d.js"), import("../../../_import/embed/perf-empirical.47110201.js")]);
-
-return {Plot,d3,loadEmpiricalData,buildSegmentedHistoryRows,metricValue,metricLabel};
-}});
-
-define({id: "3ccc4703", inputs: ["loadEmpiricalData"], outputs: ["data"], body: async (loadEmpiricalData) => {
-const data = await loadEmpiricalData();
-return {data};
-}});
-
-define({id: "2530568b", inputs: ["display","html","data"], body: (display,html,data) => {
-display(html`<small style="color:var(--theme-foreground-muted)">Loaded ${data.mainRows.length} platform rows, ${data.historyRows.length} history rows, ${data.trainRows.length} train-grid rows, ${data.microRows.length} micro rows.</small>`);
-}});
-
-define({id: "0b6f4f00", inputs: ["data","d3"], outputs: ["trainBatchValues","trainSeqValues","trainDModelValues","trainDHeadValues","trainNumHeadsValues","trainNumLayersValues","trainDFfValues"], body: (data,d3) => {
-const trainBatchValues = [...new Set(data.trainRows.map((d) => d.batch_size))].filter(Number.isFinite).sort(d3.ascending);
-const trainSeqValues = [...new Set(data.trainRows.map((d) => d.seq_len))].filter(Number.isFinite).sort(d3.ascending);
-const trainDModelValues = [...new Set(data.trainRows.map((d) => d.d_model))].filter(Number.isFinite).sort(d3.ascending);
-const trainDHeadValues = [...new Set(data.trainRows.map((d) => d.d_head))].filter(Number.isFinite).sort(d3.ascending);
-const trainNumHeadsValues = [...new Set(data.trainRows.map((d) => d.num_heads))].filter(Number.isFinite).sort(d3.ascending);
-const trainNumLayersValues = [...new Set(data.trainRows.map((d) => d.num_layers))].filter(Number.isFinite).sort(d3.ascending);
-const trainDFfValues = [...new Set(data.trainRows.map((d) => d.d_ff))].filter(Number.isFinite).sort(d3.ascending);
-return {trainBatchValues,trainSeqValues,trainDModelValues,trainDHeadValues,trainNumHeadsValues,trainNumLayersValues,trainDFfValues};
-}});
-
-define({id: "245e011b", inputs: ["view","Inputs","trainBatchValues","trainSeqValues","trainDModelValues","trainDHeadValues","trainNumHeadsValues","trainNumLayersValues","trainDFfValues"], outputs: ["gridFilters"], body: (view,Inputs,trainBatchValues,trainSeqValues,trainDModelValues,trainDHeadValues,trainNumHeadsValues,trainNumLayersValues,trainDFfValues) => {
-const gridFilters = view(Inputs.form({
-  batchSizes: Inputs.checkbox(trainBatchValues, {label: "Batch", value: trainBatchValues}),
-  seqLens: Inputs.checkbox(trainSeqValues, {label: "Seq Len", value: trainSeqValues}),
-  dModels: Inputs.checkbox(trainDModelValues, {label: "d_model", value: trainDModelValues}),
-  dHeads: Inputs.checkbox(trainDHeadValues, {label: "d_head", value: trainDHeadValues}),
-  numHeads: Inputs.checkbox(trainNumHeadsValues, {label: "num_heads", value: trainNumHeadsValues}),
-  numLayers: Inputs.checkbox(trainNumLayersValues, {label: "num_layers", value: trainNumLayersValues}),
-  dFfs: Inputs.checkbox(trainDFfValues, {label: "d_ff", value: trainDFfValues})
-}));
-return {gridFilters};
-}});
-
-define({id: "8553a1b1", outputs: ["trainAxisLabels"], body: () => {
-const trainAxisLabels = new Map([
-  ["est_memory_gb", "Estimated Memory (GB)"],
-  ["num_params_m", "Parameters (M)"],
-  ["median_ms", "Median Step Time (ms)"],
-  ["ffn_ratio", "FFN Ratio"],
-  ["tokens_per_sec", "Tokens / sec"],
-  ["steps_per_sec", "Steps / sec"]
-]);
-return {trainAxisLabels};
-}});
-
-define({id: "0fb322a1", inputs: ["view","Inputs"], outputs: ["gridEncoding"], body: (view,Inputs) => {
-const gridEncoding = view(Inputs.form({
-  xMetric: Inputs.select(
-    new Map([["Estimated Memory (GB)", "est_memory_gb"], ["Params (M)", "num_params_m"], ["Median Step (ms)", "median_ms"], ["FFN Ratio", "ffn_ratio"]]),
-    {label: "X axis", value: "est_memory_gb"}
-  ),
-  yMetric: Inputs.select(
-    new Map([["Tokens / sec", "tokens_per_sec"], ["Steps / sec", "steps_per_sec"], ["Median Step (ms)", "median_ms"], ["Estimated Memory (GB)", "est_memory_gb"]]),
-    {label: "Y axis", value: "tokens_per_sec"}
-  ),
-  colorBy: Inputs.select(
-    new Map([["batch_size", "batch_size"], ["seq_len", "seq_len"], ["d_model", "d_model"], ["d_head", "d_head"], ["num_layers", "num_layers"], ["d_ff", "d_ff"]]),
-    {label: "Color", value: "d_model"}
-  ),
-  sizeBy: Inputs.select(
-    new Map([["fixed", "(fixed)"], ["batch_size", "batch_size"], ["seq_len", "seq_len"], ["d_model", "d_model"], ["num_layers", "num_layers"]]),
-    {label: "Point size", value: "batch_size"}
-  ),
-  marks: Inputs.select(["dots", "dots + trend"], {label: "Marks", value: "dots + trend"})
-}));
-return {gridEncoding};
-}});
-
-define({id: "45c49fac", inputs: ["data","gridFilters","gridEncoding"], outputs: ["filteredTrain"], body: (data,gridFilters,gridEncoding) => {
-const filteredTrain = data.trainRows
-  .filter((d) => gridFilters.batchSizes.includes(d.batch_size))
-  .filter((d) => gridFilters.seqLens.includes(d.seq_len))
-  .filter((d) => gridFilters.dModels.includes(d.d_model))
-  .filter((d) => gridFilters.dHeads.includes(d.d_head))
-  .filter((d) => gridFilters.numHeads.includes(d.num_heads))
-  .filter((d) => gridFilters.numLayers.includes(d.num_layers))
-  .filter((d) => gridFilters.dFfs.includes(d.d_ff))
-  .filter((d) => Number.isFinite(d[gridEncoding.xMetric]) && Number.isFinite(d[gridEncoding.yMetric]));
-return {filteredTrain};
-}});
-
-define({id: "604b9805", inputs: ["filteredTrain","html","Plot","trainAxisLabels","gridEncoding","display"], body: async (filteredTrain,html,Plot,trainAxisLabels,gridEncoding,display) => {
+define({id: "e9422d4d", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
 display(await(
-filteredTrain.length === 0
-  ? html`<p style="padding:1rem;border:1px dashed var(--theme-foreground-faint);border-radius:8px;">No rows match the current filters.</p>`
-  : Plot.plot({
-      width: 920,
-      height: 380,
-      x: {label: trainAxisLabels.get(gridEncoding.xMetric) || gridEncoding.xMetric, grid: true},
-      y: {label: trainAxisLabels.get(gridEncoding.yMetric) || gridEncoding.yMetric, grid: true},
-      color: {legend: true},
-      r: gridEncoding.sizeBy !== "(fixed)" ? {legend: true} : undefined,
-      marks: [
-        Plot.dot(filteredTrain, {
-          x: gridEncoding.xMetric,
-          y: gridEncoding.yMetric,
-          fill: gridEncoding.colorBy,
-          r: gridEncoding.sizeBy === "(fixed)" ? 4 : gridEncoding.sizeBy,
-          tip: true
-        }),
-        ...(gridEncoding.marks === "dots + trend" && filteredTrain.length > 10
-          ? [Plot.linearRegressionY(filteredTrain, {x: gridEncoding.xMetric, y: gridEncoding.yMetric, stroke: "currentColor"})]
-          : [])
-      ]
-    })
+tex`B`
 ))
 }});
 
-define({id: "fe85f1ad", inputs: ["display","html","filteredTrain","data"], body: (display,html,filteredTrain,data) => {
-display(html`<small>${filteredTrain.length} of ${data.trainRows.length} rows shown.</small>`);
-}});
-
-define({id: "9ee1e3ad", inputs: ["Inputs","filteredTrain","d3","display"], body: async (Inputs,filteredTrain,d3,display) => {
+define({id: "292babb6", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
 display(await(
-Inputs.table(
-  [...filteredTrain].sort((a, b) => d3.descending(a.tokens_per_sec, b.tokens_per_sec)),
-  {
-    columns: ["batch_size", "seq_len", "d_model", "d_head", "num_heads", "num_layers", "d_ff", "tokens_per_sec", "median_ms", "est_memory_gb", "num_params_m", "ffn_ratio"],
-    header: {
-      batch_size: "Batch",
-      seq_len: "Seq",
-      d_model: "d_model",
-      d_head: "d_head",
-      num_heads: "heads",
-      num_layers: "layers",
-      d_ff: "d_ff",
-      tokens_per_sec: "tok/s",
-      median_ms: "median ms",
-      est_memory_gb: "mem GB",
-      num_params_m: "params M",
-      ffn_ratio: "ffn x"
-    },
-    format: {
-      tokens_per_sec: (d) => d.toFixed(1),
-      median_ms: (d) => d.toFixed(1),
-      est_memory_gb: (d) => d.toFixed(2),
-      num_params_m: (d) => d.toFixed(1),
-      ffn_ratio: (d) => d.toFixed(2)
-    },
-    sort: "tokens_per_sec",
-    reverse: true,
-    rows: 20
-  }
-)
+tex`S`
 ))
 }});
 
-define({id: "c9b00c0a", inputs: ["data"], outputs: ["compModelValues"], body: (data) => {
-const compModelValues = [...new Set(data.mainRows.map((d) => d.model_label))].sort();
-return {compModelValues};
-}});
-
-define({id: "f4203980", inputs: ["view","Inputs","compModelValues"], outputs: ["compControls"], body: (view,Inputs,compModelValues) => {
-const compControls = view(Inputs.form({
-  models: Inputs.checkbox(compModelValues, {label: "Models", value: compModelValues}),
-  speedMetric: Inputs.select(
-    new Map([["tokens/sec speedup", "throughput_speedup"], ["step-time speedup", "step_time_speedup"]]),
-    {label: "Speedup metric", value: "throughput_speedup"}
-  )
-}));
-return {compControls};
-}});
-
-define({id: "17e21f2d", inputs: ["data","compControls"], outputs: ["filteredMain","filteredSpeedups"], body: (data,compControls) => {
-const filteredMain = data.mainRows.filter((d) => compControls.models.includes(d.model_label));
-const filteredSpeedups = data.speedupRows.filter((d) => compControls.models.includes(d.model_label));
-return {filteredMain,filteredSpeedups};
-}});
-
-define({id: "f6fad850", inputs: ["filteredMain","html","Plot","display"], body: async (filteredMain,html,Plot,display) => {
+define({id: "d4a5728a", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
 display(await(
-filteredMain.length === 0
-  ? html`<p style="padding:1rem;border:1px dashed var(--theme-foreground-faint);border-radius:8px;">No rows for selected models.</p>`
-  : Plot.plot({
-      width: 920,
-      height: 340,
-      x: {label: "Seconds / step", grid: true},
-      y: {label: "Tokens / sec", grid: true},
-      color: {legend: true},
-      symbol: {legend: true},
-      marks: [
-        Plot.dot(filteredMain, {
-          x: "step_s",
-          y: "throughput_toks",
-          fill: "series_label",
-          symbol: "platform",
-          r: 5,
-          tip: true
-        })
-      ]
-    })
+tex`d_{model}`
 ))
 }});
 
-define({id: "02043312", inputs: ["filteredSpeedups","d3","compControls","display","html","Plot"], body: (filteredSpeedups,d3,compControls,display,html,Plot) => {
-{
-  const sorted = [...filteredSpeedups].sort((a, b) => d3.descending(a[compControls.speedMetric], b[compControls.speedMetric]));
-  const speedLabel = compControls.speedMetric === "throughput_speedup" ? "CUDA / MPS throughput" : "MPS / CUDA step time";
-
-  display(sorted.length === 0
-    ? html`<p style="padding:1rem;border:1px dashed var(--theme-foreground-faint);border-radius:8px;">No paired MPS/CUDA rows available.</p>`
-    : Plot.plot({
-        width: 920,
-        height: Math.min(420, 140 + sorted.length * 48),
-        marginLeft: 220,
-        x: {label: `${speedLabel} speedup`, grid: true},
-        marks: [
-          Plot.ruleX([1], {stroke: "var(--theme-foreground-faint)", strokeDasharray: "4 4"}),
-          Plot.barX(sorted, {y: "model_label", x: compControls.speedMetric, fill: "var(--theme-foreground-focus)", tip: true}),
-          Plot.text(sorted, {
-            y: "model_label",
-            x: compControls.speedMetric,
-            text: (d) => `${d[compControls.speedMetric].toFixed(2)}×`,
-            dx: 4,
-            textAnchor: "start"
-          })
-        ]
-      }));
-}
-}});
-
-define({id: "680d675e", inputs: ["Inputs","filteredSpeedups","d3","display"], body: async (Inputs,filteredSpeedups,d3,display) => {
+define({id: "276a7cec", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
 display(await(
-Inputs.table(
-  [...filteredSpeedups].sort((a, b) => d3.descending(a.throughput_speedup, b.throughput_speedup)),
-  {
-    columns: ["model_label", "mps_tokens_per_sec", "cuda_tokens_per_sec", "throughput_speedup", "mps_step_s", "cuda_step_s", "step_time_speedup"],
-    header: {
-      model_label: "Model",
-      mps_tokens_per_sec: "MPS tok/s",
-      cuda_tokens_per_sec: "CUDA tok/s",
-      throughput_speedup: "tok/s speedup",
-      mps_step_s: "MPS step s",
-      cuda_step_s: "CUDA step s",
-      step_time_speedup: "step-time speedup"
-    },
-    format: {
-      mps_tokens_per_sec: (d) => d.toFixed(1),
-      cuda_tokens_per_sec: (d) => d.toFixed(1),
-      throughput_speedup: (d) => Number.isFinite(d) ? `${d.toFixed(2)}×` : "n/a",
-      mps_step_s: (d) => d.toFixed(3),
-      cuda_step_s: (d) => d.toFixed(3),
-      step_time_speedup: (d) => Number.isFinite(d) ? `${d.toFixed(2)}×` : "n/a"
-    },
-    sort: "throughput_speedup",
-    reverse: true
-  }
-)
+tex`d_k`
 ))
 }});
 
-define({id: "553f43c3", inputs: ["data","d3"], outputs: ["seriesOptions","seriesMap","defaultSeriesKeys"], body: (data,d3) => {
-const seriesOptions = Array.from(
-  new Map(data.historyRows.map((d) => [d.series_key, d.series_verbose || d.series_label])).entries()
-).sort((a, b) => d3.ascending(a[1], b[1]));
-
-const seriesMap = new Map(seriesOptions.map(([key, label]) => [label, key]));
-const defaultSeriesKeys = seriesOptions.slice(0, Math.min(4, seriesOptions.length)).map(([key]) => key);
-return {seriesOptions,seriesMap,defaultSeriesKeys};
-}});
-
-define({id: "7e89a471", inputs: ["view","Inputs","seriesMap","defaultSeriesKeys"], outputs: ["selectedSeries"], body: (view,Inputs,seriesMap,defaultSeriesKeys) => {
-const selectedSeries = view(Inputs.checkbox(seriesMap, {label: "Series", value: defaultSeriesKeys}));
-return {selectedSeries};
-}});
-
-define({id: "7ec7a617", inputs: ["view","Inputs"], outputs: ["curveControls"], body: (view,Inputs) => {
-const curveControls = view(Inputs.form({
-  metric: Inputs.select(
-    new Map([["Loss", "Loss"], ["Eval Loss", "Eval Loss"], ["Eval Perplexity", "Eval Perplexity"], ["Throughput", "Throughput/Tokens per sec"], ["Step Time", "Time/Total step"]]),
-    {label: "Metric", value: "Loss"}
-  ),
-  style: Inputs.select(["lines", "lines + dots", "dots"], {label: "Marks", value: "lines"}),
-  yScale: Inputs.select(
-    new Map([["linear", "linear"], ["log", "log"]]),
-    {label: "Y scale", value: "linear"}
-  )
-}));
-return {curveControls};
-}});
-
-define({id: "f926f72f", inputs: ["d3","data"], outputs: ["histStepMin","histStepMax"], body: (d3,data) => {
-const histStepMin = d3.min(data.historyRows, (d) => d.step) ?? 0;
-const histStepMax = d3.max(data.historyRows, (d) => d.step) ?? 1;
-return {histStepMin,histStepMax};
-}});
-
-define({id: "ef3c0dba", inputs: ["view","Inputs","histStepMin","histStepMax"], outputs: ["curveRange"], body: (view,Inputs,histStepMin,histStepMax) => {
-const curveRange = view(Inputs.form({
-  stride: Inputs.range([1, 100], {label: "Downsample stride", step: 1, value: 5}),
-  maxGap: Inputs.range([1, 300], {label: "Break line if step gap >", step: 1, value: 60}),
-  stepStart: Inputs.range([histStepMin, histStepMax], {label: "Step start", step: 1, value: histStepMin}),
-  stepEnd: Inputs.range([histStepMin, histStepMax], {label: "Step end", step: 1, value: histStepMax})
-}));
-return {curveRange};
-}});
-
-define({id: "5c2f6aa5", inputs: ["buildSegmentedHistoryRows","data","selectedSeries","curveControls","curveRange"], outputs: ["segmented"], body: (buildSegmentedHistoryRows,data,selectedSeries,curveControls,curveRange) => {
-const segmented = buildSegmentedHistoryRows(data.historyRows, {
-  selectedSeries: new Set(selectedSeries),
-  metric: curveControls.metric,
-  stride: curveRange.stride,
-  maxGap: curveRange.maxGap,
-  minStep: Math.min(curveRange.stepStart, curveRange.stepEnd),
-  maxStep: Math.max(curveRange.stepStart, curveRange.stepEnd),
-  positiveOnly: curveControls.yScale === "log"
-});
-return {segmented};
-}});
-
-define({id: "cfcbf0f9", inputs: ["metricLabel","curveControls","segmented","display","html","Plot"], body: (metricLabel,curveControls,segmented,display,html,Plot) => {
-{
-  const mLabel = metricLabel(curveControls.metric);
-
-  if (segmented.length === 0) {
-    display(html`<p style="padding:1rem;border:1px dashed var(--theme-foreground-faint);border-radius:8px;">No history rows for current selections.</p>`);
-  } else {
-    const marks = [];
-    if (curveControls.style !== "dots") {
-      marks.push(Plot.lineY(segmented, {
-        x: "step", y: "metric_value", stroke: "series_label", z: "segment_key", tip: true
-      }));
-    }
-    if (curveControls.style !== "lines") {
-      marks.push(Plot.dot(segmented, {
-        x: "step", y: "metric_value", fill: "series_label", r: 2.7, tip: true
-      }));
-    }
-
-    display(Plot.plot({
-      width: 920,
-      height: 360,
-      x: {label: "step", grid: true},
-      y: {label: mLabel, grid: true, type: curveControls.yScale === "log" ? "log" : "linear"},
-      color: {legend: true},
-      marks
-    }));
-  }
-}
-}});
-
-define({id: "53ee2e90", inputs: ["Inputs","segmented","metricLabel","curveControls","display"], body: async (Inputs,segmented,metricLabel,curveControls,display) => {
+define({id: "de8b04bb", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
 display(await(
-Inputs.table(segmented, {
-  columns: ["series_verbose", "run_name", "step", "metric_value"],
-  header: {
-    series_verbose: "Series",
-    run_name: "Run",
-    step: "Step",
-    metric_value: metricLabel(curveControls.metric)
-  },
-  format: {
-    metric_value: (d) => Number.isFinite(d) ? d.toFixed(6) : "n/a"
-  },
-  sort: "step",
-  rows: 25
-})
+tex`h`
 ))
+}});
+
+define({id: "ae05f8da", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`h = d_{model} / d_k`
+))
+}});
+
+define({id: "256dca58", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`L`
+))
+}});
+
+define({id: "f3dc34f5", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`d_{ff}`
+))
+}});
+
+define({id: "1be1b6c7", outputs: ["renderPerfEmpiricalTrainBenchmark","renderPerfEmpiricalExpectedVsActual","renderPerfEmpiricalDeviceComparison","renderPerfEmpiricalTrainingCurves"], body: async () => {
+const {renderPerfEmpiricalTrainBenchmark, renderPerfEmpiricalExpectedVsActual, renderPerfEmpiricalDeviceComparison, renderPerfEmpiricalTrainingCurves} = await import("../../../_import/embed/perf-empirical.6e5843d3.js");
+
+return {renderPerfEmpiricalTrainBenchmark,renderPerfEmpiricalExpectedVsActual,renderPerfEmpiricalDeviceComparison,renderPerfEmpiricalTrainingCurves};
+}});
+
+define({id: "5f0c9453", inputs: ["renderPerfEmpiricalTrainBenchmark"], outputs: ["trainSection"], body: async (renderPerfEmpiricalTrainBenchmark) => {
+const trainSection = await renderPerfEmpiricalTrainBenchmark();
+return {trainSection};
+}});
+
+define({id: "03091ea1", inputs: ["display","trainSection"], body: (display,trainSection) => {
+display(trainSection);
+}});
+
+define({id: "d4a5728a-1", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`d_{model}`
+))
+}});
+
+define({id: "8664f8c5", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`S^2`
+))
+}});
+
+define({id: "78359219", inputs: ["renderPerfEmpiricalExpectedVsActual"], outputs: ["evaSection"], body: async (renderPerfEmpiricalExpectedVsActual) => {
+const evaSection = await renderPerfEmpiricalExpectedVsActual();
+return {evaSection};
+}});
+
+define({id: "100de579", inputs: ["display","evaSection"], body: (display,evaSection) => {
+display(evaSection);
+}});
+
+define({id: "67bfe76d", inputs: ["renderPerfEmpiricalDeviceComparison"], outputs: ["compSection"], body: async (renderPerfEmpiricalDeviceComparison) => {
+const compSection = await renderPerfEmpiricalDeviceComparison();
+return {compSection};
+}});
+
+define({id: "9996ac78", inputs: ["display","compSection"], body: (display,compSection) => {
+display(compSection);
+}});
+
+define({id: "9dd16f38", inputs: ["renderPerfEmpiricalTrainingCurves"], outputs: ["curvesSection"], body: async (renderPerfEmpiricalTrainingCurves) => {
+const curvesSection = await renderPerfEmpiricalTrainingCurves();
+return {curvesSection};
+}});
+
+define({id: "9924402b", inputs: ["display","curvesSection"], body: (display,curvesSection) => {
+display(curvesSection);
 }});
 
 </script>
@@ -463,7 +200,8 @@ Inputs.table(segmented, {
 <nav>
 <div>Contents</div>
 <ol>
-<li class="observablehq-secondary-link"><a href="#1-train-benchmark-grid-search-mps">1) Train Benchmark Grid Search (MPS)</a></li>
+<li class="observablehq-secondary-link"><a href="#benchmark-grid-search">Benchmark Grid Search</a></li>
+<li class="observablehq-secondary-link"><a href="#model-selection">Model Selection</a></li>
 <li class="observablehq-secondary-link"><a href="#2-controlled-platform-comparison-mps-comp-vs-gpu-comp">2) Controlled Platform Comparison (mps_comp vs gpu_comp)</a></li>
 <li class="observablehq-secondary-link"><a href="#3-training-curve-analysis">3) Training-Curve Analysis</a></li>
 </ol>
@@ -471,60 +209,58 @@ Inputs.table(segmented, {
 </aside>
 <main id="observablehq-main" class="observablehq">
 <h1 id="benchmarks-and-empirical-performance-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#benchmarks-and-empirical-performance-analysis">Benchmarks and Empirical Performance Analysis</a></h1>
-<p>Benchmarking proceeded in phases. The primary analysis starts with the broad MPS
-train-grid benchmark, then moves to the controlled CUDA-vs-MPS model
-comparison, and finally inspects training curves with per-run controls.</p>
-<div class="observablehq observablehq--block"><!--:854b4f71:--></div>
-<div class="observablehq observablehq--block"><!--:3ccc4703:--></div>
-<div class="observablehq observablehq--block"><!--:2530568b:--></div>
-<hr>
-<h2 id="1-train-benchmark-grid-search-mps" tabindex="-1"><a class="observablehq-header-anchor" href="#1-train-benchmark-grid-search-mps">1) Train Benchmark Grid Search (MPS)</a></h2>
-<p>The full <code>train_benchmark</code> sweep inspects throughput/memory tradeoffs
-across architecture and batch/sequence dimensions. Use the filters to narrow
-down the grid, then choose axes and encodings for the scatter plot.</p>
-<div class="observablehq observablehq--block"><!--:0b6f4f00:--></div>
-<div class="observablehq observablehq--block"><!--:245e011b:--></div>
-<div class="observablehq observablehq--block"><!--:8553a1b1:--></div>
-<div class="observablehq observablehq--block"><!--:0fb322a1:--></div>
-<div class="observablehq observablehq--block"><!--:45c49fac:--></div>
-<div class="card">
-<h3 id="interactive-grid-view" tabindex="-1"><a class="observablehq-header-anchor" href="#interactive-grid-view">Interactive Grid View</a></h3>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:604b9805:--></div>
-</div>
-<div class="observablehq observablehq--block"><!--:fe85f1ad:--></div>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:9ee1e3ad:--></div>
+<h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
+<p>Benchmarking work in this project was centered around pedagogic goals, which were twofold.  First, was simply gaining familiarity with benchmarking tools.  To this end, the PyTorch <code>blocked_autorange</code> method from the <code>benchmark.Timer</code> class was initially used to execute a controlled, large-scale grid search across core model parameters (see below).</p>
+<p>These results were then used to generate more robustly estimate model specifications that could be run on the avialable hardware, culminating in two model settings being selected for comparison, one "wide" and another "deep", a relativley standard kind of comparison.  These two models had similar numbers of parameters and compute budgets, but differed on memory use.</p>
+<p>After training on the Apple M4, the two models were then trained on the RTX 4090.  This analysis concludes with a comparison of training performance between these two systems, after which we provide sample output from the final model weights.</p>
+<h2 id="benchmark-grid-search" tabindex="-1"><a class="observablehq-header-anchor" href="#benchmark-grid-search">Benchmark Grid Search</a></h2>
+<p>The first step in benchmarking was a grid search across core models parameters, including</p>
+<ul>
+<li>bach size <observablehq-loading></observablehq-loading><!--:e9422d4d:--></li>
+<li>sequence length <observablehq-loading></observablehq-loading><!--:292babb6:--></li>
+<li>model dimension <observablehq-loading></observablehq-loading><!--:d4a5728a:--></li>
+<li>head dimension <observablehq-loading></observablehq-loading><!--:276a7cec:--> or number of heads <observablehq-loading></observablehq-loading><!--:de8b04bb:--> (with <observablehq-loading></observablehq-loading><!--:ae05f8da:-->, and locked to multiples of 32)</li>
+<li>number of layers/blocks <observablehq-loading></observablehq-loading><!--:256dca58:--></li>
+<li>SwiGLU network feedforward dimension <observablehq-loading></observablehq-loading><!--:f3dc34f5:--></li>
+</ul>
+<p>As the <code>benchmark.Timer</code> class primarily measures time and throughput, those are the metrics collected.  The <code>blocked_autorange</code> method was used on a single training loop iteration, with the expectation that this would result in reliable and repeatable results.  While this is true in the sense that the method does ensure that the memory space is clean and that the device has been synchronized, part of the method's reliability comes from the repeated execution of the code under study, and in this case the minimum time allotted was often lower than the time of a single run.  Nonetheless, the data were consistent with expectations, as can be seen below.</p>
+<div class="observablehq observablehq--block"><!--:1be1b6c7:--></div>
+<div class="observablehq observablehq--block"><!--:5f0c9453:--></div>
+<div class="observablehq observablehq--block"><!--:03091ea1:--></div>
+<h4 id="observations" tabindex="-1"><a class="observablehq-header-anchor" href="#observations">Observations</a></h4>
+<ul>
+<li>the data were not especially noisy, indicating the benchmark library functioned as desired</li>
+<li>smaller <observablehq-loading></observablehq-loading><!--:d4a5728a-1:--> lead to higher tokens/sec</li>
+<li>larger sequence lengths quickly exceed memory capacity (<observablehq-loading></observablehq-loading><!--:8664f8c5:--> curse)</li>
+<li>batch size helps smaller models effectively maintain high throughput</li>
+</ul>
+<h3 id="expected-vs-actual-performance" tabindex="-1"><a class="observablehq-header-anchor" href="#expected-vs-actual-performance">Expected vs Actual Performance</a></h3>
+<p>It's important to note that these are "expected" in the sense of "calculated based on listed system TFLOPs" rather than any more nuanced estimation.  As such, performance is always worse than "expected", with the line on the following charts reflecting the point where actual and expected would have been equal.</p>
+<div class="observablehq observablehq--block"><!--:78359219:--></div>
+<div class="observablehq observablehq--block"><!--:100de579:--></div>
+<h4 id="observations-1" tabindex="-1"><a class="observablehq-header-anchor" href="#observations-1">Observations</a></h4>
+<ul>
+<li>memory issues arise in large models, causing an explosive growth in observed iteration time when the system becomes stressed</li>
+<li></li>
+</ul>
+<h3 id="conclusions" tabindex="-1"><a class="observablehq-header-anchor" href="#conclusions">Conclusions</a></h3>
+<p>The observations broadly reflects expectations.  The modifier "broadly" is used because there is a persistent level of uncertainty associated with Apple Silicon and the MacOS/MPS stack: the system is heavily memory-bottlenecked yet also suffers from a poorly optimized stack that requires numerous MPS kernel launces, increasing overhead.</p>
+<p>In fact both are true, so increasing batch size in smaller models does lead to improved throughput, while larger models do bog down the system and show increasingly sub-optimal performance.</p>
+<h2 id="model-selection" tabindex="-1"><a class="observablehq-header-anchor" href="#model-selection">Model Selection</a></h2>
 <hr>
 <h2 id="2-controlled-platform-comparison-mps-comp-vs-gpu-comp" tabindex="-1"><a class="observablehq-header-anchor" href="#2-controlled-platform-comparison-mps-comp-vs-gpu-comp">2) Controlled Platform Comparison (<code>mps_comp</code> vs <code>gpu_comp</code>)</a></h2>
 <h3 id="device-comparison-summary" tabindex="-1"><a class="observablehq-header-anchor" href="#device-comparison-summary">Device Comparison Summary</a></h3>
 <p>This section compares matched deep/wide model variants across MPS and CUDA
 using the parquet summaries and derived speedup tables.</p>
-<div class="observablehq observablehq--block"><!--:c9b00c0a:--></div>
-<div class="observablehq observablehq--block"><!--:f4203980:--></div>
-<div class="observablehq observablehq--block"><!--:17e21f2d:--></div>
-<div class="card">
-<h3 id="throughput-vs-step-time" tabindex="-1"><a class="observablehq-header-anchor" href="#throughput-vs-step-time">Throughput vs Step Time</a></h3>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:f6fad850:--></div>
-</div>
-<div class="card">
-<h3 id="gpu-vs-mps-speedup" tabindex="-1"><a class="observablehq-header-anchor" href="#gpu-vs-mps-speedup">GPU vs MPS Speedup</a></h3>
-<div class="observablehq observablehq--block"><!--:02043312:--></div>
-</div>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:680d675e:--></div>
+<div class="observablehq observablehq--block"><!--:67bfe76d:--></div>
+<div class="observablehq observablehq--block"><!--:9996ac78:--></div>
 <hr>
 <h2 id="3-training-curve-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#3-training-curve-analysis">3) Training-Curve Analysis</a></h2>
 <p>Curves are rendered per run/platform series with stride and gap controls to
 avoid misleading joins through missing values.</p>
-<div class="observablehq observablehq--block"><!--:553f43c3:--></div>
-<div class="observablehq observablehq--block"><!--:7e89a471:--></div>
-<div class="observablehq observablehq--block"><!--:7ec7a617:--></div>
-<div class="observablehq observablehq--block"><!--:f926f72f:--></div>
-<div class="observablehq observablehq--block"><!--:ef3c0dba:--></div>
-<div class="observablehq observablehq--block"><!--:5c2f6aa5:--></div>
-<div class="card">
 <h3 id="training-curves" tabindex="-1"><a class="observablehq-header-anchor" href="#training-curves">Training Curves</a></h3>
-<div class="observablehq observablehq--block"><!--:cfcbf0f9:--></div>
-</div>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:53ee2e90:--></div>
+<div class="observablehq observablehq--block"><!--:9dd16f38:--></div>
+<div class="observablehq observablehq--block"><!--:9924402b:--></div>
 <hr>
 <h3 id="notes-on-diagnostic-benchmarks" tabindex="-1"><a class="observablehq-header-anchor" href="#notes-on-diagnostic-benchmarks">Notes on Diagnostic Benchmarks</a></h3>
 <p><code>micro_benchmarks</code> and <code>sequential_benchmark</code> were diagnostic runs used to
@@ -532,7 +268,7 @@ debug a memory-fragmentation issue and are intentionally omitted from the main
 analysis narrative here.</p>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-17T16:57:16">Feb 17, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-17T23:24:39">Feb 17, 2026</a>.</div>
 </footer>
 </div>
 </body>
