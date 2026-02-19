@@ -110,10 +110,10 @@ tex`\gamma`
 ))
 }});
 
-define({id: "63ea326f", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+define({id: "661de4a4", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
 display(await(
 tex.block`\mathrm{RMSNorm}(x) = \frac{x}{\mathrm{RMS}(x)} \cdot \gamma,
-\quad \mathrm{RMS}(x) = \sqrt{\frac{1}{d}\sum_{j=1}^{d} x_j^2 + \epsilon}`
+\quad \mathrm{RMS}(x) = \sqrt{\tfrac{1}{d}\sum_{j=1}^{d} x_j^2 + \epsilon}`
 ))
 }});
 
@@ -291,7 +291,7 @@ await renderPerfExpected()
 <ul>
 <li>
 <p>an RMS norm on the embedded token with <observablehq-loading></observablehq-loading><!--:246395b1:--> weights <observablehq-loading></observablehq-loading><!--:e123c38f:-->,</p>
-<observablehq-loading></observablehq-loading><!--:63ea326f:--></li>
+<observablehq-loading></observablehq-loading><!--:661de4a4:--></li>
 <li>
 <p>projection of the input matrix <observablehq-loading></observablehq-loading><!--:795b5447:--> by <observablehq-loading></observablehq-loading><!--:28b66ad1:--> matrices</p>
 <observablehq-loading></observablehq-loading><!--:de85bd12:--><p>however <observablehq-loading></observablehq-loading><!--:69bdf923:--> were concatenated to reduce the number of matrix multiplication operatoins.  These were then split into the individual <observablehq-loading></observablehq-loading><!--:7166cac1:--> matrices for each head.</p>
@@ -420,7 +420,7 @@ await renderPerfExpected()
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:01a07022:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-18T19:35:46">Feb 18, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-18T22:17:11">Feb 18, 2026</a>.</div>
 </footer>
 </div>
 </body>

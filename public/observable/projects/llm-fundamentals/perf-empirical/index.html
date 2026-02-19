@@ -13,7 +13,7 @@
 <link rel="modulepreload" href="../../../_observablehq/client.cbf2d9f3.js">
 <link rel="modulepreload" href="../../../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../../../_import/embed/perf-empirical.34fd7407.js">
+<link rel="modulepreload" href="../../../_import/embed/perf-empirical.4d6608a5.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib/tex.c79b643a.js">
 <link rel="modulepreload" href="../../../_import/components/data-utils.e2caa41c.js">
 <link rel="modulepreload" href="../../../_import/components/dom-utils.aaca454b.js">
@@ -123,7 +123,7 @@ tex`d_{ff}`
 }});
 
 define({id: "009ce9a3", outputs: ["renderPerfEmpiricalTrainBenchmark","renderPerfEmpiricalExpectedVsActual","renderPerfEmpiricalDeviceComparison","renderPerfEmpiricalModelSelection","renderPerfEmpiricalTrainingCurves"], body: async () => {
-const {renderPerfEmpiricalTrainBenchmark, renderPerfEmpiricalExpectedVsActual, renderPerfEmpiricalDeviceComparison, renderPerfEmpiricalModelSelection, renderPerfEmpiricalTrainingCurves} = await import("../../../_import/embed/perf-empirical.34fd7407.js");
+const {renderPerfEmpiricalTrainBenchmark, renderPerfEmpiricalExpectedVsActual, renderPerfEmpiricalDeviceComparison, renderPerfEmpiricalModelSelection, renderPerfEmpiricalTrainingCurves} = await import("../../../_import/embed/perf-empirical.4d6608a5.js");
 
 return {renderPerfEmpiricalTrainBenchmark,renderPerfEmpiricalExpectedVsActual,renderPerfEmpiricalDeviceComparison,renderPerfEmpiricalModelSelection,renderPerfEmpiricalTrainingCurves};
 }});
@@ -212,8 +212,8 @@ display(curvesSection);
 <ol>
 <li class="observablehq-secondary-link"><a href="#benchmark-grid-search">Benchmark Grid Search</a></li>
 <li class="observablehq-secondary-link"><a href="#model-selection">Model Selection</a></li>
-<li class="observablehq-secondary-link"><a href="#controlled-platform-comparison-mps-comp-vs-gpu-comp">Controlled Platform Comparison (mps_comp vs gpu_comp)</a></li>
-<li class="observablehq-secondary-link"><a href="#3-training-curve-analysis">3) Training-Curve Analysis</a></li>
+<li class="observablehq-secondary-link"><a href="#training-dyanmics-across-architectures">Training Dyanmics Across Architectures</a></li>
+<li class="observablehq-secondary-link"><a href="#training-curve-analysis">Training-Curve Analysis</a></li>
 </ol>
 </nav>
 </aside>
@@ -261,25 +261,16 @@ display(curvesSection);
 <p>Ultimately, in order to provide a robust comparison while remaining within memory limits, two model specs were chosen, one of which was actually outside the grid seach as its width made the feasible number of layers smaller than the minimum in the grid.</p>
 <div class="observablehq observablehq--block"><!--:e95b81ae:--></div>
 <div class="observablehq observablehq--block"><!--:34c11cd3:--></div>
-<pre><code>"Model A and Model B have similar parameter counts (~29M vs ~29M) and per-step compute budgets, " +
-"but differ substantially in shape. Model A is wide and shallow: a large d_model drives up the " +
-"attention projection matrices and activations, while only two layers limit depth-dependent costs. " +
-"Model B is narrow and deep: twelve layers stack modest per-layer costs, but the repeated residual " +
-"stream accumulation and deeper gradient flow make it more prone to training instability and slower " +
-"to converge per token. The attention S\u00b2 cost is identical across models (same B and S), so the " +
-"primary memory difference is the activation footprint scaling with d_model in Model A, which is " +
-"evident in its higher peak memory. On MPS this is the binding constraint; on the 4090, AMP " +
-"halves activation storage and the larger memory bandwidth absorbs both shapes comfortably."
-</code></pre>
-<hr>
-<h2 id="controlled-platform-comparison-mps-comp-vs-gpu-comp" tabindex="-1"><a class="observablehq-header-anchor" href="#controlled-platform-comparison-mps-comp-vs-gpu-comp">Controlled Platform Comparison (<code>mps_comp</code> vs <code>gpu_comp</code>)</a></h2>
-<h3 id="device-comparison-summary" tabindex="-1"><a class="observablehq-header-anchor" href="#device-comparison-summary">Device Comparison Summary</a></h3>
-<p>This section compares matched deep/wide model variants across MPS and CUDA
-using the parquet summaries and derived speedup tables.</p>
+<p>The decision to use these models was reached after an attempt at training larger models took excessive time.  Those models were also varying across a variety of parameters, which is interesting for a more intuitive approach to research, but a more controlled "deep vs wide" comparison is more appropriate for this project.</p>
+<p>So the two models selected were matched on many parameters, with the choice made to keep head count equal and change the head dimension, as well as model and feedforward dimensions.  To compensate for the differnce in width, the model size estimator was used to select a number of layers for the widemodel that would result in an equivalent parameter count.</p>
+<p>Overall model training memory could have been more controlled with the use of gradient checkpointing during training, which would have significantly alleviated the memory consumption caused by tracking activation values across many layers, however this was not part of the assignment spec and the models were sized to fit comfortably in system memory, making this unnecessary.</p>
+<p>Based on existing literature, it was expected that model A would converge to its minimum loss more quickly due to having fewer layers, but would also probably have a higher minimum loss as the architecture can only learn a relatively flat manifold. for the same reason.</p>
+<h2 id="training-dyanmics-across-architectures" tabindex="-1"><a class="observablehq-header-anchor" href="#training-dyanmics-across-architectures">Training Dyanmics Across Architectures</a></h2>
+<h3 id="training-throughput-comparison" tabindex="-1"><a class="observablehq-header-anchor" href="#training-throughput-comparison">Training Throughput Comparison</a></h3>
+<p>As expected, the RTS 4090 showed a significant speedup of about 20x for the wide model A, and 16x for the deep model B.  This is suprirsingly close to the 20x speedup expected for float32 operations on the RTX, with the reduced performance in the deep model likely caused by memory latency.</p>
 <div class="observablehq observablehq--block"><!--:67bfe76d:--></div>
 <div class="observablehq observablehq--block"><!--:9996ac78:--></div>
-<hr>
-<h2 id="3-training-curve-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#3-training-curve-analysis">3) Training-Curve Analysis</a></h2>
+<h2 id="training-curve-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#training-curve-analysis">Training-Curve Analysis</a></h2>
 <p>Curves are rendered per run/platform series with stride and gap controls to
 avoid misleading joins through missing values.</p>
 <h3 id="training-curves" tabindex="-1"><a class="observablehq-header-anchor" href="#training-curves">Training Curves</a></h3>
@@ -292,7 +283,7 @@ debug a memory-fragmentation issue and are intentionally omitted from the main
 analysis narrative here.</p>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-18T19:35:46">Feb 18, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-18T22:17:11">Feb 18, 2026</a>.</div>
 </footer>
 </div>
 </body>

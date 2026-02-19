@@ -1072,17 +1072,30 @@ function renderExpectedVsActualSection(data, options = {}) {
 }
 
 function renderDeviceComparisonSection(data, options = {}) {
-  const {mainRows, speedupRows} = data;
+  const {speedupRows} = data;
   const host = card();
-  host.appendChild(sectionHeading("Device Comparison Summary"));
+  host.appendChild(sectionHeading("Training Throughput Comparison"));
 
-  if (mainRows.length === 0) {
+  if (speedupRows.length === 0) {
     host.appendChild(emptyState("No platform comparison rows available."));
     return host;
   }
 
-  const modelValues = Array.from(new Set(mainRows.map((row) => row.model_label))).sort();
-  const modelControl = checkboxGroup(modelValues, modelValues, "cmp-model", "Models");
+  const modelValues = Array.from(new Set(speedupRows.map((row) => row.model_label))).sort(d3.ascending);
+  const platformRows = speedupRows.flatMap((row) => [
+    {
+      model_label: row.model_label,
+      platform_label: "MPS",
+      tokens_per_sec: row.mps_tokens_per_sec,
+      iterations_per_sec: Number.isFinite(Number(row.mps_step_s)) && Number(row.mps_step_s) > 0 ? 1 / Number(row.mps_step_s) : NaN
+    },
+    {
+      model_label: row.model_label,
+      platform_label: "CUDA",
+      tokens_per_sec: row.cuda_tokens_per_sec,
+      iterations_per_sec: Number.isFinite(Number(row.cuda_step_s)) && Number(row.cuda_step_s) > 0 ? 1 / Number(row.cuda_step_s) : NaN
+    }
+  ]).filter((row) => Number.isFinite(Number(row.tokens_per_sec)) || Number.isFinite(Number(row.iterations_per_sec)));
   const speedMetricControl = selectControl(
     "Speedup metric",
     [
@@ -1091,55 +1104,75 @@ function renderDeviceComparisonSection(data, options = {}) {
     ],
     options.speedMetric || "throughput_speedup"
   );
-  const rowLimitControl = makeRangeControl("Table rows", 10, 200, 10, clampRowLimit(options.compareTableLimit, 80));
 
   const controls = card();
-  controls.append(modelControl.node, speedMetricControl.node, rowLimitControl.node);
-  const scatterHost = card();
+  controls.append(speedMetricControl.node);
+  const throughputHost = card();
+  const iterationsHost = card();
   const speedupHost = card();
   const tableHost = card();
-  host.append(controls, scatterHost, speedupHost, tableHost);
+  host.append(controls, throughputHost, iterationsHost, speedupHost, tableHost);
+
+  const renderMetricBarChart = (container, chartTitle, yLabel, valueKey) => {
+    clearNode(container);
+    container.appendChild(sectionHeading(chartTitle));
+
+    const chartRows = platformRows.filter((row) => Number.isFinite(Number(row[valueKey])));
+    if (chartRows.length === 0) {
+      container.appendChild(emptyState(`No rows available for ${chartTitle.toLowerCase()}.`));
+      return;
+    }
+
+    const positiveValues = chartRows
+      .map((row) => Number(row[valueKey]))
+      .filter((value) => Number.isFinite(value) && value > 0);
+    if (positiveValues.length === 0) {
+      container.appendChild(emptyState(`No positive values available for ${chartTitle.toLowerCase()}.`));
+      return;
+    }
+    const yMin = d3.min(positiveValues);
+    const yMax = d3.max(positiveValues);
+    const yFloor = Math.max(Number.EPSILON, yMin / 2);
+
+    container.appendChild(
+      Plot.plot({
+        width: 920,
+        height: 340,
+        marginBottom: 72,
+        x: {label: null, domain: modelValues, tickRotate: -20},
+        y: {label: `${yLabel} (log scale)`, type: "log", grid: true, domain: [yFloor, yMax]},
+        fx: {label: "Device"},
+        color: {legend: true, label: "Model", scheme: "warm", domain: modelValues},
+        marks: [
+          Plot.ruleY([yFloor], {stroke: "var(--theme-foreground-faint)"}),
+          Plot.rectY(chartRows, {
+            fx: "platform_label",
+            x: "model_label",
+            y1: yFloor,
+            y2: valueKey,
+            fill: "model_label",
+            title: (d) =>
+              `${d.model_label} (${d.platform_label})\n` +
+              `${valueKey === "tokens_per_sec" ? "Tokens/sec" : "Iterations/sec"}: ${Number(d[valueKey]).toFixed(valueKey === "tokens_per_sec" ? 1 : 3)}`
+          })
+        ]
+      })
+    );
+  };
 
   const refresh = () => {
-    rowLimitControl.output.textContent = rowLimitControl.input.value;
-    const selectedModels = new Set(modelControl.getSelected());
-    const filteredMain = mainRows.filter((row) => selectedModels.has(row.model_label));
-    const filteredSpeedups = speedupRows.filter((row) => selectedModels.has(row.model_label));
     const speedMetric = speedMetricControl.select.value;
 
-    clearNode(scatterHost);
+    renderMetricBarChart(throughputHost, "Tokens / sec by model and device", "Tokens / sec", "tokens_per_sec");
+    renderMetricBarChart(iterationsHost, "Iterations / sec by model and device", "Iterations / sec", "iterations_per_sec");
     clearNode(speedupHost);
     clearNode(tableHost);
 
-    scatterHost.appendChild(sectionHeading("Throughput vs Step Time"));
-    if (filteredMain.length === 0) {
-      scatterHost.appendChild(emptyState("No rows for selected models."));
-    } else {
-      scatterHost.appendChild(
-        Plot.plot({
-          width: 920,
-          height: 340,
-          x: {label: "Seconds / step", grid: true},
-          y: {label: "Tokens / sec", grid: true},
-          color: {legend: true},
-          marks: [
-            Plot.dot(filteredMain, {
-              x: "step_s",
-              y: "throughput_toks",
-              fill: "series_label",
-              symbol: "platform",
-              tip: true
-            })
-          ]
-        })
-      );
-    }
-
     speedupHost.appendChild(sectionHeading("GPU vs MPS Speedup"));
-    if (filteredSpeedups.length === 0) {
+    if (speedupRows.length === 0) {
       speedupHost.appendChild(emptyState("No paired MPS/CUDA rows available."));
     } else {
-      const sorted = [...filteredSpeedups].sort((a, b) => d3.descending(a[speedMetric], b[speedMetric]));
+      const sorted = [...speedupRows].sort((a, b) => d3.descending(a[speedMetric], b[speedMetric]));
       const speedLabel = speedMetric === "throughput_speedup" ? "CUDA / MPS throughput" : "MPS / CUDA step time";
       speedupHost.appendChild(
         Plot.plot({
@@ -1147,9 +1180,10 @@ function renderDeviceComparisonSection(data, options = {}) {
           height: Math.min(420, 140 + sorted.length * 48),
           marginLeft: 220,
           x: {label: `${speedLabel} speedup`, grid: true},
+          color: {scheme: "warm", legend: true, label: "Speedup"},
           marks: [
             Plot.ruleX([1], {stroke: "var(--theme-foreground-faint)", strokeDasharray: "4 4"}),
-            Plot.barX(sorted, {y: "model_label", x: speedMetric, fill: "var(--theme-foreground-focus)", tip: true}),
+            Plot.barX(sorted, {y: "model_label", x: speedMetric, fill: speedMetric, tip: true}),
             Plot.text(sorted, {
               y: "model_label",
               x: speedMetric,
@@ -1162,16 +1196,13 @@ function renderDeviceComparisonSection(data, options = {}) {
       );
     }
 
-    const rowLimit = clampRowLimit(rowLimitControl.input.value, 80);
-    const tableRows = [...filteredSpeedups]
-      .sort((a, b) => d3.descending(a.throughput_speedup, b.throughput_speedup))
-      .slice(0, rowLimit);
+    const tableRows = [...speedupRows]
+      .sort((a, b) => d3.descending(a.throughput_speedup, b.throughput_speedup));
     if (tableRows.length === 0) {
       tableHost.appendChild(emptyState("No comparison rows to tabulate."));
     } else {
       const details = collapsible("expand to view comparison table");
       details.append(
-        rowLimitNote(tableRows.length, filteredSpeedups.length),
         renderSimpleTable(tableRows, [
           {key: "model_label", label: "Model"},
           {key: "mps_tokens_per_sec", label: "MPS tok/s", align: "right", format: (v) => Number(v).toFixed(1)},
@@ -1196,9 +1227,7 @@ function renderDeviceComparisonSection(data, options = {}) {
     }
   };
 
-  modelControl.onChange(refresh);
   speedMetricControl.select.addEventListener("change", refresh);
-  rowLimitControl.input.addEventListener("input", refresh);
   refresh();
   return host;
 }
