@@ -1072,7 +1072,7 @@ function renderExpectedVsActualSection(data, options = {}) {
 }
 
 function renderDeviceComparisonSection(data, options = {}) {
-  const {speedupRows} = data;
+  const {speedupRows, historyRows} = data;
   const host = card();
   host.appendChild(sectionHeading("Training Throughput Comparison"));
 
@@ -1096,22 +1096,12 @@ function renderDeviceComparisonSection(data, options = {}) {
       iterations_per_sec: Number.isFinite(Number(row.cuda_step_s)) && Number(row.cuda_step_s) > 0 ? 1 / Number(row.cuda_step_s) : NaN
     }
   ]).filter((row) => Number.isFinite(Number(row.tokens_per_sec)) || Number.isFinite(Number(row.iterations_per_sec)));
-  const speedMetricControl = selectControl(
-    "Speedup metric",
-    [
-      {value: "throughput_speedup", label: "tokens/sec speedup"},
-      {value: "step_time_speedup", label: "step-time speedup"}
-    ],
-    options.speedMetric || "throughput_speedup"
-  );
-
-  const controls = card();
-  controls.append(speedMetricControl.node);
   const throughputHost = card();
   const iterationsHost = card();
   const speedupHost = card();
+  const performanceHost = card();
   const tableHost = card();
-  host.append(controls, throughputHost, iterationsHost, speedupHost, tableHost);
+  host.append(throughputHost, iterationsHost, speedupHost, performanceHost, tableHost);
 
   const renderMetricBarChart = (container, chartTitle, yLabel, valueKey) => {
     clearNode(container);
@@ -1161,35 +1151,118 @@ function renderDeviceComparisonSection(data, options = {}) {
   };
 
   const refresh = () => {
-    const speedMetric = speedMetricControl.select.value;
-
     renderMetricBarChart(throughputHost, "Tokens / sec by model and device", "Tokens / sec", "tokens_per_sec");
     renderMetricBarChart(iterationsHost, "Iterations / sec by model and device", "Iterations / sec", "iterations_per_sec");
     clearNode(speedupHost);
+    clearNode(performanceHost);
     clearNode(tableHost);
 
     speedupHost.appendChild(sectionHeading("GPU vs MPS Speedup"));
     if (speedupRows.length === 0) {
       speedupHost.appendChild(emptyState("No paired MPS/CUDA rows available."));
     } else {
-      const sorted = [...speedupRows].sort((a, b) => d3.descending(a[speedMetric], b[speedMetric]));
-      const speedLabel = speedMetric === "throughput_speedup" ? "CUDA / MPS throughput" : "MPS / CUDA step time";
+      const sorted = [...speedupRows].sort((a, b) => d3.descending(a.throughput_speedup, b.throughput_speedup));
       speedupHost.appendChild(
         Plot.plot({
           width: 920,
           height: Math.min(420, 140 + sorted.length * 48),
           marginLeft: 220,
-          x: {label: `${speedLabel} speedup`, grid: true},
+          x: {label: "CUDA / MPS throughput speedup", grid: true},
           color: {scheme: "warm", legend: true, label: "Speedup"},
           marks: [
             Plot.ruleX([1], {stroke: "var(--theme-foreground-faint)", strokeDasharray: "4 4"}),
-            Plot.barX(sorted, {y: "model_label", x: speedMetric, fill: speedMetric, tip: true}),
+            Plot.barX(sorted, {y: "model_label", x: "throughput_speedup", fill: "throughput_speedup", tip: true}),
             Plot.text(sorted, {
               y: "model_label",
-              x: speedMetric,
-              text: (d) => `${d[speedMetric].toFixed(2)}\u00d7`,
+              x: "throughput_speedup",
+              text: (d) => `${d.throughput_speedup.toFixed(2)}\u00d7`,
               dx: 4,
               textAnchor: "start"
+            })
+          ]
+        })
+      );
+    }
+
+    performanceHost.appendChild(sectionHeading("Tokens per Second"));
+    const trendSeriesRowsByPlatformModel = d3
+      .groups(historyRows, (row) => `${row.platform}:${row.model_id}`)
+      .map(([, rows]) => {
+        const byRun = d3
+          .groups(rows, (row) => row.run_name)
+          .map(([, runRows]) => runRows)
+          .sort(
+            (a, b) =>
+              d3.descending(a[0]?.run_stamp || "", b[0]?.run_stamp || "") ||
+              d3.descending(a[0]?.run_name || "", b[0]?.run_name || "")
+          );
+        return byRun[0] || [];
+      })
+      .filter((rows) => rows.length > 0);
+    const allTrendRows = trendSeriesRowsByPlatformModel
+      .flatMap((rows) => rows)
+      .filter((row) => Number.isFinite(Number(row.step)))
+      .sort((a, b) => d3.ascending(a.step, b.step));
+    const tokensTrendRows = allTrendRows
+      .filter((row) => Number.isFinite(Number(row.throughput_toks)) && Number(row.throughput_toks) > 0)
+      .sort((a, b) => d3.ascending(a.step, b.step));
+    const stepTimeTrendRows = allTrendRows
+      .filter((row) => Number.isFinite(Number(row.step_s)) && Number(row.step_s) > 0)
+      .sort((a, b) => d3.ascending(a.step, b.step));
+
+    if (tokensTrendRows.length === 0) {
+      performanceHost.appendChild(emptyState("No token throughput rows available."));
+    } else {
+      performanceHost.appendChild(
+        Plot.plot({
+          width: 920,
+          height: 320,
+          x: {label: "Step", grid: true},
+          y: {label: "Tokens per second", grid: true},
+          color: {legend: true, scheme: "warm", label: "Series"},
+          marks: [
+            Plot.dot(tokensTrendRows, {
+              x: "step",
+              y: "throughput_toks",
+              fill: "series_label",
+              z: "series_key",
+              r: 1.1,
+              opacity: 0.85,
+              title: (d) =>
+                `${d.series_label}\nStep: ${Number(d.step).toFixed(0)}\n` +
+                `Tokens/s: ${Number(d.throughput_toks).toFixed(1)}\n` +
+                `Step time (s): ${Number(d.step_s).toFixed(4)}`,
+              tip: true
+            })
+          ]
+        })
+      );
+    }
+
+    performanceHost.appendChild(sectionHeading("Step Time (seconds per iteration)"));
+    if (stepTimeTrendRows.length === 0) {
+      performanceHost.appendChild(emptyState("No step-time rows available."));
+    } else {
+      performanceHost.appendChild(
+        Plot.plot({
+          width: 920,
+          height: 320,
+          x: {label: "Step", grid: true},
+          y: {label: "Seconds per step", grid: true},
+          color: {legend: true, scheme: "warm", label: "Series"},
+          marks: [
+            Plot.dot(stepTimeTrendRows, {
+              x: "step",
+              y: "step_s",
+              fill: "series_label",
+              z: "series_key",
+              r: 1.1,
+              opacity: 0.85,
+              title: (d) =>
+                `${d.series_label}\nStep: ${Number(d.step).toFixed(0)}\n` +
+                `Step time (s): ${Number(d.step_s).toFixed(4)}\n` +
+                `Tokens/s: ${Number(d.throughput_toks).toFixed(1)}`,
+              tip: true
             })
           ]
         })
@@ -1227,7 +1300,6 @@ function renderDeviceComparisonSection(data, options = {}) {
     }
   };
 
-  speedMetricControl.select.addEventListener("change", refresh);
   refresh();
   return host;
 }
@@ -1402,15 +1474,6 @@ function renderTrainingCurvesSection(data, options = {}) {
     ],
     options.historyChannel || "both"
   );
-  const perfMetricControl = selectControl(
-    "Performance chart",
-    [
-      {value: "throughput_toks", label: "Throughput (tokens / sec)"},
-      {value: "step_s", label: "Step time (s / step)"}
-    ],
-    options.historyPerfMetric || "throughput_toks"
-  );
-
   const stepMin = d3.min(curveRows, (row) => row.step) ?? 0;
   const stepMax = d3.max(curveRows, (row) => row.step) ?? 1;
   const stepStartControl = makeRangeControl("Step start", stepMin, stepMax, 1, options.historyStepStart ?? stepMin);
@@ -1422,21 +1485,14 @@ function renderTrainingCurvesSection(data, options = {}) {
     seriesControl.node,
     curveMetricControl.node,
     channelControl.node,
-    perfMetricControl.node,
     stepStartControl.node,
     stepEndControl.node,
     tableLimitControl.node
   );
   const mainChartHost = card();
-  const perfChartHost = card();
   const gradChartHost = card();
   const tableHost = card();
-  host.append(controls, mainChartHost, gradChartHost, perfChartHost, tableHost);
-
-  const perfMetricLabels = {
-    throughput_toks: "Tokens / sec",
-    step_s: "Seconds / step"
-  };
+  host.append(controls, mainChartHost, gradChartHost, tableHost);
 
   function buildMainCurveRows(selectedSeries, start, end, curveMetric, channelMode = "both") {
     const output = [];
@@ -1576,30 +1632,6 @@ function renderTrainingCurvesSection(data, options = {}) {
     return output.sort((a, b) => d3.ascending(a.step, b.step));
   }
 
-  function buildPerfRows(selectedSeries, start, end, metricKey) {
-    const output = [];
-    const grouped = d3.groups(
-      curveRows.filter((row) => selectedSeries.has(row.series_key)),
-      (row) => row.series_key
-    );
-    for (const [, rows] of grouped) {
-      const ordered = [...rows].sort((a, b) => d3.ascending(a.step, b.step));
-      for (const row of ordered) {
-        const step = Number(row.step);
-        if (!Number.isFinite(step) || step < start || step > end) continue;
-        const value = Number(row[metricKey]);
-        if (!Number.isFinite(value) || value <= 0) continue;
-        output.push({
-          ...row,
-          step,
-          metric_value: value,
-          series_segment: `${row.series_key}:perf`
-        });
-      }
-    }
-    return output.sort((a, b) => d3.ascending(a.step, b.step));
-  }
-
   function buildGradRows(selectedSeries, start, end) {
     const output = [];
     const grouped = d3.groups(
@@ -1647,24 +1679,20 @@ function renderTrainingCurvesSection(data, options = {}) {
     const selectedSeries = new Set(seriesControl.getSelected());
     const curveMetric = curveMetricControl.select.value;
     const channelMode = channelControl.select.value;
-    const perfMetric = perfMetricControl.select.value;
     const mainRows = buildMainCurveRows(selectedSeries, start, end, curveMetric, channelMode);
     const trainingRows = mainRows.filter((row) => row.curve_channel === "Training");
     const evalRows = mainRows.filter((row) => row.curve_channel === "Eval");
     const trainingTrendRows = buildSplineTrendRows(trainingRows, end);
-    const perfRows = buildPerfRows(selectedSeries, start, end, perfMetric);
     const gradRows = buildGradRows(selectedSeries, start, end);
     const gradTrendRows = buildSplineTrendRows(gradRows, end);
 
     clearNode(mainChartHost);
-    clearNode(perfChartHost);
     clearNode(gradChartHost);
     clearNode(tableHost);
     const metricTitle = curveMetric === "Loss" ? "Loss Trends" : "Perplexity Trends";
     const channelTitle =
       channelMode === "train" ? "Training" : channelMode === "eval" ? "Eval" : "Training + Eval";
     mainChartHost.appendChild(sectionHeading(`${metricTitle} (${channelTitle})`));
-    perfChartHost.appendChild(sectionHeading(`Performance Trend: ${perfMetricLabels[perfMetric] || perfMetric}`));
     gradChartHost.appendChild(sectionHeading("Pre-clip Gradient Norm Trend"));
 
     if (mainRows.length === 0) {
@@ -1740,31 +1768,6 @@ function renderTrainingCurvesSection(data, options = {}) {
       tableHost.appendChild(details);
     }
 
-    if (perfRows.length === 0) {
-      perfChartHost.appendChild(emptyState("No throughput/step-time rows for current selections."));
-    } else {
-      perfChartHost.appendChild(
-        Plot.plot({
-          width: 920,
-          height: 300,
-          x: {label: "Step", grid: true},
-          y: {label: perfMetricLabels[perfMetric] || perfMetric, grid: true},
-          color: {legend: true},
-          marks: [
-            Plot.dot(perfRows, {
-              x: "step",
-              y: "metric_value",
-              fill: "series_label",
-              z: "series_segment",
-              r: .8,
-              opacity: 0.85,
-              tip: true
-            })
-          ]
-        })
-      );
-    }
-
     if (gradRows.length === 0) {
       gradChartHost.appendChild(emptyState("No pre-clip gradient rows for current selections."));
       return;
@@ -1804,7 +1807,6 @@ function renderTrainingCurvesSection(data, options = {}) {
   seriesControl.onChange(refresh);
   curveMetricControl.select.addEventListener("change", refresh);
   channelControl.select.addEventListener("change", refresh);
-  perfMetricControl.select.addEventListener("change", refresh);
   stepStartControl.input.addEventListener("input", refresh);
   stepEndControl.input.addEventListener("input", refresh);
   tableLimitControl.input.addEventListener("input", refresh);

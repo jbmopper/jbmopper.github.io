@@ -6,14 +6,14 @@
 <meta name="generator" content="Observable Framework v1.13.3">
 <title>Empirical Performance | Project Writeup Sandbox</title>
 
-<link rel="preload" as="style" href="../../../_import/astro-bridge-theme.df4cc562.css">
+<link rel="preload" as="style" href="../../../_import/astro-bridge-theme.4ecc77ab.css">
 <link rel="preload" as="style" href="../../../_npm/katex@0.16.28/dist/katex.min.css">
-<link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.df4cc562.css">
+<link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.4ecc77ab.css">
 <link rel="stylesheet" type="text/css" href="../../../_npm/katex@0.16.28/dist/katex.min.css">
 <link rel="modulepreload" href="../../../_observablehq/client.cbf2d9f3.js">
 <link rel="modulepreload" href="../../../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../../../_import/embed/perf-empirical.4d6608a5.js">
+<link rel="modulepreload" href="../../../_import/embed/perf-empirical.554f4b7b.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib/tex.c79b643a.js">
 <link rel="modulepreload" href="../../../_import/components/data-utils.e2caa41c.js">
 <link rel="modulepreload" href="../../../_import/components/dom-utils.aaca454b.js">
@@ -123,7 +123,7 @@ tex`d_{ff}`
 }});
 
 define({id: "009ce9a3", outputs: ["renderPerfEmpiricalTrainBenchmark","renderPerfEmpiricalExpectedVsActual","renderPerfEmpiricalDeviceComparison","renderPerfEmpiricalModelSelection","renderPerfEmpiricalTrainingCurves"], body: async () => {
-const {renderPerfEmpiricalTrainBenchmark, renderPerfEmpiricalExpectedVsActual, renderPerfEmpiricalDeviceComparison, renderPerfEmpiricalModelSelection, renderPerfEmpiricalTrainingCurves} = await import("../../../_import/embed/perf-empirical.4d6608a5.js");
+const {renderPerfEmpiricalTrainBenchmark, renderPerfEmpiricalExpectedVsActual, renderPerfEmpiricalDeviceComparison, renderPerfEmpiricalModelSelection, renderPerfEmpiricalTrainingCurves} = await import("../../../_import/embed/perf-empirical.554f4b7b.js");
 
 return {renderPerfEmpiricalTrainBenchmark,renderPerfEmpiricalExpectedVsActual,renderPerfEmpiricalDeviceComparison,renderPerfEmpiricalModelSelection,renderPerfEmpiricalTrainingCurves};
 }});
@@ -214,6 +214,7 @@ display(curvesSection);
 <li class="observablehq-secondary-link"><a href="#model-selection">Model Selection</a></li>
 <li class="observablehq-secondary-link"><a href="#training-dyanmics-across-architectures">Training Dyanmics Across Architectures</a></li>
 <li class="observablehq-secondary-link"><a href="#training-curve-analysis">Training Curve Analysis</a></li>
+<li class="observablehq-secondary-link"><a href="#conclusions-1">Conclusions</a></li>
 </ol>
 </nav>
 </aside>
@@ -270,18 +271,19 @@ display(curvesSection);
 <p>As expected, the RTS 4090 showed a significant speedup of about 20x for the wide model A, and 16x for the deep model B.  This is suprirsingly close to the 20x speedup expected for float32 operations on the RTX, with the reduced performance in the deep model likely caused by memory latency.</p>
 <div class="observablehq observablehq--block"><!--:67bfe76d:--></div>
 <div class="observablehq observablehq--block"><!--:9996ac78:--></div>
+<p>Interestingly, the iteration times for the deep model on MPS show a period of increased step time, probably due to MacOS housekeeping that was triggered automatically.  This could be a memory management artifact, as there are additional latency spikes, probably due to memory pressure, even though the model on paper should fit comfortably.</p>
 <h2 id="training-curve-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#training-curve-analysis">Training Curve Analysis</a></h2>
-<h3 id="training-curves" tabindex="-1"><a class="observablehq-header-anchor" href="#training-curves">Training Curves</a></h3>
 <div class="observablehq observablehq--block"><!--:9dd16f38:--></div>
 <div class="observablehq observablehq--block"><!--:9924402b:--></div>
-<hr>
+<p>In</p>
+<h2 id="conclusions-1" tabindex="-1"><a class="observablehq-header-anchor" href="#conclusions-1">Conclusions</a></h2>
 <h3 id="notes-on-diagnostic-benchmarks" tabindex="-1"><a class="observablehq-header-anchor" href="#notes-on-diagnostic-benchmarks">Notes on Diagnostic Benchmarks</a></h3>
 <p><code>micro_benchmarks</code> and <code>sequential_benchmark</code> were diagnostic runs used to
 debug a memory-fragmentation issue and are intentionally omitted from the main
 analysis narrative here.</p>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-18T22:26:34">Feb 18, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-18T23:04:34">Feb 18, 2026</a>.</div>
 </footer>
 </div>
 </body>

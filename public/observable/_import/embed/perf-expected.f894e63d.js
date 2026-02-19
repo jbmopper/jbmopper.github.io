@@ -17,29 +17,30 @@ const DTYPE_BYTES = {
   bfloat16: 2,
   float8: 1
 };
+const ARCH_SVG_ATTR = "data-perf-expected-arch";
 const SVG_FONT_STYLE = `
 <style>
-svg {
+svg[${ARCH_SVG_ATTR}] {
   background: #0f1117;
 }
-text {
+svg[${ARCH_SVG_ATTR}] text {
   font-family: "Inter", system-ui, -apple-system, sans-serif !important;
   fill: #e6edf3 !important;
 }
-[fill="white"] {
+svg[${ARCH_SVG_ATTR}] [fill="white"] {
   fill: #0f1117 !important;
 }
-[fill="#1E1E1E"] {
+svg[${ARCH_SVG_ATTR}] [fill="#1E1E1E"] {
   fill: #e6edf3 !important;
 }
-[fill="black"] {
+svg[${ARCH_SVG_ATTR}] [fill="black"] {
   fill: #e6edf3 !important;
 }
-[fill="black"][fill-opacity="0.8"] {
+svg[${ARCH_SVG_ATTR}] [fill="black"][fill-opacity="0.8"] {
   fill: #1b1f24 !important;
 }
-[stroke="#A5A5A5"],
-[stroke="#757575"] {
+svg[${ARCH_SVG_ATTR}] [stroke="#A5A5A5"],
+svg[${ARCH_SVG_ATTR}] [stroke="#757575"] {
   stroke: #8b949e !important;
 }
 </style>
@@ -819,6 +820,7 @@ export async function renderPerfExpected(options = {}) {
     svgNode.innerHTML = populatedSvg;
     const svgElement = svgNode.querySelector("svg");
     if (svgElement) {
+      svgElement.setAttribute(ARCH_SVG_ATTR, "true");
       svgElement.style.display = "block";
       svgElement.style.width = "100%";
       svgElement.style.height = "auto";
