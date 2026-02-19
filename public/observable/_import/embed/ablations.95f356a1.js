@@ -5,8 +5,8 @@ import {formatMs} from "../components/data-utils.e2caa41c.js";
 import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.aaca454b.js";
 
 const ATTACHMENTS = {
-  main: FileAttachment({"name":"../../data/raw/benchmarks/ablations_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/ablations_main.684150ce.parquet","lastModified":1770927469233,"size":32700}, import.meta.url),
-  history: FileAttachment({"name":"../../data/raw/benchmarks/ablations_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/ablations_history.fa92f106.parquet","lastModified":1770927469232,"size":389841}, import.meta.url)
+  main: FileAttachment({"name":"../../data/raw/benchmarks/ablations_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/ablations_main.89f4a063.parquet","lastModified":1771465633669,"size":32130}, import.meta.url),
+  history: FileAttachment({"name":"../../data/raw/benchmarks/ablations_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/ablations_history.32f488b0.parquet","lastModified":1771465877012,"size":687805}, import.meta.url)
 };
 
 let ablationDataPromise;

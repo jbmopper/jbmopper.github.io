@@ -4,8 +4,8 @@ import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
 import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.aaca454b.js";
 
 const ATTACHMENTS = {
-  main: FileAttachment({"name":"../../data/raw/benchmarks/lr_sweeps_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/lr_sweeps_main.f6fefad8.parquet","lastModified":1770920604377,"size":15604}, import.meta.url),
-  history: FileAttachment({"name":"../../data/raw/benchmarks/lr_sweeps_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/lr_sweeps_history.ca369050.parquet","lastModified":1770927469237,"size":2077247}, import.meta.url)
+  main: FileAttachment({"name":"../../data/raw/benchmarks/lr_sweeps_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/lr_sweeps_main.f6fefad8.parquet","lastModified":1771465633675,"size":15604}, import.meta.url),
+  history: FileAttachment({"name":"../../data/raw/benchmarks/lr_sweeps_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/lr_sweeps_history.a559e30f.parquet","lastModified":1771465907939,"size":2896986}, import.meta.url)
 };
 
 let sweepDataPromise;

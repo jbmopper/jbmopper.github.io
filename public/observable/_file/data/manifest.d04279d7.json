@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-12T21:03:52.290Z",
+  "generated_at": "2026-02-19T01:47:13.685Z",
   "source_root": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public",
   "files": [
     {
@@ -9,10 +9,10 @@
       "size": 699507,
       "hash": "0e5fcf94fe3a4c4bb46ce3ba45869c66d15506c8257aba3c8c45f66c23534144",
       "sha256": "0e5fcf94fe3a4c4bb46ce3ba45869c66d15506c8257aba3c8c45f66c23534144",
-      "imported_at": "2026-02-12T21:03:52.220Z",
+      "imported_at": "2026-02-19T01:47:13.640Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/traces/bad_head_size_nsys.parquet",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/traces/bad_head_size_nsys.parquet",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/traces/bad_head_size_nsys.parquet"
+      "materialized": "data/raw/traces/bad_head_size_nsys.parquet",
+      "runtime": "src/data/raw/traces/bad_head_size_nsys.parquet"
     },
     {
       "category": "traces",
@@ -21,10 +21,10 @@
       "size": 526034,
       "hash": "0570a4e8df7c1dfeed1187ea759013a974474410dccb576693d49e65011a9f7a",
       "sha256": "0570a4e8df7c1dfeed1187ea759013a974474410dccb576693d49e65011a9f7a",
-      "imported_at": "2026-02-12T21:03:52.220Z",
+      "imported_at": "2026-02-19T01:47:13.640Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/traces/bandwidth_bound_nsys.parquet",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/traces/bandwidth_bound_nsys.parquet",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/traces/bandwidth_bound_nsys.parquet"
+      "materialized": "data/raw/traces/bandwidth_bound_nsys.parquet",
+      "runtime": "src/data/raw/traces/bandwidth_bound_nsys.parquet"
     },
     {
       "category": "traces",
@@ -33,10 +33,10 @@
       "size": 1020491,
       "hash": "9be215530cfa50d52a1d3aedffc4408d456d36ed695b720fd3ac6abeb0c9d791",
       "sha256": "9be215530cfa50d52a1d3aedffc4408d456d36ed695b720fd3ac6abeb0c9d791",
-      "imported_at": "2026-02-12T21:03:52.220Z",
+      "imported_at": "2026-02-19T01:47:13.640Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/traces/compute_bound_nsys.parquet",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/traces/compute_bound_nsys.parquet",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/traces/compute_bound_nsys.parquet"
+      "materialized": "data/raw/traces/compute_bound_nsys.parquet",
+      "runtime": "src/data/raw/traces/compute_bound_nsys.parquet"
     },
     {
       "category": "traces",
@@ -45,10 +45,10 @@
       "size": 3186034,
       "hash": "4ed702eb06ffd7d338011e6cdcc672c8ef221032d3c92a23d454afa7fecf8881",
       "sha256": "4ed702eb06ffd7d338011e6cdcc672c8ef221032d3c92a23d454afa7fecf8881",
-      "imported_at": "2026-02-12T21:03:52.220Z",
+      "imported_at": "2026-02-19T01:47:13.640Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/traces/deep_sequential_nsys.parquet",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/traces/deep_sequential_nsys.parquet",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/traces/deep_sequential_nsys.parquet"
+      "materialized": "data/raw/traces/deep_sequential_nsys.parquet",
+      "runtime": "src/data/raw/traces/deep_sequential_nsys.parquet"
     },
     {
       "category": "traces",
@@ -57,10 +57,10 @@
       "size": 1104236,
       "hash": "5b9c4edd0e6b550d6dd2528876b2e7112a43d650e2f12895d212ad865dcd7536",
       "sha256": "5b9c4edd0e6b550d6dd2528876b2e7112a43d650e2f12895d212ad865dcd7536",
-      "imported_at": "2026-02-12T21:03:52.220Z",
+      "imported_at": "2026-02-19T01:47:13.640Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/traces/latency_bound_nsys.parquet",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/traces/latency_bound_nsys.parquet",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/traces/latency_bound_nsys.parquet"
+      "materialized": "data/raw/traces/latency_bound_nsys.parquet",
+      "runtime": "src/data/raw/traces/latency_bound_nsys.parquet"
     },
     {
       "category": "traces",
@@ -69,10 +69,10 @@
       "size": 834,
       "hash": "e0e9fef315f31a8cf82ba2f9ea4af319cb71630ce6909d292b3a486b3bbc112b",
       "sha256": "e0e9fef315f31a8cf82ba2f9ea4af319cb71630ce6909d292b3a486b3bbc112b",
-      "imported_at": "2026-02-12T21:03:52.220Z",
+      "imported_at": "2026-02-19T01:47:13.640Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/traces/misaligned_dims_nsys.parquet",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/traces/misaligned_dims_nsys.parquet",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/traces/misaligned_dims_nsys.parquet"
+      "materialized": "data/raw/traces/misaligned_dims_nsys.parquet",
+      "runtime": "src/data/raw/traces/misaligned_dims_nsys.parquet"
     },
     {
       "category": "traces",
@@ -81,10 +81,10 @@
       "size": 294932,
       "hash": "7c95f1f4bac8139189a3f1acb64af8ba2c14bf34f589edeedacc6fc1824445c3",
       "sha256": "7c95f1f4bac8139189a3f1acb64af8ba2c14bf34f589edeedacc6fc1824445c3",
-      "imported_at": "2026-02-12T21:03:52.220Z",
+      "imported_at": "2026-02-19T01:47:13.640Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/traces/model_a_nsys.parquet",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/traces/model_a_nsys.parquet",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/traces/model_a_nsys.parquet"
+      "materialized": "data/raw/traces/model_a_nsys.parquet",
+      "runtime": "src/data/raw/traces/model_a_nsys.parquet"
     },
     {
       "category": "traces",
@@ -93,10 +93,10 @@
       "size": 1231233,
       "hash": "d909797c828eb0f52f3aa2c476d49fbc67c9abcb42360fbbbd8dd046cad087a7",
       "sha256": "d909797c828eb0f52f3aa2c476d49fbc67c9abcb42360fbbbd8dd046cad087a7",
-      "imported_at": "2026-02-12T21:03:52.220Z",
+      "imported_at": "2026-02-19T01:47:13.640Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/traces/model_b_nsys.parquet",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/traces/model_b_nsys.parquet",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/traces/model_b_nsys.parquet"
+      "materialized": "data/raw/traces/model_b_nsys.parquet",
+      "runtime": "src/data/raw/traces/model_b_nsys.parquet"
     },
     {
       "category": "traces",
@@ -105,10 +105,10 @@
       "size": 509294,
       "hash": "c6e0b3932af07bedf358048e8352509fedc7f220db313d4148fd6fdc21dd3a92",
       "sha256": "c6e0b3932af07bedf358048e8352509fedc7f220db313d4148fd6fdc21dd3a92",
-      "imported_at": "2026-02-12T21:03:52.220Z",
+      "imported_at": "2026-02-19T01:47:13.640Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/traces/vocab_bottleneck_nsys.parquet",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/traces/vocab_bottleneck_nsys.parquet",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/traces/vocab_bottleneck_nsys.parquet"
+      "materialized": "data/raw/traces/vocab_bottleneck_nsys.parquet",
+      "runtime": "src/data/raw/traces/vocab_bottleneck_nsys.parquet"
     },
     {
       "category": "traces",
@@ -117,10 +117,10 @@
       "size": 715444,
       "hash": "e3df58065760c7d363bd88d16d161ac7f553b301bd160cfd5cdd883054ffc16d",
       "sha256": "e3df58065760c7d363bd88d16d161ac7f553b301bd160cfd5cdd883054ffc16d",
-      "imported_at": "2026-02-12T21:03:52.220Z",
+      "imported_at": "2026-02-19T01:47:13.640Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/traces/wide_ffn_nsys.parquet",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/traces/wide_ffn_nsys.parquet",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/traces/wide_ffn_nsys.parquet"
+      "materialized": "data/raw/traces/wide_ffn_nsys.parquet",
+      "runtime": "src/data/raw/traces/wide_ffn_nsys.parquet"
     },
     {
       "category": "traces",
@@ -129,82 +129,82 @@
       "size": 25493,
       "hash": "8a62282f758a020dba0c6e5452d70146fe5b1e47af04982735953267314b6235",
       "sha256": "8a62282f758a020dba0c6e5452d70146fe5b1e47af04982735953267314b6235",
-      "imported_at": "2026-02-12T21:03:52.220Z",
+      "imported_at": "2026-02-19T01:47:13.640Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/traces/nsys_sqlite_table_inventory.md",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/traces/nsys_sqlite_table_inventory.md",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/traces/nsys_sqlite_table_inventory.md"
+      "materialized": "data/raw/traces/nsys_sqlite_table_inventory.md",
+      "runtime": "src/data/raw/traces/nsys_sqlite_table_inventory.md"
     },
     {
       "category": "benchmarks",
       "filename": "ablations_main.parquet",
       "file": "ablations_main.parquet",
-      "size": 32700,
-      "hash": "684150cef5d386abc155b7b02273d20f5842ebdb5b1e8c496ee406adb0da081a",
-      "sha256": "684150cef5d386abc155b7b02273d20f5842ebdb5b1e8c496ee406adb0da081a",
-      "imported_at": "2026-02-12T21:03:52.267Z",
+      "size": 32130,
+      "hash": "89f4a06312d4adb115a3bc5b2eded8a2861dc037af331a5bc7e1751b63ff47b1",
+      "sha256": "89f4a06312d4adb115a3bc5b2eded8a2861dc037af331a5bc7e1751b63ff47b1",
+      "imported_at": "2026-02-19T01:47:13.668Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/benchmarks/ablations_main.parquet",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/benchmarks/ablations_main.parquet",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/benchmarks/ablations_main.parquet"
+      "materialized": "data/raw/benchmarks/ablations_main.parquet",
+      "runtime": "src/data/raw/benchmarks/ablations_main.parquet"
     },
     {
       "category": "benchmarks",
       "filename": "ablations_history.parquet",
       "file": "ablations_history.parquet",
-      "size": 389841,
-      "hash": "fa92f10679c6b1fddf96fd16378e3e6858b35dc7cc3c9c1ee64e45b18deb50db",
-      "sha256": "fa92f10679c6b1fddf96fd16378e3e6858b35dc7cc3c9c1ee64e45b18deb50db",
-      "imported_at": "2026-02-12T21:03:52.267Z",
+      "size": 389506,
+      "hash": "dcc84774fef416025beee828f79abf16142ec90a62b81ba66aa2fc40820e93c3",
+      "sha256": "dcc84774fef416025beee828f79abf16142ec90a62b81ba66aa2fc40820e93c3",
+      "imported_at": "2026-02-19T01:47:13.668Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/benchmarks/ablations_history.parquet",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/benchmarks/ablations_history.parquet",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/benchmarks/ablations_history.parquet"
+      "materialized": "data/raw/benchmarks/ablations_history.parquet",
+      "runtime": "src/data/raw/benchmarks/ablations_history.parquet"
     },
     {
       "category": "benchmarks",
       "filename": "gpu_comp_main.parquet",
       "file": "gpu_comp_main.parquet",
-      "size": 26614,
-      "hash": "8b657d6cc6eacfa7a42f504ccca8961d243ab4b125d2b4645831311e6459f787",
-      "sha256": "8b657d6cc6eacfa7a42f504ccca8961d243ab4b125d2b4645831311e6459f787",
-      "imported_at": "2026-02-12T21:03:52.267Z",
+      "size": 26280,
+      "hash": "1cc36d461e0b3958cb3a5bd6db7eaa78ed6130bbd26c8400eec34d7b668f5c18",
+      "sha256": "1cc36d461e0b3958cb3a5bd6db7eaa78ed6130bbd26c8400eec34d7b668f5c18",
+      "imported_at": "2026-02-19T01:47:13.668Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/benchmarks/gpu_comp_main.parquet",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/benchmarks/gpu_comp_main.parquet",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/benchmarks/gpu_comp_main.parquet"
+      "materialized": "data/raw/benchmarks/gpu_comp_main.parquet",
+      "runtime": "src/data/raw/benchmarks/gpu_comp_main.parquet"
     },
     {
       "category": "benchmarks",
       "filename": "gpu_comp_history.parquet",
       "file": "gpu_comp_history.parquet",
-      "size": 189583,
-      "hash": "4a516c8a6729dfa6becd7e3390a6bd34cbdbf0a9f813ecb852296bdd950ce071",
-      "sha256": "4a516c8a6729dfa6becd7e3390a6bd34cbdbf0a9f813ecb852296bdd950ce071",
-      "imported_at": "2026-02-12T21:03:52.267Z",
+      "size": 189298,
+      "hash": "99e250862776c953c194b307a7948f1f206fa486b16932572ccd65fcfbc09352",
+      "sha256": "99e250862776c953c194b307a7948f1f206fa486b16932572ccd65fcfbc09352",
+      "imported_at": "2026-02-19T01:47:13.668Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/benchmarks/gpu_comp_history.parquet",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/benchmarks/gpu_comp_history.parquet",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/benchmarks/gpu_comp_history.parquet"
+      "materialized": "data/raw/benchmarks/gpu_comp_history.parquet",
+      "runtime": "src/data/raw/benchmarks/gpu_comp_history.parquet"
     },
     {
       "category": "benchmarks",
       "filename": "mps_comp_main.parquet",
       "file": "mps_comp_main.parquet",
-      "size": 25521,
-      "hash": "ccc27b69612aea33cce85e6a9378901faa154fee2040c1d5bcdff86842c0b461",
-      "sha256": "ccc27b69612aea33cce85e6a9378901faa154fee2040c1d5bcdff86842c0b461",
-      "imported_at": "2026-02-12T21:03:52.267Z",
+      "size": 25195,
+      "hash": "63058a493abfca455673a99c0357d26f825f0f2b6f4c7c6e8083f7fcea830657",
+      "sha256": "63058a493abfca455673a99c0357d26f825f0f2b6f4c7c6e8083f7fcea830657",
+      "imported_at": "2026-02-19T01:47:13.668Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/benchmarks/mps_comp_main.parquet",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/benchmarks/mps_comp_main.parquet",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/benchmarks/mps_comp_main.parquet"
+      "materialized": "data/raw/benchmarks/mps_comp_main.parquet",
+      "runtime": "src/data/raw/benchmarks/mps_comp_main.parquet"
     },
     {
       "category": "benchmarks",
       "filename": "mps_comp_history.parquet",
       "file": "mps_comp_history.parquet",
-      "size": 220323,
-      "hash": "81dcba33fc334caa2c417710ee57a6efd3ea3fd1ec085d4e51387c9589cc1b00",
-      "sha256": "81dcba33fc334caa2c417710ee57a6efd3ea3fd1ec085d4e51387c9589cc1b00",
-      "imported_at": "2026-02-12T21:03:52.267Z",
+      "size": 220043,
+      "hash": "d8fb209abc738446fb0d7389a72c5ba8777fe6a01cd6ff832df8082eea40adc5",
+      "sha256": "d8fb209abc738446fb0d7389a72c5ba8777fe6a01cd6ff832df8082eea40adc5",
+      "imported_at": "2026-02-19T01:47:13.668Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/benchmarks/mps_comp_history.parquet",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/benchmarks/mps_comp_history.parquet",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/benchmarks/mps_comp_history.parquet"
+      "materialized": "data/raw/benchmarks/mps_comp_history.parquet",
+      "runtime": "src/data/raw/benchmarks/mps_comp_history.parquet"
     },
     {
       "category": "benchmarks",
@@ -213,22 +213,22 @@
       "size": 15604,
       "hash": "f6fefad8c92c10db0bf4f9fe41d17f6de3ac192daa55fc41d00a94990c219d8c",
       "sha256": "f6fefad8c92c10db0bf4f9fe41d17f6de3ac192daa55fc41d00a94990c219d8c",
-      "imported_at": "2026-02-12T21:03:52.267Z",
+      "imported_at": "2026-02-19T01:47:13.668Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/benchmarks/lr_sweeps_main.parquet",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/benchmarks/lr_sweeps_main.parquet",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/benchmarks/lr_sweeps_main.parquet"
+      "materialized": "data/raw/benchmarks/lr_sweeps_main.parquet",
+      "runtime": "src/data/raw/benchmarks/lr_sweeps_main.parquet"
     },
     {
       "category": "benchmarks",
       "filename": "lr_sweeps_history.parquet",
       "file": "lr_sweeps_history.parquet",
-      "size": 2077247,
-      "hash": "ca369050465e29b2ed72c26bc801f7f3e8fe16b19a855c2b65d93665e52cb69a",
-      "sha256": "ca369050465e29b2ed72c26bc801f7f3e8fe16b19a855c2b65d93665e52cb69a",
-      "imported_at": "2026-02-12T21:03:52.267Z",
+      "size": 2077243,
+      "hash": "2f89ab18b4f7e902e2f4af7abf7e5537532162d6d6bbd7d2074946797f73844d",
+      "sha256": "2f89ab18b4f7e902e2f4af7abf7e5537532162d6d6bbd7d2074946797f73844d",
+      "imported_at": "2026-02-19T01:47:13.668Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/benchmarks/lr_sweeps_history.parquet",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/benchmarks/lr_sweeps_history.parquet",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/benchmarks/lr_sweeps_history.parquet"
+      "materialized": "data/raw/benchmarks/lr_sweeps_history.parquet",
+      "runtime": "src/data/raw/benchmarks/lr_sweeps_history.parquet"
     },
     {
       "category": "benchmarks",
@@ -237,10 +237,10 @@
       "size": 2403,
       "hash": "0003d6fe8d9e00be5d81caaa86df7f6ca41a0ce9e07edddee3a00447ab1cd508",
       "sha256": "0003d6fe8d9e00be5d81caaa86df7f6ca41a0ce9e07edddee3a00447ab1cd508",
-      "imported_at": "2026-02-12T21:03:52.267Z",
+      "imported_at": "2026-02-19T01:47:13.668Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/benchmarks/micro_benchmarks_20260126_130256.json",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/benchmarks/micro_benchmarks_20260126_130256.json",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/benchmarks/micro_benchmarks_20260126_130256.json"
+      "materialized": "data/raw/benchmarks/micro_benchmarks_20260126_130256.json",
+      "runtime": "src/data/raw/benchmarks/micro_benchmarks_20260126_130256.json"
     },
     {
       "category": "benchmarks",
@@ -249,10 +249,10 @@
       "size": 1945563,
       "hash": "e80aa47483a92fe4fa85123b18817db99dd5897fd348bd0a520ba4d4914dcc24",
       "sha256": "e80aa47483a92fe4fa85123b18817db99dd5897fd348bd0a520ba4d4914dcc24",
-      "imported_at": "2026-02-12T21:03:52.267Z",
+      "imported_at": "2026-02-19T01:47:13.668Z",
       "source": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/public/benchmarks/train_benchmark_20260127_092323.json",
-      "materialized": "/Users/juliusmopper/Dev/ns_obv/data/raw/benchmarks/train_benchmark_20260127_092323.json",
-      "runtime": "/Users/juliusmopper/Dev/ns_obv/src/data/raw/benchmarks/train_benchmark_20260127_092323.json"
+      "materialized": "data/raw/benchmarks/train_benchmark_20260127_092323.json",
+      "runtime": "src/data/raw/benchmarks/train_benchmark_20260127_092323.json"
     }
   ]
 }

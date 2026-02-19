@@ -3,15 +3,16 @@ import * as Plot from "../../_npm/@observablehq/plot@0.6.17/7c43807f.js";
 import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
 import {formatMs, normalizeRunLabel} from "../components/data-utils.e2caa41c.js";
 import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.aaca454b.js";
-import {calculateForwardFlops, calculateTrainingStepFlops} from "../components/perf-estimates.d771a94d.js";
+import {calculateForwardFlops, calculateMemoryAccounting, calculateModelParams, calculateTrainingStepFlops} from "../components/perf-estimates.d771a94d.js";
 
 const ATTACHMENTS = {
-  mps_main: FileAttachment({"name":"../../data/raw/benchmarks/mps_comp_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/mps_comp_main.ccc27b69.parquet","lastModified":1770927469238,"size":25521}, import.meta.url),
-  gpu_main: FileAttachment({"name":"../../data/raw/benchmarks/gpu_comp_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/gpu_comp_main.8b657d6c.parquet","lastModified":1770927469234,"size":26614}, import.meta.url),
-  mps_history: FileAttachment({"name":"../../data/raw/benchmarks/mps_comp_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/mps_comp_history.81dcba33.parquet","lastModified":1770927469238,"size":220323}, import.meta.url),
-  gpu_history: FileAttachment({"name":"../../data/raw/benchmarks/gpu_comp_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/gpu_comp_history.4a516c8a.parquet","lastModified":1770927469233,"size":189583}, import.meta.url),
-  train: FileAttachment({"name":"../../data/raw/benchmarks/train_benchmark_20260127_092323.json","mimeType":"application/json","path":"../../_file/data/raw/benchmarks/train_benchmark_20260127_092323.e80aa474.json","lastModified":1770920604379,"size":1945563}, import.meta.url),
-  micro: FileAttachment({"name":"../../data/raw/benchmarks/micro_benchmarks_20260126_130256.json","mimeType":"application/json","path":"../../_file/data/raw/benchmarks/micro_benchmarks_20260126_130256.0003d6fe.json","lastModified":1770920604377,"size":2403}, import.meta.url)
+  mps_main: FileAttachment({"name":"../../data/raw/benchmarks/mps_comp_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/mps_comp_main.63058a49.parquet","lastModified":1771465633673,"size":25195}, import.meta.url),
+  gpu_main: FileAttachment({"name":"../../data/raw/benchmarks/gpu_comp_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/gpu_comp_main.1cc36d46.parquet","lastModified":1771465633671,"size":26280}, import.meta.url),
+  mps_history: FileAttachment({"name":"../../data/raw/benchmarks/mps_comp_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/mps_comp_history.46520918.parquet","lastModified":1771465881500,"size":293870}, import.meta.url),
+  gpu_history: FileAttachment({"name":"../../data/raw/benchmarks/gpu_comp_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/gpu_comp_history.ce8ef571.parquet","lastModified":1771465886678,"size":267748}, import.meta.url),
+  train: FileAttachment({"name":"../../data/raw/benchmarks/train_benchmark_20260127_092323.json","mimeType":"application/json","path":"../../_file/data/raw/benchmarks/train_benchmark_20260127_092323.e80aa474.json","lastModified":1771465633684,"size":1945563}, import.meta.url),
+  micro: FileAttachment({"name":"../../data/raw/benchmarks/micro_benchmarks_20260126_130256.json","mimeType":"application/json","path":"../../_file/data/raw/benchmarks/micro_benchmarks_20260126_130256.0003d6fe.json","lastModified":1771465633680,"size":2403}, import.meta.url),
+  catalog: FileAttachment({"name":"../../data/raw/llm-fundamentals/model-config-catalog.json","mimeType":"application/json","path":"../../_file/data/raw/llm-fundamentals/model-config-catalog.3b260981.json","lastModified":1771314318102,"size":18447}, import.meta.url)
 };
 
 let empiricalDataPromise;
@@ -157,7 +158,14 @@ async function loadHistoryRows(datasetName, platform, attachment) {
       eval_loss: pickNumber(row, ["Eval Loss", "Eval/Loss", "Eval/Loss"]),
       eval_perplexity: pickNumber(row, ["Eval Perplexity", "Eval/Perplexity"]),
       throughput_toks: pickNumber(row, ["Throughput/Tokens per sec"]),
-      step_s: pickNumber(row, ["Time/Total step"])
+      step_s: pickNumber(row, ["Time/Total step"]),
+      grad_norm_unclipped: pickNumber(row, [
+        "Grad/Norm (unclipped)",
+        "Grad/Norm (pre-clip)",
+        "Grad/Norm (preclip)",
+        "Grad/Norm (raw)",
+        "Grad/Norm"
+      ])
     };
   }).filter((row) => Number.isFinite(row.step));
 }
@@ -470,48 +478,33 @@ function renderTrainGridSection(data, options = {}) {
   const numLayersControl = checkboxGroup(numLayersValues, numLayersValues, "grid-layers", "num_layers");
   const dFfControl = checkboxGroup(dFfValues, dFfValues, "grid-dff", "d_ff");
 
-  const xMetricControl = selectControl(
-    "X",
-    [
-      {value: "est_memory_gb", label: "Estimated Memory (GB)"},
-      {value: "num_params_m", label: "Params (M)"},
-      {value: "median_ms", label: "Median Step (ms)"},
-      {value: "ffn_ratio", label: "FFN Ratio"}
-    ],
-    options.gridX || "est_memory_gb"
-  );
-  const yMetricControl = selectControl(
-    "Y",
-    [
-      {value: "tokens_per_sec", label: "Tokens / sec"},
-      {value: "steps_per_sec", label: "Steps / sec"},
-      {value: "median_ms", label: "Median Step (ms)"},
-      {value: "est_memory_gb", label: "Estimated Memory (GB)"}
-    ],
-    options.gridY || "tokens_per_sec"
-  );
-  const colorByControl = selectControl(
-    "Color",
-    [
-      {value: "batch_size", label: "batch_size"},
-      {value: "seq_len", label: "seq_len"},
-      {value: "d_model", label: "d_model"},
-      {value: "d_head", label: "d_head"},
-      {value: "num_layers", label: "num_layers"},
-      {value: "d_ff", label: "d_ff"}
-    ],
-    options.gridColor || "d_model"
-  );
-  const sizeByControl = selectControl(
-    "Point size",
-    [
-      {value: "(fixed)", label: "fixed"},
-      {value: "batch_size", label: "batch_size"},
-      {value: "seq_len", label: "seq_len"},
-      {value: "d_model", label: "d_model"},
-      {value: "num_layers", label: "num_layers"}
-    ],
-    options.gridSize || "batch_size"
+  const metricOptions = [
+    {value: "batch_size", label: "Batch size (B)"},
+    {value: "seq_len", label: "Sequence length (S)"},
+    {value: "d_model", label: "Model dimension (d_model)"},
+    {value: "d_head", label: "Head dimension (d_head)"},
+    {value: "num_heads", label: "Attention heads (h)"},
+    {value: "num_layers", label: "Transformer layers (L)"},
+    {value: "d_ff", label: "FFN dimension (d_ff)"},
+    {value: "tokens_per_sec", label: "Tokens / sec"},
+    {value: "steps_per_sec", label: "Steps / sec"},
+    {value: "median_ms", label: "Median step (ms)"},
+    {value: "mean_s", label: "Mean step (s)"},
+    {value: "iqr_s", label: "Step IQR (s)"},
+    {value: "tokens_per_step", label: "Tokens / step"},
+    {value: "est_memory_gb", label: "Estimated memory (GB)"},
+    {value: "num_params_m", label: "Parameters (M)"},
+    {value: "ffn_ratio", label: "FFN ratio"}
+  ];
+  const axisLabels = Object.fromEntries(metricOptions.map((opt) => [opt.value, opt.label]));
+
+  const xMetricControl = selectControl("X", metricOptions, options.gridX || "est_memory_gb");
+  const yMetricControl = selectControl("Y", metricOptions, options.gridY || "tokens_per_sec");
+  const colorByControl = selectControl("Color", metricOptions, options.gridColor || "d_model");
+  const zMetricControl = selectControl(
+    "Mark Size",
+    [{value: "(fixed)", label: "(none / fixed size)"}, ...metricOptions],
+    options.gridZ || options.gridSize || "batch_size"
   );
   const chartModeControl = selectControl(
     "Marks",
@@ -522,6 +515,12 @@ function renderTrainGridSection(data, options = {}) {
     options.gridMode || "dots+trend"
   );
   const tableLimitControl = makeRangeControl("Table rows", 25, 300, 25, clampRowLimit(options.gridTableLimit, 100));
+  const resetAxesButton = el("button", "Reset X/Y");
+  resetAxesButton.type = "button";
+  const axisActions = el("div");
+  axisActions.style.display = "flex";
+  axisActions.style.gap = "0.5rem";
+  axisActions.appendChild(resetAxesButton);
 
   const controls = card();
   controls.append(
@@ -534,8 +533,9 @@ function renderTrainGridSection(data, options = {}) {
     dFfControl.node,
     xMetricControl.node,
     yMetricControl.node,
+    zMetricControl.node,
+    axisActions,
     colorByControl.node,
-    sizeByControl.node,
     chartModeControl.node,
     tableLimitControl.node
   );
@@ -543,15 +543,6 @@ function renderTrainGridSection(data, options = {}) {
   const chartHost = card();
   const tableHost = card();
   host.append(controls, chartHost, tableHost);
-
-  const axisLabels = {
-    est_memory_gb: "Estimated Memory (GB)",
-    num_params_m: "Parameters (M)",
-    median_ms: "Median Step Time (ms)",
-    ffn_ratio: "FFN Ratio",
-    tokens_per_sec: "Tokens / sec",
-    steps_per_sec: "Steps / sec"
-  };
 
   const refresh = () => {
     tableLimitControl.output.textContent = tableLimitControl.input.value;
@@ -585,27 +576,40 @@ function renderTrainGridSection(data, options = {}) {
 
     const xKey = xMetricControl.select.value;
     const yKey = yMetricControl.select.value;
+    const zKey = zMetricControl.select.value;
     const colorKey = colorByControl.select.value;
-    const sizeKey = sizeByControl.select.value;
     const chartMode = chartModeControl.select.value;
 
     const plotted = filtered
       .filter((row) => Number.isFinite(Number(row[xKey])))
-      .filter((row) => Number.isFinite(Number(row[yKey])));
+      .filter((row) => Number.isFinite(Number(row[yKey])))
+      .filter((row) => Number.isFinite(Number(row[colorKey])))
+      .filter((row) => zKey === "(fixed)" || Number.isFinite(Number(row[zKey])));
+    const colorValue = (row) => Number(row[colorKey]);
+    const zValue = (row) => Number(row[zKey]);
+    const zMin = zKey === "(fixed)" ? NaN : d3.min(plotted, zValue);
+    const zMax = zKey === "(fixed)" ? NaN : d3.max(plotted, zValue);
+    const plottedOrdered =
+      zKey === "(fixed)"
+        ? plotted
+        : [...plotted].sort((a, b) => d3.ascending(zValue(a), zValue(b)));
+    const radiusFor = (row) => {
+      if (zKey === "(fixed)") return 4;
+      const v = zValue(row);
+      if (!Number.isFinite(v)) return 4;
+      if (!Number.isFinite(zMin) || !Number.isFinite(zMax) || zMax <= zMin) return 6;
+      const t = (v - zMin) / (zMax - zMin);
+      return 2.5 + t * 8.5;
+    };
+    const zLabel = zKey === "(fixed)" ? "none" : axisLabels[zKey] || zKey;
 
     const marks = [
-      Plot.dot(plotted, {
+      Plot.dot(plottedOrdered, {
         x: xKey,
         y: yKey,
-        fill: (d) => String(d[colorKey]),
-        r:
-          sizeKey === "(fixed)"
-            ? 4
-            : (d) => {
-                const v = Number(d[sizeKey]);
-                return Number.isFinite(v) ? Math.max(2.5, Math.min(10, 1.5 + Math.sqrt(Math.max(v, 0)) / 4)) : 4;
-              },
-        title: (d) => `B=${d.batch_size} S=${d.seq_len} d=${d.d_model} h=${d.num_heads} L=${d.num_layers} d_ff=${d.d_ff}\ntok/s=${Number(d.tokens_per_sec).toFixed(1)}  ms=${Number(d.median_ms).toFixed(1)}  mem=${Number(d.est_memory_gb).toFixed(2)}GB  params=${Number(d.num_params_m).toFixed(1)}M`,
+        fill: colorValue,
+        r: radiusFor,
+        title: (d) => `B=${d.batch_size} S=${d.seq_len} d=${d.d_model} h=${d.num_heads} L=${d.num_layers} d_ff=${d.d_ff}\ntok/s=${Number(d.tokens_per_sec).toFixed(1)}  ms=${Number(d.median_ms).toFixed(1)}  mem=${Number(d.est_memory_gb).toFixed(2)}GB  params=${Number(d.num_params_m).toFixed(1)}M\nz=${zKey === "(fixed)" ? "n/a" : Number(d[zKey]).toFixed(3)}`,
         tip: true
       })
     ];
@@ -619,7 +623,8 @@ function renderTrainGridSection(data, options = {}) {
         height: 380,
         x: {label: axisLabels[xKey] || xKey, grid: true},
         y: {label: axisLabels[yKey] || yKey, grid: true},
-        color: {type: "categorical", scheme: "observable10", legend: true},
+        color: {scheme: "warm", legend: true, label: axisLabels[colorKey] || colorKey},
+        r: zKey === "(fixed)" ? {legend: false} : {legend: true, label: zLabel},
         marks
       })
     );
@@ -662,10 +667,15 @@ function renderTrainGridSection(data, options = {}) {
   for (const [control] of listeners) control.onChange(refresh);
   xMetricControl.select.addEventListener("change", refresh);
   yMetricControl.select.addEventListener("change", refresh);
+  zMetricControl.select.addEventListener("change", refresh);
   colorByControl.select.addEventListener("change", refresh);
-  sizeByControl.select.addEventListener("change", refresh);
   chartModeControl.select.addEventListener("change", refresh);
   tableLimitControl.input.addEventListener("input", refresh);
+  resetAxesButton.addEventListener("click", () => {
+    xMetricControl.select.value = "est_memory_gb";
+    yMetricControl.select.value = "tokens_per_sec";
+    refresh();
+  });
 
   refresh();
   return host;
@@ -700,19 +710,65 @@ function renderExpectedVsActualSection(data, options = {}) {
   const dFfControl = checkboxGroup(dFfValues, dFfValues, "eva-ff", "d_ff");
   const colorByControl = selectControl("Dot color", [
     {label: "Batch size (B)", value: "batch_size"},
-    {label: "Sequence length (S)", value: "seq_len"}
+    {label: "Sequence length (S)", value: "seq_len"},
+    {label: "Model parameters (M)", value: "num_params_m"}
   ], "batch_size");
+  const xAxisControl = selectControl("Observed tok/s chart X axis", [
+    {label: "Batch size (B)", value: "batch_size"},
+    {label: "Sequence length (S)", value: "seq_len"},
+    {label: "Model dimension (d_model)", value: "d_model"},
+    {label: "Head dimension (d_head)", value: "d_head"},
+    {label: "Attention heads (h)", value: "num_heads"},
+    {label: "Transformer layers (L)", value: "num_layers"},
+    {label: "FFN dimension (d_ff)", value: "d_ff"},
+    {label: "Estimated memory (GB)", value: "est_memory_gb"},
+    {label: "Model parameters (M)", value: "num_params_m"},
+    {label: "Tokens per iteration", value: "tokens_per_iteration"}
+  ], "d_model");
 
   const allEva = computeExpectedVsActual(trainRows);
-  const maxObserved = d3.max(allEva, (d) => d.actual_step_s) ?? 10;
-  const maxExpected = d3.max(allEva, (d) => d.expected_step_s) ?? 10;
-  const stepRes = Math.pow(10, Math.floor(Math.log10(Math.max(maxObserved, maxExpected))) - 2);
-  const maxObservedControl = makeRangeControl("Max observed step (s)", 0, maxObserved, stepRes, maxObserved);
-  const maxExpectedControl = makeRangeControl("Max expected step (s)", 0, maxExpected, stepRes, maxExpected);
-  maxObservedControl.input.addEventListener("input", () => { maxObservedControl.output.textContent = Number(maxObservedControl.input.value).toFixed(3); });
-  maxExpectedControl.input.addEventListener("input", () => { maxExpectedControl.output.textContent = Number(maxExpectedControl.input.value).toFixed(3); });
-  maxObservedControl.output.textContent = Number(maxObserved).toFixed(3);
-  maxExpectedControl.output.textContent = Number(maxExpected).toFixed(3);
+  const observedMinBound = d3.min(allEva, (d) => d.actual_step_s) ?? 0;
+  const observedMaxBound = d3.max(allEva, (d) => d.actual_step_s) ?? 10;
+  const expectedMinBound = d3.min(allEva, (d) => d.expected_step_s) ?? 0;
+  const expectedMaxBound = d3.max(allEva, (d) => d.expected_step_s) ?? 10;
+  const observedStepRes = Math.max((observedMaxBound - observedMinBound) / 5000, 1e-6);
+  const expectedStepRes = Math.max((expectedMaxBound - expectedMinBound) / 5000, 1e-6);
+  const minObservedControl = makeRangeControl("Min observed step (s)", observedMinBound, observedMaxBound, observedStepRes, observedMinBound);
+  const maxObservedControl = makeRangeControl("Max observed step (s)", observedMinBound, observedMaxBound, observedStepRes, observedMaxBound);
+  const minExpectedControl = makeRangeControl("Min expected step (s)", expectedMinBound, expectedMaxBound, expectedStepRes, expectedMinBound);
+  const maxExpectedControl = makeRangeControl("Max expected step (s)", expectedMinBound, expectedMaxBound, expectedStepRes, expectedMaxBound);
+
+  const formatRangeValue = (value) => {
+    const n = Number(value);
+    if (!Number.isFinite(n)) return "n/a";
+    if (n >= 1) return n.toFixed(4);
+    if (n >= 0.01) return n.toFixed(5);
+    return n.toPrecision(4);
+  };
+
+  const syncRangePair = (minControl, maxControl) => {
+    const update = () => {
+      let minValue = safeNumber(minControl.input.value, 0);
+      let maxValue = safeNumber(maxControl.input.value, 0);
+      if (minValue > maxValue) {
+        if (document.activeElement === minControl.input) {
+          maxValue = minValue;
+          maxControl.input.value = String(maxValue);
+        } else {
+          minValue = maxValue;
+          minControl.input.value = String(minValue);
+        }
+      }
+      minControl.output.textContent = formatRangeValue(minValue);
+      maxControl.output.textContent = formatRangeValue(maxValue);
+    };
+    minControl.input.addEventListener("input", update);
+    maxControl.input.addEventListener("input", update);
+    update();
+  };
+
+  syncRangePair(minObservedControl, maxObservedControl);
+  syncRangePair(minExpectedControl, maxExpectedControl);
 
   const filters = el("div");
   filters.style.display = "grid";
@@ -720,7 +776,7 @@ function renderExpectedVsActualSection(data, options = {}) {
   filters.append(
     batchControl.node, seqControl.node, dModelControl.node, dHeadControl.node,
     numHeadsControl.node, numLayersControl.node, dFfControl.node, colorByControl.node,
-    maxObservedControl.node, maxExpectedControl.node
+    minObservedControl.node, maxObservedControl.node, minExpectedControl.node, maxExpectedControl.node
   );
   host.appendChild(filters);
 
@@ -728,10 +784,12 @@ function renderExpectedVsActualSection(data, options = {}) {
   chartStepHost.className = "card";
   const chartThroughputHost = el("div");
   chartThroughputHost.className = "card";
-  const chartParamsHost = el("div");
-  chartParamsHost.className = "card";
+  const bottomChartControlsHost = card();
+  bottomChartControlsHost.appendChild(xAxisControl.node);
+  const chartTokensByXHost = el("div");
+  chartTokensByXHost.className = "card";
   const tableHost = el("div");
-  host.append(chartStepHost, chartThroughputHost, chartParamsHost, tableHost);
+  host.append(chartStepHost, chartThroughputHost, bottomChartControlsHost, chartTokensByXHost, tableHost);
 
   function computeExpectedVsActual(filtered) {
     return filtered.map((row) => {
@@ -767,21 +825,22 @@ function renderExpectedVsActualSection(data, options = {}) {
 
   function buildDiagonalScatter(hostEl, rows, xKey, yKey, xLabel, yLabel, emptyMsg, colorBy, scaleOpts = {}) {
     clearNode(hostEl);
-    const colorLabel = colorBy === "batch_size" ? "Batch size (B)" : "Sequence length (S)";
-    const fillValue = (d) => (colorBy === "batch_size" ? `B=${d.batch_size}` : `S=${d.seq_len}`);
-    const scatterRows = rows
+    const colorLabelByKey = {
+      batch_size: "Batch size (B)",
+      seq_len: "Sequence length (S)",
+      num_params_m: "Model parameters (M)"
+    };
+    const colorLabel = colorLabelByKey[colorBy] || colorBy;
+    const colorValue = (d) => Number(d[colorBy]);
+    let scatterRows = rows
       .filter((d) => Number.isFinite(d[xKey]) && d[xKey] > 0)
-      .filter((d) => Number.isFinite(d[yKey]) && d[yKey] > 0);
+      .filter((d) => Number.isFinite(d[yKey]) && d[yKey] > 0)
+      .filter((d) => Number.isFinite(colorValue(d)));
     if (scatterRows.length === 0) {
       hostEl.appendChild(emptyState(emptyMsg));
       return;
     }
-    const colorDomain = [...new Set(scatterRows.map(fillValue))]
-      .sort((a, b) => {
-        const na = parseFloat(a.replace(/\D+/, ""));
-        const nb = parseFloat(b.replace(/\D+/, ""));
-        return (na || 0) - (nb || 0);
-      });
+    const colorConfig = {legend: true, label: colorLabel, scheme: "warm"};
     const xMin = d3.min(scatterRows, (d) => d[xKey]);
     const xMax = d3.max(scatterRows, (d) => d[xKey]);
     const yMin = d3.min(scatterRows, (d) => d[yKey]);
@@ -792,19 +851,118 @@ function renderExpectedVsActualSection(data, options = {}) {
       Number.isFinite(minDiag) && Number.isFinite(maxDiag) && maxDiag > minDiag
         ? [{v: minDiag}, {v: maxDiag}]
         : [];
+    const kernelTrendRows = (() => {
+      if (scatterRows.length < 12) return [];
+      const logX = Boolean(scaleOpts.logX);
+      const transformed = scatterRows
+        .map((d) => {
+          const x = Number(d[xKey]);
+          const y = Number(d[yKey]);
+          if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+          if (logX && x <= 0) return null;
+          return {x, tx: logX ? Math.log10(x) : x, y};
+        })
+        .filter((d) => d != null);
+      if (transformed.length < 12) return [];
+
+      transformed.sort((a, b) => d3.ascending(a.tx, b.tx));
+      const txMin = transformed[0]?.tx;
+      const txMax = transformed[transformed.length - 1]?.tx;
+      const txRange = txMax - txMin;
+      if (!Number.isFinite(txRange) || txRange <= 0) return [];
+
+      const std = d3.deviation(transformed, (d) => d.tx);
+      const n = transformed.length;
+      const silverman = Number.isFinite(std) && std > 0 ? 1.06 * std * Math.pow(n, -0.2) : NaN;
+      const bandwidth = Number.isFinite(silverman) && silverman > 0 ? silverman : txRange / 12;
+      if (!Number.isFinite(bandwidth) || bandwidth <= 0) return [];
+
+      const gaussian = (u) => Math.exp(-0.5 * u * u);
+      const samples = Math.min(120, Math.max(40, Math.round(Math.sqrt(n) * 3)));
+      const out = [];
+
+      for (let i = 0; i < samples; i += 1) {
+        const t = txMin + (txRange * i) / (samples - 1);
+        let wSum = 0;
+        let ySum = 0;
+        for (const row of transformed) {
+          const w = gaussian((t - row.tx) / bandwidth);
+          wSum += w;
+          ySum += w * row.y;
+        }
+        if (wSum <= 0) continue;
+        const x = logX ? Math.pow(10, t) : t;
+        const y = ySum / wSum;
+        if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+        out.push({x, y});
+      }
+      return out;
+    })();
     hostEl.appendChild(
       Plot.plot({
         width: 920,
         height: 380,
         x: {label: xLabel, grid: true, type: scaleOpts.logX ? "log" : "linear"},
         y: {label: yLabel, grid: true, type: scaleOpts.logY ? "log" : "linear"},
-        color: {legend: true, label: colorLabel, domain: colorDomain},
+        color: colorConfig,
         marks: [
           Plot.dot(scatterRows, {
-            x: xKey, y: yKey, fill: fillValue, title: "model_spec", r: 3.8, tip: true
+            x: xKey, y: yKey, fill: colorValue, title: "model_spec", r: 3.8, tip: true
           }),
+          ...(kernelTrendRows.length > 1
+            ? [Plot.line(kernelTrendRows, {x: "x", y: "y", stroke: "var(--theme-foreground-focus)", curve: "natural"})]
+            : []),
           ...(diagRows.length > 0
             ? [Plot.line(diagRows, {x: "v", y: "v", stroke: "var(--theme-foreground-muted)", strokeDasharray: "4 4"})]
+            : [])
+        ]
+      })
+    );
+  }
+
+  function buildTokensByXScatter(hostEl, rows, xKey, xLabel, emptyMsg, colorBy) {
+    clearNode(hostEl);
+    const colorLabelByKey = {
+      batch_size: "Batch size (B)",
+      seq_len: "Sequence length (S)",
+      num_params_m: "Model parameters (M)"
+    };
+    const colorLabel = colorLabelByKey[colorBy] || colorBy;
+    const colorValue = (d) => Number(d[colorBy]);
+    const tokensRows = rows.map((d) => ({
+      ...d,
+      x_value: d[xKey],
+      y_value: d.actual_tokens_per_sec
+    }))
+      .filter((d) => Number.isFinite(d.x_value))
+      .filter((d) => Number.isFinite(d.y_value) && d.y_value > 0)
+      .filter((d) => Number.isFinite(colorValue(d)));
+
+    if (tokensRows.length === 0) {
+      hostEl.appendChild(emptyState(emptyMsg));
+      return;
+    }
+    const colorConfig = {legend: true, label: colorLabel, scheme: "warm"};
+
+    hostEl.appendChild(
+      Plot.plot({
+        width: 920,
+        height: 380,
+        x: {label: xLabel, grid: true},
+        y: {label: "Observed tokens / sec", grid: true},
+        color: colorConfig,
+        marks: [
+          Plot.dot(tokensRows, {
+            x: "x_value",
+            y: "y_value",
+            fill: colorValue,
+            r: 3.6,
+            opacity: 0.85,
+            title: (d) => `Observed tok/s\n${d.model_spec}`,
+            tip: true
+          }),
+          ...(tokensRows.length > 2
+            ? [Plot.linearRegressionY(tokensRows, {x: "x_value", y: "y_value", stroke: "var(--theme-foreground-muted)"})]
             : [])
         ]
       })
@@ -820,6 +978,19 @@ function renderExpectedVsActualSection(data, options = {}) {
     const selectedNumLayers = asNumericSet(numLayersControl.getSelected());
     const selectedDFf = asNumericSet(dFfControl.getSelected());
     const colorBy = colorByControl.select.value;
+    const xKey = xAxisControl.select.value;
+    const xAxisLabels = {
+      batch_size: "Batch size (B)",
+      seq_len: "Sequence length (S)",
+      d_model: "Model dimension (d_model)",
+      d_head: "Head dimension (d_head)",
+      num_heads: "Attention heads (h)",
+      num_layers: "Transformer layers (L)",
+      d_ff: "FFN dimension (d_ff)",
+      est_memory_gb: "Estimated memory (GB)",
+      num_params_m: "Model parameters (M)",
+      tokens_per_iteration: "Tokens per iteration"
+    };
 
     const filtered = trainRows
       .filter((d) => selectedBatch.has(d.batch_size))
@@ -830,10 +1001,14 @@ function renderExpectedVsActualSection(data, options = {}) {
       .filter((d) => selectedNumLayers.has(d.num_layers))
       .filter((d) => selectedDFf.has(d.d_ff));
 
+    const minObs = safeNumber(minObservedControl.input.value, -Infinity);
     const maxObs = safeNumber(maxObservedControl.input.value, Infinity);
+    const minExp = safeNumber(minExpectedControl.input.value, -Infinity);
     const maxExp = safeNumber(maxExpectedControl.input.value, Infinity);
     const evaRows = computeExpectedVsActual(filtered)
+      .filter((d) => d.actual_step_s >= minObs)
       .filter((d) => d.actual_step_s <= maxObs)
+      .filter((d) => d.expected_step_s >= minExp)
       .filter((d) => d.expected_step_s <= maxExp);
 
     buildDiagonalScatter(
@@ -849,11 +1024,13 @@ function renderExpectedVsActualSection(data, options = {}) {
       "Expected throughput (tok/s)", "Observed throughput (tok/s)",
       "No rows available for expected-vs-observed throughput chart.", colorBy
     );
-    buildDiagonalScatter(
-      chartParamsHost, evaRows,
-      "expected_params_m_per_sec", "actual_params_m_per_sec",
-      "Expected model params / sec (M)", "Observed model params / sec (M)",
-      "No rows available for expected-vs-observed model-params/sec chart.", colorBy
+    buildTokensByXScatter(
+      chartTokensByXHost,
+      evaRows,
+      xKey,
+      xAxisLabels[xKey] || xKey,
+      "No rows available for tokens/sec vs selected variable chart.",
+      colorBy
     );
 
     clearNode(tableHost);
@@ -884,7 +1061,10 @@ function renderExpectedVsActualSection(data, options = {}) {
   const filterListeners = [batchControl, seqControl, dModelControl, dHeadControl, numHeadsControl, numLayersControl, dFfControl];
   for (const ctrl of filterListeners) ctrl.onChange(refresh);
   colorByControl.select.addEventListener("change", refresh);
+  xAxisControl.select.addEventListener("change", refresh);
+  minObservedControl.input.addEventListener("input", refresh);
   maxObservedControl.input.addEventListener("input", refresh);
+  minExpectedControl.input.addEventListener("input", refresh);
   maxExpectedControl.input.addEventListener("input", refresh);
 
   refresh();
@@ -1023,6 +1203,21 @@ function renderDeviceComparisonSection(data, options = {}) {
   return host;
 }
 
+function filterHistoryRows(historyRows, {selectedSeries, metric, minStep, maxStep, positiveOnly}) {
+  const output = [];
+  for (const row of historyRows) {
+    if (!selectedSeries.has(row.series_key)) continue;
+    const step = Number(row.step);
+    if (!Number.isFinite(step)) continue;
+    if (step < minStep || step > maxStep) continue;
+    const value = metricValue(row, metric);
+    if (!metricValid(metric, value)) continue;
+    if (positiveOnly && value <= 0) continue;
+    output.push({...row, metric_value: value});
+  }
+  return output.sort((a, b) => d3.ascending(a.step, b.step));
+}
+
 export function buildSegmentedHistoryRows(historyRows, options) {
   const {
     selectedSeries,
@@ -1080,12 +1275,72 @@ function renderTrainingCurvesSection(data, options = {}) {
     return host;
   }
 
+  const preferredModelOrder = [
+    "model_a_wide",
+    "model_b_deep",
+    "model_a",
+    "model_b",
+    "assignment_default",
+    "model_a_wide_attn_diag",
+    "model_b_standard_ffn_diag"
+  ];
+  const preferredPlatformOrder = ["mps", "cuda"];
+  const modelRank = (modelId) => {
+    const idx = preferredModelOrder.indexOf(String(modelId));
+    return idx >= 0 ? idx : 999;
+  };
+  const platformRank = (platform) => {
+    const idx = preferredPlatformOrder.indexOf(String(platform));
+    return idx >= 0 ? idx : 999;
+  };
+
+  const seriesRowsByPlatformModel = d3
+    .groups(historyRows, (row) => `${row.platform}:${row.model_id}`)
+    .map(([, rows]) => {
+      const byRun = d3.groups(rows, (row) => row.run_name).map(([, runRows]) => {
+        const evalCount = runRows.reduce(
+          (acc, row) =>
+            acc +
+            (Number.isFinite(Number(row.eval_loss)) && Number(row.eval_loss) > 0
+              ? 1
+              : Number.isFinite(Number(row.eval_perplexity)) && Number(row.eval_perplexity) > 0
+                ? 1
+                : 0),
+          0
+        );
+        return {rows: runRows, evalCount};
+      });
+      byRun.sort(
+        (a, b) =>
+          d3.descending(a.evalCount, b.evalCount) ||
+          d3.descending(a.rows[0]?.run_stamp || "", b.rows[0]?.run_stamp || "") ||
+          d3.descending(a.rows[0]?.run_name || "", b.rows[0]?.run_name || "")
+      );
+      return byRun[0]?.rows || [];
+    })
+    .filter((rows) => rows.length > 0);
+
+  const canonicalSeriesMeta = seriesRowsByPlatformModel
+    .map((rows) => rows[0])
+    .sort(
+      (a, b) =>
+        d3.ascending(modelRank(a.model_id), modelRank(b.model_id)) ||
+        d3.ascending(platformRank(a.platform), platformRank(b.platform)) ||
+        d3.ascending(a.series_label, b.series_label) ||
+        d3.descending(a.run_stamp || "", b.run_stamp || "") ||
+        d3.descending(a.run_name || "", b.run_name || "")
+    );
+  const canonicalSeriesKeys = canonicalSeriesMeta.slice(0, 4).map((row) => row.series_key);
+  const canonicalSeriesKeySet = new Set(canonicalSeriesKeys);
+  const curveRowsSource = historyRows.filter((row) => canonicalSeriesKeySet.has(row.series_key));
+  const curveRows = curveRowsSource.length > 0 ? curveRowsSource : historyRows;
+
   const seriesOptions = Array.from(
-    new Map(historyRows.map((row) => [row.series_key, row.series_verbose || row.series_label])).entries()
+    new Map(curveRows.map((row) => [row.series_key, row.series_verbose || row.series_label])).entries()
   )
     .map(([value, label]) => ({value, label}))
     .sort((a, b) => d3.ascending(a.label, b.label));
-  const defaultSeries = seriesOptions.slice(0, Math.min(4, seriesOptions.length)).map((row) => row.value);
+  const defaultSeries = seriesOptions.map((row) => row.value);
   const seriesControl = checkboxGroup(
     seriesOptions.map((row) => row.value),
     options.historyRuns && options.historyRuns.length > 0 ? options.historyRuns : defaultSeries,
@@ -1100,39 +1355,35 @@ function renderTrainingCurvesSection(data, options = {}) {
     if (labelNode) labelNode.lastChild.textContent = labelBySeries.get(raw) || raw;
   }
 
-  const metricControl = selectControl(
-    "Metric",
+  const initialCurveMetric = options.historyMetric === "Eval Perplexity" ? "Perplexity" : "Loss";
+  const curveMetricControl = selectControl(
+    "Main chart",
     [
-      {value: "Loss", label: "Loss"},
-      {value: "Eval Loss", label: "Eval Loss"},
-      {value: "Eval Perplexity", label: "Eval Perplexity"},
-      {value: "Throughput/Tokens per sec", label: "Throughput"},
-      {value: "Time/Total step", label: "Step Time"}
+      {value: "Loss", label: "Loss (train + eval)"},
+      {value: "Perplexity", label: "Perplexity (train + eval)"}
     ],
-    options.historyMetric || "Loss"
+    initialCurveMetric
   );
-  const styleControl = selectControl(
-    "Marks",
+  const channelControl = selectControl(
+    "Channels",
     [
-      {value: "lines", label: "lines"},
-      {value: "lines+dots", label: "lines + dots"},
-      {value: "dots", label: "dots"}
+      {value: "both", label: "Training + Eval"},
+      {value: "train", label: "Training only"},
+      {value: "eval", label: "Eval only"}
     ],
-    options.historyStyle || "lines"
+    options.historyChannel || "both"
   );
-  const yScaleControl = selectControl(
-    "Y scale",
+  const perfMetricControl = selectControl(
+    "Performance chart",
     [
-      {value: "linear", label: "linear"},
-      {value: "log", label: "log"}
+      {value: "throughput_toks", label: "Throughput (tokens / sec)"},
+      {value: "step_s", label: "Step time (s / step)"}
     ],
-    options.historyScale || "linear"
+    options.historyPerfMetric || "throughput_toks"
   );
 
-  const stepMin = d3.min(historyRows, (row) => row.step) ?? 0;
-  const stepMax = d3.max(historyRows, (row) => row.step) ?? 1;
-  const strideControl = makeRangeControl("Downsample stride", 1, 100, 1, options.historyStride ?? 5);
-  const gapControl = makeRangeControl("Break line if step gap >", 1, 300, 1, options.historyGap ?? 60);
+  const stepMin = d3.min(curveRows, (row) => row.step) ?? 0;
+  const stepMax = d3.max(curveRows, (row) => row.step) ?? 1;
   const stepStartControl = makeRangeControl("Step start", stepMin, stepMax, 1, options.historyStepStart ?? stepMin);
   const stepEndControl = makeRangeControl("Step end", stepMin, stepMax, 1, options.historyStepEnd ?? stepMax);
   const tableLimitControl = makeRangeControl("Table rows", 50, 1000, 50, clampRowLimit(options.historyTableLimit, 300));
@@ -1140,22 +1391,214 @@ function renderTrainingCurvesSection(data, options = {}) {
   const controls = card();
   controls.append(
     seriesControl.node,
-    metricControl.node,
-    styleControl.node,
-    yScaleControl.node,
-    strideControl.node,
-    gapControl.node,
+    curveMetricControl.node,
+    channelControl.node,
+    perfMetricControl.node,
     stepStartControl.node,
     stepEndControl.node,
     tableLimitControl.node
   );
-  const chartHost = card();
+  const mainChartHost = card();
+  const perfChartHost = card();
+  const gradChartHost = card();
   const tableHost = card();
-  host.append(controls, chartHost, tableHost);
+  host.append(controls, mainChartHost, gradChartHost, perfChartHost, tableHost);
+
+  const perfMetricLabels = {
+    throughput_toks: "Tokens / sec",
+    step_s: "Seconds / step"
+  };
+
+  function buildMainCurveRows(selectedSeries, start, end, curveMetric, channelMode = "both") {
+    const output = [];
+    const includeTraining = channelMode !== "eval";
+    const includeEval = channelMode !== "train";
+    const grouped = d3.groups(
+      curveRows.filter((row) => selectedSeries.has(row.series_key)),
+      (row) => row.series_key
+    );
+    for (const [, rows] of grouped) {
+      const ordered = [...rows].sort((a, b) => d3.ascending(a.step, b.step));
+      for (const row of ordered) {
+        const step = Number(row.step);
+        if (!Number.isFinite(step) || step < start || step > end) continue;
+        const seriesBase = row.series_verbose || row.series_label || row.series_key;
+
+        if (includeTraining) {
+          const trainValue =
+            curveMetric === "Loss"
+              ? Number(row.loss)
+              : Number.isFinite(Number(row.loss))
+                ? Math.exp(Number(row.loss))
+                : NaN;
+          if (Number.isFinite(trainValue) && trainValue > 0) {
+            output.push({
+              ...row,
+              step,
+              curve_channel: "Training",
+              metric_value: trainValue,
+              series_channel_key: `${row.series_key}:train`,
+              curve_series_id: `${row.series_key}:train`,
+              curve_series_label: `${seriesBase} (Training)`
+            });
+          }
+        }
+
+        if (includeEval) {
+          const evalValue =
+            curveMetric === "Loss"
+              ? Number.isFinite(Number(row.eval_loss)) && Number(row.eval_loss) > 0
+                ? Number(row.eval_loss)
+                : Number.isFinite(Number(row.eval_perplexity)) && Number(row.eval_perplexity) > 0
+                  ? Math.log(Number(row.eval_perplexity))
+                  : NaN
+              : Number.isFinite(Number(row.eval_perplexity)) && Number(row.eval_perplexity) > 0
+                ? Number(row.eval_perplexity)
+                : Number.isFinite(Number(row.eval_loss))
+                  ? Math.exp(Number(row.eval_loss))
+                  : NaN;
+          if (Number.isFinite(evalValue) && evalValue > 0) {
+            output.push({
+              ...row,
+              step,
+              curve_channel: "Eval",
+              metric_value: evalValue,
+              series_channel_key: `${row.series_key}:eval`,
+              curve_series_id: `${row.series_key}:eval`,
+              curve_series_label: `${seriesBase} (Eval)`
+            });
+          }
+        }
+      }
+    }
+    return output.sort((a, b) => d3.ascending(a.step, b.step));
+  }
+
+  function buildSplineTrendRows(rows, selectionEnd) {
+    const output = [];
+    const grouped = d3.groups(rows, (row) => row.curve_series_id);
+    for (const [, seriesRows] of grouped) {
+      const ordered = [...seriesRows].sort((a, b) => d3.ascending(a.step, b.step));
+      const n = ordered.length;
+      if (n === 0) continue;
+      const template = ordered[0];
+      const xMin = Number(ordered[0].step);
+      const rawXMax = Number(ordered[n - 1].step);
+      const xMax =
+        template.curve_channel === "Eval" && Number.isFinite(selectionEnd)
+          ? Math.max(rawXMax, Number(selectionEnd))
+          : rawXMax;
+      if (!Number.isFinite(xMin) || !Number.isFinite(xMax)) continue;
+
+      if (n <= 2 || xMax <= xMin) {
+        for (const row of ordered) output.push({...row, metric_trend: row.metric_value});
+        if (template.curve_channel === "Eval" && xMax > rawXMax) {
+          output.push({...template, step: xMax, metric_trend: ordered[n - 1].metric_value});
+        }
+        continue;
+      }
+
+      const knotCount = Math.max(12, Math.min(72, Math.round(Math.sqrt(n) * 5)));
+      const binWidth = (xMax - xMin) / Math.max(1, knotCount - 1);
+      const bins = Array.from({length: knotCount}, () => []);
+      for (const row of ordered) {
+        const x = Number(row.step);
+        const y = Number(row.metric_value);
+        if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+        const idx = Math.max(0, Math.min(knotCount - 1, Math.round((x - xMin) / Math.max(binWidth, 1e-9))));
+        bins[idx].push(y);
+      }
+
+      const knotY = bins.map((values) => (values.length > 0 ? d3.median(values) : NaN));
+      let lastKnown = -1;
+      for (let i = 0; i < knotY.length; i += 1) {
+        if (Number.isFinite(knotY[i])) {
+          if (lastKnown >= 0 && i - lastKnown > 1) {
+            const y0 = Number(knotY[lastKnown]);
+            const y1 = Number(knotY[i]);
+            for (let j = lastKnown + 1; j < i; j += 1) {
+              const t = (j - lastKnown) / (i - lastKnown);
+              knotY[j] = y0 + t * (y1 - y0);
+            }
+          }
+          lastKnown = i;
+        }
+      }
+      const firstKnown = knotY.findIndex((v) => Number.isFinite(v));
+      if (firstKnown >= 0) {
+        for (let i = 0; i < firstKnown; i += 1) knotY[i] = knotY[firstKnown];
+        let trailing = NaN;
+        for (let i = knotY.length - 1; i >= 0; i -= 1) {
+          if (Number.isFinite(knotY[i])) trailing = knotY[i];
+          else if (Number.isFinite(trailing)) knotY[i] = trailing;
+        }
+      }
+
+      for (let i = 0; i < knotCount; i += 1) {
+        const y = Number(knotY[i]);
+        if (!Number.isFinite(y)) continue;
+        output.push({
+          ...template,
+          step: xMin + i * binWidth,
+          metric_trend: y
+        });
+      }
+    }
+    return output.sort((a, b) => d3.ascending(a.step, b.step));
+  }
+
+  function buildPerfRows(selectedSeries, start, end, metricKey) {
+    const output = [];
+    const grouped = d3.groups(
+      curveRows.filter((row) => selectedSeries.has(row.series_key)),
+      (row) => row.series_key
+    );
+    for (const [, rows] of grouped) {
+      const ordered = [...rows].sort((a, b) => d3.ascending(a.step, b.step));
+      for (const row of ordered) {
+        const step = Number(row.step);
+        if (!Number.isFinite(step) || step < start || step > end) continue;
+        const value = Number(row[metricKey]);
+        if (!Number.isFinite(value) || value <= 0) continue;
+        output.push({
+          ...row,
+          step,
+          metric_value: value,
+          series_segment: `${row.series_key}:perf`
+        });
+      }
+    }
+    return output.sort((a, b) => d3.ascending(a.step, b.step));
+  }
+
+  function buildGradRows(selectedSeries, start, end) {
+    const output = [];
+    const grouped = d3.groups(
+      curveRows.filter((row) => selectedSeries.has(row.series_key)),
+      (row) => row.series_key
+    );
+    for (const [, rows] of grouped) {
+      const ordered = [...rows].sort((a, b) => d3.ascending(a.step, b.step));
+      for (const row of ordered) {
+        const step = Number(row.step);
+        if (!Number.isFinite(step) || step < start || step > end) continue;
+        const value = Number(row.grad_norm_unclipped);
+        if (!Number.isFinite(value) || value <= 0) continue;
+        output.push({
+          ...row,
+          step,
+          metric_value: value,
+          series_segment: `${row.series_key}:grad`,
+          curve_channel: "Training",
+          curve_series_id: `${row.series_key}:grad`,
+          curve_series_label: `${row.series_verbose || row.series_label || row.series_key} (Pre-clip grad norm)`
+        });
+      }
+    }
+    return output.sort((a, b) => d3.ascending(a.step, b.step));
+  }
 
   const refresh = () => {
-    strideControl.output.textContent = strideControl.input.value;
-    gapControl.output.textContent = gapControl.input.value;
     tableLimitControl.output.textContent = tableLimitControl.input.value;
     stepStartControl.output.textContent = stepStartControl.input.value;
     stepEndControl.output.textContent = stepEndControl.input.value;
@@ -1173,97 +1616,166 @@ function renderTrainingCurvesSection(data, options = {}) {
     }
 
     const selectedSeries = new Set(seriesControl.getSelected());
-    const stride = Number(strideControl.input.value);
-    const maxGap = Number(gapControl.input.value);
-    const metric = metricControl.select.value;
-    const style = styleControl.select.value;
-    const positiveOnly = yScaleControl.select.value === "log";
+    const curveMetric = curveMetricControl.select.value;
+    const channelMode = channelControl.select.value;
+    const perfMetric = perfMetricControl.select.value;
+    const mainRows = buildMainCurveRows(selectedSeries, start, end, curveMetric, channelMode);
+    const trainingRows = mainRows.filter((row) => row.curve_channel === "Training");
+    const evalRows = mainRows.filter((row) => row.curve_channel === "Eval");
+    const trainingTrendRows = buildSplineTrendRows(trainingRows, end);
+    const perfRows = buildPerfRows(selectedSeries, start, end, perfMetric);
+    const gradRows = buildGradRows(selectedSeries, start, end);
+    const gradTrendRows = buildSplineTrendRows(gradRows, end);
 
-    const filtered = buildSegmentedHistoryRows(historyRows, {
-      selectedSeries,
-      metric,
-      stride,
-      maxGap,
-      minStep: start,
-      maxStep: end,
-      positiveOnly
-    });
-
-    clearNode(chartHost);
+    clearNode(mainChartHost);
+    clearNode(perfChartHost);
+    clearNode(gradChartHost);
     clearNode(tableHost);
-    chartHost.appendChild(sectionHeading(`Training Curve: ${metric}`));
+    const metricTitle = curveMetric === "Loss" ? "Loss Trends" : "Perplexity Trends";
+    const channelTitle =
+      channelMode === "train" ? "Training" : channelMode === "eval" ? "Eval" : "Training + Eval";
+    mainChartHost.appendChild(sectionHeading(`${metricTitle} (${channelTitle})`));
+    perfChartHost.appendChild(sectionHeading(`Performance Trend: ${perfMetricLabels[perfMetric] || perfMetric}`));
+    gradChartHost.appendChild(sectionHeading("Pre-clip Gradient Norm Trend"));
 
-    if (filtered.length === 0) {
-      chartHost.appendChild(emptyState("No history rows for current selections."));
+    if (mainRows.length === 0) {
+      mainChartHost.appendChild(emptyState("No history rows for current selections."));
       tableHost.appendChild(emptyState("No rows to display."));
+    } else {
+      const mainMarks = [];
+      if (trainingRows.length > 0) {
+        mainMarks.push(
+          Plot.lineY(trainingTrendRows.length > 0 ? trainingTrendRows : trainingRows, {
+            x: "step",
+            y: trainingTrendRows.length > 0 ? "metric_trend" : "metric_value",
+            stroke: "curve_series_label",
+            z: "curve_series_id",
+            curve: "natural",
+            strokeWidth: 2.2,
+            tip: true
+          })
+        );
+      }
+      if (evalRows.length > 0) {
+        mainMarks.push(
+          Plot.lineY(evalRows, {
+            x: "step",
+            y: "metric_value",
+            stroke: "curve_series_label",
+            z: "curve_series_id",
+            curve: "natural",
+            strokeWidth: 2.0,
+            tip: true
+          }),
+          Plot.dot(evalRows, {
+            x: "step",
+            y: "metric_value",
+            fill: "curve_series_label",
+            z: "curve_series_id",
+            r: 1.2,
+            opacity: 0.9,
+            tip: true
+          })
+        );
+      }
+
+      mainChartHost.appendChild(
+        Plot.plot({
+          width: 920,
+          height: 360,
+          x: {label: "Step", grid: true},
+          y: {label: curveMetric, grid: true},
+          color: {legend: true},
+          marks: mainMarks
+        })
+      );
+
+      const tableLimit = clampRowLimit(tableLimitControl.input.value, 300);
+      const limited = mainRows.slice(0, tableLimit);
+      const details = collapsible("expand to view training/eval trend data");
+      details.append(
+        rowLimitNote(limited.length, mainRows.length),
+        renderSimpleTable(limited, [
+          {key: "series_verbose", label: "Series"},
+          {key: "curve_channel", label: "Channel"},
+          {key: "run_name", label: "Run"},
+          {key: "step", label: "Step", align: "right"},
+          {
+            key: "metric_value",
+            label: curveMetric,
+            align: "right",
+            format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(6) : "n/a")
+          }
+        ])
+      );
+      tableHost.appendChild(details);
+    }
+
+    if (perfRows.length === 0) {
+      perfChartHost.appendChild(emptyState("No throughput/step-time rows for current selections."));
+    } else {
+      perfChartHost.appendChild(
+        Plot.plot({
+          width: 920,
+          height: 300,
+          x: {label: "Step", grid: true},
+          y: {label: perfMetricLabels[perfMetric] || perfMetric, grid: true},
+          color: {legend: true},
+          marks: [
+            Plot.dot(perfRows, {
+              x: "step",
+              y: "metric_value",
+              fill: "series_label",
+              z: "series_segment",
+              r: .8,
+              opacity: 0.85,
+              tip: true
+            })
+          ]
+        })
+      );
+    }
+
+    if (gradRows.length === 0) {
+      gradChartHost.appendChild(emptyState("No pre-clip gradient rows for current selections."));
       return;
     }
 
-    const marks = [];
-    if (style !== "dots") {
-      marks.push(
-        Plot.lineY(filtered, {
-          x: "step",
-          y: "metric_value",
-          stroke: "series_label",
-          z: "segment_key",
-          tip: true
-        })
-      );
-    }
-    if (style !== "lines") {
-      marks.push(
-        Plot.dot(filtered, {
-          x: "step",
-          y: "metric_value",
-          fill: "series_label",
-          r: 2.7,
-          tip: true
-        })
-      );
-    }
-
-    chartHost.appendChild(
+    gradChartHost.appendChild(
       Plot.plot({
         width: 920,
-        height: 360,
-        x: {label: "step", grid: true},
-        y: {
-          label: metricLabel(metric),
-          grid: true,
-          type: yScaleControl.select.value === "log" ? "log" : "linear"
-        },
+        height: 300,
+        x: {label: "Step", grid: true},
+        y: {label: "Pre-clip grad norm", grid: true, type: "log"},
         color: {legend: true},
-        marks
+        marks: [
+          Plot.lineY(gradTrendRows.length > 0 ? gradTrendRows : gradRows, {
+            x: "step",
+            y: gradTrendRows.length > 0 ? "metric_trend" : "metric_value",
+            stroke: "curve_series_label",
+            z: "curve_series_id",
+            curve: "natural",
+            strokeWidth: 2.0,
+            tip: true
+          }),
+          Plot.dot(gradRows, {
+            x: "step",
+            y: "metric_value",
+            fill: "curve_series_label",
+            z: "series_segment",
+            r: 1.2,
+            opacity: 0.45,
+            tip: true
+          })
+        ]
       })
     );
-
-    const tableLimit = clampRowLimit(tableLimitControl.input.value, 300);
-    const limited = filtered.slice(0, tableLimit);
-    const details = collapsible("expand to view training curve data");
-    details.append(
-      rowLimitNote(limited.length, filtered.length),
-      renderSimpleTable(limited, [
-        {key: "series_verbose", label: "Series"},
-        {key: "run_name", label: "Run"},
-        {key: "step", label: "Step", align: "right"},
-        {
-          key: "metric_value",
-          label: metricLabel(metric),
-          align: "right",
-          format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(6) : "n/a")
-        }
-      ])
-    );
-    tableHost.appendChild(details);
   };
 
   seriesControl.onChange(refresh);
-  metricControl.select.addEventListener("change", refresh);
-  styleControl.select.addEventListener("change", refresh);
-  yScaleControl.select.addEventListener("change", refresh);
-  strideControl.input.addEventListener("input", refresh);
-  gapControl.input.addEventListener("input", refresh);
+  curveMetricControl.select.addEventListener("change", refresh);
+  channelControl.select.addEventListener("change", refresh);
+  perfMetricControl.select.addEventListener("change", refresh);
   stepStartControl.input.addEventListener("input", refresh);
   stepEndControl.input.addEventListener("input", refresh);
   tableLimitControl.input.addEventListener("input", refresh);
@@ -1337,6 +1849,89 @@ export async function renderPerfEmpiricalTrainingCurves(options = {}) {
 
 export async function renderPerfEmpiricalDiagnostics(options = {}) {
   return renderSection(renderDiagnosticsSection, options);
+}
+
+const COMPARISON_MODEL_IDS = ["models_yaml:model_a", "models_yaml:model_b", "models_yaml:assignment_default"];
+
+const COMPARISON_PLATFORMS = [
+  {key: "mps", label: "MPS (M4)", wt_dtype: "float32", ft_dtype: "float32", grad_dtype: "float32", use_amp: false},
+  {key: "cuda", label: "RTX 4090 (AMP)", wt_dtype: "float32", ft_dtype: "bfloat16", grad_dtype: "bfloat16", use_amp: true}
+];
+
+export async function renderPerfEmpiricalModelSelection() {
+  const root = el("div");
+  root.style.display = "grid";
+  root.style.gap = "1.2rem";
+
+  let catalog;
+  try {
+    catalog = await ATTACHMENTS.catalog.json();
+  } catch (err) {
+    root.appendChild(emptyState(`Failed to load model catalog: ${err.message}`));
+    return root;
+  }
+
+  const configs = COMPARISON_MODEL_IDS.map((id) => catalog.named_configs.find((c) => c.id === id)).filter(Boolean);
+  if (configs.length === 0) {
+    root.appendChild(emptyState("No matching model configs found in catalog."));
+    return root;
+  }
+
+  root.appendChild(sectionHeading("Model Hyperparameters"));
+  root.appendChild(
+    renderSimpleTable(configs, [
+      {key: "name", label: "Model"},
+      {key: "batch_size", label: "B", align: "right"},
+      {key: "seq_len", label: "S", align: "right"},
+      {key: "d_model", label: "d_model", align: "right"},
+      {key: "num_heads", label: "h", align: "right"},
+      {key: "d_head", label: "d_head", align: "right"},
+      {key: "num_layers", label: "L", align: "right"},
+      {key: "d_ff", label: "d_ff", align: "right"},
+      {key: "vocab_size", label: "V", align: "right"}
+    ])
+  );
+
+  const resourceRows = configs.map((cfg) => {
+    const params = calculateModelParams(cfg.vocab_size, cfg.d_model, cfg.num_heads, cfg.num_layers, cfg.d_ff);
+    const fwdFlops = calculateForwardFlops(cfg.batch_size, cfg.seq_len, cfg.vocab_size, cfg.d_model, cfg.num_heads, cfg.num_layers, cfg.d_ff);
+    const stepFlops = calculateTrainingStepFlops(fwdFlops.total);
+    const row = {
+      name: cfg.name,
+      params: params.total_M.toFixed(2) + "M",
+      tflops: stepFlops.total_TFLOPs.toFixed(3)
+    };
+    for (const plat of COMPARISON_PLATFORMS) {
+      const mem = calculateMemoryAccounting({
+        B: cfg.batch_size,
+        S: cfg.seq_len,
+        V: cfg.vocab_size,
+        d_model: cfg.d_model,
+        n_heads: cfg.num_heads,
+        n_blocks: cfg.num_layers,
+        d_ff: cfg.d_ff,
+        d_head: cfg.d_head,
+        wt_dtype: plat.wt_dtype,
+        ft_dtype: plat.ft_dtype,
+        grad_dtype: plat.grad_dtype,
+        use_amp: plat.use_amp
+      });
+      row[`${plat.key}_peak`] = mem.peak_training;
+    }
+    return row;
+  });
+
+  root.appendChild(sectionHeading("Estimated Training Resources"));
+  root.appendChild(
+    renderSimpleTable(resourceRows, [
+      {key: "name", label: "Model"},
+      {key: "params", label: "Params", align: "right"},
+      {key: "tflops", label: "Step TFLOPs", align: "right"},
+      {key: "mps_peak", label: "MPS Peak Mem", align: "right"},
+      {key: "cuda_peak", label: "4090 Peak Mem", align: "right"}
+    ])
+  );
+  return root;
 }
 
 export async function renderPerfEmpirical(options = {}) {

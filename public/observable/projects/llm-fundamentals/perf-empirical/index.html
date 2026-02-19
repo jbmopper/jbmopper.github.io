@@ -13,7 +13,7 @@
 <link rel="modulepreload" href="../../../_observablehq/client.cbf2d9f3.js">
 <link rel="modulepreload" href="../../../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../../../_import/embed/perf-empirical.6e5843d3.js">
+<link rel="modulepreload" href="../../../_import/embed/perf-empirical.07e64c34.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib/tex.c79b643a.js">
 <link rel="modulepreload" href="../../../_import/components/data-utils.e2caa41c.js">
 <link rel="modulepreload" href="../../../_import/components/dom-utils.aaca454b.js">
@@ -66,12 +66,13 @@
 import {define} from "../../../_observablehq/client.cbf2d9f3.js";
 import {registerFile} from "../../../_observablehq/stdlib.43270668.js";
 
-registerFile("../../../data/raw/benchmarks/gpu_comp_history.parquet", {"name":"../../../data/raw/benchmarks/gpu_comp_history.parquet","path":"../../../_file/data/raw/benchmarks/gpu_comp_history.4a516c8a.parquet","lastModified":1770927469233,"size":189583});
-registerFile("../../../data/raw/benchmarks/gpu_comp_main.parquet", {"name":"../../../data/raw/benchmarks/gpu_comp_main.parquet","path":"../../../_file/data/raw/benchmarks/gpu_comp_main.8b657d6c.parquet","lastModified":1770927469234,"size":26614});
-registerFile("../../../data/raw/benchmarks/micro_benchmarks_20260126_130256.json", {"name":"../../../data/raw/benchmarks/micro_benchmarks_20260126_130256.json","mimeType":"application/json","path":"../../../_file/data/raw/benchmarks/micro_benchmarks_20260126_130256.0003d6fe.json","lastModified":1770920604377,"size":2403});
-registerFile("../../../data/raw/benchmarks/mps_comp_history.parquet", {"name":"../../../data/raw/benchmarks/mps_comp_history.parquet","path":"../../../_file/data/raw/benchmarks/mps_comp_history.81dcba33.parquet","lastModified":1770927469238,"size":220323});
-registerFile("../../../data/raw/benchmarks/mps_comp_main.parquet", {"name":"../../../data/raw/benchmarks/mps_comp_main.parquet","path":"../../../_file/data/raw/benchmarks/mps_comp_main.ccc27b69.parquet","lastModified":1770927469238,"size":25521});
-registerFile("../../../data/raw/benchmarks/train_benchmark_20260127_092323.json", {"name":"../../../data/raw/benchmarks/train_benchmark_20260127_092323.json","mimeType":"application/json","path":"../../../_file/data/raw/benchmarks/train_benchmark_20260127_092323.e80aa474.json","lastModified":1770920604379,"size":1945563});
+registerFile("../../../data/raw/benchmarks/gpu_comp_history.parquet", {"name":"../../../data/raw/benchmarks/gpu_comp_history.parquet","path":"../../../_file/data/raw/benchmarks/gpu_comp_history.ce8ef571.parquet","lastModified":1771465886678,"size":267748});
+registerFile("../../../data/raw/benchmarks/gpu_comp_main.parquet", {"name":"../../../data/raw/benchmarks/gpu_comp_main.parquet","path":"../../../_file/data/raw/benchmarks/gpu_comp_main.1cc36d46.parquet","lastModified":1771465633671,"size":26280});
+registerFile("../../../data/raw/benchmarks/micro_benchmarks_20260126_130256.json", {"name":"../../../data/raw/benchmarks/micro_benchmarks_20260126_130256.json","mimeType":"application/json","path":"../../../_file/data/raw/benchmarks/micro_benchmarks_20260126_130256.0003d6fe.json","lastModified":1771465633680,"size":2403});
+registerFile("../../../data/raw/benchmarks/mps_comp_history.parquet", {"name":"../../../data/raw/benchmarks/mps_comp_history.parquet","path":"../../../_file/data/raw/benchmarks/mps_comp_history.46520918.parquet","lastModified":1771465881500,"size":293870});
+registerFile("../../../data/raw/benchmarks/mps_comp_main.parquet", {"name":"../../../data/raw/benchmarks/mps_comp_main.parquet","path":"../../../_file/data/raw/benchmarks/mps_comp_main.63058a49.parquet","lastModified":1771465633673,"size":25195});
+registerFile("../../../data/raw/benchmarks/train_benchmark_20260127_092323.json", {"name":"../../../data/raw/benchmarks/train_benchmark_20260127_092323.json","mimeType":"application/json","path":"../../../_file/data/raw/benchmarks/train_benchmark_20260127_092323.e80aa474.json","lastModified":1771465633684,"size":1945563});
+registerFile("../../../data/raw/llm-fundamentals/model-config-catalog.json", {"name":"../../../data/raw/llm-fundamentals/model-config-catalog.json","mimeType":"application/json","path":"../../../_file/data/raw/llm-fundamentals/model-config-catalog.3b260981.json","lastModified":1771314318102,"size":18447});
 
 define({id: "e9422d4d", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
 display(await(
@@ -121,10 +122,10 @@ tex`d_{ff}`
 ))
 }});
 
-define({id: "1be1b6c7", outputs: ["renderPerfEmpiricalTrainBenchmark","renderPerfEmpiricalExpectedVsActual","renderPerfEmpiricalDeviceComparison","renderPerfEmpiricalTrainingCurves"], body: async () => {
-const {renderPerfEmpiricalTrainBenchmark, renderPerfEmpiricalExpectedVsActual, renderPerfEmpiricalDeviceComparison, renderPerfEmpiricalTrainingCurves} = await import("../../../_import/embed/perf-empirical.6e5843d3.js");
+define({id: "009ce9a3", outputs: ["renderPerfEmpiricalTrainBenchmark","renderPerfEmpiricalExpectedVsActual","renderPerfEmpiricalDeviceComparison","renderPerfEmpiricalModelSelection","renderPerfEmpiricalTrainingCurves"], body: async () => {
+const {renderPerfEmpiricalTrainBenchmark, renderPerfEmpiricalExpectedVsActual, renderPerfEmpiricalDeviceComparison, renderPerfEmpiricalModelSelection, renderPerfEmpiricalTrainingCurves} = await import("../../../_import/embed/perf-empirical.07e64c34.js");
 
-return {renderPerfEmpiricalTrainBenchmark,renderPerfEmpiricalExpectedVsActual,renderPerfEmpiricalDeviceComparison,renderPerfEmpiricalTrainingCurves};
+return {renderPerfEmpiricalTrainBenchmark,renderPerfEmpiricalExpectedVsActual,renderPerfEmpiricalDeviceComparison,renderPerfEmpiricalModelSelection,renderPerfEmpiricalTrainingCurves};
 }});
 
 define({id: "5f0c9453", inputs: ["renderPerfEmpiricalTrainBenchmark"], outputs: ["trainSection"], body: async (renderPerfEmpiricalTrainBenchmark) => {
@@ -155,6 +156,15 @@ return {evaSection};
 
 define({id: "100de579", inputs: ["display","evaSection"], body: (display,evaSection) => {
 display(evaSection);
+}});
+
+define({id: "e95b81ae", inputs: ["renderPerfEmpiricalModelSelection"], outputs: ["modelSelectionSection"], body: async (renderPerfEmpiricalModelSelection) => {
+const modelSelectionSection = await renderPerfEmpiricalModelSelection();
+return {modelSelectionSection};
+}});
+
+define({id: "34c11cd3", inputs: ["display","modelSelectionSection"], body: (display,modelSelectionSection) => {
+display(modelSelectionSection);
 }});
 
 define({id: "67bfe76d", inputs: ["renderPerfEmpiricalDeviceComparison"], outputs: ["compSection"], body: async (renderPerfEmpiricalDeviceComparison) => {
@@ -202,7 +212,7 @@ display(curvesSection);
 <ol>
 <li class="observablehq-secondary-link"><a href="#benchmark-grid-search">Benchmark Grid Search</a></li>
 <li class="observablehq-secondary-link"><a href="#model-selection">Model Selection</a></li>
-<li class="observablehq-secondary-link"><a href="#2-controlled-platform-comparison-mps-comp-vs-gpu-comp">2) Controlled Platform Comparison (mps_comp vs gpu_comp)</a></li>
+<li class="observablehq-secondary-link"><a href="#controlled-platform-comparison-mps-comp-vs-gpu-comp">Controlled Platform Comparison (mps_comp vs gpu_comp)</a></li>
 <li class="observablehq-secondary-link"><a href="#3-training-curve-analysis">3) Training-Curve Analysis</a></li>
 </ol>
 </nav>
@@ -224,31 +234,45 @@ display(curvesSection);
 <li>SwiGLU network feedforward dimension <observablehq-loading></observablehq-loading><!--:f3dc34f5:--></li>
 </ul>
 <p>As the <code>benchmark.Timer</code> class primarily measures time and throughput, those are the metrics collected.  The <code>blocked_autorange</code> method was used on a single training loop iteration, with the expectation that this would result in reliable and repeatable results.  While this is true in the sense that the method does ensure that the memory space is clean and that the device has been synchronized, part of the method's reliability comes from the repeated execution of the code under study, and in this case the minimum time allotted was often lower than the time of a single run.  Nonetheless, the data were consistent with expectations, as can be seen below.</p>
-<div class="observablehq observablehq--block"><!--:1be1b6c7:--></div>
+<div class="observablehq observablehq--block"><!--:009ce9a3:--></div>
 <div class="observablehq observablehq--block"><!--:5f0c9453:--></div>
 <div class="observablehq observablehq--block"><!--:03091ea1:--></div>
 <h4 id="observations" tabindex="-1"><a class="observablehq-header-anchor" href="#observations">Observations</a></h4>
 <ul>
-<li>the data were not especially noisy, indicating the benchmark library functioned as desired</li>
 <li>smaller <observablehq-loading></observablehq-loading><!--:d4a5728a-1:--> lead to higher tokens/sec</li>
-<li>larger sequence lengths quickly exceed memory capacity (<observablehq-loading></observablehq-loading><!--:8664f8c5:--> curse)</li>
-<li>batch size helps smaller models effectively maintain high throughput</li>
+<li>larger sequence lengths quickly exceed memory capacity due to the attention's <observablehq-loading></observablehq-loading><!--:8664f8c5:--> scaling</li>
+<li>in practice, this chart was useful for finding interesting and less-controlled comparison models, as batch size can be varied along with other parameters to find diverse models that have similar training memory budgets</li>
 </ul>
 <h3 id="expected-vs-actual-performance" tabindex="-1"><a class="observablehq-header-anchor" href="#expected-vs-actual-performance">Expected vs Actual Performance</a></h3>
-<p>It's important to note that these are "expected" in the sense of "calculated based on listed system TFLOPs" rather than any more nuanced estimation.  As such, performance is always worse than "expected", with the line on the following charts reflecting the point where actual and expected would have been equal.</p>
+<p>It's important to note that these are "expected" in the sense of "calculated based on listed system TFLOPs" rather than any more nuanced estimation.  As such, performance is always worse than "expected", with the dashed line on the following charts reflecting the point where actual and expected would have been equal.</p>
 <div class="observablehq observablehq--block"><!--:78359219:--></div>
 <div class="observablehq observablehq--block"><!--:100de579:--></div>
 <h4 id="observations-1" tabindex="-1"><a class="observablehq-header-anchor" href="#observations-1">Observations</a></h4>
 <ul>
-<li>memory issues arise in large models, causing an explosive growth in observed iteration time when the system becomes stressed</li>
-<li></li>
+<li>larger models display nonlinear slowdowns, suggesting the expected effect of memory bottlenecking does occur</li>
+<li>even more significant memory issues arise in large models, which see an explosive growth in observed iteration time when the system becomes stressed</li>
+<li>increased batch size does in fact show increased training throughput, validating the hypothesis that kenrel launches are an additional bottleneck on MPS</li>
 </ul>
 <h3 id="conclusions" tabindex="-1"><a class="observablehq-header-anchor" href="#conclusions">Conclusions</a></h3>
-<p>The observations broadly reflects expectations.  The modifier "broadly" is used because there is a persistent level of uncertainty associated with Apple Silicon and the MacOS/MPS stack: the system is heavily memory-bottlenecked yet also suffers from a poorly optimized stack that requires numerous MPS kernel launces, increasing overhead.</p>
-<p>In fact both are true, so increasing batch size in smaller models does lead to improved throughput, while larger models do bog down the system and show increasingly sub-optimal performance.</p>
+<p>The observations broadly reflects expectations.  The modifier "broadly" is used because there is a persistent level of uncertainty associated with Apple Silicon and the MacOS/MPS: first, and that even with the controls of the PyTorch benchmark library, the Mac is operating as a desktop system, and has numerous processes that can lead to resource contention unpredictably.  We did leave the system to run these benchmarks overnight, turned off backups, and closed all apps, so the data emerged relatively clean.</p>
+<p>Returning to core questions of traning dynamics, the main question based on research into the system is whether it is heavily memory-bottlenecked preventing larger models from being trained, or does it suffers from a poorly optimized stack that requires numerous MPS kernel launces, increasing overhead and causing increased batch size to</p>
+<p>In fact both are true, so increasing batch size does lead to improved throughput, while larger models do bog down the system and show increasingly sub-optimal performance.</p>
 <h2 id="model-selection" tabindex="-1"><a class="observablehq-header-anchor" href="#model-selection">Model Selection</a></h2>
+<p>Ultimately, in order to provide a robust comparison while remaining within memory limits, two model specs were chosen, one of which was actually outside the grid seach as its width made the feasible number of layers smaller than the minimum in the grid.</p>
+<div class="observablehq observablehq--block"><!--:e95b81ae:--></div>
+<div class="observablehq observablehq--block"><!--:34c11cd3:--></div>
+<pre><code>"Model A and Model B have similar parameter counts (~29M vs ~29M) and per-step compute budgets, " +
+"but differ substantially in shape. Model A is wide and shallow: a large d_model drives up the " +
+"attention projection matrices and activations, while only two layers limit depth-dependent costs. " +
+"Model B is narrow and deep: twelve layers stack modest per-layer costs, but the repeated residual " +
+"stream accumulation and deeper gradient flow make it more prone to training instability and slower " +
+"to converge per token. The attention S\u00b2 cost is identical across models (same B and S), so the " +
+"primary memory difference is the activation footprint scaling with d_model in Model A, which is " +
+"evident in its higher peak memory. On MPS this is the binding constraint; on the 4090, AMP " +
+"halves activation storage and the larger memory bandwidth absorbs both shapes comfortably."
+</code></pre>
 <hr>
-<h2 id="2-controlled-platform-comparison-mps-comp-vs-gpu-comp" tabindex="-1"><a class="observablehq-header-anchor" href="#2-controlled-platform-comparison-mps-comp-vs-gpu-comp">2) Controlled Platform Comparison (<code>mps_comp</code> vs <code>gpu_comp</code>)</a></h2>
+<h2 id="controlled-platform-comparison-mps-comp-vs-gpu-comp" tabindex="-1"><a class="observablehq-header-anchor" href="#controlled-platform-comparison-mps-comp-vs-gpu-comp">Controlled Platform Comparison (<code>mps_comp</code> vs <code>gpu_comp</code>)</a></h2>
 <h3 id="device-comparison-summary" tabindex="-1"><a class="observablehq-header-anchor" href="#device-comparison-summary">Device Comparison Summary</a></h3>
 <p>This section compares matched deep/wide model variants across MPS and CUDA
 using the parquet summaries and derived speedup tables.</p>
@@ -268,7 +292,7 @@ debug a memory-fragmentation issue and are intentionally omitted from the main
 analysis narrative here.</p>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-17T23:24:39">Feb 17, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-18T19:02:44">Feb 18, 2026</a>.</div>
 </footer>
 </div>
 </body>
