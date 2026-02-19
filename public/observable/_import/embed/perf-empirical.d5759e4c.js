@@ -1456,12 +1456,13 @@ function renderTrainingCurvesSection(data, options = {}) {
     if (labelNode) labelNode.lastChild.textContent = labelBySeries.get(raw) || raw;
   }
 
-  const initialCurveMetric = options.historyMetric === "Eval Perplexity" ? "Perplexity" : "Loss";
+  const initialCurveMetric =
+    options.historyMetric === "Eval Perplexity" || options.historyMetric === "Perplexity" ? "LossLog" : "Loss";
   const curveMetricControl = selectControl(
     "Main chart",
     [
       {value: "Loss", label: "Loss (train + eval)"},
-      {value: "Perplexity", label: "Perplexity (train + eval)"}
+      {value: "LossLog", label: "Loss (log scale, train + eval)"}
     ],
     initialCurveMetric
   );
@@ -1496,6 +1497,7 @@ function renderTrainingCurvesSection(data, options = {}) {
 
   function buildMainCurveRows(selectedSeries, start, end, curveMetric, channelMode = "both") {
     const output = [];
+    const useLoss = curveMetric === "Loss" || curveMetric === "LossLog";
     const includeTraining = channelMode !== "eval";
     const includeEval = channelMode !== "train";
     const grouped = d3.groups(
@@ -1511,11 +1513,9 @@ function renderTrainingCurvesSection(data, options = {}) {
 
         if (includeTraining) {
           const trainValue =
-            curveMetric === "Loss"
+            useLoss
               ? Number(row.loss)
-              : Number.isFinite(Number(row.loss))
-                ? Math.exp(Number(row.loss))
-                : NaN;
+              : NaN;
           if (Number.isFinite(trainValue) && trainValue > 0) {
             output.push({
               ...row,
@@ -1531,17 +1531,13 @@ function renderTrainingCurvesSection(data, options = {}) {
 
         if (includeEval) {
           const evalValue =
-            curveMetric === "Loss"
+            useLoss
               ? Number.isFinite(Number(row.eval_loss)) && Number(row.eval_loss) > 0
                 ? Number(row.eval_loss)
                 : Number.isFinite(Number(row.eval_perplexity)) && Number(row.eval_perplexity) > 0
                   ? Math.log(Number(row.eval_perplexity))
                   : NaN
-              : Number.isFinite(Number(row.eval_perplexity)) && Number(row.eval_perplexity) > 0
-                ? Number(row.eval_perplexity)
-                : Number.isFinite(Number(row.eval_loss))
-                  ? Math.exp(Number(row.eval_loss))
-                  : NaN;
+              : NaN;
           if (Number.isFinite(evalValue) && evalValue > 0) {
             output.push({
               ...row,
@@ -1678,6 +1674,7 @@ function renderTrainingCurvesSection(data, options = {}) {
 
     const selectedSeries = new Set(seriesControl.getSelected());
     const curveMetric = curveMetricControl.select.value;
+    const useLogLossScale = curveMetric === "LossLog";
     const channelMode = channelControl.select.value;
     const mainRows = buildMainCurveRows(selectedSeries, start, end, curveMetric, channelMode);
     const trainingRows = mainRows.filter((row) => row.curve_channel === "Training");
@@ -1689,7 +1686,7 @@ function renderTrainingCurvesSection(data, options = {}) {
     clearNode(mainChartHost);
     clearNode(gradChartHost);
     clearNode(tableHost);
-    const metricTitle = curveMetric === "Loss" ? "Loss Trends" : "Perplexity Trends";
+    const metricTitle = useLogLossScale ? "Loss Trends (log scale)" : "Loss Trends";
     const channelTitle =
       channelMode === "train" ? "Training" : channelMode === "eval" ? "Eval" : "Training + Eval";
     mainChartHost.appendChild(sectionHeading(`${metricTitle} (${channelTitle})`));
@@ -1741,7 +1738,7 @@ function renderTrainingCurvesSection(data, options = {}) {
           width: 920,
           height: 360,
           x: {label: "Step", grid: true},
-          y: {label: curveMetric, grid: true},
+          y: {label: "Loss", grid: true, ...(useLogLossScale ? {type: "log"} : {})},
           color: {legend: true},
           marks: mainMarks
         })
@@ -1759,7 +1756,7 @@ function renderTrainingCurvesSection(data, options = {}) {
           {key: "step", label: "Step", align: "right"},
           {
             key: "metric_value",
-            label: curveMetric,
+            label: "Loss",
             align: "right",
             format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(6) : "n/a")
           }

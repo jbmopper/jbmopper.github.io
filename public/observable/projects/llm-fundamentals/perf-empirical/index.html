@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="generator" content="Observable Framework v1.13.3">
+<base href="/observable/projects/llm-fundamentals/perf-empirical/">
 <title>Empirical Performance | Project Writeup Sandbox</title>
 
 <link rel="preload" as="style" href="../../../_import/astro-bridge-theme.4ecc77ab.css">
@@ -13,7 +14,7 @@
 <link rel="modulepreload" href="../../../_observablehq/client.cbf2d9f3.js">
 <link rel="modulepreload" href="../../../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../../../_import/embed/perf-empirical.554f4b7b.js">
+<link rel="modulepreload" href="../../../_import/embed/perf-empirical.d5759e4c.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib/tex.c79b643a.js">
 <link rel="modulepreload" href="../../../_import/components/data-utils.e2caa41c.js">
 <link rel="modulepreload" href="../../../_import/components/dom-utils.aaca454b.js">
@@ -123,7 +124,7 @@ tex`d_{ff}`
 }});
 
 define({id: "009ce9a3", outputs: ["renderPerfEmpiricalTrainBenchmark","renderPerfEmpiricalExpectedVsActual","renderPerfEmpiricalDeviceComparison","renderPerfEmpiricalModelSelection","renderPerfEmpiricalTrainingCurves"], body: async () => {
-const {renderPerfEmpiricalTrainBenchmark, renderPerfEmpiricalExpectedVsActual, renderPerfEmpiricalDeviceComparison, renderPerfEmpiricalModelSelection, renderPerfEmpiricalTrainingCurves} = await import("../../../_import/embed/perf-empirical.554f4b7b.js");
+const {renderPerfEmpiricalTrainBenchmark, renderPerfEmpiricalExpectedVsActual, renderPerfEmpiricalDeviceComparison, renderPerfEmpiricalModelSelection, renderPerfEmpiricalTrainingCurves} = await import("../../../_import/embed/perf-empirical.d5759e4c.js");
 
 return {renderPerfEmpiricalTrainBenchmark,renderPerfEmpiricalExpectedVsActual,renderPerfEmpiricalDeviceComparison,renderPerfEmpiricalModelSelection,renderPerfEmpiricalTrainingCurves};
 }});
@@ -204,7 +205,7 @@ display(curvesSection);
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <header id="observablehq-header">
-<nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">Home</a><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a id="portfolio-current-project-link" class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; const path = window.location.pathname.replace(/^\/observable(?=\/|$)/, ''); const llm = /^\/projects\/llm-fundamentals(\/|$)/.test(path); const playground = /^\/projects\/data-playground(\/|$)/.test(path); const target = llm ? '/projects/llm-fundamentals/' : (playground ? '/projects/data-playground/' : '/projects/'); window.location.assign(window.location.origin + mount + target);">Current Project</a></nav><script>(function(){const path=window.location.pathname.replace(/^\/observable(?=\/|$)/,""); const link=document.getElementById("portfolio-current-project-link"); if(link && /^\/projects\/?$/.test(path)){link.remove();} for(const id of ["observablehq-sidebar-toggle","observablehq-sidebar-backdrop","observablehq-sidebar"]){const node=document.getElementById(id); if(node) node.remove();}})();</script>
+<nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">Home</a><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a id="portfolio-current-project-link" class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; const path = window.location.pathname.replace(/^\/observable(?=\/|$)/, ''); const llm = /^\/projects\/llm-fundamentals(\/|$)/.test(path); const playground = /^\/projects\/data-playground(\/|$)/.test(path); const target = llm ? '/projects/llm-fundamentals/' : (playground ? '/projects/data-playground/' : '/projects/'); window.location.assign(window.location.origin + mount + target);">Current Project</a></nav><script>(function(){const path=window.location.pathname.replace(/^\/observable(?=\/|$)/,""); const link=document.getElementById("portfolio-current-project-link"); if(link && /^\/projects(?:\/index\.html)?\/?$/.test(path)){link.remove();} for(const id of ["observablehq-sidebar-toggle","observablehq-sidebar-backdrop","observablehq-sidebar"]){const node=document.getElementById(id); if(node) node.remove();}})();</script>
 </header>
 <aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
 <nav>
@@ -275,15 +276,13 @@ display(curvesSection);
 <h2 id="training-curve-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#training-curve-analysis">Training Curve Analysis</a></h2>
 <div class="observablehq observablehq--block"><!--:9dd16f38:--></div>
 <div class="observablehq observablehq--block"><!--:9924402b:--></div>
-<p>In</p>
+<p>Training shows the expected dynamics, where the wide model A converges more quickly but to a higher steady-state loss, while the deep model B converges more slowly to lower steady state.  The pre-clipping gradient norm is consistent with this dynamic, with the norm for the deep model remaining elevated for about 20 cycles longer than the wide model.</p>
 <h2 id="conclusions-1" tabindex="-1"><a class="observablehq-header-anchor" href="#conclusions-1">Conclusions</a></h2>
-<h3 id="notes-on-diagnostic-benchmarks" tabindex="-1"><a class="observablehq-header-anchor" href="#notes-on-diagnostic-benchmarks">Notes on Diagnostic Benchmarks</a></h3>
-<p><code>micro_benchmarks</code> and <code>sequential_benchmark</code> were diagnostic runs used to
-debug a memory-fragmentation issue and are intentionally omitted from the main
-analysis narrative here.</p>
+<p>Overall, this investigation successfully highlighted the practical constraints and trade-offs in LLM training. The hardware comparison showed a clear advantage for the RTX 4090, which delivered a consistent ~20x speedup over the Apple M4, effectively matching theoretical expectations for float32 performance. While the M4 was certainly functional for smaller-scale experimentation, the analysis also highlighted its susceptibility to memory management latency and kernel launch overheads, particularly with deeper network architectures.</p>
+<p>On the architectural front, the controlled comparison between "wide" and "deep" models confirmed established intuitions: the wider, shallower model offered rapid convergence but limited capacity, while the deeper model achieved a lower steady-state loss at the cost of longer training horizons. Taken together, these results show that while consumer silicon can support initial development, scaling model depth and performance requires both specialized hardware and careful architectural tuning.</p>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-18T23:04:34">Feb 18, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-18T23:32:40">Feb 18, 2026</a>.</div>
 </footer>
 </div>
 </body>
