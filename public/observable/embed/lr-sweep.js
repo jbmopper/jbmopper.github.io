@@ -1,4 +1,4 @@
-import "../_import/components/dom-utils.aaca454b.js";
+import "../_import/components/dom-utils.363530d4.js";
 import "../_observablehq/stdlib.43270668.js";
 import "../_npm/@observablehq/plot@0.6.17/7c43807f.js";
 import "../_npm/d3@7.9.0/e324157d.js";
@@ -42,4 +42,4 @@ import "../_npm/binary-search-bounds@2.0.5/cbf6ba23.js";
 import "../_npm/internmap@2.0.3/e08981d9.js";
 import "../_npm/delaunator@5.0.1/02d43215.js";
 import "../_npm/robust-predicates@3.0.2/aa00730b.js";
-export * from "../_import/embed/lr-sweep.4e8f55a5.js";
+export * from "../_import/embed/lr-sweep.c8c3a9aa.js";

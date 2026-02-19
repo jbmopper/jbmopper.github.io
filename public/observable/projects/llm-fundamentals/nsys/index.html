@@ -7,15 +7,15 @@
 <base href="/observable/projects/llm-fundamentals/nsys/">
 <title>NSYS Traces | Project Writeup Sandbox</title>
 
-<link rel="preload" as="style" href="../../../_import/astro-bridge-theme.4ecc77ab.css">
-<link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.4ecc77ab.css">
+<link rel="preload" as="style" href="../../../_import/astro-bridge-theme.21c55a64.css">
+<link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.21c55a64.css">
 <link rel="modulepreload" href="../../../_observablehq/client.cbf2d9f3.js">
 <link rel="modulepreload" href="../../../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../../../_import/embed/nsys.b291fb17.js">
+<link rel="modulepreload" href="../../../_import/embed/nsys.6ef7929e.js">
 <link rel="modulepreload" href="../../../_import/components/perf-estimates.d771a94d.js">
 <link rel="modulepreload" href="../../../_import/components/data-utils.e2caa41c.js">
-<link rel="modulepreload" href="../../../_import/components/dom-utils.aaca454b.js">
+<link rel="modulepreload" href="../../../_import/components/dom-utils.363530d4.js">
 <link rel="modulepreload" href="../../../_npm/@observablehq/plot@0.6.17/7c43807f.js">
 <link rel="modulepreload" href="../../../_npm/d3@7.9.0/e324157d.js">
 <link rel="modulepreload" href="../../../_npm/apache-arrow@21.1.0/63de76cd.js">
@@ -75,7 +75,7 @@ registerFile("../../../data/raw/traces/vocab_bottleneck_nsys.parquet", {"name":"
 registerFile("../../../data/raw/traces/wide_ffn_nsys.parquet", {"name":"../../../data/raw/traces/wide_ffn_nsys.parquet","path":"../../../_file/data/raw/traces/wide_ffn_nsys.e3df5806.parquet","lastModified":1771465633667,"size":715444});
 
 define({id: "81d1cf6f", outputs: ["renderNsys"], body: async () => {
-const {renderNsys} = await import("../../../_import/embed/nsys.b291fb17.js");
+const {renderNsys} = await import("../../../_import/embed/nsys.6ef7929e.js");
 
 return {renderNsys};
 }});
@@ -105,15 +105,160 @@ await renderNsys()
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <header id="observablehq-header">
-<nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">Home</a><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a id="portfolio-current-project-link" class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; const path = window.location.pathname.replace(/^\/observable(?=\/|$)/, ''); const llm = /^\/projects\/llm-fundamentals(\/|$)/.test(path); const playground = /^\/projects\/data-playground(\/|$)/.test(path); const target = llm ? '/projects/llm-fundamentals/' : (playground ? '/projects/data-playground/' : '/projects/'); window.location.assign(window.location.origin + mount + target);">Current Project</a></nav><script>(function(){const path=window.location.pathname.replace(/^\/observable(?=\/|$)/,""); const link=document.getElementById("portfolio-current-project-link"); if(link && /^\/projects(?:\/index\.html)?\/?$/.test(path)){link.remove();} for(const id of ["observablehq-sidebar-toggle","observablehq-sidebar-backdrop","observablehq-sidebar"]){const node=document.getElementById(id); if(node) node.remove();}})();</script>
+<nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">Home</a><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><details id="portfolio-current-project-menu" class="portfolio-project-menu"><summary class="portfolio-nav-link portfolio-project-toggle">LLM Fundamentals</summary><div class="portfolio-project-dropdown"><a class="portfolio-project-item" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/');">Introduction</a><a class="portfolio-project-item" href="../perf-expected/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/perf-expected/');">Architecture and Expected Performance Analysis</a><a class="portfolio-project-item" href="../perf-empirical/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/perf-empirical/');">Benchmarks and Empirical Performance Analysis</a><a class="portfolio-project-item" href="./" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/nsys/');">Nvidia CUDA Nsys Trace Analysis</a><a class="portfolio-project-item" href="../lr-sweep/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/lr-sweep/');">Learning Parameter Sweeps</a><a class="portfolio-project-item" href="../ablations/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/ablations/');">Architectural Variations (Ablations)</a></div></details></nav><script>(function(){const path=window.location.pathname.replace(/^\/observable(?=\/|$)/,""); const menu=document.getElementById("portfolio-current-project-menu"); if(menu && /^\/projects(?:\/index\.html)?\/?$/.test(path)){menu.remove();} if(menu){document.addEventListener("click",(event)=>{if(!menu.hasAttribute("open")) return; if(!menu.contains(event.target)) menu.removeAttribute("open");}); document.addEventListener("keydown",(event)=>{if(event.key==="Escape") menu.removeAttribute("open");});} for(const id of ["observablehq-sidebar-toggle","observablehq-sidebar-backdrop","observablehq-sidebar"]){const node=document.getElementById(id); if(node) node.remove();}})();</script>
 </header>
+<aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
+<nav>
+</nav>
+</aside>
 <main id="observablehq-main" class="observablehq">
-<h1 id="nsys-traces" tabindex="-1"><a class="observablehq-header-anchor" href="#nsys-traces">NSYS Traces</a></h1>
+<h1 id="nsys-trace-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#nsys-trace-analysis">NSYS Trace Analysis</a></h1>
+<h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
+<p>Profiling GPU behavior is an important skill for an AI engineering practicioner to posess.  We therefore took the time to run some traces on RTX 4090 GPUs in order to try to observe differences.  NCU profiling was also attempted, however Nvidia performance counters were not available in the containerized environments tests were run in.</p>
+<p>Nsys nevertheless provides very fine-grained information on model performance.  Here is a summary of the model specs compared:</p>
+<table>
+<thead>
+<tr>
+<th>Config</th>
+<th>Batch</th>
+<th>Seq</th>
+<th>d_model</th>
+<th>num_heads</th>
+<th>d_head</th>
+<th>num_layers</th>
+<th>d_ff</th>
+<th>FFN Ratio</th>
+<th>Design Intent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>model_a</strong></td>
+<td>32</td>
+<td>256</td>
+<td>768</td>
+<td>12</td>
+<td>64</td>
+<td>2</td>
+<td>2048</td>
+<td>2.7x</td>
+<td>Wide &amp; shallow baseline -- large d_model, few layers</td>
+</tr>
+<tr>
+<td><strong>model_b</strong></td>
+<td>32</td>
+<td>256</td>
+<td>384</td>
+<td>12</td>
+<td>32</td>
+<td>12</td>
+<td>1024</td>
+<td>2.7x</td>
+<td>Narrow &amp; deep baseline -- small d_model, many layers</td>
+</tr>
+<tr>
+<td><strong>latency_bound</strong></td>
+<td>1</td>
+<td>128</td>
+<td>512</td>
+<td>8</td>
+<td>64</td>
+<td>12</td>
+<td>1536</td>
+<td>3.0x</td>
+<td>Minimal batch -- exposes per-step kernel launch overhead, no batching benefit</td>
+</tr>
+<tr>
+<td><strong>misaligned_dims</strong></td>
+<td>34</td>
+<td>257</td>
+<td>514</td>
+<td>2</td>
+<td>257</td>
+<td>6</td>
+<td>1538</td>
+<td>3.0x</td>
+<td>Non-power-of-2 dims -- stresses tensor core alignment, exposes padding waste</td>
+</tr>
+<tr>
+<td><strong>bad_head_size</strong></td>
+<td>32</td>
+<td>256</td>
+<td>672</td>
+<td>12</td>
+<td>56</td>
+<td>6</td>
+<td>1792</td>
+<td>2.7x</td>
+<td>d_head=56 (not 32/64/128) -- misaligned for tensor core tile sizes</td>
+</tr>
+<tr>
+<td><strong>vocab_bottleneck</strong></td>
+<td>64</td>
+<td>256</td>
+<td>512</td>
+<td>8</td>
+<td>64</td>
+<td>4</td>
+<td>1536</td>
+<td>3.0x</td>
+<td>Large vocab (50,257 vs 10,000) -- stresses embedding/LM-head matmuls</td>
+</tr>
+<tr>
+<td><strong>wide_ffn</strong></td>
+<td>32</td>
+<td>256</td>
+<td>768</td>
+<td>12</td>
+<td>64</td>
+<td>6</td>
+<td>4096</td>
+<td>5.3x</td>
+<td>Very wide FFN -- SwiGLU with 3x the usual d_ff, FFN-dominated compute</td>
+</tr>
+<tr>
+<td><strong>bandwidth_bound</strong></td>
+<td>256</td>
+<td>256</td>
+<td>384</td>
+<td>6</td>
+<td>64</td>
+<td>4</td>
+<td>1024</td>
+<td>2.7x</td>
+<td>Huge batch, small model -- memory bandwidth bound (data movement dominates)</td>
+</tr>
+<tr>
+<td><strong>compute_bound</strong></td>
+<td>32</td>
+<td>256</td>
+<td>1536</td>
+<td>24</td>
+<td>64</td>
+<td>8</td>
+<td>4096</td>
+<td>2.7x</td>
+<td>Very large model -- compute bound (GEMM-dominated, tests peak FLOP utilization)</td>
+</tr>
+<tr>
+<td><strong>deep_sequential</strong></td>
+<td>32</td>
+<td>256</td>
+<td>512</td>
+<td>8</td>
+<td>64</td>
+<td>32</td>
+<td>1536</td>
+<td>3.0x</td>
+<td>Very deep -- 32 layers of sequential dependency, tests pipeline bubble effects</td>
+</tr>
+</tbody>
+</table>
 <div class="observablehq observablehq--block"><!--:81d1cf6f:--></div>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:842e7c02:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-18T23:32:40">Feb 18, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-19T15:08:46">Feb 19, 2026</a>.</div>
 </footer>
 </div>
 </body>

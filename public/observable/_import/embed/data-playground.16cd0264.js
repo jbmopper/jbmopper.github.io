@@ -2,7 +2,7 @@ import {FileAttachment} from "../../_observablehq/stdlib.43270668.js";
 import * as Plot from "../../_npm/@observablehq/plot@0.6.17/7c43807f.js";
 import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
 import {formatBytes} from "../components/data-utils.e2caa41c.js";
-import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.aaca454b.js";
+import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.363530d4.js";
 
 const MANIFEST_ATTACHMENT = FileAttachment({"name":"../../data/manifest.json","mimeType":"application/json","path":"../../_file/data/manifest.d04279d7.json","lastModified":1771465633686,"size":13400}, import.meta.url);
 

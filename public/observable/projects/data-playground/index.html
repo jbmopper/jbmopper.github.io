@@ -7,14 +7,14 @@
 <base href="/observable/projects/data-playground/">
 <title>Data Playground | Project Writeup Sandbox</title>
 
-<link rel="preload" as="style" href="../../_import/astro-bridge-theme.4ecc77ab.css">
-<link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.4ecc77ab.css">
+<link rel="preload" as="style" href="../../_import/astro-bridge-theme.21c55a64.css">
+<link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.21c55a64.css">
 <link rel="modulepreload" href="../../_observablehq/client.cbf2d9f3.js">
 <link rel="modulepreload" href="../../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../../_import/embed/data-playground.e03c54bc.js">
+<link rel="modulepreload" href="../../_import/embed/data-playground.16cd0264.js">
 <link rel="modulepreload" href="../../_import/components/data-utils.e2caa41c.js">
-<link rel="modulepreload" href="../../_import/components/dom-utils.aaca454b.js">
+<link rel="modulepreload" href="../../_import/components/dom-utils.363530d4.js">
 <link rel="modulepreload" href="../../_npm/@observablehq/plot@0.6.17/7c43807f.js">
 <link rel="modulepreload" href="../../_npm/d3@7.9.0/e324157d.js">
 <link rel="modulepreload" href="../../_npm/apache-arrow@21.1.0/63de76cd.js">
@@ -86,7 +86,7 @@ registerFile("../../data/raw/traces/vocab_bottleneck_nsys.parquet", {"name":"../
 registerFile("../../data/raw/traces/wide_ffn_nsys.parquet", {"name":"../../data/raw/traces/wide_ffn_nsys.parquet","path":"../../_file/data/raw/traces/wide_ffn_nsys.e3df5806.parquet","lastModified":1771465633667,"size":715444});
 
 define({id: "56bc7f43", outputs: ["renderDataPlayground"], body: async () => {
-const {renderDataPlayground} = await import("../../_import/embed/data-playground.e03c54bc.js");
+const {renderDataPlayground} = await import("../../_import/embed/data-playground.16cd0264.js");
 
 return {renderDataPlayground};
 }});
@@ -116,7 +116,7 @@ await renderDataPlayground()
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <header id="observablehq-header">
-<nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">Home</a><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a id="portfolio-current-project-link" class="portfolio-nav-link" href="../llm-fundamentals/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; const path = window.location.pathname.replace(/^\/observable(?=\/|$)/, ''); const llm = /^\/projects\/llm-fundamentals(\/|$)/.test(path); const playground = /^\/projects\/data-playground(\/|$)/.test(path); const target = llm ? '/projects/llm-fundamentals/' : (playground ? '/projects/data-playground/' : '/projects/'); window.location.assign(window.location.origin + mount + target);">Current Project</a></nav><script>(function(){const path=window.location.pathname.replace(/^\/observable(?=\/|$)/,""); const link=document.getElementById("portfolio-current-project-link"); if(link && /^\/projects(?:\/index\.html)?\/?$/.test(path)){link.remove();} for(const id of ["observablehq-sidebar-toggle","observablehq-sidebar-backdrop","observablehq-sidebar"]){const node=document.getElementById(id); if(node) node.remove();}})();</script>
+<nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">Home</a><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><details id="portfolio-current-project-menu" class="portfolio-project-menu"><summary class="portfolio-nav-link portfolio-project-toggle">LLM Fundamentals</summary><div class="portfolio-project-dropdown"><a class="portfolio-project-item" href="../llm-fundamentals/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/');">Introduction</a><a class="portfolio-project-item" href="../llm-fundamentals/perf-expected/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/perf-expected/');">Architecture and Expected Performance Analysis</a><a class="portfolio-project-item" href="../llm-fundamentals/perf-empirical/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/perf-empirical/');">Benchmarks and Empirical Performance Analysis</a><a class="portfolio-project-item" href="../llm-fundamentals/nsys/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/nsys/');">Nvidia CUDA Nsys Trace Analysis</a><a class="portfolio-project-item" href="../llm-fundamentals/lr-sweep/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/lr-sweep/');">Learning Parameter Sweeps</a><a class="portfolio-project-item" href="../llm-fundamentals/ablations/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/ablations/');">Architectural Variations (Ablations)</a></div></details></nav><script>(function(){const path=window.location.pathname.replace(/^\/observable(?=\/|$)/,""); const menu=document.getElementById("portfolio-current-project-menu"); if(menu && /^\/projects(?:\/index\.html)?\/?$/.test(path)){menu.remove();} if(menu){document.addEventListener("click",(event)=>{if(!menu.hasAttribute("open")) return; if(!menu.contains(event.target)) menu.removeAttribute("open");}); document.addEventListener("keydown",(event)=>{if(event.key==="Escape") menu.removeAttribute("open");});} for(const id of ["observablehq-sidebar-toggle","observablehq-sidebar-backdrop","observablehq-sidebar"]){const node=document.getElementById(id); if(node) node.remove();}})();</script>
 </header>
 <main id="observablehq-main" class="observablehq">
 <h1 id="data-playground" tabindex="-1"><a class="observablehq-header-anchor" href="#data-playground">Data Playground</a></h1>
@@ -124,7 +124,7 @@ await renderDataPlayground()
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:7f0eccc5:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-18T23:32:40">Feb 18, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-19T15:08:46">Feb 19, 2026</a>.</div>
 </footer>
 </div>
 </body>

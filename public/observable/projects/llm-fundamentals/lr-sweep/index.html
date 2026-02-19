@@ -7,17 +7,21 @@
 <base href="/observable/projects/llm-fundamentals/lr-sweep/">
 <title>Learning-Rate Sweeps | Project Writeup Sandbox</title>
 
-<link rel="preload" as="style" href="../../../_import/astro-bridge-theme.4ecc77ab.css">
-<link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.4ecc77ab.css">
+<link rel="preload" as="style" href="../../../_import/astro-bridge-theme.21c55a64.css">
+<link rel="preload" as="style" href="../../../_npm/katex@0.16.28/dist/katex.min.css">
+<link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.21c55a64.css">
+<link rel="stylesheet" type="text/css" href="../../../_npm/katex@0.16.28/dist/katex.min.css">
 <link rel="modulepreload" href="../../../_observablehq/client.cbf2d9f3.js">
 <link rel="modulepreload" href="../../../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../../../_import/embed/lr-sweep.4e8f55a5.js">
-<link rel="modulepreload" href="../../../_import/components/dom-utils.aaca454b.js">
+<link rel="modulepreload" href="../../../_import/embed/lr-sweep.c8c3a9aa.js">
+<link rel="modulepreload" href="../../../_observablehq/stdlib/tex.c79b643a.js">
+<link rel="modulepreload" href="../../../_import/components/dom-utils.363530d4.js">
 <link rel="modulepreload" href="../../../_npm/@observablehq/plot@0.6.17/7c43807f.js">
 <link rel="modulepreload" href="../../../_npm/d3@7.9.0/e324157d.js">
 <link rel="modulepreload" href="../../../_npm/apache-arrow@21.1.0/63de76cd.js">
 <link rel="modulepreload" href="../../../_npm/parquet-wasm@0.7.1/68d81b68.js">
+<link rel="modulepreload" href="../../../_npm/katex@0.16.28/f76b8a99.js">
 <link rel="modulepreload" href="../../../_npm/isoformat@0.2.1/18cbf477.js">
 <link rel="modulepreload" href="../../../_npm/interval-tree-1d@1.0.4/53fe8176.js">
 <link rel="modulepreload" href="../../../_npm/d3-array@3.2.4/e93ca09f.js">
@@ -64,15 +68,75 @@ import {registerFile} from "../../../_observablehq/stdlib.43270668.js";
 registerFile("../../../data/raw/benchmarks/lr_sweeps_history.parquet", {"name":"../../../data/raw/benchmarks/lr_sweeps_history.parquet","path":"../../../_file/data/raw/benchmarks/lr_sweeps_history.4f809053.parquet","lastModified":1771468224300,"size":3312658});
 registerFile("../../../data/raw/benchmarks/lr_sweeps_main.parquet", {"name":"../../../data/raw/benchmarks/lr_sweeps_main.parquet","path":"../../../_file/data/raw/benchmarks/lr_sweeps_main.98e6db0c.parquet","lastModified":1771466904236,"size":15015});
 
-define({id: "2c33b9bf", outputs: ["renderLrSweep"], body: async () => {
-const {renderLrSweep} = await import("../../../_import/embed/lr-sweep.4e8f55a5.js");
+define({id: "1a7a153c", outputs: ["renderLrSweepFrontier","renderLrSweepSummaryTable","renderLrSweepThreshold","renderLrSweepHistory","renderLrSweepGradient","renderLrSweepPivot"], body: async () => {
+const {renderLrSweepFrontier, renderLrSweepSummaryTable, renderLrSweepThreshold, renderLrSweepHistory, renderLrSweepGradient, renderLrSweepPivot} = await import("../../../_import/embed/lr-sweep.c8c3a9aa.js");
 
-return {renderLrSweep};
+return {renderLrSweepFrontier,renderLrSweepSummaryTable,renderLrSweepThreshold,renderLrSweepHistory,renderLrSweepGradient,renderLrSweepPivot};
 }});
 
-define({id: "68812716", inputs: ["renderLrSweep","display"], body: async (renderLrSweep,display) => {
+define({id: "11afead7", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
 display(await(
-await renderLrSweep()
+tex`1\times 10^{-3}`
+))
+}});
+
+define({id: "9a030f7c", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`1\times 10^{-4}`
+))
+}});
+
+define({id: "25748673", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`0.5`
+))
+}});
+
+define({id: "d94f5ab5", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`5\times 10^{-5}`
+))
+}});
+
+define({id: "11afead7-1", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`1\times 10^{-3}`
+))
+}});
+
+define({id: "a169abaf", inputs: ["renderLrSweepSummaryTable","display"], body: async (renderLrSweepSummaryTable,display) => {
+display(await(
+await renderLrSweepSummaryTable()
+))
+}});
+
+define({id: "ec35833f", inputs: ["renderLrSweepFrontier","display"], body: async (renderLrSweepFrontier,display) => {
+display(await(
+await renderLrSweepFrontier()
+))
+}});
+
+define({id: "5c3c1a73", inputs: ["renderLrSweepThreshold","display"], body: async (renderLrSweepThreshold,display) => {
+display(await(
+await renderLrSweepThreshold()
+))
+}});
+
+define({id: "4f94711e", inputs: ["renderLrSweepHistory","display"], body: async (renderLrSweepHistory,display) => {
+display(await(
+await renderLrSweepHistory()
+))
+}});
+
+define({id: "258f3406", inputs: ["renderLrSweepGradient","display"], body: async (renderLrSweepGradient,display) => {
+display(await(
+await renderLrSweepGradient()
+))
+}});
+
+define({id: "22d1e9c3", inputs: ["renderLrSweepPivot","display"], body: async (renderLrSweepPivot,display) => {
+display(await(
+await renderLrSweepPivot()
 ))
 }});
 
@@ -95,15 +159,66 @@ await renderLrSweep()
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <header id="observablehq-header">
-<nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">Home</a><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a id="portfolio-current-project-link" class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; const path = window.location.pathname.replace(/^\/observable(?=\/|$)/, ''); const llm = /^\/projects\/llm-fundamentals(\/|$)/.test(path); const playground = /^\/projects\/data-playground(\/|$)/.test(path); const target = llm ? '/projects/llm-fundamentals/' : (playground ? '/projects/data-playground/' : '/projects/'); window.location.assign(window.location.origin + mount + target);">Current Project</a></nav><script>(function(){const path=window.location.pathname.replace(/^\/observable(?=\/|$)/,""); const link=document.getElementById("portfolio-current-project-link"); if(link && /^\/projects(?:\/index\.html)?\/?$/.test(path)){link.remove();} for(const id of ["observablehq-sidebar-toggle","observablehq-sidebar-backdrop","observablehq-sidebar"]){const node=document.getElementById(id); if(node) node.remove();}})();</script>
+<nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">Home</a><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><details id="portfolio-current-project-menu" class="portfolio-project-menu"><summary class="portfolio-nav-link portfolio-project-toggle">LLM Fundamentals</summary><div class="portfolio-project-dropdown"><a class="portfolio-project-item" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/');">Introduction</a><a class="portfolio-project-item" href="../perf-expected/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/perf-expected/');">Architecture and Expected Performance Analysis</a><a class="portfolio-project-item" href="../perf-empirical/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/perf-empirical/');">Benchmarks and Empirical Performance Analysis</a><a class="portfolio-project-item" href="../nsys/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/nsys/');">Nvidia CUDA Nsys Trace Analysis</a><a class="portfolio-project-item" href="./" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/lr-sweep/');">Learning Parameter Sweeps</a><a class="portfolio-project-item" href="../ablations/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/ablations/');">Architectural Variations (Ablations)</a></div></details></nav><script>(function(){const path=window.location.pathname.replace(/^\/observable(?=\/|$)/,""); const menu=document.getElementById("portfolio-current-project-menu"); if(menu && /^\/projects(?:\/index\.html)?\/?$/.test(path)){menu.remove();} if(menu){document.addEventListener("click",(event)=>{if(!menu.hasAttribute("open")) return; if(!menu.contains(event.target)) menu.removeAttribute("open");}); document.addEventListener("keydown",(event)=>{if(event.key==="Escape") menu.removeAttribute("open");});} for(const id of ["observablehq-sidebar-toggle","observablehq-sidebar-backdrop","observablehq-sidebar"]){const node=document.getElementById(id); if(node) node.remove();}})();</script>
 </header>
+<aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
+<nav>
+<div>Contents</div>
+<ol>
+<li class="observablehq-secondary-link"><a href="#sweep-configuration">Sweep Configuration</a></li>
+</ol>
+</nav>
+</aside>
 <main id="observablehq-main" class="observablehq">
-<h1 id="learning-rate-sweep-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#learning-rate-sweep-analysis">Learning-Rate Sweep Analysis</a></h1>
-<div class="observablehq observablehq--block"><!--:2c33b9bf:--></div>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:68812716:--></div>
+<div class="observablehq observablehq--block"><!--:1a7a153c:--></div>
+<h1 id="learning-rate-sweep-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#learning-rate-sweep-analysis">Learning Rate Sweep Analysis</a></h1>
+<h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
+<p>For the parameter sweep exercise, the learning rate was chosen as a target because it can be varied without altering more significant training performance aspects of the model such as dimensions.  It also provides an opportunity to observe training runs that are unstable.  The general goal was to find the higest maximum learning rate that exhibited stable training behavior.</p>
+<p>This exercise also provided an opportunity to become familiar with the WandB <a href="https://docs.wandb.ai/models/sweeps" target="_blank" rel="noopener noreferrer">sweeps api</a>, which provides easy access to advanced features such as hyperband early stopping and Bayesian parameter search schedulers.</p>
+<p>To review, the model's AdamW optimizer can accept a learning rate parameter which provides a bulk control to the size of the model parameter update.  This learning rate is set during training by a learning rate scheduler routine, which executes a linear warmup from 0 to the maximum LR over the input warmup iterations, then goes from the maximum LR to the minimum according to a cosine schedule over the remaining training iterations.</p>
+<p>As such, the maximum learning rate is the key variable.  The assignment default had this at <observablehq-loading></observablehq-loading><!--:11afead7:-->, with the minimum going down to <observablehq-loading></observablehq-loading><!--:9a030f7c:-->.  For the sweeps, we configured maximum rates to fall in a range between <observablehq-loading></observablehq-loading><!--:25748673:--> and <observablehq-loading></observablehq-loading><!--:d94f5ab5:-->.  In retrospect, since the <observablehq-loading></observablehq-loading><!--:11afead7-1:--> maximum learning rate was stable we could have used this as a floor, but since the sweeps were running locally overnight there was plenty of chance for the Bayesian algorithm to search in that area.</p>
+<h2 id="sweep-configuration" tabindex="-1"><a class="observablehq-header-anchor" href="#sweep-configuration">Sweep Configuration</a></h2>
+<p>Sweeps were set to run for a maximum of 1000 iterations with 100 iterations warmup.  Evaluation metrics such as eval loss were collected every 50 iterations, with early termination available after 250 iterations.</p>
+<p>Early termination was handled by the Hyperband algorithm, however due to an inconsistency in the way number of iterations are tracked, with one eval loss only available for every 50 iterations, the early termination did not kick in.</p>
+<p>Nonetheless, 23 sweeps completed.  Here is a summary:</p>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:a169abaf:--></div>
+<p>For reference, here is the config used by the wandb sweeps API:</p>
+<pre data-language="yaml"><code class="language-yaml"><span class="hljs-attr">program:</span> <span class="hljs-string">cs336_basics/train_sweep.py</span>
+<span class="hljs-attr">method:</span> <span class="hljs-string">bayes</span>  <span class="hljs-comment"># Bayesian optimization for efficient hyperparameter search</span>
+<span class="hljs-attr">metric:</span>
+  <span class="hljs-attr">name:</span> <span class="hljs-string">Eval</span> <span class="hljs-string">Loss</span>
+  <span class="hljs-attr">goal:</span> <span class="hljs-string">minimize</span>
+
+<span class="hljs-attr">parameters:</span>
+  <span class="hljs-comment"># Learning rate parameters (stock model/settings, sweep LR only)</span>
+  <span class="hljs-attr">scheduler_lr_max:</span>
+    <span class="hljs-attr">distribution:</span> <span class="hljs-string">uniform</span>
+    <span class="hljs-attr">min:</span> <span class="hljs-number">5e-5</span>
+    <span class="hljs-attr">max:</span> <span class="hljs-number">5e-1</span>
+
+<span class="hljs-comment"># Early termination to stop poor performing runs</span>
+<span class="hljs-attr">early_terminate:</span>
+  <span class="hljs-attr">type:</span> <span class="hljs-string">hyperband</span>
+  <span class="hljs-attr">min_iter:</span> <span class="hljs-number">250</span>
+  <span class="hljs-attr">max_iter:</span> <span class="hljs-number">1000</span>
+  <span class="hljs-attr">eta:</span> <span class="hljs-number">3</span>
+  <span class="hljs-attr">s:</span> <span class="hljs-number">1</span>
+</code></pre>
+<p>It is therefore somewhat confusing that the Bayesian sweep algorithm rapidly diverged</p>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:ec35833f:--></div>
+<h3 id="sweep-summary-statistics" tabindex="-1"><a class="observablehq-header-anchor" href="#sweep-summary-statistics">Sweep Summary Statistics</a></h3>
+<p>`</p>
+<h3 id="threshold-crossing-workflow" tabindex="-1"><a class="observablehq-header-anchor" href="#threshold-crossing-workflow">Threshold Crossing Workflow</a></h3>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:5c3c1a73:--></div>
+<h3 id="run-history-controls-and-curves" tabindex="-1"><a class="observablehq-header-anchor" href="#run-history-controls-and-curves">Run History Controls and Curves</a></h3>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:4f94711e:--></div>
+<h3 id="gradient-vs-lr-and-loss-delta" tabindex="-1"><a class="observablehq-header-anchor" href="#gradient-vs-lr-and-loss-delta">Gradient vs LR and Loss Delta</a></h3>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:258f3406:--></div>
+<h3 id="pivot-style-chart-builder" tabindex="-1"><a class="observablehq-header-anchor" href="#pivot-style-chart-builder">Pivot-Style Chart Builder</a></h3>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:22d1e9c3:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-18T23:32:40">Feb 18, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-19T15:08:46">Feb 19, 2026</a>.</div>
 </footer>
 </div>
 </body>

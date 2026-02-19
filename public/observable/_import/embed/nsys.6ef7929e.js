@@ -3,7 +3,7 @@ import * as Plot from "../../_npm/@observablehq/plot@0.6.17/7c43807f.js";
 import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
 import {calculateForwardFlops, calculateMemoryAccounting, calculateModelParams, calculateTrainingStepFlops} from "../components/perf-estimates.d771a94d.js";
 import {formatBytes, formatMs} from "../components/data-utils.e2caa41c.js";
-import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.aaca454b.js";
+import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.363530d4.js";
 
 const TRACE_ATTACHMENTS = {
   bad_head_size: FileAttachment({"name":"../../data/raw/traces/bad_head_size_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/bad_head_size_nsys.0e5fcf94.parquet","lastModified":1771465633642,"size":699507}, import.meta.url),
@@ -21,6 +21,7 @@ const TRACE_ATTACHMENTS = {
 const TRACE_NAMES = Object.keys(TRACE_ATTACHMENTS);
 const EVENT_TYPES = ["kernel", "memcpy", "memset"];
 const traceCache = new Map();
+const traceLoadPromises = new Map();
 
 const TRACE_RESOURCE_CONFIGS = [
   {
@@ -243,35 +244,55 @@ function rangeControl(labelText, min, max, step, value) {
   return {node: wrapper, input, output};
 }
 
+function debounce(fn, waitMs = 120) {
+  let timeoutId;
+  return () => {
+    window.clearTimeout(timeoutId);
+    timeoutId = window.setTimeout(() => {
+      fn();
+    }, waitMs);
+  };
+}
+
 async function loadTraceRows(traceName) {
   if (traceCache.has(traceName)) return traceCache.get(traceName);
+  if (traceLoadPromises.has(traceName)) return traceLoadPromises.get(traceName);
 
   const attachment = TRACE_ATTACHMENTS[traceName];
   if (!attachment) throw new Error(`Unknown trace: ${traceName}`);
 
-  const table = await attachment.parquet();
-  const rows = Array.from(table, (row) => {
-    const startMs = nsToMs(row.start_ns);
-    const endMs = nsToMs(row.end_ns);
-    const durationMs = Number.isFinite(Number(row.duration_ms))
-      ? Number(row.duration_ms)
-      : Number.isFinite(startMs) && Number.isFinite(endMs)
-        ? Math.max(0, endMs - startMs)
-        : NaN;
+  const loadPromise = (async () => {
+    const table = await attachment.parquet();
+    const rows = Array.from(table, (row) => {
+      const startMs = nsToMs(row.start_ns);
+      const endMs = nsToMs(row.end_ns);
+      const durationMs = Number.isFinite(Number(row.duration_ms))
+        ? Number(row.duration_ms)
+        : Number.isFinite(startMs) && Number.isFinite(endMs)
+          ? Math.max(0, endMs - startMs)
+          : NaN;
 
-    return {
-      trace: traceName,
-      event_type: String(row.event_type || "unknown"),
-      event_name: String(row.event_name || "unknown"),
-      start_ms: startMs,
-      end_ms: endMs,
-      duration_ms: durationMs,
-      bytes: safeNumber(row.bytes, 0)
-    };
-  }).filter((row) => Number.isFinite(row.start_ms) && Number.isFinite(row.end_ms));
+      return {
+        trace: traceName,
+        event_type: String(row.event_type || "unknown"),
+        event_name: String(row.event_name || "unknown"),
+        start_ms: startMs,
+        end_ms: endMs,
+        duration_ms: durationMs,
+        bytes: safeNumber(row.bytes, 0)
+      };
+    }).filter((row) => Number.isFinite(row.start_ms) && Number.isFinite(row.end_ms));
 
-  traceCache.set(traceName, rows);
-  return rows;
+    traceCache.set(traceName, rows);
+    return rows;
+  })();
+
+  traceLoadPromises.set(traceName, loadPromise);
+  try {
+    return await loadPromise;
+  } finally {
+    traceLoadPromises.delete(traceName);
+  }
 }
 
 function aggregateSummary(rows) {
@@ -423,8 +444,10 @@ function resourceEnvelopeRows(selectedTraces) {
         category: spec.category,
         B: spec.B,
         S: spec.S,
+        V: spec.V,
         d_model: spec.d_model,
         n_heads: spec.n_heads,
+        n_blocks: spec.n_blocks,
         d_head: "n/a",
         d_ff: spec.d_ff,
         params_m: NaN,
@@ -460,8 +483,10 @@ function resourceEnvelopeRows(selectedTraces) {
       category: spec.category,
       B: spec.B,
       S: spec.S,
+      V: spec.V,
       d_model: spec.d_model,
       n_heads: spec.n_heads,
+      n_blocks: spec.n_blocks,
       d_head: dHead,
       d_ff: spec.d_ff,
       params_m: params.total_M,
@@ -473,6 +498,57 @@ function resourceEnvelopeRows(selectedTraces) {
       d_ff_multiple_64: spec.d_ff % 64 === 0
     };
   });
+}
+
+export async function renderNsysTraceSpecTable(options = {}) {
+  const root = el("section");
+  root.className = "observable-embed observable-embed-nsys-spec-table";
+  root.style.display = "grid";
+  root.style.gap = "1rem";
+
+  const selectedTraces =
+    Array.isArray(options.traces) && options.traces.length > 0
+      ? options.traces.filter((trace) => TRACE_NAMES.includes(trace))
+      : TRACE_NAMES;
+  const rows = resourceEnvelopeRows(selectedTraces).sort(
+    (a, b) => d3.ascending(a.category, b.category) || d3.ascending(a.trace, b.trace)
+  );
+
+  root.appendChild(sectionHeading("Trace Model Specification Comparison"));
+  if (rows.length === 0) {
+    root.appendChild(emptyState("No trace specs found for selected traces."));
+    return root;
+  }
+
+  root.appendChild(
+    renderSimpleTable(rows, [
+      {key: "trace", label: "Trace"},
+      {key: "category", label: "Category"},
+      {key: "B", label: "B", align: "right"},
+      {key: "S", label: "S", align: "right"},
+      {key: "V", label: "Vocab", align: "right"},
+      {key: "d_model", label: "d_model", align: "right"},
+      {key: "n_heads", label: "n_heads", align: "right"},
+      {key: "d_head", label: "d_head", align: "right"},
+      {key: "n_blocks", label: "n_blocks", align: "right"},
+      {key: "d_ff", label: "d_ff", align: "right"},
+      {
+        key: "params_m",
+        label: "Params (M)",
+        align: "right",
+        format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(2) : "n/a")
+      },
+      {
+        key: "peak_mem_gb",
+        label: "Peak Mem (GB)",
+        align: "right",
+        format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(2) : "n/a")
+      },
+      {key: "fits_24gb", label: "Fits 24GB", format: (v) => (v ? "yes" : "no")}
+    ])
+  );
+
+  return root;
 }
 
 export async function renderNsys(options = {}) {
@@ -499,6 +575,7 @@ export async function renderNsys(options = {}) {
   const timelineHost = card();
   const kernelHost = card();
   const memoryHost = card();
+  let refreshSeq = 0;
 
   root.append(title, subtitle, controls, status, resourceHost, diagnosticsHost, summaryHost, timelineHost, kernelHost, memoryHost);
 
@@ -580,6 +657,7 @@ export async function renderNsys(options = {}) {
   );
 
   const refresh = async () => {
+    const refreshId = ++refreshSeq;
     topK.output.textContent = topK.input.value;
     maxEvents.output.textContent = maxEvents.input.value;
     bucket.output.textContent = bucket.input.value;
@@ -607,15 +685,23 @@ export async function renderNsys(options = {}) {
 
     const loadErrors = [];
     const rowsByTrace = [];
+    status.textContent = `Loading ${selectedTraces.length.toLocaleString("en-US")} trace(s)...`;
 
-    for (const traceName of selectedTraces) {
-      try {
-        rowsByTrace.push(...(await loadTraceRows(traceName)));
-      } catch (error) {
+    const loadResults = await Promise.allSettled(
+      selectedTraces.map(async (traceName) => ({traceName, rows: await loadTraceRows(traceName)}))
+    );
+
+    // Prevent stale async completions from older refresh runs from clobbering UI.
+    if (refreshId !== refreshSeq) return;
+
+    for (const [index, result] of loadResults.entries()) {
+      if (result.status === "fulfilled") {
+        for (const row of result.value.rows) rowsByTrace.push(row);
+      } else {
         loadErrors.push({
-          trace: traceName,
+          trace: selectedTraces[index] || "unknown",
           stage: "load",
-          error: error instanceof Error ? error.message : String(error)
+          error: result.reason instanceof Error ? result.reason.message : String(result.reason)
         });
       }
     }
@@ -870,6 +956,9 @@ export async function renderNsys(options = {}) {
       );
     }
   };
+  const refreshDebounced = debounce(() => {
+    void refresh();
+  });
 
   traceControl.onChange(refresh);
   typeControl.onChange(refresh);
@@ -878,10 +967,10 @@ export async function renderNsys(options = {}) {
   laneStyle.select.addEventListener("change", refresh);
   timelineRank.select.addEventListener("change", refresh);
   kernelMetric.select.addEventListener("change", refresh);
-  topK.input.addEventListener("input", refresh);
-  maxEvents.input.addEventListener("input", refresh);
-  bucket.input.addEventListener("input", refresh);
-  topLanes.input.addEventListener("input", refresh);
+  topK.input.addEventListener("input", refreshDebounced);
+  maxEvents.input.addEventListener("input", refreshDebounced);
+  bucket.input.addEventListener("input", refreshDebounced);
+  topLanes.input.addEventListener("input", refreshDebounced);
 
   await refresh();
   return root;

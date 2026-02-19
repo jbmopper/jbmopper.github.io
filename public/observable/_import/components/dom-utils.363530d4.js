@@ -56,3 +56,13 @@ export function renderSimpleTable(rows, columns) {
 
   return table;
 }
+
+export function collapsible(summaryText) {
+  const details = document.createElement("details");
+  const summary = document.createElement("summary");
+  summary.style.cursor = "pointer";
+  summary.style.fontWeight = "600";
+  summary.textContent = summaryText;
+  details.appendChild(summary);
+  return details;
+}
