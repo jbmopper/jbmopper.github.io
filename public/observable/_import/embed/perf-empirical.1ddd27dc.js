@@ -6,8 +6,8 @@ import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../compo
 import {calculateForwardFlops, calculateMemoryAccounting, calculateModelParams, calculateTrainingStepFlops} from "../components/perf-estimates.d771a94d.js";
 
 const ATTACHMENTS = {
-  mps_main: FileAttachment({"name":"../../data/raw/benchmarks/mps_comp_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/mps_comp_main.63058a49.parquet","lastModified":1771465633673,"size":25195}, import.meta.url),
-  gpu_main: FileAttachment({"name":"../../data/raw/benchmarks/gpu_comp_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/gpu_comp_main.1cc36d46.parquet","lastModified":1771465633671,"size":26280}, import.meta.url),
+  mps_main: FileAttachment({"name":"../../data/raw/benchmarks/mps_comp_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/mps_comp_main.f7579557.parquet","lastModified":1771466904241,"size":21062}, import.meta.url),
+  gpu_main: FileAttachment({"name":"../../data/raw/benchmarks/gpu_comp_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/gpu_comp_main.d82fa693.parquet","lastModified":1771466904217,"size":21863}, import.meta.url),
   mps_history: FileAttachment({"name":"../../data/raw/benchmarks/mps_comp_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/mps_comp_history.46520918.parquet","lastModified":1771465881500,"size":293870}, import.meta.url),
   gpu_history: FileAttachment({"name":"../../data/raw/benchmarks/gpu_comp_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/gpu_comp_history.ce8ef571.parquet","lastModified":1771465886678,"size":267748}, import.meta.url),
   train: FileAttachment({"name":"../../data/raw/benchmarks/train_benchmark_20260127_092323.json","mimeType":"application/json","path":"../../_file/data/raw/benchmarks/train_benchmark_20260127_092323.e80aa474.json","lastModified":1771465633684,"size":1945563}, import.meta.url),

@@ -13,7 +13,7 @@
 <link rel="modulepreload" href="../../../_observablehq/client.cbf2d9f3.js">
 <link rel="modulepreload" href="../../../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../../../_import/embed/perf-empirical.07e64c34.js">
+<link rel="modulepreload" href="../../../_import/embed/perf-empirical.1ddd27dc.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib/tex.c79b643a.js">
 <link rel="modulepreload" href="../../../_import/components/data-utils.e2caa41c.js">
 <link rel="modulepreload" href="../../../_import/components/dom-utils.aaca454b.js">
@@ -67,10 +67,10 @@ import {define} from "../../../_observablehq/client.cbf2d9f3.js";
 import {registerFile} from "../../../_observablehq/stdlib.43270668.js";
 
 registerFile("../../../data/raw/benchmarks/gpu_comp_history.parquet", {"name":"../../../data/raw/benchmarks/gpu_comp_history.parquet","path":"../../../_file/data/raw/benchmarks/gpu_comp_history.ce8ef571.parquet","lastModified":1771465886678,"size":267748});
-registerFile("../../../data/raw/benchmarks/gpu_comp_main.parquet", {"name":"../../../data/raw/benchmarks/gpu_comp_main.parquet","path":"../../../_file/data/raw/benchmarks/gpu_comp_main.1cc36d46.parquet","lastModified":1771465633671,"size":26280});
+registerFile("../../../data/raw/benchmarks/gpu_comp_main.parquet", {"name":"../../../data/raw/benchmarks/gpu_comp_main.parquet","path":"../../../_file/data/raw/benchmarks/gpu_comp_main.d82fa693.parquet","lastModified":1771466904217,"size":21863});
 registerFile("../../../data/raw/benchmarks/micro_benchmarks_20260126_130256.json", {"name":"../../../data/raw/benchmarks/micro_benchmarks_20260126_130256.json","mimeType":"application/json","path":"../../../_file/data/raw/benchmarks/micro_benchmarks_20260126_130256.0003d6fe.json","lastModified":1771465633680,"size":2403});
 registerFile("../../../data/raw/benchmarks/mps_comp_history.parquet", {"name":"../../../data/raw/benchmarks/mps_comp_history.parquet","path":"../../../_file/data/raw/benchmarks/mps_comp_history.46520918.parquet","lastModified":1771465881500,"size":293870});
-registerFile("../../../data/raw/benchmarks/mps_comp_main.parquet", {"name":"../../../data/raw/benchmarks/mps_comp_main.parquet","path":"../../../_file/data/raw/benchmarks/mps_comp_main.63058a49.parquet","lastModified":1771465633673,"size":25195});
+registerFile("../../../data/raw/benchmarks/mps_comp_main.parquet", {"name":"../../../data/raw/benchmarks/mps_comp_main.parquet","path":"../../../_file/data/raw/benchmarks/mps_comp_main.f7579557.parquet","lastModified":1771466904241,"size":21062});
 registerFile("../../../data/raw/benchmarks/train_benchmark_20260127_092323.json", {"name":"../../../data/raw/benchmarks/train_benchmark_20260127_092323.json","mimeType":"application/json","path":"../../../_file/data/raw/benchmarks/train_benchmark_20260127_092323.e80aa474.json","lastModified":1771465633684,"size":1945563});
 registerFile("../../../data/raw/llm-fundamentals/model-config-catalog.json", {"name":"../../../data/raw/llm-fundamentals/model-config-catalog.json","mimeType":"application/json","path":"../../../_file/data/raw/llm-fundamentals/model-config-catalog.3b260981.json","lastModified":1771314318102,"size":18447});
 
@@ -123,7 +123,7 @@ tex`d_{ff}`
 }});
 
 define({id: "009ce9a3", outputs: ["renderPerfEmpiricalTrainBenchmark","renderPerfEmpiricalExpectedVsActual","renderPerfEmpiricalDeviceComparison","renderPerfEmpiricalModelSelection","renderPerfEmpiricalTrainingCurves"], body: async () => {
-const {renderPerfEmpiricalTrainBenchmark, renderPerfEmpiricalExpectedVsActual, renderPerfEmpiricalDeviceComparison, renderPerfEmpiricalModelSelection, renderPerfEmpiricalTrainingCurves} = await import("../../../_import/embed/perf-empirical.07e64c34.js");
+const {renderPerfEmpiricalTrainBenchmark, renderPerfEmpiricalExpectedVsActual, renderPerfEmpiricalDeviceComparison, renderPerfEmpiricalModelSelection, renderPerfEmpiricalTrainingCurves} = await import("../../../_import/embed/perf-empirical.1ddd27dc.js");
 
 return {renderPerfEmpiricalTrainBenchmark,renderPerfEmpiricalExpectedVsActual,renderPerfEmpiricalDeviceComparison,renderPerfEmpiricalModelSelection,renderPerfEmpiricalTrainingCurves};
 }});
@@ -292,7 +292,7 @@ debug a memory-fragmentation issue and are intentionally omitted from the main
 analysis narrative here.</p>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-18T19:02:44">Feb 18, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-18T19:16:13">Feb 18, 2026</a>.</div>
 </footer>
 </div>
 </body>
