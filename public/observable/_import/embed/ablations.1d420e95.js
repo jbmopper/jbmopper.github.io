@@ -2,7 +2,7 @@ import {FileAttachment} from "../../_observablehq/stdlib.43270668.js";
 import * as Plot from "../../_npm/@observablehq/plot@0.6.17/7c43807f.js";
 import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
 import {formatMs} from "../components/data-utils.e2caa41c.js";
-import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.363530d4.js";
+import {clearNode, emptyState, renderSimpleTable, sectionHeading, collapsible} from "../components/dom-utils.363530d4.js";
 
 const ATTACHMENTS = {
   main: FileAttachment({"name":"../../data/raw/benchmarks/ablations_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/ablations_main.912ec8a5.parquet","lastModified":1771466904212,"size":26405}, import.meta.url),
@@ -141,12 +141,56 @@ function rangeControl(labelText, min, max, step, value) {
   return {node: wrapper, input, output};
 }
 
+function debounce(fn, waitMs = 120) {
+  let timeoutId;
+  return () => {
+    window.clearTimeout(timeoutId);
+    timeoutId = window.setTimeout(() => {
+      fn();
+    }, waitMs);
+  };
+}
+
 function metricValue(row, metric) {
   if (metric === "Loss") return row.loss;
   if (metric === "Eval Loss") return row.eval_loss;
   if (metric === "Eval Perplexity") return row.eval_perplexity;
   if (metric === "Throughput/Tokens per sec") return row.tokens_per_sec;
   return row.step_s;
+}
+
+function ablationSummaryColumns() {
+  return [
+    {key: "run_name", label: "Run"},
+    {key: "state", label: "State"},
+    {key: "norm_mode", label: "Norm"},
+    {key: "use_rope", label: "RoPE"},
+    {key: "ffn_type", label: "FFN"},
+    {
+      key: "eval_loss",
+      label: "Eval Loss",
+      align: "right",
+      format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(6) : "n/a")
+    },
+    {
+      key: "tokens_per_sec",
+      label: "Tokens / sec",
+      align: "right",
+      format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(1) : "n/a")
+    },
+    {
+      key: "memory_max_gb",
+      label: "Max Mem (GB)",
+      align: "right",
+      format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(2) : "n/a")
+    },
+    {
+      key: "step_s",
+      label: "Step Time",
+      align: "right",
+      format: (v) => (Number.isFinite(Number(v)) ? formatMs(Number(v) * 1000) : "n/a")
+    }
+  ];
 }
 
 async function loadAblationData() {
@@ -192,94 +236,58 @@ async function loadAblationData() {
   return ablationDataPromise;
 }
 
-export async function renderAblations(options = {}) {
+export async function renderAblationsSummary(options = {}) {
   const root = el("section");
-  root.className = "observable-embed observable-embed-ablations";
+  root.className = "observable-embed observable-embed-ablations-summary";
   root.style.display = "grid";
   root.style.gap = "1rem";
-
-  const title = el("h2", "Ablation Analysis");
-  title.style.margin = "0";
-  const subtitle = el(
-    "p",
-    "Ablation summary metrics, eval-loss/throughput/memory views, and history controls."
-  );
-  subtitle.style.margin = "0";
-
-  const status = el("p");
-  status.style.margin = "0";
-
-  const summaryHost = card();
-  const chartsHost = card();
-  const historyHost = card();
-
-  root.append(title, subtitle, status, summaryHost, chartsHost, historyHost);
 
   let data;
   try {
     data = await loadAblationData();
   } catch (error) {
-    status.textContent = `Failed to load ablations parquet snapshots: ${error.message}`;
-    summaryHost.appendChild(emptyState("Ablation summary unavailable."));
-    chartsHost.appendChild(emptyState("Ablation charts unavailable."));
-    historyHost.appendChild(emptyState("Ablation history unavailable."));
+    root.appendChild(emptyState(`Failed to load ablations parquet snapshots: ${error.message}`));
     return root;
   }
 
-  const {mainRows, historyRows} = data;
-  status.textContent = `Loaded ${mainRows.length} summary rows and ${historyRows.length} history rows.`;
-
-  clearNode(summaryHost);
-  summaryHost.appendChild(sectionHeading("Ablation Summary Table"));
+  const {mainRows} = data;
+  root.appendChild(sectionHeading("Ablation Summary Table"));
   if (mainRows.length === 0) {
-    summaryHost.appendChild(emptyState("No ablation summary rows available."));
-  } else {
-    summaryHost.appendChild(
-      renderSimpleTable(mainRows, [
-        {key: "run_name", label: "Run"},
-        {key: "state", label: "State"},
-        {key: "norm_mode", label: "Norm"},
-        {key: "use_rope", label: "RoPE"},
-        {key: "ffn_type", label: "FFN"},
-        {
-          key: "eval_loss",
-          label: "Eval Loss",
-          align: "right",
-          format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(6) : "n/a")
-        },
-        {
-          key: "tokens_per_sec",
-          label: "Tokens / sec",
-          align: "right",
-          format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(1) : "n/a")
-        },
-        {
-          key: "memory_max_gb",
-          label: "Max Mem (GB)",
-          align: "right",
-          format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(2) : "n/a")
-        },
-        {
-          key: "step_s",
-          label: "Step Time",
-          align: "right",
-          format: (v) => (Number.isFinite(Number(v)) ? formatMs(Number(v) * 1000) : "n/a")
-        }
-      ])
-    );
+    root.appendChild(emptyState("No ablation summary rows available."));
+    return root;
   }
 
-  clearNode(chartsHost);
-  chartsHost.appendChild(sectionHeading("Eval-Loss, Throughput, and Memory Charts"));
+  const details = collapsible("expand to view ablation summary table");
+  details.appendChild(renderSimpleTable(mainRows, ablationSummaryColumns()));
+  root.appendChild(details);
+  return root;
+}
+
+export async function renderAblationsOverviewCharts(options = {}) {
+  const root = el("section");
+  root.className = "observable-embed observable-embed-ablations-overview";
+  root.style.display = "grid";
+  root.style.gap = "1rem";
+
+  let data;
+  try {
+    data = await loadAblationData();
+  } catch (error) {
+    root.appendChild(emptyState(`Failed to load ablations parquet snapshots: ${error.message}`));
+    return root;
+  }
+
+  const {mainRows} = data;
+  root.appendChild(sectionHeading("Eval-Loss, Throughput, and Memory Charts"));
   if (mainRows.length === 0) {
-    chartsHost.appendChild(emptyState("No rows for chart rendering."));
+    root.appendChild(emptyState("No rows for chart rendering."));
   } else {
     const evalRows = mainRows.filter((row) => Number.isFinite(row.eval_loss));
     const throughputRows = mainRows.filter((row) => Number.isFinite(row.tokens_per_sec));
     const memRows = mainRows.filter((row) => Number.isFinite(row.memory_max_gb) && Number.isFinite(row.tokens_per_sec));
 
     if (evalRows.length > 0) {
-      chartsHost.appendChild(
+      root.appendChild(
         Plot.plot({
           width: 920,
           height: 300,
@@ -293,7 +301,7 @@ export async function renderAblations(options = {}) {
     }
 
     if (throughputRows.length > 0) {
-      chartsHost.appendChild(
+      root.appendChild(
         Plot.plot({
           width: 920,
           height: 320,
@@ -307,7 +315,7 @@ export async function renderAblations(options = {}) {
     }
 
     if (memRows.length > 0) {
-      chartsHost.appendChild(
+      root.appendChild(
         Plot.plot({
           width: 920,
           height: 320,
@@ -319,6 +327,24 @@ export async function renderAblations(options = {}) {
       );
     }
   }
+  return root;
+}
+
+export async function renderAblationsHistory(options = {}) {
+  const root = el("section");
+  root.className = "observable-embed observable-embed-ablations-history";
+  root.style.display = "grid";
+  root.style.gap = "1rem";
+
+  let data;
+  try {
+    data = await loadAblationData();
+  } catch (error) {
+    root.appendChild(emptyState(`Failed to load ablations parquet snapshots: ${error.message}`));
+    return root;
+  }
+
+  const {mainRows, historyRows} = data;
 
   const runNames = Array.from(new Set(mainRows.map((row) => row.run_name))).sort();
   const runControl = checkboxGroup(
@@ -340,13 +366,12 @@ export async function renderAblations(options = {}) {
   );
   const strideControl = rangeControl("Downsample stride", 1, 100, 1, options.historyStride ?? 10);
 
-  clearNode(historyHost);
-  historyHost.appendChild(sectionHeading("History Controls and Curves"));
+  root.appendChild(sectionHeading("History Controls and Curves"));
   const controlsHost = card();
   const chartHost = card();
   const tableHost = card();
   controlsHost.append(runControl.node, metricControl.node, strideControl.node);
-  historyHost.append(controlsHost, chartHost, tableHost);
+  root.append(controlsHost, chartHost, tableHost);
 
   function refreshHistory() {
     strideControl.output.textContent = strideControl.input.value;
@@ -380,7 +405,8 @@ export async function renderAblations(options = {}) {
       })
     );
 
-    tableHost.appendChild(
+    const details = collapsible("expand to view ablation history table");
+    details.appendChild(
       renderSimpleTable(filtered.slice(0, 1000), [
         {key: "run_name", label: "Run"},
         {key: "norm_mode", label: "Norm"},
@@ -413,13 +439,47 @@ export async function renderAblations(options = {}) {
         }
       ])
     );
+    tableHost.appendChild(details);
   }
 
   runControl.onChange(refreshHistory);
   metricControl.select.addEventListener("change", refreshHistory);
-  strideControl.input.addEventListener("input", refreshHistory);
+  strideControl.input.addEventListener("input", debounce(refreshHistory));
 
   refreshHistory();
+  return root;
+}
 
+export async function renderAblations(options = {}) {
+  const root = el("section");
+  root.className = "observable-embed observable-embed-ablations";
+  root.style.display = "grid";
+  root.style.gap = "1rem";
+
+  const title = el("h2", "Ablation Analysis");
+  title.style.margin = "0";
+  const subtitle = el(
+    "p",
+    "Ablation summary metrics, eval-loss/throughput/memory views, and history controls."
+  );
+  subtitle.style.margin = "0";
+  const status = el("p");
+  status.style.margin = "0";
+  root.append(title, subtitle, status);
+
+  try {
+    const {mainRows, historyRows} = await loadAblationData();
+    status.textContent = `Loaded ${mainRows.length} summary rows and ${historyRows.length} history rows.`;
+  } catch (error) {
+    status.textContent = `Failed to load ablations parquet snapshots: ${error.message}`;
+    root.appendChild(emptyState("Ablation sections unavailable."));
+    return root;
+  }
+
+  root.append(
+    await renderAblationsSummary(options),
+    await renderAblationsOverviewCharts(options),
+    await renderAblationsHistory(options)
+  );
   return root;
 }
