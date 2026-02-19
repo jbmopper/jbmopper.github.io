@@ -6,7 +6,7 @@ import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../compo
 
 const ATTACHMENTS = {
   main: FileAttachment({"name":"../../data/raw/benchmarks/ablations_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/ablations_main.912ec8a5.parquet","lastModified":1771466904212,"size":26405}, import.meta.url),
-  history: FileAttachment({"name":"../../data/raw/benchmarks/ablations_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/ablations_history.32f488b0.parquet","lastModified":1771465877012,"size":687805}, import.meta.url)
+  history: FileAttachment({"name":"../../data/raw/benchmarks/ablations_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/ablations_history.c15e6588.parquet","lastModified":1771468208647,"size":2777049}, import.meta.url)
 };
 
 let ablationDataPromise;

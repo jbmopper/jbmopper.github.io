@@ -5,7 +5,7 @@ import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../compo
 
 const ATTACHMENTS = {
   main: FileAttachment({"name":"../../data/raw/benchmarks/lr_sweeps_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/lr_sweeps_main.98e6db0c.parquet","lastModified":1771466904236,"size":15015}, import.meta.url),
-  history: FileAttachment({"name":"../../data/raw/benchmarks/lr_sweeps_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/lr_sweeps_history.a559e30f.parquet","lastModified":1771465907939,"size":2896986}, import.meta.url)
+  history: FileAttachment({"name":"../../data/raw/benchmarks/lr_sweeps_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/lr_sweeps_history.4f809053.parquet","lastModified":1771468224300,"size":3312658}, import.meta.url)
 };
 
 let sweepDataPromise;
