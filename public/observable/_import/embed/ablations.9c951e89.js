@@ -2,7 +2,7 @@ import {FileAttachment} from "../../_observablehq/stdlib.43270668.js";
 import * as Plot from "../../_npm/@observablehq/plot@0.6.17/7c43807f.js";
 import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
 import {formatMs} from "../components/data-utils.e2caa41c.js";
-import {clearNode, emptyState, renderSimpleTable, sectionHeading, collapsible} from "../components/dom-utils.363530d4.js";
+import {clearNode, emptyState, renderSimpleTable, sectionHeading, collapsible} from "../components/dom-utils.d6dae979.js";
 
 const ATTACHMENTS = {
   main: FileAttachment({"name":"../../data/raw/benchmarks/ablations_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/ablations_main.912ec8a5.parquet","lastModified":1771466904212,"size":26405}, import.meta.url),

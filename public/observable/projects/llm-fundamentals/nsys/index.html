@@ -7,20 +7,23 @@
 <title>NSYS Traces | Project Writeup Sandbox</title>
 
 <link rel="preload" as="style" href="../../../_import/astro-bridge-theme.21c55a64.css">
+<link rel="preload" as="style" href="../../../_observablehq/stdlib/inputs.ea9fd553.css">
 <link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.21c55a64.css">
+<link rel="stylesheet" type="text/css" href="../../../_observablehq/stdlib/inputs.ea9fd553.css">
 <link rel="modulepreload" href="../../../_observablehq/client.cbf2d9f3.js">
 <link rel="modulepreload" href="../../../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../../../_import/embed/nsys.6ef7929e.js">
-<link rel="modulepreload" href="../../../_import/components/perf-estimates.d771a94d.js">
+<link rel="modulepreload" href="../../../_import/embed/nsys.b9ba7206.js">
 <link rel="modulepreload" href="../../../_import/components/data-utils.e2caa41c.js">
-<link rel="modulepreload" href="../../../_import/components/dom-utils.363530d4.js">
-<link rel="modulepreload" href="../../../_npm/@observablehq/plot@0.6.17/7c43807f.js">
 <link rel="modulepreload" href="../../../_npm/d3@7.9.0/e324157d.js">
+<link rel="modulepreload" href="../../../_npm/htl@0.3.1/72f4716c.js">
+<link rel="modulepreload" href="../../../_observablehq/stdlib/inputs.7f302853.js">
+<link rel="modulepreload" href="../../../_npm/@observablehq/plot@0.6.17/7c43807f.js">
+<link rel="modulepreload" href="../../../_import/components/perf-estimates.d771a94d.js">
+<link rel="modulepreload" href="../../../_import/components/dom-utils.d6dae979.js">
 <link rel="modulepreload" href="../../../_npm/apache-arrow@21.1.0/63de76cd.js">
 <link rel="modulepreload" href="../../../_npm/parquet-wasm@0.7.1/68d81b68.js">
 <link rel="modulepreload" href="../../../_npm/isoformat@0.2.1/18cbf477.js">
-<link rel="modulepreload" href="../../../_npm/interval-tree-1d@1.0.4/53fe8176.js">
 <link rel="modulepreload" href="../../../_npm/d3-array@3.2.4/e93ca09f.js">
 <link rel="modulepreload" href="../../../_npm/d3-axis@3.0.0/0f2de24d.js">
 <link rel="modulepreload" href="../../../_npm/d3-brush@3.0.0/65eb105b.js">
@@ -51,11 +54,12 @@
 <link rel="modulepreload" href="../../../_npm/d3-timer@3.0.1/b58a267d.js">
 <link rel="modulepreload" href="../../../_npm/d3-transition@3.0.1/004da2ac.js">
 <link rel="modulepreload" href="../../../_npm/d3-zoom@3.0.0/b5786b3f.js">
+<link rel="modulepreload" href="../../../_npm/interval-tree-1d@1.0.4/53fe8176.js">
 <link rel="modulepreload" href="../../../_npm/tslib@2.8.1/b62a9c4a.js">
 <link rel="modulepreload" href="../../../_npm/flatbuffers@25.9.23/c82700c2.js">
-<link rel="modulepreload" href="../../../_npm/binary-search-bounds@2.0.5/cbf6ba23.js">
 <link rel="modulepreload" href="../../../_npm/internmap@2.0.3/e08981d9.js">
 <link rel="modulepreload" href="../../../_npm/delaunator@5.0.1/02d43215.js">
+<link rel="modulepreload" href="../../../_npm/binary-search-bounds@2.0.5/cbf6ba23.js">
 <link rel="modulepreload" href="../../../_npm/robust-predicates@3.0.2/aa00730b.js">
 <script type="module">
 
@@ -67,22 +71,688 @@ registerFile("../../../data/raw/traces/bandwidth_bound_nsys.parquet", {"name":".
 registerFile("../../../data/raw/traces/compute_bound_nsys.parquet", {"name":"../../../data/raw/traces/compute_bound_nsys.parquet","path":"../../../_file/data/raw/traces/compute_bound_nsys.9be21553.parquet","lastModified":1771465633647,"size":1020491});
 registerFile("../../../data/raw/traces/deep_sequential_nsys.parquet", {"name":"../../../data/raw/traces/deep_sequential_nsys.parquet","path":"../../../_file/data/raw/traces/deep_sequential_nsys.4ed702eb.parquet","lastModified":1771465633653,"size":3186034});
 registerFile("../../../data/raw/traces/latency_bound_nsys.parquet", {"name":"../../../data/raw/traces/latency_bound_nsys.parquet","path":"../../../_file/data/raw/traces/latency_bound_nsys.5b9c4edd.parquet","lastModified":1771465633657,"size":1104236});
-registerFile("../../../data/raw/traces/misaligned_dims_nsys.parquet", {"name":"../../../data/raw/traces/misaligned_dims_nsys.parquet","path":"../../../_file/data/raw/traces/misaligned_dims_nsys.e0e9fef3.parquet","lastModified":1771465633659,"size":834});
+registerFile("../../../data/raw/traces/misaligned_dims_nsys.parquet", {"name":"../../../data/raw/traces/misaligned_dims_nsys.parquet","path":"../../../_file/data/raw/traces/misaligned_dims_nsys.accc5b6e.parquet","lastModified":1771606521284,"size":669386});
 registerFile("../../../data/raw/traces/model_a_nsys.parquet", {"name":"../../../data/raw/traces/model_a_nsys.parquet","path":"../../../_file/data/raw/traces/model_a_nsys.7c95f1f4.parquet","lastModified":1771465633660,"size":294932});
 registerFile("../../../data/raw/traces/model_b_nsys.parquet", {"name":"../../../data/raw/traces/model_b_nsys.parquet","path":"../../../_file/data/raw/traces/model_b_nsys.d909797c.parquet","lastModified":1771465633662,"size":1231233});
 registerFile("../../../data/raw/traces/vocab_bottleneck_nsys.parquet", {"name":"../../../data/raw/traces/vocab_bottleneck_nsys.parquet","path":"../../../_file/data/raw/traces/vocab_bottleneck_nsys.c6e0b393.parquet","lastModified":1771465633665,"size":509294});
 registerFile("../../../data/raw/traces/wide_ffn_nsys.parquet", {"name":"../../../data/raw/traces/wide_ffn_nsys.parquet","path":"../../../_file/data/raw/traces/wide_ffn_nsys.e3df5806.parquet","lastModified":1771465633667,"size":715444});
 
-define({id: "81d1cf6f", outputs: ["renderNsys"], body: async () => {
-const {renderNsys} = await import("../../../_import/embed/nsys.6ef7929e.js");
+define({id: "24aa71c1", outputs: ["loadTraceRows","aggregateSummary","aggregateTimeline","aggregateKernels","aggregateMemory","resourceEnvelopeRows","TRACE_NAMES","EVENT_TYPES","TRACE_RESOURCE_CONFIGS","renderNsys","formatMs","formatBytes","d3"], body: async () => {
+const [{loadTraceRows, aggregateSummary, aggregateTimeline, aggregateKernels, aggregateMemory, resourceEnvelopeRows, TRACE_NAMES, EVENT_TYPES, TRACE_RESOURCE_CONFIGS, renderNsys}, {formatMs, formatBytes}, d3] = await Promise.all([import("../../../_import/embed/nsys.b9ba7206.js"), import("../../../_import/components/data-utils.e2caa41c.js"), import("../../../_npm/d3@7.9.0/e324157d.js")]);
 
-return {renderNsys};
+return {loadTraceRows,aggregateSummary,aggregateTimeline,aggregateKernels,aggregateMemory,resourceEnvelopeRows,TRACE_NAMES,EVENT_TYPES,TRACE_RESOURCE_CONFIGS,renderNsys,formatMs,formatBytes,d3};
 }});
 
-define({id: "842e7c02", inputs: ["renderNsys","display"], body: async (renderNsys,display) => {
+define({id: "76d3cb15", inputs: ["resourceEnvelopeRows","TRACE_NAMES"], outputs: ["envelopeRows"], body: (resourceEnvelopeRows,TRACE_NAMES) => {
+const envelopeRows = resourceEnvelopeRows(TRACE_NAMES);
+return {envelopeRows};
+}});
+
+define({id: "9750c68b", inputs: ["Inputs","envelopeRows","display"], body: async (Inputs,envelopeRows,display) => {
 display(await(
-await renderNsys()
+Inputs.table(envelopeRows, {
+  columns: ["trace", "category", "B", "S", "d_model", "n_heads", "d_head", "n_blocks", "d_ff", "params_m", "peak_mem_gb", "train_tflops", "fits_24gb", "head_dim_multiple_32", "d_ff_multiple_64"],
+  header: {
+    params_m: "Params (M)",
+    peak_mem_gb: "Peak Mem (GB)",
+    train_tflops: "Train TFLOPs",
+    fits_24gb: "Fits 24GB",
+    head_dim_multiple_32: "d_head%32==0",
+    d_ff_multiple_64: "d_ff%64==0"
+  },
+  format: {
+    params_m: (v) => Number.isFinite(v) ? v.toFixed(2) : "n/a",
+    peak_mem_gb: (v) => Number.isFinite(v) ? v.toFixed(2) : "n/a",
+    train_tflops: (v) => Number.isFinite(v) ? v.toFixed(3) : "n/a",
+    fits_24gb: (v) => v ? "yes" : "no",
+    head_dim_multiple_32: (v) => v ? "yes" : "no",
+    d_ff_multiple_64: (v) => v ? "yes" : "no"
+  },
+  sort: "peak_mem_gb",
+  reverse: true,
+  rows: 12
+})
 ))
+}});
+
+define({id: "dc85eb54", inputs: ["view","Inputs","TRACE_NAMES"], outputs: ["selectedTraces"], body: (view,Inputs,TRACE_NAMES) => {
+const selectedTraces = view(Inputs.checkbox(
+  TRACE_NAMES,
+  {label: "Traces", value: TRACE_NAMES}
+));
+return {selectedTraces};
+}});
+
+define({id: "a5915697", inputs: ["view","Inputs","EVENT_TYPES"], outputs: ["selectedTypes"], body: (view,Inputs,EVENT_TYPES) => {
+const selectedTypes = view(Inputs.checkbox(
+  EVENT_TYPES,
+  {label: "Event Types", value: EVENT_TYPES}
+));
+return {selectedTypes};
+}});
+
+define({id: "0330bb2c", inputs: ["selectedTraces","loadTraceRows"], outputs: ["allRows"], body: async (selectedTraces,loadTraceRows) => {
+const allRows = await Promise.allSettled(
+  selectedTraces.map((name) => loadTraceRows(name))
+).then((results) => {
+  const rows = [];
+  const errors = [];
+  for (const [i, r] of results.entries()) {
+    if (r.status === "fulfilled") {
+      for (const row of r.value) rows.push(row);
+    } else {
+      errors.push({trace: selectedTraces[i], error: r.reason?.message ?? String(r.reason)});
+    }
+  }
+  return {rows, errors};
+});
+return {allRows};
+}});
+
+define({id: "a4e7aaaf", inputs: ["selectedTypes","allRows"], outputs: ["typeSet","rows"], body: (selectedTypes,allRows) => {
+const typeSet = new Set(selectedTypes);
+const rows = allRows.rows.filter((r) => typeSet.has(r.event_type));
+return {typeSet,rows};
+}});
+
+define({id: "f0b5653a", inputs: ["rows","selectedTraces","allRows","display","html","Inputs"], body: (rows,selectedTraces,allRows,display,html,Inputs) => {
+{
+  const msg = `${rows.length.toLocaleString("en-US")} events loaded from ${selectedTraces.length} trace(s).`;
+  if (allRows.errors.length > 0) {
+    display(html`<p>${msg}</p><details><summary>${allRows.errors.length} load error(s)</summary>${Inputs.table(allRows.errors)}</details>`);
+  } else {
+    display(html`<p>${msg}</p>`);
+  }
+}
+}});
+
+define({id: "4da46772", inputs: ["aggregateSummary","rows"], outputs: ["summaryRows"], body: (aggregateSummary,rows) => {
+const summaryRows = aggregateSummary(rows);
+return {summaryRows};
+}});
+
+define({id: "f1451824", inputs: ["display","resize","Plot","summaryRows"], body: (display,resize,Plot,summaryRows) => {
+{
+  display(resize((width) => Plot.plot({
+    width,
+    height: 300,
+    marginBottom: 60,
+    x: {label: "Trace", tickRotate: -35},
+    y: {label: "Event Count", grid: true},
+    color: {type: "categorical", scheme: "observable10", legend: true},
+    marks: [
+      Plot.barY(summaryRows, {x: "trace", y: "event_count", fill: "event_type", tip: true}),
+      Plot.ruleY([0])
+    ]
+  })));
+}
+}});
+
+define({id: "3e515260", inputs: ["display","resize","Plot","summaryRows"], body: (display,resize,Plot,summaryRows) => {
+{
+  display(resize((width) => Plot.plot({
+    width,
+    height: 300,
+    marginBottom: 60,
+    x: {label: "Trace", tickRotate: -35},
+    y: {label: "Total Duration (ms)", grid: true},
+    color: {type: "categorical", scheme: "observable10", legend: true},
+    marks: [
+      Plot.barY(summaryRows, {x: "trace", y: "total_duration_ms", fill: "event_type", tip: true}),
+      Plot.ruleY([0])
+    ]
+  })));
+}
+}});
+
+define({id: "fcbacfd6", inputs: ["Inputs","summaryRows","formatMs","display"], body: async (Inputs,summaryRows,formatMs,display) => {
+display(await(
+Inputs.table(summaryRows, {
+  columns: ["trace", "event_type", "event_count", "total_duration_ms"],
+  header: {event_count: "Events", total_duration_ms: "Total Duration (ms)"},
+  format: {
+    total_duration_ms: (v) => formatMs(v)
+  },
+  sort: "total_duration_ms",
+  reverse: true
+})
+))
+}});
+
+define({id: "fa5030d5", inputs: ["envelopeRows","display","resize","Plot"], body: (envelopeRows,display,resize,Plot) => {
+{
+  const scatterRows = envelopeRows.filter((r) => Number.isFinite(r.peak_mem_gb) && Number.isFinite(r.train_tflops));
+  display(resize((width) => Plot.plot({
+    width,
+    height: 360,
+    x: {label: "Peak Training Memory (GB)", grid: true},
+    y: {label: "Train Step TFLOPs", grid: true},
+    color: {type: "categorical", scheme: "observable10", legend: true},
+    marks: [
+      Plot.dot(scatterRows, {
+        x: "peak_mem_gb",
+        y: "train_tflops",
+        fill: "category",
+        r: 6,
+        tip: true
+      }),
+      Plot.text(scatterRows, {
+        x: "peak_mem_gb",
+        y: "train_tflops",
+        text: "trace",
+        dy: -12,
+        fontSize: 10
+      }),
+      Plot.ruleX([24], {stroke: "red", strokeDasharray: "4 4"})
+    ]
+  })));
+}
+}});
+
+define({id: "5f224635", inputs: ["envelopeRows","display","resize","Plot"], body: (envelopeRows,display,resize,Plot) => {
+{
+  const sorted = [...envelopeRows].filter((r) => Number.isFinite(r.params_m)).sort((a, b) => b.params_m - a.params_m);
+  display(resize((width) => Plot.plot({
+    width,
+    height: Math.max(240, sorted.length * 28 + 60),
+    marginLeft: 120,
+    x: {label: "Parameters (M)", grid: true},
+    y: {label: null},
+    color: {type: "categorical", scheme: "observable10", legend: true},
+    marks: [
+      Plot.barX(sorted, {x: "params_m", y: "trace", fill: "category", tip: true, sort: {y: "-x"}}),
+      Plot.ruleX([0])
+    ]
+  })));
+}
+}});
+
+define({id: "86baeb13", inputs: ["Inputs","envelopeRows","display"], body: async (Inputs,envelopeRows,display) => {
+display(await(
+Inputs.table(envelopeRows, {
+  columns: ["trace", "d_model", "n_heads", "d_head", "d_ff", "head_dim_multiple_32", "d_ff_multiple_64"],
+  header: {
+    d_head: "d_head",
+    head_dim_multiple_32: "d_head%32==0",
+    d_ff_multiple_64: "d_ff%64==0"
+  },
+  format: {
+    head_dim_multiple_32: (v) => v ? "yes" : "no",
+    d_ff_multiple_64: (v) => v ? "yes" : "no"
+  },
+  rows: 12
+})
+))
+}});
+
+define({id: "ce083b44", inputs: ["view","Inputs"], outputs: ["kernelControls"], body: (view,Inputs) => {
+const kernelControls = view(Inputs.form({
+  metric: Inputs.select(
+    new Map([["Total Duration", "duration"], ["Invocation Count", "count"]]),
+    {label: "Rank by", value: "duration"}
+  ),
+  topK: Inputs.range([3, 50], {label: "Top K kernels", step: 1, value: 15})
+}));
+return {kernelControls};
+}});
+
+define({id: "a990493f", inputs: ["aggregateKernels","rows","kernelControls"], outputs: ["kernelRows"], body: (aggregateKernels,rows,kernelControls) => {
+const kernelRows = aggregateKernels(rows, kernelControls.topK);
+return {kernelRows};
+}});
+
+define({id: "2bcc236e", inputs: ["kernelRows","display","html","kernelControls","resize","Plot"], body: (kernelRows,display,html,kernelControls,resize,Plot) => {
+{
+  if (kernelRows.length === 0) {
+    display(html`<p><em>No kernel rows for selected traces.</em></p>`);
+  } else {
+    const metric = kernelControls.metric === "count" ? "invocations" : "total_duration_ms";
+    const label = kernelControls.metric === "count" ? "Invocations" : "Total Duration (ms)";
+    display(resize((width) => Plot.plot({
+      width,
+      height: Math.min(600, 80 + kernelRows.length * 18),
+      marginLeft: 280,
+      x: {label, grid: true},
+      y: {label: null},
+      color: {type: "categorical", scheme: "observable10", legend: true},
+      marks: [
+        Plot.barX(kernelRows, {x: metric, y: "kernel_name", fill: "trace", tip: true, sort: {y: "-x"}}),
+        Plot.ruleX([0])
+      ]
+    })));
+  }
+}
+}});
+
+define({id: "4eeb9e32", inputs: ["rows","kernelRows","display","html","resize","Plot"], body: (rows,kernelRows,display,html,resize,Plot) => {
+{
+  const kernelEvents = rows.filter((r) => r.event_type === "kernel");
+  const topNames = new Set(kernelRows.map((r) => r.kernel_name));
+  const topEvents = kernelEvents.filter((r) => topNames.has(r.event_name));
+  if (topEvents.length === 0) {
+    display(html`<p><em>No kernel events to plot.</em></p>`);
+  } else {
+    display(resize((width) => Plot.plot({
+      width,
+      height: 320,
+      marginBottom: 40,
+      x: {label: "Kernel", tickRotate: -45, axis: "bottom"},
+      y: {label: "Duration (ms)", grid: true},
+      fx: {label: "Trace"},
+      color: {type: "categorical", scheme: "observable10"},
+      marks: [
+        Plot.boxY(topEvents, {x: "event_name", y: "duration_ms", fx: "trace", fill: "event_name", tip: true})
+      ]
+    })));
+  }
+}
+}});
+
+define({id: "4c7840b7", outputs: ["categorizeKernel"], body: () => {
+function categorizeKernel(name) {
+  const n = name.toLowerCase();
+  if (n.includes("gemm") || n.includes("cutlass") || n.includes("cublaslt") || n.includes("cublas")) return "GEMM";
+  if (n.includes("softmax")) return "Softmax";
+  if (n.includes("layernorm") || n.includes("rmsnorm") || n.includes("layer_norm") || n.includes("rms_norm")) return "Normalization";
+  if (n.includes("flash") || n.includes("attention") || n.includes("fmha")) return "Attention";
+  if (n.includes("adam") || n.includes("optimizer")) return "Optimizer";
+  if (n.includes("reduce") || n.includes("allreduce")) return "Reduction";
+  if (n.includes("elementwise") || n.includes("vectorized") || n.includes("unrolled")) return "Elementwise";
+  if (n.includes("embedding") || n.includes("embed")) return "Embedding";
+  if (n.includes("copy") || n.includes("memcpy") || n.includes("memset") || n.includes("fill")) return "Memory-like";
+  if (n.includes("cast") || n.includes("convert")) return "Type Cast";
+  if (n.includes("dropout")) return "Dropout";
+  if (n.includes("swiglu") || n.includes("silu") || n.includes("gelu") || n.includes("relu") || n.includes("activation")) return "Activation";
+  return "Other";
+}
+return {categorizeKernel};
+}});
+
+define({id: "14bd133e", inputs: ["rows","d3","categorizeKernel","display","html","resize","Plot"], body: (rows,d3,categorizeKernel,display,html,resize,Plot) => {
+{
+  const kernelEvents = rows.filter((r) => r.event_type === "kernel");
+  const categorized = d3.rollups(
+    kernelEvents,
+    (group) => d3.sum(group, (r) => r.duration_ms),
+    (r) => r.trace,
+    (r) => categorizeKernel(r.event_name)
+  ).flatMap(([trace, cats]) => cats.map(([category, duration_ms]) => ({trace, category, duration_ms})));
+
+  if (categorized.length === 0) {
+    display(html`<p><em>No kernel data for category breakdown.</em></p>`);
+  } else {
+    display(resize((width) => Plot.plot({
+      width,
+      height: 360,
+      marginBottom: 60,
+      x: {label: "Trace", tickRotate: -35},
+      y: {label: "Total Duration (ms)", grid: true},
+      color: {type: "categorical", scheme: "observable10", legend: true},
+      marks: [
+        Plot.barY(categorized, Plot.stackY({x: "trace", y: "duration_ms", fill: "category", tip: true, order: "sum", reverse: true})),
+        Plot.ruleY([0])
+      ]
+    })));
+  }
+}
+}});
+
+define({id: "ca1bf131", inputs: ["rows","d3","categorizeKernel","display","html","resize","Plot"], body: (rows,d3,categorizeKernel,display,html,resize,Plot) => {
+{
+  const kernelEvents = rows.filter((r) => r.event_type === "kernel");
+  const categorized = d3.rollups(
+    kernelEvents,
+    (group) => d3.sum(group, (r) => r.duration_ms),
+    (r) => r.trace,
+    (r) => categorizeKernel(r.event_name)
+  ).flatMap(([trace, cats]) => cats.map(([category, duration_ms]) => ({trace, category, duration_ms})));
+
+  const traceTotals = d3.rollups(categorized, (g) => d3.sum(g, (r) => r.duration_ms), (r) => r.trace);
+  const totalMap = new Map(traceTotals);
+  const normalized = categorized.map((r) => ({...r, pct: (r.duration_ms / (totalMap.get(r.trace) || 1)) * 100}));
+
+  if (normalized.length === 0) {
+    display(html`<p><em>No data.</em></p>`);
+  } else {
+    display(resize((width) => Plot.plot({
+      width,
+      height: 360,
+      marginBottom: 60,
+      x: {label: "Trace", tickRotate: -35},
+      y: {label: "% of Kernel Time", grid: true, domain: [0, 100]},
+      color: {type: "categorical", scheme: "observable10", legend: true},
+      marks: [
+        Plot.barY(normalized, Plot.stackY({x: "trace", y: "pct", fill: "category", tip: true, order: "sum", reverse: true})),
+        Plot.ruleY([0])
+      ]
+    })));
+  }
+}
+}});
+
+define({id: "d11c7027", inputs: ["Inputs","kernelRows","formatMs","display"], body: async (Inputs,kernelRows,formatMs,display) => {
+display(await(
+Inputs.table(kernelRows, {
+  columns: ["trace", "kernel_name", "invocations", "total_duration_ms", "avg_duration_ms"],
+  header: {
+    kernel_name: "Kernel",
+    invocations: "Calls",
+    total_duration_ms: "Total (ms)",
+    avg_duration_ms: "Avg (ms)"
+  },
+  format: {
+    total_duration_ms: (v) => formatMs(v),
+    avg_duration_ms: (v) => formatMs(v)
+  },
+  sort: "total_duration_ms",
+  reverse: true,
+  rows: 20
+})
+))
+}});
+
+define({id: "b1c27796", inputs: ["aggregateMemory","rows"], outputs: ["memoryRows"], body: (aggregateMemory,rows) => {
+const memoryRows = aggregateMemory(rows);
+return {memoryRows};
+}});
+
+define({id: "96ba9033", inputs: ["memoryRows","display","html","resize","Plot"], body: (memoryRows,display,html,resize,Plot) => {
+{
+  if (memoryRows.length === 0) {
+    display(html`<p><em>No memcpy/memset rows for selected traces.</em></p>`);
+  } else {
+    display(resize((width) => Plot.plot({
+      width,
+      height: Math.min(480, 80 + memoryRows.length * 18),
+      marginLeft: 220,
+      x: {label: "Total Duration (ms)", grid: true},
+      y: {label: null},
+      color: {type: "categorical", scheme: "observable10", legend: true},
+      marks: [
+        Plot.barX(memoryRows, {x: "total_duration_ms", y: "operation", fill: "trace", tip: true, sort: {y: "-x"}}),
+        Plot.ruleX([0])
+      ]
+    })));
+  }
+}
+}});
+
+define({id: "96d5f8ee", inputs: ["memoryRows","display","html","resize","Plot"], body: (memoryRows,display,html,resize,Plot) => {
+{
+  if (memoryRows.length === 0) {
+    display(html`<p><em>No memory data.</em></p>`);
+  } else {
+    display(resize((width) => Plot.plot({
+      width,
+      height: Math.min(480, 80 + memoryRows.length * 18),
+      marginLeft: 220,
+      x: {label: "Total Bytes", grid: true},
+      y: {label: null},
+      color: {type: "categorical", scheme: "observable10", legend: true},
+      marks: [
+        Plot.barX(memoryRows, {x: "total_bytes", y: "operation", fill: "trace", tip: true, sort: {y: "-x"}}),
+        Plot.ruleX([0])
+      ]
+    })));
+  }
+}
+}});
+
+define({id: "a8ce7e04", inputs: ["memoryRows","display","html","resize","Plot"], body: (memoryRows,display,html,resize,Plot) => {
+{
+  const bwRows = memoryRows
+    .filter((r) => r.total_duration_ms > 0 && r.total_bytes > 0)
+    .map((r) => ({
+      ...r,
+      bandwidth_gbs: (r.total_bytes / 1e9) / (r.total_duration_ms / 1e3)
+    }));
+
+  if (bwRows.length === 0) {
+    display(html`<p><em>No bandwidth data.</em></p>`);
+  } else {
+    display(resize((width) => Plot.plot({
+      width,
+      height: Math.min(480, 80 + bwRows.length * 18),
+      marginLeft: 220,
+      x: {label: "Effective Bandwidth (GB/s)", grid: true},
+      y: {label: null},
+      color: {type: "categorical", scheme: "observable10", legend: true},
+      marks: [
+        Plot.barX(bwRows, {x: "bandwidth_gbs", y: "operation", fill: "trace", tip: true, sort: {y: "-x"}}),
+        Plot.ruleX([0])
+      ]
+    })));
+  }
+}
+}});
+
+define({id: "0eebe904", inputs: ["Inputs","memoryRows","formatMs","formatBytes","display"], body: async (Inputs,memoryRows,formatMs,formatBytes,display) => {
+display(await(
+Inputs.table(memoryRows, {
+  columns: ["trace", "operation", "op_count", "total_duration_ms", "total_bytes"],
+  header: {
+    op_count: "Calls",
+    total_duration_ms: "Total Duration",
+    total_bytes: "Bytes"
+  },
+  format: {
+    total_duration_ms: (v) => formatMs(v),
+    total_bytes: (v) => formatBytes(v)
+  },
+  sort: "total_duration_ms",
+  reverse: true,
+  rows: 20
+})
+))
+}});
+
+define({id: "a81c9f4a", inputs: ["view","Inputs"], outputs: ["timelineControls"], body: (view,Inputs) => {
+const timelineControls = view(Inputs.form({
+  mode: Inputs.select(
+    new Map([["Rolled up (buckets)", "rolled"], ["Raw events", "raw"]]),
+    {label: "Mode", value: "rolled"}
+  ),
+  source: Inputs.select(
+    new Map([["Kernels + Memory", "all"], ["Kernels only", "kernels"], ["Memory only", "memory"]]),
+    {label: "Event source", value: "all"}
+  ),
+  laneStyle: Inputs.select(
+    new Map([["By trace", "trace"], ["Trace + event", "trace_event"]]),
+    {label: "Lane style", value: "trace"}
+  ),
+  rank: Inputs.select(
+    new Map([["Earliest first", "earliest"], ["Longest first", "longest"]]),
+    {label: "Event selection", value: "earliest"}
+  ),
+  maxEvents: Inputs.range([100, 20000], {label: "Max events", step: 100, value: 6000}),
+  bucketMs: Inputs.range([1, 200], {label: "Bucket (ms)", step: 1, value: 10}),
+  topLanes: Inputs.range([1, 200], {label: "Top lanes", step: 1, value: 40})
+}));
+return {timelineControls};
+}});
+
+define({id: "7ab29294", inputs: ["rows","timelineControls"], outputs: ["timelineSourceFiltered"], body: (rows,timelineControls) => {
+const timelineSourceFiltered = rows.filter((r) => {
+  if (timelineControls.source === "kernels") return r.event_type === "kernel";
+  if (timelineControls.source === "memory") return r.event_type === "memcpy" || r.event_type === "memset";
+  return true;
+});
+return {timelineSourceFiltered};
+}});
+
+define({id: "64c452cc", inputs: ["aggregateTimeline","timelineSourceFiltered","timelineControls"], outputs: ["timeline"], body: (aggregateTimeline,timelineSourceFiltered,timelineControls) => {
+const timeline = aggregateTimeline(
+  timelineSourceFiltered,
+  timelineControls.mode,
+  timelineControls.laneStyle,
+  timelineControls.rank,
+  timelineControls.maxEvents,
+  timelineControls.bucketMs,
+  timelineControls.topLanes
+);
+return {timeline};
+}});
+
+define({id: "9e78faef", inputs: ["timeline","display","html","resize","Plot"], body: (timeline,display,html,resize,Plot) => {
+{
+  if (timeline.rows.length === 0) {
+    display(html`<p><em>No timeline rows for current filters.</em></p>`);
+  } else {
+    display(resize((width) => Plot.plot({
+      width,
+      height: Math.max(260, Math.min(960, timeline.laneCountKept * 18 + 100)),
+      x: {label: "ms since first selected event", grid: true},
+      y: {label: "Lane"},
+      color: {type: "categorical", scheme: "observable10", legend: true},
+      marks: [
+        Plot.barX(timeline.rows, {
+          x1: "start_ms",
+          x2: "end_ms",
+          y: "lane",
+          fill: "event_type",
+          tip: true
+        })
+      ]
+    })));
+    display(html`<p>Lanes shown: ${timeline.laneCountKept} of ${timeline.laneCountTotal}</p>`);
+  }
+}
+}});
+
+define({id: "45b9329a", inputs: ["timeline","timelineControls","display","Inputs","formatMs"], body: (timeline,timelineControls,display,Inputs,formatMs) => {
+{
+  if (timeline.rows.length > 0) {
+    const durationKey = timelineControls.mode === "rolled" ? "total_duration_ms" : "duration_ms";
+    display(Inputs.table(timeline.rows.slice(0, 500), {
+      columns: ["trace", "event_type", "lane", "start_ms", "end_ms", durationKey, "event_count"],
+      header: {
+        start_ms: "Start (ms)",
+        end_ms: "End (ms)",
+        [durationKey]: timelineControls.mode === "rolled" ? "Total Duration" : "Duration",
+        event_count: "Count"
+      },
+      format: {
+        start_ms: (v) => Number.isFinite(v) ? v.toFixed(3) : "n/a",
+        end_ms: (v) => Number.isFinite(v) ? v.toFixed(3) : "n/a",
+        [durationKey]: (v) => formatMs(v)
+      },
+      rows: 15
+    }));
+  }
+}
+}});
+
+define({id: "118174b7", inputs: ["d3","rows","display","html","resize","Plot","Inputs","formatMs"], body: (d3,rows,display,html,resize,Plot,Inputs,formatMs) => {
+{
+  const kernelByTrace = d3.rollups(
+    rows.filter((r) => r.event_type === "kernel"),
+    (g) => ({
+      total_ms: d3.sum(g, (r) => r.duration_ms),
+      wall_ms: (d3.max(g, (r) => r.end_ms) || 0) - (d3.min(g, (r) => r.start_ms) || 0),
+      count: g.length
+    }),
+    (r) => r.trace
+  );
+  const memByTrace = d3.rollups(
+    rows.filter((r) => r.event_type === "memcpy" || r.event_type === "memset"),
+    (g) => d3.sum(g, (r) => r.duration_ms),
+    (r) => r.trace
+  );
+  const memMap = new Map(memByTrace);
+
+  const metrics = kernelByTrace.map(([trace, stats]) => ({
+    trace,
+    kernel_density: stats.wall_ms > 0 ? stats.total_ms / stats.wall_ms : 0,
+    memory_overhead_ratio: stats.total_ms > 0 ? (memMap.get(trace) || 0) / stats.total_ms : 0,
+    total_kernel_ms: stats.total_ms,
+    total_memory_ms: memMap.get(trace) || 0,
+    kernel_count: stats.count
+  })).sort((a, b) => b.kernel_density - a.kernel_density);
+
+  if (metrics.length === 0) {
+    display(html`<p><em>No data for comparative analysis.</em></p>`);
+  } else {
+    display(resize((width) => Plot.plot({
+      title: "Kernel Density (kernel time / wall-clock span)",
+      width,
+      height: Math.max(240, metrics.length * 28 + 60),
+      marginLeft: 120,
+      x: {label: "Kernel Density", grid: true},
+      y: {label: null},
+      marks: [
+        Plot.barX(metrics, {x: "kernel_density", y: "trace", fill: "steelblue", tip: true, sort: {y: "-x"}}),
+        Plot.ruleX([0]),
+        Plot.ruleX([1], {stroke: "red", strokeDasharray: "4 4"})
+      ]
+    })));
+
+    display(resize((width) => Plot.plot({
+      title: "Memory Overhead Ratio (memory time / kernel time)",
+      width,
+      height: Math.max(240, metrics.length * 28 + 60),
+      marginLeft: 120,
+      x: {label: "Memory Overhead Ratio", grid: true},
+      y: {label: null},
+      marks: [
+        Plot.barX(metrics, {x: "memory_overhead_ratio", y: "trace", fill: "orange", tip: true, sort: {y: "-x"}}),
+        Plot.ruleX([0])
+      ]
+    })));
+
+    display(Inputs.table(metrics, {
+      columns: ["trace", "kernel_density", "memory_overhead_ratio", "total_kernel_ms", "total_memory_ms", "kernel_count"],
+      header: {
+        kernel_density: "Kernel Density",
+        memory_overhead_ratio: "Mem/Kernel Ratio",
+        total_kernel_ms: "Total Kernel (ms)",
+        total_memory_ms: "Total Mem (ms)",
+        kernel_count: "Kernel Count"
+      },
+      format: {
+        kernel_density: (v) => v.toFixed(3),
+        memory_overhead_ratio: (v) => v.toFixed(4),
+        total_kernel_ms: (v) => formatMs(v),
+        total_memory_ms: (v) => formatMs(v)
+      },
+      sort: "kernel_density",
+      reverse: true,
+      rows: 12
+    }));
+  }
+}
+}});
+
+define({id: "6c6a876b", inputs: ["rows","d3","display","html","resize","Plot"], body: (rows,d3,display,html,resize,Plot) => {
+{
+  const allKernelEvents = rows.filter((r) => r.event_type === "kernel");
+  const byTrace = d3.groups(allKernelEvents, (r) => r.trace);
+  const facetData = byTrace.flatMap(([trace, events]) => {
+    const top5 = d3.rollups(events, (g) => d3.sum(g, (r) => r.duration_ms), (r) => r.event_name)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([name, ms]) => ({trace, kernel: name, duration_ms: ms}));
+    return top5;
+  });
+
+  if (facetData.length === 0) {
+    display(html`<p><em>No kernel data for faceted view.</em></p>`);
+  } else {
+    display(resize((width) => Plot.plot({
+      width,
+      height: 300,
+      marginLeft: 180,
+      marginBottom: 30,
+      fx: {label: "Trace", padding: 0.15},
+      x: {label: "Duration (ms)", grid: true},
+      y: {label: null},
+      color: {type: "categorical", scheme: "observable10"},
+      marks: [
+        Plot.barX(facetData, {x: "duration_ms", y: "kernel", fx: "trace", fill: "kernel", tip: true, sort: {y: "-x"}}),
+        Plot.ruleX([0])
+      ]
+    })));
+  }
+}
 }});
 
 </script>
@@ -108,13 +778,24 @@ await renderNsys()
 </header>
 <aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
 <nav>
+<div>Contents</div>
+<ol>
+<li class="observablehq-secondary-link"><a href="#data-loading-and-controls">Data Loading and Controls</a></li>
+<li class="observablehq-secondary-link"><a href="#high-level-summary">High-Level Summary</a></li>
+<li class="observablehq-secondary-link"><a href="#resource-envelope-comparison">Resource Envelope Comparison</a></li>
+<li class="observablehq-secondary-link"><a href="#kernel-analysis">Kernel Analysis</a></li>
+<li class="observablehq-secondary-link"><a href="#memory-operations">Memory Operations</a></li>
+<li class="observablehq-secondary-link"><a href="#timeline-exploration">Timeline Exploration</a></li>
+<li class="observablehq-secondary-link"><a href="#cross-config-comparative-analysis">Cross-Config Comparative Analysis</a></li>
+</ol>
 </nav>
 </aside>
 <main id="observablehq-main" class="observablehq">
+<div class="observablehq observablehq--block"><!--:24aa71c1:--></div>
 <h1 id="nsys-trace-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#nsys-trace-analysis">NSYS Trace Analysis</a></h1>
 <h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
-<p>Profiling GPU behavior is an important skill for an AI engineering practicioner to posess.  We therefore took the time to run some traces on RTX 4090 GPUs in order to try to observe differences.  NCU profiling was also attempted, however Nvidia performance counters were not available in the containerized environments tests were run in.</p>
-<p>Nsys nevertheless provides very fine-grained information on model performance.  Here is a summary of the model specs compared:</p>
+<p>Profiling GPU behavior is an important skill for an AI engineering practitioner to possess. We ran nsys traces on RTX 4090 GPUs across a matrix of model configurations designed to stress different architectural bottlenecks. NCU profiling was also attempted, however Nvidia performance counters were not available in the containerized environments tests were run in.</p>
+<p>Nsys nevertheless provides very fine-grained information on model performance. The configurations below were chosen to isolate specific performance characteristics: two baselines (wide-shallow vs narrow-deep), and eight stress tests targeting latency, alignment, vocabulary, FFN width, memory bandwidth, compute throughput, and sequential depth.</p>
 <table>
 <thead>
 <tr>
@@ -253,11 +934,76 @@ await renderNsys()
 </tr>
 </tbody>
 </table>
-<div class="observablehq observablehq--block"><!--:81d1cf6f:--></div>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:842e7c02:--></div>
+<h3 id="resource-envelope" tabindex="-1"><a class="observablehq-header-anchor" href="#resource-envelope">Resource Envelope</a></h3>
+<p>The table below shows computed resource estimates for each configuration under RTX 4090 AMP assumptions (float32 weights, bfloat16 activations and gradients).</p>
+<div class="observablehq observablehq--block"><!--:76d3cb15:--></div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:9750c68b:--></div>
+<hr>
+<h2 id="data-loading-and-controls" tabindex="-1"><a class="observablehq-header-anchor" href="#data-loading-and-controls">Data Loading and Controls</a></h2>
+<div class="observablehq observablehq--block"><!--:dc85eb54:--></div>
+<div class="observablehq observablehq--block"><!--:a5915697:--></div>
+<div class="observablehq observablehq--block"><!--:0330bb2c:--></div>
+<div class="observablehq observablehq--block"><!--:a4e7aaaf:--></div>
+<div class="observablehq observablehq--block"><!--:f0b5653a:--></div>
+<hr>
+<h2 id="high-level-summary" tabindex="-1"><a class="observablehq-header-anchor" href="#high-level-summary">High-Level Summary</a></h2>
+<p>How many events does each trace produce, and how much total GPU time do they consume? Traces with more layers (deep_sequential, model_b) naturally produce more kernel events, while bandwidth_bound's large batch size drives memory operation counts.</p>
+<div class="observablehq observablehq--block"><!--:4da46772:--></div>
+<div class="observablehq observablehq--block"><!--:f1451824:--></div>
+<div class="observablehq observablehq--block"><!--:3e515260:--></div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:fcbacfd6:--></div>
+<hr>
+<h2 id="resource-envelope-comparison" tabindex="-1"><a class="observablehq-header-anchor" href="#resource-envelope-comparison">Resource Envelope Comparison</a></h2>
+<p>How do the model configurations compare in terms of estimated compute and memory requirements? The scatter below maps peak training memory against training step TFLOPs, revealing which configs are memory-limited vs compute-limited.</p>
+<div class="observablehq observablehq--block"><!--:fa5030d5:--></div>
+<div class="observablehq observablehq--block"><!--:5f224635:--></div>
+<h3 id="alignment-diagnostics" tabindex="-1"><a class="observablehq-header-anchor" href="#alignment-diagnostics">Alignment Diagnostics</a></h3>
+<p>Tensor core efficiency depends on dimension alignment. The <code>d_head % 32 == 0</code> and <code>d_ff % 64 == 0</code> flags below indicate which configs are well-aligned for RTX 4090 tensor core tile sizes. Misaligned configurations (bad_head_size, misaligned_dims) pay a padding tax on every matmul.</p>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:86baeb13:--></div>
+<hr>
+<h2 id="kernel-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#kernel-analysis">Kernel Analysis</a></h2>
+<p>Which GPU kernels dominate execution time? This section ranks kernels by total duration or invocation count across the selected traces.</p>
+<div class="observablehq observablehq--block"><!--:ce083b44:--></div>
+<div class="observablehq observablehq--block"><!--:a990493f:--></div>
+<div class="observablehq observablehq--block"><!--:2bcc236e:--></div>
+<h3 id="kernel-duration-distribution" tabindex="-1"><a class="observablehq-header-anchor" href="#kernel-duration-distribution">Kernel Duration Distribution</a></h3>
+<p>Per-invocation duration distributions for the top kernels, faceted by trace name. Box plots reveal whether kernels have consistent or highly variable execution times.</p>
+<div class="observablehq observablehq--block"><!--:4eeb9e32:--></div>
+<h3 id="kernel-category-breakdown" tabindex="-1"><a class="observablehq-header-anchor" href="#kernel-category-breakdown">Kernel Category Breakdown</a></h3>
+<p>Grouping kernels by functional category (GEMM, softmax, normalization, elementwise, memory-like, etc.) reveals the compute profile of each trace configuration. Compute-bound configs should be GEMM-dominated; bandwidth-bound configs will show more elementwise and memory overhead.</p>
+<div class="observablehq observablehq--block"><!--:4c7840b7:--></div>
+<div class="observablehq observablehq--block"><!--:14bd133e:--></div>
+<div class="observablehq observablehq--block"><!--:ca1bf131:--></div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:d11c7027:--></div>
+<hr>
+<h2 id="memory-operations" tabindex="-1"><a class="observablehq-header-anchor" href="#memory-operations">Memory Operations</a></h2>
+<p>Memory copy and set operations reveal data movement overhead. Configs with large batches (bandwidth_bound) or large vocabularies (vocab_bottleneck) tend to move more data; misaligned dimensions may require extra padding copies.</p>
+<div class="observablehq observablehq--block"><!--:b1c27796:--></div>
+<div class="observablehq observablehq--block"><!--:96ba9033:--></div>
+<h3 id="bytes-transferred" tabindex="-1"><a class="observablehq-header-anchor" href="#bytes-transferred">Bytes Transferred</a></h3>
+<div class="observablehq observablehq--block"><!--:96d5f8ee:--></div>
+<h3 id="effective-bandwidth" tabindex="-1"><a class="observablehq-header-anchor" href="#effective-bandwidth">Effective Bandwidth</a></h3>
+<p>Dividing total bytes by total duration gives an effective bandwidth metric (GB/s) for each memory operation type per trace.</p>
+<div class="observablehq observablehq--block"><!--:a8ce7e04:--></div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:0eebe904:--></div>
+<hr>
+<h2 id="timeline-exploration" tabindex="-1"><a class="observablehq-header-anchor" href="#timeline-exploration">Timeline Exploration</a></h2>
+<p>The timeline view plots GPU events over wall-clock time. In "rolled up" mode, events are bucketed to show density; in "raw" mode, individual events are shown. Look for kernel launch gaps (visible as white space between bars), memory transfer overlap with compute, and pipeline bubbles in deep architectures like deep_sequential.</p>
+<div class="observablehq observablehq--block"><!--:a81c9f4a:--></div>
+<div class="observablehq observablehq--block"><!--:7ab29294:--></div>
+<div class="observablehq observablehq--block"><!--:64c452cc:--></div>
+<div class="observablehq observablehq--block"><!--:9e78faef:--></div>
+<div class="observablehq observablehq--block"><!--:45b9329a:--></div>
+<hr>
+<h2 id="cross-config-comparative-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#cross-config-comparative-analysis">Cross-Config Comparative Analysis</a></h2>
+<p>Finally, derived metrics help compare the GPU utilization profiles across all configurations. "Kernel density" is the ratio of total kernel execution time to trace wall-clock span -- higher means the GPU spent more of its time running kernels rather than waiting. "Memory overhead ratio" is the total memory operation time divided by total kernel time -- higher means more relative time spent moving data.</p>
+<div class="observablehq observablehq--block"><!--:118174b7:--></div>
+<h3 id="top-5-kernel-duration-breakdown-by-trace" tabindex="-1"><a class="observablehq-header-anchor" href="#top-5-kernel-duration-breakdown-by-trace">Top-5 Kernel Duration Breakdown by Trace</a></h3>
+<p>Small multiples showing the top-5 kernels by duration for each selected trace, enabling direct visual comparison of where each config spends its GPU time.</p>
+<div class="observablehq observablehq--block"><!--:6c6a876b:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-19T15:57:04">Feb 19, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-20T13:51:41">Feb 20, 2026</a>.</div>
 </footer>
 </div>
 </body>

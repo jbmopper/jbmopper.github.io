@@ -2,7 +2,7 @@ import {FileAttachment} from "../../_observablehq/stdlib.43270668.js";
 import * as Plot from "../../_npm/@observablehq/plot@0.6.17/7c43807f.js";
 import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
 import {formatBytes} from "../components/data-utils.e2caa41c.js";
-import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.363530d4.js";
+import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.d6dae979.js";
 
 const MANIFEST_ATTACHMENT = FileAttachment({"name":"../../data/manifest.json","mimeType":"application/json","path":"../../_file/data/manifest.d04279d7.json","lastModified":1771465633686,"size":13400}, import.meta.url);
 
@@ -12,7 +12,7 @@ const ATTACHMENTS = {
   "traces/compute_bound_nsys.parquet": FileAttachment({"name":"../../data/raw/traces/compute_bound_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/compute_bound_nsys.9be21553.parquet","lastModified":1771465633647,"size":1020491}, import.meta.url),
   "traces/deep_sequential_nsys.parquet": FileAttachment({"name":"../../data/raw/traces/deep_sequential_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/deep_sequential_nsys.4ed702eb.parquet","lastModified":1771465633653,"size":3186034}, import.meta.url),
   "traces/latency_bound_nsys.parquet": FileAttachment({"name":"../../data/raw/traces/latency_bound_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/latency_bound_nsys.5b9c4edd.parquet","lastModified":1771465633657,"size":1104236}, import.meta.url),
-  "traces/misaligned_dims_nsys.parquet": FileAttachment({"name":"../../data/raw/traces/misaligned_dims_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/misaligned_dims_nsys.e0e9fef3.parquet","lastModified":1771465633659,"size":834}, import.meta.url),
+  "traces/misaligned_dims_nsys.parquet": FileAttachment({"name":"../../data/raw/traces/misaligned_dims_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/misaligned_dims_nsys.accc5b6e.parquet","lastModified":1771606521284,"size":669386}, import.meta.url),
   "traces/model_a_nsys.parquet": FileAttachment({"name":"../../data/raw/traces/model_a_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/model_a_nsys.7c95f1f4.parquet","lastModified":1771465633660,"size":294932}, import.meta.url),
   "traces/model_b_nsys.parquet": FileAttachment({"name":"../../data/raw/traces/model_b_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/model_b_nsys.d909797c.parquet","lastModified":1771465633662,"size":1231233}, import.meta.url),
   "traces/vocab_bottleneck_nsys.parquet": FileAttachment({"name":"../../data/raw/traces/vocab_bottleneck_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/vocab_bottleneck_nsys.c6e0b393.parquet","lastModified":1771465633665,"size":509294}, import.meta.url),

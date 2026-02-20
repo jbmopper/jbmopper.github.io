@@ -1,7 +1,7 @@
 import {FileAttachment} from "../../_observablehq/stdlib.43270668.js";
 import * as Plot from "../../_npm/@observablehq/plot@0.6.17/7c43807f.js";
 import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
-import {clearNode, emptyState, renderSimpleTable, collapsible} from "../components/dom-utils.363530d4.js";
+import {clearNode, emptyState, renderSimpleTable, collapsible} from "../components/dom-utils.d6dae979.js";
 
 const ATTACHMENTS = {
   main: FileAttachment({"name":"../../data/raw/benchmarks/lr_sweeps_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/lr_sweeps_main.98e6db0c.parquet","lastModified":1771466904236,"size":15015}, import.meta.url),
@@ -203,6 +203,108 @@ function rangeWindowControl(labelText, min, max, step, startValue, endValue) {
         sync("end");
         handler();
       });
+    }
+  };
+}
+
+function multiSelectControl(labelText, options, initialValues = [], size = 10) {
+  const wrapper = el("div");
+  wrapper.style.display = "grid";
+  wrapper.style.gap = "0.45rem";
+
+  const header = el("div");
+  header.style.display = "flex";
+  header.style.alignItems = "center";
+  header.style.gap = "0.75rem";
+
+  const title = el("span", labelText);
+  title.style.fontWeight = "600";
+  header.appendChild(title);
+
+  const count = el("output", "");
+  count.style.fontVariantNumeric = "tabular-nums";
+  header.appendChild(count);
+
+  const search = el("input");
+  search.type = "search";
+  search.placeholder = "Filter runs...";
+  search.style.maxWidth = "24rem";
+
+  const buttonRow = el("div");
+  buttonRow.style.display = "flex";
+  buttonRow.style.gap = "0.5rem";
+
+  const selectAll = el("button", "Select all");
+  selectAll.type = "button";
+  const clearAll = el("button", "Clear");
+  clearAll.type = "button";
+  buttonRow.append(selectAll, clearAll);
+
+  const select = el("select");
+  select.multiple = true;
+  select.size = Math.max(4, Math.min(size, Math.max(4, options.length)));
+  select.style.minWidth = "20rem";
+
+  const selected = new Set(initialValues.map((v) => String(v)));
+  const listeners = new Set();
+
+  function notify() {
+    for (const listener of listeners) listener();
+  }
+
+  function visibleOptionValues() {
+    return new Set(Array.from(select.options, (opt) => opt.value));
+  }
+
+  function syncCount() {
+    count.textContent = `${selected.size} selected`;
+  }
+
+  function rebuildOptions() {
+    const query = search.value.trim().toLowerCase();
+    clearNode(select);
+    for (const optionSpec of options) {
+      const value = String(optionSpec.value);
+      const label = String(optionSpec.label);
+      if (query && !label.toLowerCase().includes(query)) continue;
+      const option = el("option", label);
+      option.value = value;
+      option.selected = selected.has(value);
+      select.appendChild(option);
+    }
+    syncCount();
+  }
+
+  select.addEventListener("change", () => {
+    const visible = visibleOptionValues();
+    for (const value of visible) selected.delete(value);
+    for (const option of Array.from(select.selectedOptions)) selected.add(option.value);
+    syncCount();
+    notify();
+  });
+
+  search.addEventListener("input", rebuildOptions);
+  selectAll.addEventListener("click", () => {
+    for (const optionSpec of options) selected.add(String(optionSpec.value));
+    rebuildOptions();
+    notify();
+  });
+  clearAll.addEventListener("click", () => {
+    selected.clear();
+    rebuildOptions();
+    notify();
+  });
+
+  wrapper.append(header, search, buttonRow, select);
+  rebuildOptions();
+
+  return {
+    node: wrapper,
+    getSelected() {
+      return options.map((opt) => String(opt.value)).filter((value) => selected.has(value));
+    },
+    onChange(handler) {
+      listeners.add(handler);
     }
   };
 }
@@ -431,7 +533,7 @@ export async function renderLrSweepFrontier(options = {}) {
   details.appendChild(
     renderSimpleTable(tableRows, [
       {key: "run_number", label: "Run #", align: "right"},
-      {key: "lr_max", label: "LR Max", align: "right", format: (v) => Number(v).toFixed(5)},
+      {key: "lr_max", label: "LR Max", align: "right", format: (v) => Number(v).toExponential(2)},
       {key: "eval_best_loss", label: "Eval Best Loss", align: "right", format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(6) : "n/a")}
     ])
   );
@@ -720,6 +822,239 @@ export async function renderLrSweepGradient(options = {}) {
   return root;
 }
 
+export async function renderLrSweepLrGradScatter(options = {}) {
+  const root = el("section");
+  root.className = "observable-embed observable-embed-lr-sweep-lr-grad";
+  root.style.display = "grid";
+  root.style.gap = "1rem";
+
+  let data;
+  try {
+    data = await loadSweepData();
+  } catch (error) {
+    root.appendChild(emptyState(`Failed to load LR sweep data: ${error.message}`));
+    return root;
+  }
+
+  const {historyRows} = data;
+  const points = historyRows
+    .filter((row) => Number.isFinite(row.step))
+    .filter((row) => Number.isFinite(row.lr) && row.lr > 0)
+    .filter((row) => Number.isFinite(row.grad_unclipped))
+    .filter((row) => Number.isFinite(row.run_number))
+    .sort((a, b) => d3.ascending(a.run_number, b.run_number) || d3.ascending(a.step, b.step));
+
+  if (points.length === 0) {
+    root.appendChild(emptyState("No rows available for LR vs unclipped gradient scatter."));
+    return root;
+  }
+
+  const minLr = d3.min(points, (d) => d.lr) ?? 1e-6;
+  const maxLr = d3.max(points, (d) => d.lr) ?? 1;
+  const minLrLog10 = Math.log10(minLr);
+  const maxLrLog10 = Math.log10(maxLr);
+  const minGrad = Math.max(0, d3.min(points, (d) => d.grad_unclipped) ?? 0);
+  const maxGrad = d3.max(points, (d) => d.grad_unclipped) ?? 1;
+
+  const panelHost = card();
+  const minLrDefault = Number.isFinite(Number(options.minLr)) && Number(options.minLr) > 0
+    ? Math.log10(Number(options.minLr))
+    : minLrLog10;
+  const maxGradDefault = Number.isFinite(Number(options.maxGrad)) ? Number(options.maxGrad) : maxGrad;
+  const minLrControl = rangeControl(
+    "Min LR filter",
+    Number(minLrLog10.toFixed(4)),
+    Number(maxLrLog10.toFixed(4)),
+    0.01,
+    Number(Math.max(minLrLog10, Math.min(maxLrLog10, minLrDefault)).toFixed(4))
+  );
+  const gradStep = Math.max((maxGrad - minGrad) / 500, 0.001);
+  const maxGradControl = rangeControl(
+    "Max grad-norm filter",
+    Number(minGrad.toFixed(4)),
+    Number(maxGrad.toFixed(4)),
+    Number(gradStep.toFixed(4)),
+    Number(Math.max(minGrad, Math.min(maxGrad, maxGradDefault)).toFixed(4))
+  );
+  panelHost.append(minLrControl.node, maxGradControl.node);
+
+  const chartHost = el("div");
+  panelHost.appendChild(chartHost);
+  root.appendChild(panelHost);
+
+  function refresh() {
+    const lrThreshold = 10 ** Number(minLrControl.input.value);
+    const gradThreshold = Number(maxGradControl.input.value);
+    minLrControl.output.textContent = Number.isFinite(lrThreshold) ? lrThreshold.toExponential(2) : "n/a";
+    maxGradControl.output.textContent = Number.isFinite(gradThreshold) ? gradThreshold.toFixed(3) : "n/a";
+
+    const filtered = points.filter((d) => d.lr >= lrThreshold && d.grad_unclipped <= gradThreshold);
+
+    clearNode(chartHost);
+    if (filtered.length === 0) {
+      chartHost.appendChild(emptyState("No rows match the LR/grad filters."));
+      return;
+    }
+
+    let xMin = d3.min(filtered, (d) => d.lr) ?? minLr;
+    let xMax = d3.max(filtered, (d) => d.lr) ?? maxLr;
+    if (!(xMin > 0)) xMin = minLr;
+    if (!(xMax > 0)) xMax = maxLr;
+    if (xMin === xMax) {
+      const eps = xMin * 0.15 || 1e-8;
+      xMin = Math.max(1e-12, xMin - eps);
+      xMax = xMax + eps;
+    }
+
+    let yMin = d3.min(filtered, (d) => d.grad_unclipped) ?? minGrad;
+    let yMax = d3.max(filtered, (d) => d.grad_unclipped) ?? maxGrad;
+    if (yMin === yMax) {
+      const eps = Math.max(Math.abs(yMin) * 0.1, 1e-3);
+      yMin -= eps;
+      yMax += eps;
+    }
+
+    chartHost.appendChild(
+      Plot.plot({
+        title: "Step-level LR vs Unclipped Gradient Norm",
+        width: 920,
+        height: 360,
+        x: {type: "log", label: "Learning rate", grid: true, domain: [xMin, xMax]},
+        y: {label: "Unclipped gradient norm", grid: true, domain: [yMin, yMax]},
+        color: {type: "linear", interpolate: d3.interpolateWarm, label: "Run #", legend: true},
+        marks: [
+          Plot.dot(filtered, {
+            x: "lr",
+            y: "grad_unclipped",
+            fill: "run_number",
+            r: 2,
+            opacity: 0.5,
+            title: (d) =>
+              `Run ${d.run_number}\nStep ${Math.round(d.step)}\nLR ${Number(d.lr).toExponential(3)}\nGrad ${Number(d.grad_unclipped).toFixed(4)}`,
+            tip: true
+          })
+        ]
+      })
+    );
+
+    chartHost.appendChild(el("p", `${filtered.length.toLocaleString("en-US")} points shown`));
+  }
+
+  minLrControl.input.addEventListener("input", refresh);
+  maxGradControl.input.addEventListener("input", refresh);
+  refresh();
+
+  return root;
+}
+
+export async function renderLrSweepLrClipHistogram(options = {}) {
+  const root = el("section");
+  root.className = "observable-embed observable-embed-lr-sweep-lr-clip-hist";
+  root.style.display = "grid";
+  root.style.gap = "1rem";
+
+  let data;
+  try {
+    data = await loadSweepData();
+  } catch (error) {
+    root.appendChild(emptyState(`Failed to load LR sweep data: ${error.message}`));
+    return root;
+  }
+
+  const {historyRows} = data;
+  const clipRows = historyRows
+    .filter((row) => Number.isFinite(row.lr) && row.lr > 0)
+    .filter((row) => Number.isFinite(row.grad_unclipped) && Number.isFinite(row.grad_clipped))
+    .map((row) => ({
+      ...row,
+      lr_log10: Math.log10(row.lr),
+      clipped: row.grad_clipped < row.grad_unclipped - 1e-9 ? 1 : 0
+    }));
+
+  if (clipRows.length === 0) {
+    root.appendChild(emptyState("No rows available for LR-bin clipping histogram."));
+    return root;
+  }
+
+  const panelHost = card();
+  const minLog = d3.min(clipRows, (row) => row.lr_log10) ?? -6;
+  const maxLog = d3.max(clipRows, (row) => row.lr_log10) ?? 0;
+  const binsControl = rangeControl("LR bins", 8, 80, 1, Number(options.lrClipBins ?? 24));
+  panelHost.appendChild(binsControl.node);
+  const chartHost = el("div");
+  panelHost.appendChild(chartHost);
+  root.appendChild(panelHost);
+
+  function refresh() {
+    binsControl.output.textContent = binsControl.input.value;
+    const binCount = Number(binsControl.input.value);
+    const logSpan = maxLog - minLog;
+    const logEdges =
+      logSpan > 1e-12
+        ? d3.range(0, binCount + 1).map((i) => minLog + (logSpan * i) / binCount)
+        : [minLog, minLog + 1e-6];
+
+    const bins = d3
+      .bin()
+      .value((row) => row.lr_log10)
+      .domain([minLog, maxLog])
+      .thresholds(logEdges)(clipRows);
+
+    const binRows = bins
+      .map((bin) => {
+        const total = bin.length;
+        const clippedCount = d3.sum(bin, (row) => row.clipped);
+        const pctClipped = total > 0 ? (100 * clippedCount) / total : NaN;
+        const x0 = Number.isFinite(bin.x0) ? bin.x0 : NaN;
+        const x1 = Number.isFinite(bin.x1) ? bin.x1 : NaN;
+        return {
+          lr_lo: Number.isFinite(x0) ? 10 ** x0 : NaN,
+          lr_hi: Number.isFinite(x1) ? 10 ** x1 : NaN,
+          pct_clipped: pctClipped,
+          total_steps: total,
+          clipped_steps: clippedCount
+        };
+      })
+      .filter((row) => Number.isFinite(row.lr_lo) && Number.isFinite(row.lr_hi) && row.total_steps > 0)
+      .sort((a, b) => d3.ascending(a.lr_lo, b.lr_lo));
+
+    clearNode(chartHost);
+    if (binRows.length === 0) {
+      chartHost.appendChild(emptyState("No histogram bins available for current settings."));
+      return;
+    }
+
+    chartHost.appendChild(
+      Plot.plot({
+        title: "LR Histogram with Clip Rate per Bin",
+        width: 920,
+        height: 340,
+        x: {type: "log", label: "Learning rate (bin edges)", grid: true},
+        y: {label: "Clipped steps (%)", grid: true, domain: [0, 100]},
+        color: {type: "linear", scheme: "warm", legend: false, domain: [0, 100]},
+        marks: [
+          Plot.rectY(binRows, {
+            x1: "lr_lo",
+            x2: "lr_hi",
+            y: "pct_clipped",
+            fill: "pct_clipped",
+            tip: true,
+            title: (d) =>
+              `LR ${Number(d.lr_lo).toExponential(2)} to ${Number(d.lr_hi).toExponential(2)}\nClipped ${Number(d.pct_clipped).toFixed(
+                1
+              )}%\nClipped steps ${Math.round(d.clipped_steps)} / ${Math.round(d.total_steps)}`
+          }),
+          Plot.ruleY([0, 100])
+        ]
+      })
+    );
+  }
+
+  binsControl.input.addEventListener("input", refresh);
+  refresh();
+  return root;
+}
+
 export async function renderLrSweepPivot(options = {}) {
   const root = el("section");
   root.className = "observable-embed observable-embed-lr-sweep-pivot";
@@ -864,52 +1199,65 @@ export async function renderLrSweepSummaryTable(options = {}) {
     return root;
   }
 
-  const historyByRun = d3.group(
-    historyRows,
-    (r) => r.run_name
+  const historyByRun = d3.group(historyRows, (row) => row.run_name);
+  const tableData = mainRows
+    .map((mainRow) => {
+      const runHistory = historyByRun.get(mainRow.run_name) || [];
+      const gradNorms = runHistory.filter((row) => Number.isFinite(row.grad_unclipped)).map((row) => row.grad_unclipped).sort(d3.ascending);
+      const evalRows = runHistory.filter((row) => Number.isFinite(row.eval_loss) && row.eval_loss > 0).sort((a, b) => d3.ascending(a.step, b.step));
+      const final_eval_loss = evalRows.length > 0 ? evalRows[evalRows.length - 1].eval_loss : NaN;
+
+      let grad_mean = NaN;
+      let grad_median = NaN;
+      let grad_max = NaN;
+      let grad_p99 = NaN;
+      if (gradNorms.length > 0) {
+        grad_mean = d3.mean(gradNorms);
+        grad_median = d3.median(gradNorms);
+        grad_max = d3.max(gradNorms);
+        grad_p99 = d3.quantile(gradNorms, 0.99);
+      }
+
+      return {
+        run_name: mainRow.run_name,
+        run_number: mainRow.run_number,
+        lr_max: mainRow.lr_max,
+        final_eval_loss,
+        eval_best_loss: mainRow.eval_best_loss,
+        grad_mean,
+        grad_median,
+        grad_max,
+        grad_p99
+      };
+    })
+    .sort((a, b) => d3.ascending(a.run_number, b.run_number));
+
+  const runOptions = tableData.map((row) => ({
+    value: row.run_name,
+    label: Number.isFinite(row.run_number) ? `${row.run_number} - ${row.run_name}` : row.run_name
+  }));
+  const runNameSet = new Set(runOptions.map((option) => option.value));
+  const runNameByNumber = new Map(
+    tableData
+      .filter((row) => Number.isFinite(row.run_number))
+      .map((row) => [String(row.run_number), row.run_name])
   );
+  const requestedRuns = Array.isArray(options.summaryRuns) ? options.summaryRuns : [];
+  let initialSelectedRuns =
+    requestedRuns.length > 0
+      ? requestedRuns
+          .map((value) => String(value))
+          .map((value) => (runNameSet.has(value) ? value : runNameByNumber.get(value)))
+          .filter(Boolean)
+      : runOptions.map((option) => String(option.value));
+  if (initialSelectedRuns.length === 0) initialSelectedRuns = runOptions.map((option) => String(option.value));
 
-  const tableData = mainRows.map((mainRow) => {
-    const runHistory = historyByRun.get(mainRow.run_name) || [];
-    const gradNorms = runHistory.filter((r) => Number.isFinite(r.grad_unclipped)).map((r) => r.grad_unclipped).sort(d3.ascending);
+  const controlsHost = card();
+  const runControl = multiSelectControl("Runs", runOptions, initialSelectedRuns, 12);
+  controlsHost.appendChild(runControl.node);
 
-    const evalRows = runHistory.filter((r) => Number.isFinite(r.eval_loss) && r.eval_loss > 0).sort((a, b) => d3.ascending(a.step, b.step));
-    const final_eval_loss = evalRows.length > 0 ? evalRows[evalRows.length - 1].eval_loss : NaN;
-
-    let grad_mean = NaN, grad_median = NaN, grad_max = NaN, grad_p99 = NaN;
-    if (gradNorms.length > 0) {
-      grad_mean = d3.mean(gradNorms);
-      grad_median = d3.median(gradNorms);
-      grad_max = d3.max(gradNorms);
-      grad_p99 = d3.quantile(gradNorms, 0.99);
-    }
-
-    return {
-      run_number: mainRow.run_number,
-      lr_max: mainRow.lr_max,
-      final_eval_loss,
-      eval_best_loss: mainRow.eval_best_loss,
-      grad_mean,
-      grad_median,
-      grad_max,
-      grad_p99
-    };
-  }).sort((a, b) => d3.ascending(a.run_number, b.run_number));
-
-  const host = card();
-  host.appendChild(
-    renderSimpleTable(tableData, [
-      {key: "run_number", label: "Run #", align: "right"},
-      {key: "lr_max", label: "Max LR", align: "right", format: (v) => Number(v).toFixed(5)},
-      {key: "final_eval_loss", label: "Final Eval Loss", align: "right", format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(6) : "n/a")},
-      {key: "eval_best_loss", label: "Min Eval Loss", align: "right", format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(6) : "n/a")},
-      {key: "grad_mean", label: "Grad Norm (Mean)", align: "right", format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(2) : "n/a")},
-      {key: "grad_median", label: "Grad Norm (Median)", align: "right", format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(2) : "n/a")},
-      {key: "grad_p99", label: "Grad Norm (p99)", align: "right", format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(2) : "n/a")},
-      {key: "grad_max", label: "Grad Norm (Max)", align: "right", format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(2) : "n/a")}
-    ])
-  );
-  root.appendChild(host);
+  const tableHost = card();
+  root.appendChild(tableHost);
 
   const evalHistoryRows = historyRows
     .filter((row) => Number.isFinite(row.step) && Number.isFinite(row.eval_loss) && row.eval_loss > 0 && Number.isFinite(row.run_number))
@@ -919,34 +1267,64 @@ export async function renderLrSweepSummaryTable(options = {}) {
     .sort((a, b) => d3.ascending(a.run_number, b.run_number) || d3.ascending(a.step, b.step));
 
   const chartHost = card();
+  let windowControl = null;
+  let evalPlotHost = null;
+  let lossPlotHost = null;
   if (evalHistoryRows.length === 0) {
     chartHost.appendChild(emptyState("No evaluation-loss history rows available."));
   } else {
-    const minIteration = Math.floor(d3.min(evalHistoryRows, (d) => d.step) ?? 0);
-    const maxIteration = Math.ceil(d3.max(evalHistoryRows, (d) => d.step) ?? 1);
-    const windowControl = rangeWindowControl("Iteration window", minIteration, maxIteration, 1, minIteration, maxIteration);
-    chartHost.appendChild(windowControl.node);
-    const evalPlotHost = el("div");
-    const lossPlotHost = el("div");
-    chartHost.append(evalPlotHost, lossPlotHost);
+    const minIteration = Math.floor(d3.min(evalHistoryRows, (row) => row.step) ?? 0);
+    const maxIteration = Math.ceil(d3.max(evalHistoryRows, (row) => row.step) ?? 1);
+    windowControl = rangeWindowControl("Iteration window", minIteration, maxIteration, 1, minIteration, maxIteration);
+    evalPlotHost = el("div");
+    lossPlotHost = el("div");
+    chartHost.append(windowControl.node, evalPlotHost, lossPlotHost);
+  }
+  root.appendChild(controlsHost);
+  root.appendChild(chartHost);
 
-    function refreshChart() {
-      const window = windowControl.getWindow();
-      const filteredEvalRows = evalHistoryRows.filter((row) => row.step >= window.start && row.step <= window.end);
-      const filteredLossRows = lossHistoryRows.filter((row) => row.step >= window.start && row.step <= window.end);
-      const smoothedLossRows = smoothByRun(filteredLossRows, "loss", 25);
+  function refreshSummary() {
+    const selectedRuns = new Set(runControl.getSelected());
 
-      clearNode(evalPlotHost);
-      clearNode(lossPlotHost);
+    clearNode(tableHost);
+    const summaryTable = renderSimpleTable(tableData, [
+      {key: "run_number", label: "Run #", align: "right", bold: true, width: "9%"},
+      {key: "lr_max", label: "Max LR", align: "right", width: "12%", format: (v) => Number(v).toExponential(2)},
+      {key: "final_eval_loss", label: "Final Eval Loss", align: "right", width: "14%", format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(6) : "n/a")},
+      {key: "eval_best_loss", label: "Min Eval Loss", align: "right", width: "14%", format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(6) : "n/a")},
+      {key: "grad_mean", label: "Grad Norm (Mean)", align: "right", width: "12.5%", format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(2) : "n/a")},
+      {key: "grad_median", label: "Grad Norm (Median)", align: "right", width: "12.5%", format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(2) : "n/a")},
+      {key: "grad_p99", label: "Grad Norm (p99)", align: "right", width: "12.5%", format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(2) : "n/a")},
+      {key: "grad_max", label: "Grad Norm (Max)", align: "right", width: "12.5%", format: (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(2) : "n/a")}
+    ]);
+    summaryTable.style.tableLayout = "fixed";
+    tableHost.appendChild(summaryTable);
 
-      if (filteredEvalRows.length === 0) {
-        evalPlotHost.appendChild(emptyState("No evaluation-loss rows in selected iteration window."));
-        return;
-      }
+    if (!windowControl || !evalPlotHost || !lossPlotHost) return;
 
+    clearNode(evalPlotHost);
+    clearNode(lossPlotHost);
+    if (selectedRuns.size === 0) {
+      evalPlotHost.appendChild(emptyState("Select at least one run to view evaluation-loss curves."));
+      lossPlotHost.appendChild(emptyState("Select at least one run to view training-loss curves."));
+      return;
+    }
+
+    const window = windowControl.getWindow();
+    const filteredEvalRows = evalHistoryRows
+      .filter((row) => selectedRuns.has(row.run_name))
+      .filter((row) => row.step >= window.start && row.step <= window.end);
+    const filteredLossRows = lossHistoryRows
+      .filter((row) => selectedRuns.has(row.run_name))
+      .filter((row) => row.step >= window.start && row.step <= window.end);
+    const smoothedLossRows = smoothByRun(filteredLossRows, "loss", 25);
+
+    if (filteredEvalRows.length === 0) {
+      evalPlotHost.appendChild(emptyState("No evaluation-loss rows for selected runs in this iteration window."));
+    } else {
       evalPlotHost.appendChild(
         Plot.plot({
-          title: "Evaluation Loss by Iteration (All Runs)",
+          title: "Evaluation Loss by Iteration (Selected Runs)",
           width: 920,
           height: 360,
           x: {label: "Iteration", grid: true},
@@ -974,39 +1352,39 @@ export async function renderLrSweepSummaryTable(options = {}) {
           ]
         })
       );
-
-      if (smoothedLossRows.length === 0) {
-        lossPlotHost.appendChild(emptyState("No training-loss rows in selected iteration window."));
-        return;
-      }
-
-      lossPlotHost.appendChild(
-        Plot.plot({
-          title: "Smoothed Training Loss by Iteration (All Runs)",
-          width: 920,
-          height: 320,
-          x: {label: "Iteration", grid: true},
-          y: {type: "log", label: "Loss (25-step trailing mean)", grid: true},
-          color: {type: "linear", interpolate: d3.interpolateWarm, legend: false},
-          marks: [
-            Plot.lineY(smoothedLossRows, {x: "step", y: "loss_smoothed", stroke: "run_number"}),
-            Plot.tip(
-              smoothedLossRows,
-              Plot.pointer({
-                x: "step",
-                y: "loss_smoothed",
-                title: (d) => `Run ${d.run_number}\nStep ${Math.round(d.step)}\nSmoothed Loss ${Number(d.loss_smoothed).toFixed(6)}`
-              })
-            )
-          ]
-        })
-      );
     }
 
-    windowControl.onChange(refreshChart);
-    refreshChart();
+    if (smoothedLossRows.length === 0) {
+      lossPlotHost.appendChild(emptyState("No training-loss rows for selected runs in this iteration window."));
+      return;
+    }
+
+    lossPlotHost.appendChild(
+      Plot.plot({
+        title: "Smoothed Training Loss by Iteration (Selected Runs)",
+        width: 920,
+        height: 320,
+        x: {label: "Iteration", grid: true},
+        y: {type: "log", label: "Loss (25-step trailing mean)", grid: true},
+        color: {type: "linear", interpolate: d3.interpolateWarm, legend: false},
+        marks: [
+          Plot.lineY(smoothedLossRows, {x: "step", y: "loss_smoothed", stroke: "run_number"}),
+          Plot.tip(
+            smoothedLossRows,
+            Plot.pointer({
+              x: "step",
+              y: "loss_smoothed",
+              title: (d) => `Run ${d.run_number}\nStep ${Math.round(d.step)}\nSmoothed Loss ${Number(d.loss_smoothed).toFixed(6)}`
+            })
+          )
+        ]
+      })
+    );
   }
-  root.appendChild(chartHost);
+
+  runControl.onChange(refreshSummary);
+  if (windowControl) windowControl.onChange(refreshSummary);
+  refreshSummary();
 
   return root;
 }

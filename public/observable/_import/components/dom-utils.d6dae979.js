@@ -33,6 +33,10 @@ export function renderSimpleTable(rows, columns) {
     th.style.textAlign = column.align || "left";
     th.style.borderBottom = "1px solid var(--theme-foreground-faint)";
     th.style.padding = "0.4rem";
+    if (column.width) {
+      th.style.width = column.width;
+      th.style.minWidth = column.width;
+    }
     tr.appendChild(th);
   }
   thead.appendChild(tr);
@@ -46,6 +50,13 @@ export function renderSimpleTable(rows, columns) {
       td.style.padding = "0.35rem";
       td.style.borderBottom = "1px solid var(--theme-foreground-faintest)";
       td.style.textAlign = column.align || "left";
+      if (column.width) {
+        td.style.width = column.width;
+        td.style.minWidth = column.width;
+      }
+      if (column.bold) {
+        td.style.fontWeight = "600";
+      }
       const value = column.format ? column.format(row[column.key], row) : row[column.key];
       td.textContent = value == null ? "" : String(value);
       trBody.appendChild(td);

@@ -3,7 +3,7 @@ import * as Plot from "../../_npm/@observablehq/plot@0.6.17/7c43807f.js";
 import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
 import {calculateForwardFlops, calculateMemoryAccounting, calculateModelParams, calculateTrainingStepFlops} from "../components/perf-estimates.d771a94d.js";
 import {formatBytes, formatMs} from "../components/data-utils.e2caa41c.js";
-import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.363530d4.js";
+import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.d6dae979.js";
 
 const TRACE_ATTACHMENTS = {
   bad_head_size: FileAttachment({"name":"../../data/raw/traces/bad_head_size_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/bad_head_size_nsys.0e5fcf94.parquet","lastModified":1771465633642,"size":699507}, import.meta.url),
@@ -11,19 +11,19 @@ const TRACE_ATTACHMENTS = {
   compute_bound: FileAttachment({"name":"../../data/raw/traces/compute_bound_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/compute_bound_nsys.9be21553.parquet","lastModified":1771465633647,"size":1020491}, import.meta.url),
   deep_sequential: FileAttachment({"name":"../../data/raw/traces/deep_sequential_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/deep_sequential_nsys.4ed702eb.parquet","lastModified":1771465633653,"size":3186034}, import.meta.url),
   latency_bound: FileAttachment({"name":"../../data/raw/traces/latency_bound_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/latency_bound_nsys.5b9c4edd.parquet","lastModified":1771465633657,"size":1104236}, import.meta.url),
-  misaligned_dims: FileAttachment({"name":"../../data/raw/traces/misaligned_dims_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/misaligned_dims_nsys.e0e9fef3.parquet","lastModified":1771465633659,"size":834}, import.meta.url),
+  misaligned_dims: FileAttachment({"name":"../../data/raw/traces/misaligned_dims_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/misaligned_dims_nsys.accc5b6e.parquet","lastModified":1771606521284,"size":669386}, import.meta.url),
   model_a: FileAttachment({"name":"../../data/raw/traces/model_a_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/model_a_nsys.7c95f1f4.parquet","lastModified":1771465633660,"size":294932}, import.meta.url),
   model_b: FileAttachment({"name":"../../data/raw/traces/model_b_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/model_b_nsys.d909797c.parquet","lastModified":1771465633662,"size":1231233}, import.meta.url),
   vocab_bottleneck: FileAttachment({"name":"../../data/raw/traces/vocab_bottleneck_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/vocab_bottleneck_nsys.c6e0b393.parquet","lastModified":1771465633665,"size":509294}, import.meta.url),
   wide_ffn: FileAttachment({"name":"../../data/raw/traces/wide_ffn_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/wide_ffn_nsys.e3df5806.parquet","lastModified":1771465633667,"size":715444}, import.meta.url)
 };
 
-const TRACE_NAMES = Object.keys(TRACE_ATTACHMENTS);
-const EVENT_TYPES = ["kernel", "memcpy", "memset"];
+export const TRACE_NAMES = Object.keys(TRACE_ATTACHMENTS);
+export const EVENT_TYPES = ["kernel", "memcpy", "memset"];
 const traceCache = new Map();
 const traceLoadPromises = new Map();
 
-const TRACE_RESOURCE_CONFIGS = [
+export const TRACE_RESOURCE_CONFIGS = [
   {
     trace: "model_a",
     category: "baseline",
@@ -254,7 +254,7 @@ function debounce(fn, waitMs = 120) {
   };
 }
 
-async function loadTraceRows(traceName) {
+export async function loadTraceRows(traceName) {
   if (traceCache.has(traceName)) return traceCache.get(traceName);
   if (traceLoadPromises.has(traceName)) return traceLoadPromises.get(traceName);
 
@@ -295,7 +295,7 @@ async function loadTraceRows(traceName) {
   }
 }
 
-function aggregateSummary(rows) {
+export function aggregateSummary(rows) {
   return d3
     .rollups(
       rows,
@@ -310,7 +310,7 @@ function aggregateSummary(rows) {
     .sort((a, b) => d3.ascending(a.trace, b.trace) || d3.ascending(a.event_type, b.event_type));
 }
 
-function aggregateTimeline(rows, mode, laneStyle, rank, maxEvents, bucketMs, topLanes) {
+export function aggregateTimeline(rows, mode, laneStyle, rank, maxEvents, bucketMs, topLanes) {
   if (rows.length === 0) return {rows: [], laneCountTotal: 0, laneCountKept: 0};
 
   const ranked =
@@ -385,7 +385,7 @@ function aggregateTimeline(rows, mode, laneStyle, rank, maxEvents, bucketMs, top
   };
 }
 
-function aggregateKernels(rows, topK) {
+export function aggregateKernels(rows, topK) {
   const kernelRows = rows.filter((row) => row.event_type === "kernel");
 
   const byTraceKernel = d3
@@ -417,7 +417,7 @@ function aggregateKernels(rows, topK) {
   return byTraceKernel.filter((row) => topNames.includes(row.kernel_name));
 }
 
-function aggregateMemory(rows) {
+export function aggregateMemory(rows) {
   const memRows = rows.filter((row) => row.event_type === "memcpy" || row.event_type === "memset");
 
   return d3
@@ -435,7 +435,7 @@ function aggregateMemory(rows) {
     .sort((a, b) => d3.descending(a.total_duration_ms, b.total_duration_ms));
 }
 
-function resourceEnvelopeRows(selectedTraces) {
+export function resourceEnvelopeRows(selectedTraces) {
   return TRACE_RESOURCE_CONFIGS.filter((spec) => selectedTraces.includes(spec.trace)).map((spec) => {
     const dHead = spec.d_model % spec.n_heads === 0 ? spec.d_model / spec.n_heads : NaN;
     if (!Number.isFinite(dHead)) {

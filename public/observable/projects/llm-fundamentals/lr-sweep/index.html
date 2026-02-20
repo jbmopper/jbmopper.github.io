@@ -13,9 +13,9 @@
 <link rel="modulepreload" href="../../../_observablehq/client.cbf2d9f3.js">
 <link rel="modulepreload" href="../../../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../../../_import/embed/lr-sweep.c8c3a9aa.js">
+<link rel="modulepreload" href="../../../_import/embed/lr-sweep.0abe9ead.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib/tex.c79b643a.js">
-<link rel="modulepreload" href="../../../_import/components/dom-utils.363530d4.js">
+<link rel="modulepreload" href="../../../_import/components/dom-utils.d6dae979.js">
 <link rel="modulepreload" href="../../../_npm/@observablehq/plot@0.6.17/7c43807f.js">
 <link rel="modulepreload" href="../../../_npm/d3@7.9.0/e324157d.js">
 <link rel="modulepreload" href="../../../_npm/apache-arrow@21.1.0/63de76cd.js">
@@ -67,10 +67,10 @@ import {registerFile} from "../../../_observablehq/stdlib.43270668.js";
 registerFile("../../../data/raw/benchmarks/lr_sweeps_history.parquet", {"name":"../../../data/raw/benchmarks/lr_sweeps_history.parquet","path":"../../../_file/data/raw/benchmarks/lr_sweeps_history.4f809053.parquet","lastModified":1771468224300,"size":3312658});
 registerFile("../../../data/raw/benchmarks/lr_sweeps_main.parquet", {"name":"../../../data/raw/benchmarks/lr_sweeps_main.parquet","path":"../../../_file/data/raw/benchmarks/lr_sweeps_main.98e6db0c.parquet","lastModified":1771466904236,"size":15015});
 
-define({id: "1a7a153c", outputs: ["renderLrSweepFrontier","renderLrSweepSummaryTable","renderLrSweepThreshold","renderLrSweepHistory","renderLrSweepGradient","renderLrSweepPivot"], body: async () => {
-const {renderLrSweepFrontier, renderLrSweepSummaryTable, renderLrSweepThreshold, renderLrSweepHistory, renderLrSweepGradient, renderLrSweepPivot} = await import("../../../_import/embed/lr-sweep.c8c3a9aa.js");
+define({id: "c5f886df", outputs: ["renderLrSweepFrontier","renderLrSweepSummaryTable","renderLrSweepLrGradScatter","renderLrSweepLrClipHistogram","renderLrSweepThreshold","renderLrSweepHistory","renderLrSweepGradient","renderLrSweepPivot"], body: async () => {
+const {renderLrSweepFrontier, renderLrSweepSummaryTable, renderLrSweepLrGradScatter, renderLrSweepLrClipHistogram, renderLrSweepThreshold, renderLrSweepHistory, renderLrSweepGradient, renderLrSweepPivot} = await import("../../../_import/embed/lr-sweep.0abe9ead.js");
 
-return {renderLrSweepFrontier,renderLrSweepSummaryTable,renderLrSweepThreshold,renderLrSweepHistory,renderLrSweepGradient,renderLrSweepPivot};
+return {renderLrSweepFrontier,renderLrSweepSummaryTable,renderLrSweepLrGradScatter,renderLrSweepLrClipHistogram,renderLrSweepThreshold,renderLrSweepHistory,renderLrSweepGradient,renderLrSweepPivot};
 }});
 
 define({id: "11afead7", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
@@ -106,6 +106,129 @@ tex`1\times 10^{-3}`
 define({id: "a169abaf", inputs: ["renderLrSweepSummaryTable","display"], body: async (renderLrSweepSummaryTable,display) => {
 display(await(
 await renderLrSweepSummaryTable()
+))
+}});
+
+define({id: "c98a5019", inputs: ["renderLrSweepLrGradScatter","display"], body: async (renderLrSweepLrGradScatter,display) => {
+display(await(
+await renderLrSweepLrGradScatter()
+))
+}});
+
+define({id: "d03a7c91", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`1\times 10^{-2}`
+))
+}});
+
+define({id: "e07162ee", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`3\times 10^{-1}`
+))
+}});
+
+define({id: "26e5d7bb", inputs: ["renderLrSweepLrClipHistogram","display"], body: async (renderLrSweepLrClipHistogram,display) => {
+display(await(
+await renderLrSweepLrClipHistogram()
+))
+}});
+
+define({id: "11afead7-2", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`1\times 10^{-3}`
+))
+}});
+
+define({id: "303db986", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`2\times 10^{-3}`
+))
+}});
+
+define({id: "c67e6317", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`2\times 10^{-4}`
+))
+}});
+
+define({id: "303db986-1", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`2\times 10^{-3}`
+))
+}});
+
+define({id: "42de3a0d", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`\Delta`
+))
+}});
+
+define({id: "a2fb6ae5", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`\ell`
+))
+}});
+
+define({id: "42de3a0d-1", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`\Delta`
+))
+}});
+
+define({id: "815f512a", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`\rho`
+))
+}});
+
+define({id: "a2fb6ae5-1", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`\ell`
+))
+}});
+
+define({id: "90557cbf", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`\iota`
+))
+}});
+
+define({id: "84b14f2f", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex.block`f(\ell_\iota) = \begin{cases}
+-\ell_\iota &\text{if} \quad \rho \geq 0 \\
+\ell_\iota &\text{if} \quad  \rho < 0
+\end{cases}`
+))
+}});
+
+define({id: "4bf78fd7", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`\kappa > 1`
+))
+}});
+
+define({id: "760828c5", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`\Mu`
+))
+}});
+
+define({id: "d63d106e", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex.block`\Mu = \sum_{\iota} f(\ell_\iota) \kappa^\iota`
+))
+}});
+
+define({id: "beb6c7b6", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`\kappa`
+))
+}});
+
+define({id: "61eb764a", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`\kappa = 1.03`
 ))
 }});
 
@@ -164,46 +287,70 @@ await renderLrSweepPivot()
 <nav>
 <div>Contents</div>
 <ol>
-<li class="observablehq-secondary-link"><a href="#sweep-configuration">Sweep Configuration</a></li>
+<li class="observablehq-secondary-link"><a href="#sweep-configuration-and-summary">Sweep Configuration and Summary</a></li>
 </ol>
 </nav>
 </aside>
 <main id="observablehq-main" class="observablehq">
-<div class="observablehq observablehq--block"><!--:1a7a153c:--></div>
+<div class="observablehq observablehq--block"><!--:c5f886df:--></div>
 <h1 id="learning-rate-sweep-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#learning-rate-sweep-analysis">Learning Rate Sweep Analysis</a></h1>
 <h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
 <p>For the parameter sweep exercise, the learning rate was chosen as a target because it can be varied without altering more significant training performance aspects of the model such as dimensions.  It also provides an opportunity to observe training runs that are unstable.  The general goal was to find the higest maximum learning rate that exhibited stable training behavior.</p>
 <p>This exercise also provided an opportunity to become familiar with the WandB <a href="https://docs.wandb.ai/models/sweeps" target="_blank" rel="noopener noreferrer">sweeps api</a>, which provides easy access to advanced features such as hyperband early stopping and Bayesian parameter search schedulers.</p>
 <p>To review, the model's AdamW optimizer can accept a learning rate parameter which provides a bulk control to the size of the model parameter update.  This learning rate is set during training by a learning rate scheduler routine, which executes a linear warmup from 0 to the maximum LR over the input warmup iterations, then goes from the maximum LR to the minimum according to a cosine schedule over the remaining training iterations.</p>
 <p>As such, the maximum learning rate is the key variable.  The assignment default had this at <observablehq-loading></observablehq-loading><!--:11afead7:-->, with the minimum going down to <observablehq-loading></observablehq-loading><!--:9a030f7c:-->.  For the sweeps, we configured maximum rates to fall in a range between <observablehq-loading></observablehq-loading><!--:25748673:--> and <observablehq-loading></observablehq-loading><!--:d94f5ab5:-->.  In retrospect, since the <observablehq-loading></observablehq-loading><!--:11afead7-1:--> maximum learning rate was stable we could have used this as a floor, but since the sweeps were running locally overnight there was plenty of chance for the Bayesian algorithm to search in that area.</p>
-<h2 id="sweep-configuration" tabindex="-1"><a class="observablehq-header-anchor" href="#sweep-configuration">Sweep Configuration</a></h2>
-<p>Sweeps were set to run for a maximum of 1000 iterations with 100 iterations warmup.  Evaluation metrics such as eval loss were collected every 50 iterations, with early termination available after 250 iterations.</p>
+<h2 id="sweep-configuration-and-summary" tabindex="-1"><a class="observablehq-header-anchor" href="#sweep-configuration-and-summary">Sweep Configuration and Summary</a></h2>
+<p>An initial set of seeps were set to run for a maximum of 1000 iterations with 100 iterations warmup.  Evaluation metrics such as eval loss were collected every 50 iterations, with early termination available after 250 iterations.</p>
 <p>Early termination was handled by the Hyperband algorithm, however due to an inconsistency in the way number of iterations are tracked, with one eval loss only available for every 50 iterations, the early termination did not kick in.</p>
 <p>Nonetheless, 23 sweeps completed.  Here is a summary:</p>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:a169abaf:--></div>
-<p>For reference, here is the config used by the wandb sweeps API:</p>
-<pre data-language="yaml"><code class="language-yaml"><span class="hljs-attr">program:</span> <span class="hljs-string">cs336_basics/train_sweep.py</span>
-<span class="hljs-attr">method:</span> <span class="hljs-string">bayes</span>  <span class="hljs-comment"># Bayesian optimization for efficient hyperparameter search</span>
-<span class="hljs-attr">metric:</span>
-  <span class="hljs-attr">name:</span> <span class="hljs-string">Eval</span> <span class="hljs-string">Loss</span>
-  <span class="hljs-attr">goal:</span> <span class="hljs-string">minimize</span>
-
-<span class="hljs-attr">parameters:</span>
-  <span class="hljs-comment"># Learning rate parameters (stock model/settings, sweep LR only)</span>
-  <span class="hljs-attr">scheduler_lr_max:</span>
-    <span class="hljs-attr">distribution:</span> <span class="hljs-string">uniform</span>
-    <span class="hljs-attr">min:</span> <span class="hljs-number">5e-5</span>
-    <span class="hljs-attr">max:</span> <span class="hljs-number">5e-1</span>
-
-<span class="hljs-comment"># Early termination to stop poor performing runs</span>
-<span class="hljs-attr">early_terminate:</span>
-  <span class="hljs-attr">type:</span> <span class="hljs-string">hyperband</span>
-  <span class="hljs-attr">min_iter:</span> <span class="hljs-number">250</span>
-  <span class="hljs-attr">max_iter:</span> <span class="hljs-number">1000</span>
-  <span class="hljs-attr">eta:</span> <span class="hljs-number">3</span>
-  <span class="hljs-attr">s:</span> <span class="hljs-number">1</span>
-</code></pre>
-<p>It is therefore somewhat confusing that the Bayesian sweep algorithm rapidly diverged</p>
+<p>The outlier in run 4 jumps out.  This appears to have displayed a nearly-monotonic decline in both training loss and eval loss, and stabilized to a far lower eval loss than any other run.  We confirmed that our run settings, with should look at the last eval loss value available in the sweep and try to minimize it in its selection of the next run.</p>
+<p>Although the run 4 learning rate value is close to the bottom of the range, it is still within the range of allowed values, the use of a uniform sampling distribution instead of log-uniform caused values in this lower region to be underrepresented.</p>
+<p>Nonetheless, both the assignment handout and our research indicate that a maximum learning rate "at the edge of stability" is ideal due to a "catapult" effect that pushes parameters into a "wide", "general" valley of the loss landscape, so instead of treating the sweeps as finding difinitive max LR's, we look at each iteration's step-level LR and see what the corresponding gradient norm was, in order to orient ourselves towards the region with the desired almost-unstable characteristics.</p>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:c98a5019:--></div>
+<p>Based on this analysis, it seems  peaklearning rates in the range of <observablehq-loading></observablehq-loading><!--:d03a7c91:--> to <observablehq-loading></observablehq-loading><!--:e07162ee:--> might be good.  However, we should choose based on the impact the learning rate will actuall have on our model, which depends on the gradient norm clipping.</p>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:26e5d7bb:--></div>
+<p>The spikes between <observablehq-loading></observablehq-loading><!--:11afead7-2:--> and <observablehq-loading></observablehq-loading><!--:303db986:--> are due to the lack of learning rate datapoints, skewing the ratios.  The range from <observablehq-loading></observablehq-loading><!--:c67e6317:--> and <observablehq-loading></observablehq-loading><!--:303db986-1:--> seems promising, making the relative lack of datapoints there more unfortunate.  Let's run another round of sweeps, this time including other optmizer parameters.  But first, let's think of a metric that will deliver the behavior we want, so we can feed something useful into hyperband.</p>
+<p>We want a composite loss function that requires an increase in loss near the max LR and otherwise looks for low eval loss.  First, this means more data points, so tighetining the eval interval to once every 10 iterations.  Then we can create a rule, first to look at a rolling average of say 5 <observablehq-loading></observablehq-loading><!--:42de3a0d:-->s of eval loss as <observablehq-loading></observablehq-loading><!--:a2fb6ae5:-->, and the <observablehq-loading></observablehq-loading><!--:42de3a0d-1:--> of the learning rate between this and the last eval iteration as <observablehq-loading></observablehq-loading><!--:815f512a:-->. So one possibility is to track the rolling average <observablehq-loading></observablehq-loading><!--:a2fb6ae5-1:--> at any iteration <observablehq-loading></observablehq-loading><!--:90557cbf:--> (in the rolling average) and watch for increasing LR:</p>
+<span><observablehq-loading></observablehq-loading><!--:84b14f2f:--></span><p>and sum these to create the metric for the optimizer to try to minimize, which is pretty simple, and leaves it to the hyperband setup to manage early stopping, which we will want to be aggressive in order to weed out runs that don't display the desired initial increase in loss.  The concern becomes that, for the surviving runs, we want to more heavily weight the eval losses at the end of the run, and so we should add an exponential weighting factor <observablehq-loading></observablehq-loading><!--:4bf78fd7:-->. We thus end up with our Hyperband minimization objective <observablehq-loading></observablehq-loading><!--:760828c5:-->:</p>
+<span><observablehq-loading></observablehq-loading><!--:d63d106e:--></span><p>which raises the question, what's a good <observablehq-loading></observablehq-loading><!--:beb6c7b6:-->?  An automated assessment assuming 100 warmup iterations and 5 iterations between evals gives</p>
+<table>
+<thead>
+<tr>
+<th>κ</th>
+<th>last/first (κ^94)</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.01</td>
+<td>~2.5x</td>
+<td>Almost uniform -- warmup signal too dominant</td>
+</tr>
+<tr>
+<td>1.02</td>
+<td>~6.5x</td>
+<td>Mild tilt toward end</td>
+</tr>
+<tr>
+<td>1.03</td>
+<td>~16x</td>
+<td>Moderate -- warmup matters for Hyperband, final perf dominates total</td>
+</tr>
+<tr>
+<td>1.05</td>
+<td>~108x</td>
+<td>Aggressive -- warmup is noise, only last ~30 points matter</td>
+</tr>
+<tr>
+<td>1.10</td>
+<td>~12,000x</td>
+<td>Effectively only the final few points count</td>
+</tr>
+</tbody>
+</table>
+<p>ultimately preferring <observablehq-loading></observablehq-loading><!--:61eb764a:-->, assuming Hyperband first prunes at iteration 100</p>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:ec35833f:--></div>
 <h3 id="sweep-summary-statistics" tabindex="-1"><a class="observablehq-header-anchor" href="#sweep-summary-statistics">Sweep Summary Statistics</a></h3>
 <p>`</p>
@@ -217,7 +364,7 @@ await renderLrSweepPivot()
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:22d1e9c3:--></div>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-19T15:57:04">Feb 19, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-20T13:51:41">Feb 20, 2026</a>.</div>
 </footer>
 </div>
 </body>

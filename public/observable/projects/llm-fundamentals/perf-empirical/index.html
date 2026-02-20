@@ -13,10 +13,10 @@
 <link rel="modulepreload" href="../../../_observablehq/client.cbf2d9f3.js">
 <link rel="modulepreload" href="../../../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../../../_import/embed/perf-empirical.afc56bfd.js">
+<link rel="modulepreload" href="../../../_import/embed/perf-empirical.66e76430.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib/tex.c79b643a.js">
 <link rel="modulepreload" href="../../../_import/components/data-utils.e2caa41c.js">
-<link rel="modulepreload" href="../../../_import/components/dom-utils.363530d4.js">
+<link rel="modulepreload" href="../../../_import/components/dom-utils.d6dae979.js">
 <link rel="modulepreload" href="../../../_import/components/perf-estimates.d771a94d.js">
 <link rel="modulepreload" href="../../../_npm/@observablehq/plot@0.6.17/7c43807f.js">
 <link rel="modulepreload" href="../../../_npm/d3@7.9.0/e324157d.js">
@@ -123,7 +123,7 @@ tex`d_{ff}`
 }});
 
 define({id: "009ce9a3", outputs: ["renderPerfEmpiricalTrainBenchmark","renderPerfEmpiricalExpectedVsActual","renderPerfEmpiricalDeviceComparison","renderPerfEmpiricalModelSelection","renderPerfEmpiricalTrainingCurves"], body: async () => {
-const {renderPerfEmpiricalTrainBenchmark, renderPerfEmpiricalExpectedVsActual, renderPerfEmpiricalDeviceComparison, renderPerfEmpiricalModelSelection, renderPerfEmpiricalTrainingCurves} = await import("../../../_import/embed/perf-empirical.afc56bfd.js");
+const {renderPerfEmpiricalTrainBenchmark, renderPerfEmpiricalExpectedVsActual, renderPerfEmpiricalDeviceComparison, renderPerfEmpiricalModelSelection, renderPerfEmpiricalTrainingCurves} = await import("../../../_import/embed/perf-empirical.66e76430.js");
 
 return {renderPerfEmpiricalTrainBenchmark,renderPerfEmpiricalExpectedVsActual,renderPerfEmpiricalDeviceComparison,renderPerfEmpiricalModelSelection,renderPerfEmpiricalTrainingCurves};
 }});
@@ -281,7 +281,7 @@ display(curvesSection);
 <p>On the architectural front, the controlled comparison between "wide" and "deep" models confirmed established intuitions: the wider, shallower model offered rapid convergence but limited capacity, while the deeper model achieved a lower steady-state loss at the cost of longer training horizons. Taken together, these results show that while consumer silicon can support initial development, scaling model depth and performance requires both specialized hardware and careful architectural tuning.</p>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-19T15:57:04">Feb 19, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-20T13:51:41">Feb 20, 2026</a>.</div>
 </footer>
 </div>
 </body>

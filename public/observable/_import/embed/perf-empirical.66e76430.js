@@ -2,7 +2,7 @@ import {FileAttachment} from "../../_observablehq/stdlib.43270668.js";
 import * as Plot from "../../_npm/@observablehq/plot@0.6.17/7c43807f.js";
 import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
 import {formatMs, normalizeRunLabel} from "../components/data-utils.e2caa41c.js";
-import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.363530d4.js";
+import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.d6dae979.js";
 import {calculateForwardFlops, calculateMemoryAccounting, calculateModelParams, calculateTrainingStepFlops} from "../components/perf-estimates.d771a94d.js";
 
 const ATTACHMENTS = {
