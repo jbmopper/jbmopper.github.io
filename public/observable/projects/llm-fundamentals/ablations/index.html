@@ -4,20 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="generator" content="Observable Framework v1.13.3">
+<base href="/observable/projects/llm-fundamentals/ablations/">
 <title>Ablations | Project Writeup Sandbox</title>
 
 <link rel="preload" as="style" href="../../../_import/astro-bridge-theme.21c55a64.css">
+<link rel="preload" as="style" href="../../../_npm/katex@0.16.28/dist/katex.min.css">
 <link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.21c55a64.css">
+<link rel="stylesheet" type="text/css" href="../../../_npm/katex@0.16.28/dist/katex.min.css">
 <link rel="modulepreload" href="../../../_observablehq/client.cbf2d9f3.js">
 <link rel="modulepreload" href="../../../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../../../_import/embed/ablations.9c951e89.js">
+<link rel="modulepreload" href="../../../_import/embed/ablations.5d8b1390.js">
+<link rel="modulepreload" href="../../../_observablehq/stdlib/tex.c79b643a.js">
 <link rel="modulepreload" href="../../../_import/components/data-utils.e2caa41c.js">
 <link rel="modulepreload" href="../../../_import/components/dom-utils.d6dae979.js">
 <link rel="modulepreload" href="../../../_npm/@observablehq/plot@0.6.17/7c43807f.js">
 <link rel="modulepreload" href="../../../_npm/d3@7.9.0/e324157d.js">
 <link rel="modulepreload" href="../../../_npm/apache-arrow@21.1.0/63de76cd.js">
 <link rel="modulepreload" href="../../../_npm/parquet-wasm@0.7.1/68d81b68.js">
+<link rel="modulepreload" href="../../../_npm/katex@0.16.28/f76b8a99.js">
 <link rel="modulepreload" href="../../../_npm/isoformat@0.2.1/18cbf477.js">
 <link rel="modulepreload" href="../../../_npm/interval-tree-1d@1.0.4/53fe8176.js">
 <link rel="modulepreload" href="../../../_npm/d3-array@3.2.4/e93ca09f.js">
@@ -64,27 +69,45 @@ import {registerFile} from "../../../_observablehq/stdlib.43270668.js";
 registerFile("../../../data/raw/benchmarks/ablations_history.parquet", {"name":"../../../data/raw/benchmarks/ablations_history.parquet","path":"../../../_file/data/raw/benchmarks/ablations_history.c15e6588.parquet","lastModified":1771468208647,"size":2777049});
 registerFile("../../../data/raw/benchmarks/ablations_main.parquet", {"name":"../../../data/raw/benchmarks/ablations_main.parquet","path":"../../../_file/data/raw/benchmarks/ablations_main.912ec8a5.parquet","lastModified":1771466904212,"size":26405});
 
-define({id: "b2aacf6f", outputs: ["renderAblationsSummary","renderAblationsOverviewCharts","renderAblationsHistory"], body: async () => {
-const {renderAblationsSummary, renderAblationsOverviewCharts, renderAblationsHistory} = await import("../../../_import/embed/ablations.9c951e89.js");
+define({id: "e3b26b0a", outputs: ["renderAblationsOverviewCharts","renderAblationSection"], body: async () => {
+const {renderAblationsOverviewCharts, renderAblationSection} = await import("../../../_import/embed/ablations.5d8b1390.js");
 
-return {renderAblationsSummary,renderAblationsOverviewCharts,renderAblationsHistory};
+return {renderAblationsOverviewCharts,renderAblationSection};
 }});
 
-define({id: "98c18ac6", inputs: ["renderAblationsSummary","display"], body: async (renderAblationsSummary,display) => {
+define({id: "5abd39fc", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
 display(await(
-await renderAblationsSummary()
+tex`\ x \cdot \sigma(x)`
 ))
 }});
 
-define({id: "b01784e5", inputs: ["renderAblationsOverviewCharts","display"], body: async (renderAblationsOverviewCharts,display) => {
+define({id: "f0ad8393", inputs: ["renderAblationsOverviewCharts","display"], body: async (renderAblationsOverviewCharts,display) => {
 display(await(
-await renderAblationsOverviewCharts()
+await renderAblationsOverviewCharts({showHeading: false})
 ))
 }});
 
-define({id: "8eae3cbf", inputs: ["renderAblationsHistory","display"], body: async (renderAblationsHistory,display) => {
+define({id: "b6755adb", inputs: ["renderAblationSection","display"], body: async (renderAblationSection,display) => {
 display(await(
-await renderAblationsHistory()
+await renderAblationSection({matchAny: ["post norm", "post"], showHeading: false})
+))
+}});
+
+define({id: "4ba6b9a1", inputs: ["renderAblationSection","display"], body: async (renderAblationSection,display) => {
+display(await(
+await renderAblationSection({matchAny: ["silu"], showHeading: false})
+))
+}});
+
+define({id: "a6fa8581", inputs: ["renderAblationSection","display"], body: async (renderAblationSection,display) => {
+display(await(
+await renderAblationSection({matchAny: ["nope", "no rope", "no_rope"], useRope: false, showHeading: false})
+))
+}});
+
+define({id: "ab5445c7", inputs: ["renderAblationSection","display"], body: async (renderAblationSection,display) => {
+display(await(
+await renderAblationSection({matchAny: ["no norm", "no_norm", "without norm"], showHeading: false})
 ))
 }});
 
@@ -107,17 +130,42 @@ await renderAblationsHistory()
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <header id="observablehq-header">
-<nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">Home</a><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><details id="portfolio-current-project-menu" class="portfolio-project-menu"><summary class="portfolio-nav-link portfolio-project-toggle">LLM Fundamentals</summary><div class="portfolio-project-dropdown"><a class="portfolio-project-item" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/');">Introduction</a><a class="portfolio-project-item" href="../perf-expected/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/perf-expected/');">Architecture and Expected Performance Analysis</a><a class="portfolio-project-item" href="../perf-empirical/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/perf-empirical/');">Benchmarks and Empirical Performance Analysis</a><a class="portfolio-project-item" href="../nsys/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/nsys/');">Nvidia CUDA Nsys Trace Analysis</a><a class="portfolio-project-item" href="../lr-sweep/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/lr-sweep/');">Learning Parameter Sweeps</a><a class="portfolio-project-item" href="./" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/ablations/');">Architectural Variations (Ablations)</a></div></details></nav><script>(function(){const path=window.location.pathname.replace(/^\/observable(?=\/|$)/,""); const menu=document.getElementById("portfolio-current-project-menu"); if(menu && /^\/projects\/?$/.test(path)){menu.remove();} if(menu){document.addEventListener("click",(event)=>{if(!menu.hasAttribute("open")) return; if(!menu.contains(event.target)) menu.removeAttribute("open");}); document.addEventListener("keydown",(event)=>{if(event.key==="Escape") menu.removeAttribute("open");});} for(const id of ["observablehq-sidebar-toggle","observablehq-sidebar-backdrop","observablehq-sidebar"]){const node=document.getElementById(id); if(node) node.remove();}})();</script>
+<nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">Home</a><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><details id="portfolio-current-project-menu" class="portfolio-project-menu"><summary class="portfolio-nav-link portfolio-project-toggle">LLM Fundamentals</summary><div class="portfolio-project-dropdown"><a class="portfolio-project-item" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/');">Introduction</a><a class="portfolio-project-item" href="../perf-expected/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/perf-expected/');">Architecture and Expected Performance Analysis</a><a class="portfolio-project-item" href="../perf-empirical/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/perf-empirical/');">Benchmarks and Empirical Performance Analysis</a><a class="portfolio-project-item" href="../nsys/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/nsys/');">Nvidia CUDA Nsys Trace Analysis</a><a class="portfolio-project-item" href="../lr-sweep/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/lr-sweep/');">Learning Parameter Sweeps</a><a class="portfolio-project-item" href="./" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/ablations/');">Architectural Variations (Ablations)</a></div></details></nav><script>(function(){const path=window.location.pathname.replace(/^\/observable(?=\/|$)/,""); const menu=document.getElementById("portfolio-current-project-menu"); if(menu && /^\/projects(?:\/index\.html)?\/?$/.test(path)){menu.remove();} if(menu){document.addEventListener("click",(event)=>{if(!menu.hasAttribute("open")) return; if(!menu.contains(event.target)) menu.removeAttribute("open");}); document.addEventListener("keydown",(event)=>{if(event.key==="Escape") menu.removeAttribute("open");});} for(const id of ["observablehq-sidebar-toggle","observablehq-sidebar-backdrop","observablehq-sidebar"]){const node=document.getElementById(id); if(node) node.remove();}})();</script>
 </header>
 <main id="observablehq-main" class="observablehq">
+<div class="observablehq observablehq--block"><!--:e3b26b0a:--></div>
 <h1 id="ablation-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#ablation-analysis">Ablation Analysis</a></h1>
-<div class="observablehq observablehq--block"><!--:b2aacf6f:--></div>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:98c18ac6:--></div>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:b01784e5:--></div>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:8eae3cbf:--></div>
+<h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
+<p>Ablations are architectural variations.  In the context of the source assignment, these were intended to test some basic variations.  We'll to through these and describe what they are and what the expected effect is, then proceed to examining the empirical results.</p>
+<ul>
+<li><strong>Post-Norm:</strong> The post-norm ablation alters the moves the RMSNorm within the transformer block from before the attention computation to after, that is between the attention calcuation and the feedforward step.  This is expected to slightly degrate model stability, but not have a major effect.</li>
+<li><strong>SiLU:</strong> The SiLU ablation relaces the more complex SwiGLU with a SiLU, that is, it removes the "gating" componentise product and its associated weights and uses just the "Swish" function,  <observablehq-loading></observablehq-loading><!--:5abd39fc:-->.  This is expected to slightly decrease convergence rate and increase final losses, as there are fewer "levers" for backpropagation to "pull".</li>
+<li><strong>NoPE:</strong> A fun name for excluding the RoPE postional encoding mechanism.  Given the models are trained with a sequence length of 256, it's not clear how much impact this will have.  But overall we expect increased losses.</li>
+<li><strong>No Norm:</strong> Removing RMS Norm steps from the computation.  This is the ablation expected to have the greatest impact, as "norm early, norm often" has become the rule of thumb for a reason: the persistent conditioning of the residual stream is known to play a central role in preventing exploding gradients.  We expect the model to be unstable.</li>
+</ul>
+<h2 id="results" tabindex="-1"><a class="observablehq-header-anchor" href="#results">Results</a></h2>
+<p>Here is a a set of charts showing all tests:</p>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:f0ad8393:--></div>
+<p>Let's dig in to each case.</p>
+<h3 id="post-norm" tabindex="-1"><a class="observablehq-header-anchor" href="#post-norm">Post-Norm</a></h3>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:b6755adb:--></div>
+<p>As expected, in our small model post-norm has little impact on losses, however we see a persistently higher gradient norm relative to baseline.  This ablation kept the final RMS Norm before the "language head" up-projection, so the difference is likely due to the un-normed inputs to the attention mechanism increasing gradient sizes, a consequence of having larger variances flowing in to heavy computations tracked by the auto-differentiation compute graph.</p>
+<!--
+Add some sort of statistical significnce test or other analysis on the grad norm difference
+-->
+<h3 id="si-lu" tabindex="-1"><a class="observablehq-header-anchor" href="#si-lu">SiLU</a></h3>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:4ba6b9a1:--></div>
+<p>As expected, the SiLU ablation displays higher losses.</p>
+<h3 id="no-pe" tabindex="-1"><a class="observablehq-header-anchor" href="#no-pe">NoPE</a></h3>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:a6fa8581:--></div>
+<p>This is probably the most interesting ablation.  We might expect relatively minor changes to</p>
+<h3 id="no-norm" tabindex="-1"><a class="observablehq-header-anchor" href="#no-norm">No Norm</a></h3>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:ab5445c7:--></div>
+<h2 id="conclusion" tabindex="-1"><a class="observablehq-header-anchor" href="#conclusion">Conclusion</a></h2>
+<p>As expected,</p>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-20T13:51:41">Feb 20, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-22T13:24:19">Feb 22, 2026</a>.</div>
 </footer>
 </div>
 </body>
