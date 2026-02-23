@@ -14,7 +14,7 @@
 <link rel="modulepreload" href="../../../_observablehq/client.cbf2d9f3.js">
 <link rel="modulepreload" href="../../../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../../../_import/embed/ablations.5d8b1390.js">
+<link rel="modulepreload" href="../../../_import/embed/ablations.69487b01.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib/tex.c79b643a.js">
 <link rel="modulepreload" href="../../../_import/components/data-utils.e2caa41c.js">
 <link rel="modulepreload" href="../../../_import/components/dom-utils.d6dae979.js">
@@ -70,7 +70,7 @@ registerFile("../../../data/raw/benchmarks/ablations_history.parquet", {"name":"
 registerFile("../../../data/raw/benchmarks/ablations_main.parquet", {"name":"../../../data/raw/benchmarks/ablations_main.parquet","path":"../../../_file/data/raw/benchmarks/ablations_main.912ec8a5.parquet","lastModified":1771466904212,"size":26405});
 
 define({id: "e3b26b0a", outputs: ["renderAblationsOverviewCharts","renderAblationSection"], body: async () => {
-const {renderAblationsOverviewCharts, renderAblationSection} = await import("../../../_import/embed/ablations.5d8b1390.js");
+const {renderAblationsOverviewCharts, renderAblationSection} = await import("../../../_import/embed/ablations.69487b01.js");
 
 return {renderAblationsOverviewCharts,renderAblationSection};
 }});
@@ -136,36 +136,38 @@ await renderAblationSection({matchAny: ["no norm", "no_norm", "without norm"], s
 <div class="observablehq observablehq--block"><!--:e3b26b0a:--></div>
 <h1 id="ablation-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#ablation-analysis">Ablation Analysis</a></h1>
 <h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
-<p>Ablations are architectural variations.  In the context of the source assignment, these were intended to test some basic variations.  We'll to through these and describe what they are and what the expected effect is, then proceed to examining the empirical results.</p>
+<p>Ablations are structural or architectural variations of a base model. In the context of the source assignment, these were intended to test some foundational modifications to the transformer architecture. We'll walk through these variations, describe what they entail and what their expected effect is, and then proceed to examining the empirical results from our training runs.</p>
 <ul>
-<li><strong>Post-Norm:</strong> The post-norm ablation alters the moves the RMSNorm within the transformer block from before the attention computation to after, that is between the attention calcuation and the feedforward step.  This is expected to slightly degrate model stability, but not have a major effect.</li>
-<li><strong>SiLU:</strong> The SiLU ablation relaces the more complex SwiGLU with a SiLU, that is, it removes the "gating" componentise product and its associated weights and uses just the "Swish" function,  <observablehq-loading></observablehq-loading><!--:5abd39fc:-->.  This is expected to slightly decrease convergence rate and increase final losses, as there are fewer "levers" for backpropagation to "pull".</li>
-<li><strong>NoPE:</strong> A fun name for excluding the RoPE postional encoding mechanism.  Given the models are trained with a sequence length of 256, it's not clear how much impact this will have.  But overall we expect increased losses.</li>
-<li><strong>No Norm:</strong> Removing RMS Norm steps from the computation.  This is the ablation expected to have the greatest impact, as "norm early, norm often" has become the rule of thumb for a reason: the persistent conditioning of the residual stream is known to play a central role in preventing exploding gradients.  We expect the model to be unstable.</li>
+<li><strong>Post-Norm:</strong> The post-norm ablation moves the RMSNorm within the transformer block from before the attention computation (pre-norm) to after it—specifically, between the attention calculation and the feedforward step. This is expected to slightly degrade model stability by exposing the attention mechanism to un-normalized variance, but it shouldn't have a catastrophic effect on overall convergence for smaller models.</li>
+<li><strong>SiLU:</strong> The SiLU ablation replaces the more complex SwiGLU activation function with a standard SiLU. That is, it removes the "gating" componentwise product and its associated weight matrix, relying solely on the "Swish" function, <observablehq-loading></observablehq-loading><!--:5abd39fc:-->. Because this simplifies the feedforward network and reduces the overall parameter count, it provides fewer "levers" for backpropagation to pull. Consequently, we expect this to slightly decrease the convergence rate and lead to a higher final loss.</li>
+<li><strong>NoPE:</strong> A fun name for excluding the RoPE (Rotary Position Embedding) mechanism altogether. Given our models are trained with a relatively short sequence length of 256, it's an open question how much impact the lack of explicit positional information will have. Nevertheless, we generally expect increased losses since the model must infer positional relationships purely from context.</li>
+<li><strong>No Norm:</strong> This ablation removes the RMS Norm steps from the computation entirely. This variation is expected to have the most dramatic impact, as the "norm early, norm often" heuristic has become the rule of thumb for a reason: consistent conditioning of the residual stream plays a central role in preventing exploding gradients. We expect the model training to be highly unstable, potentially leading to a complete crash.</li>
 </ul>
 <h2 id="results" tabindex="-1"><a class="observablehq-header-anchor" href="#results">Results</a></h2>
-<p>Here is a a set of charts showing all tests:</p>
+<p>Here is a set of charts showing all tests:</p>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:f0ad8393:--></div>
 <p>Let's dig in to each case.</p>
 <h3 id="post-norm" tabindex="-1"><a class="observablehq-header-anchor" href="#post-norm">Post-Norm</a></h3>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:b6755adb:--></div>
-<p>As expected, in our small model post-norm has little impact on losses, however we see a persistently higher gradient norm relative to baseline.  This ablation kept the final RMS Norm before the "language head" up-projection, so the difference is likely due to the un-normed inputs to the attention mechanism increasing gradient sizes, a consequence of having larger variances flowing in to heavy computations tracked by the auto-differentiation compute graph.</p>
+<p>As expected, in our small model post-norm has little impact on the final loss; however, we see a persistently higher gradient norm relative to the baseline. This ablation retained the final RMS Norm before the "language head" up-projection, so the observed difference is likely due to the un-normalized inputs entering the attention mechanism. This naturally increases the scale of the gradients—a direct consequence of having larger variances flowing into heavy computations that are tracked by the auto-differentiation compute graph.</p>
 <!--
 Add some sort of statistical significnce test or other analysis on the grad norm difference
 -->
 <h3 id="si-lu" tabindex="-1"><a class="observablehq-header-anchor" href="#si-lu">SiLU</a></h3>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:4ba6b9a1:--></div>
-<p>As expected, the SiLU ablation displays higher losses.</p>
+<p>As expected, the SiLU ablation displays noticeably higher losses compared to the baseline, while the gradient norm remains relatively low and stable. The lack of a gating mechanism restricts the network's expressivity, confirming that the additional parameters in SwiGLU meaningfully contribute to the model's ability to minimize loss.</p>
 <h3 id="no-pe" tabindex="-1"><a class="observablehq-header-anchor" href="#no-pe">NoPE</a></h3>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:a6fa8581:--></div>
-<p>This is probably the most interesting ablation.  We might expect relatively minor changes to</p>
+<p>This is probably the most interesting ablation. We might initially expect relatively minor changes to the observed metrics given the small sequence length. However, we see that losses start to climb higher than even the non-normed run by iteration 300, and ultimately remain higher than all other ablations throughout the rest of the run. Similarly, the gradient norm is elevated compared to other pre-normed runs, suggesting that without rotary embeddings, the attention mechanism struggles to efficiently route information, leading to less stable and less effective training.</p>
 <h3 id="no-norm" tabindex="-1"><a class="observablehq-header-anchor" href="#no-norm">No Norm</a></h3>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:ab5445c7:--></div>
+<p>Removing normalization entirely, unsurprisingly, caused the training to destabilize and crash. Around iteration 600, the model experiences a small spike in the gradient norm, followed by a larger spike, and then a massive spike, after which the loss (technically, the perplexity) experienced a math range overflow and the run crashed. This catastrophic failure is clearly reflected in the loss metrics, which display a very sharp, irrecoverable spike, illustrating the necessity of layer normalization, and matrix conditioning more generally, for stable deep learning.</p>
 <h2 id="conclusion" tabindex="-1"><a class="observablehq-header-anchor" href="#conclusion">Conclusion</a></h2>
-<p>As expected,</p>
+<p>Most of our empirical results aligned well with theoretical expectations. The most interesting finding was from the NoPE (No Positional Encoding) ablation, which demonstrated a significant and persistent increase in loss during the asymptotic phase of training. This strongly suggests that the relative positional information provided by the RoPE mechanism plays a crucial role in allowing the attention mechanism to properly organize and process sequence information throughout the training process, even for short sequence lengths.</p>
+<p>Furthermore, the spectacular failure of the No Norm ablation serves as a clear illustration of why normalization techniques like RMSNorm are ubiquitous in modern transformer architectures. Without them, the delicate balance of forward activations and backward gradients quickly spirals out of control, highlighting the importance of persistent residual stream conditioning in preventing exploding gradients. Ultimately, these ablations validate the standard architectural choices in modern LLMs, proving that each component—from gating mechanisms to positional encodings and layer normalization—serves a distinct and necessary purpose for stable and efficient training.</p>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-22T13:24:19">Feb 22, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-22T17:32:13">Feb 22, 2026</a>.</div>
 </footer>
 </div>
 </body>

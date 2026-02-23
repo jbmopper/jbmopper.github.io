@@ -9,6 +9,8 @@ const ATTACHMENTS = {
   history: FileAttachment({"name":"../../data/raw/benchmarks/ablations_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/ablations_history.c15e6588.parquet","lastModified":1771468208647,"size":2777049}, import.meta.url)
 };
 
+const EVAL_LOSS_CURVE = "catmull-rom";
+
 let ablationDataPromise;
 
 function el(tag, text) {
@@ -136,6 +138,49 @@ function syncRangeControl(control, min, max, step, value) {
   setRangeOutput(control);
 }
 
+function createLogMappedRangeControl(labelText, min, max, value) {
+  const wrapper = el("label");
+  wrapper.style.display = "flex";
+  wrapper.style.alignItems = "center";
+  wrapper.style.gap = "0.5rem";
+
+  const input = el("input");
+  input.type = "range";
+  input.min = "0";
+  input.max = "1000";
+  input.step = "1";
+
+  const output = el("output", "");
+  wrapper.append(document.createTextNode(labelText), input, output);
+  const control = {node: wrapper, input, output, _min: 1e-6, _max: 1, _logMin: Math.log(1e-6), _logMax: Math.log(1)};
+  setLogMappedRangeBounds(control, min, max, value);
+  return control;
+}
+
+function getLogMappedRangeValue(control) {
+  const pos = Number(control.input.value);
+  const t = clamp((pos - 0) / 1000, 0, 1);
+  return Math.exp(control._logMin + t * (control._logMax - control._logMin));
+}
+
+function setLogMappedRangeOutput(control, value = getLogMappedRangeValue(control)) {
+  control.output.textContent = Number.isFinite(value) ? d3.format(".6~g")(value) : "n/a";
+}
+
+function setLogMappedRangeBounds(control, min, max, value) {
+  const safeMin = Math.max(Number(min) || 1e-6, 1e-12);
+  const safeMax = Math.max(Number(max) || safeMin * 2, safeMin * 1.000001);
+  control._min = safeMin;
+  control._max = safeMax;
+  control._logMin = Math.log(safeMin);
+  control._logMax = Math.log(safeMax);
+  const clampedValue = clamp(Number(value) || safeMax, safeMin, safeMax);
+  const span = control._logMax - control._logMin;
+  const t = span > 0 ? (Math.log(clampedValue) - control._logMin) / span : 1;
+  control.input.value = String(Math.round(clamp(t, 0, 1) * 1000));
+  setLogMappedRangeOutput(control, clampedValue);
+}
+
 function isFinitePositive(value) {
   return Number.isFinite(value) && Number(value) > 0;
 }
@@ -158,8 +203,20 @@ function yTopBounds(values) {
   return {min, max, step, initial};
 }
 
-function createYAxisControls(labelPrefix, values, defaultScale = "linear", defaultMax) {
-  const bounds = yTopBounds(values);
+function applyYAxisBoundsOptions(bounds, options = {}) {
+  if (!options || typeof options !== "object") return bounds;
+  const next = {...bounds};
+  if (Number.isFinite(Number(options.stepMultiplier)) && Number(options.stepMultiplier) > 0) {
+    next.step = bounds.step * Number(options.stepMultiplier);
+  }
+  if (Number.isFinite(Number(options.minStep)) && Number(options.minStep) > 0) {
+    next.step = Math.max(next.step, Number(options.minStep));
+  }
+  return next;
+}
+
+function createYAxisControls(labelPrefix, values, defaultScale = "linear", defaultMax, boundsOptions = {}) {
+  const bounds = applyYAxisBoundsOptions(yTopBounds(values), boundsOptions);
   const yScaleControl = selectControl(
     `${labelPrefix} Y scale`,
     [
@@ -187,11 +244,18 @@ function buildYAxisConfig(values, label, yScale, yMax) {
   return {label, grid: true, domain: [min, max]};
 }
 
-function syncYMaxControl(yMaxControl, values, autoScale = true) {
-  const bounds = yTopBounds(values);
+function syncYMaxControl(yMaxControl, values, autoScale = true, boundsOptions = {}) {
+  const bounds = applyYAxisBoundsOptions(yTopBounds(values), boundsOptions);
   const current = Number(yMaxControl.input.value);
   const nextValue = autoScale ? bounds.initial : clamp(current, bounds.min, bounds.max);
   syncRangeControl(yMaxControl, bounds.min, bounds.max, bounds.step, nextValue);
+}
+
+function syncLogYMaxControl(yMaxControl, values, autoScale = true, boundsOptions = {}) {
+  const bounds = applyYAxisBoundsOptions(yTopBounds(values), boundsOptions);
+  const current = getLogMappedRangeValue(yMaxControl);
+  const nextValue = autoScale ? bounds.initial : clamp(current, bounds.min, bounds.max);
+  setLogMappedRangeBounds(yMaxControl, bounds.min, bounds.max, nextValue);
 }
 
 function buildXAxisConfig(rows, label = "Step") {
@@ -205,15 +269,49 @@ function buildXAxisConfig(rows, label = "Step") {
   return {label, grid: true, domain: [min, max], tickValues, tickFormat: d3.format(",d")};
 }
 
-function trimPoints(rows, excludeStartCount, excludeEndCount) {
+function computeStepWindow(referenceRows, excludeStartCount, excludeEndCount) {
+  const steps = Array.from(
+    new Set(referenceRows.map((row) => Number(row.step)).filter((value) => Number.isFinite(value)))
+  ).sort(d3.ascending);
+  if (steps.length === 0) return null;
+
+  const start = Math.max(0, Math.min(excludeStartCount, steps.length));
+  const end = Math.max(0, Math.min(excludeEndCount, steps.length - start));
+  if (start + end >= steps.length) return null;
+  return {
+    min: steps[start],
+    max: steps[steps.length - 1 - end]
+  };
+}
+
+function trimPointsToWindow(rows, stepWindow) {
   const ordered = rows
     .filter((row) => Number.isFinite(row.step))
     .sort((a, b) => d3.ascending(a.step, b.step));
+  if (ordered.length === 0 || !stepWindow) return [];
+  return ordered.filter((row) => row.step >= stepWindow.min && row.step <= stepWindow.max);
+}
 
-  if (ordered.length === 0) return ordered;
-  const start = Math.max(0, Math.min(excludeStartCount, ordered.length));
-  const end = Math.max(0, Math.min(excludeEndCount, ordered.length - start));
-  return ordered.slice(start, ordered.length - end);
+function trimPoints(rows, excludeStartCount, excludeEndCount, referenceRows = rows) {
+  const stepWindow = computeStepWindow(referenceRows, excludeStartCount, excludeEndCount);
+  return trimPointsToWindow(rows, stepWindow);
+}
+
+function smoothEwmaBySeries(rows, alpha = 0.08) {
+  const a = Math.max(0.005, Math.min(1, Number(alpha) || 0.08));
+  const grouped = d3.group(rows, (row) => row.series_label);
+  const out = [];
+  for (const seriesRows of grouped.values()) {
+    const ordered = [...seriesRows].sort((aRow, bRow) => d3.ascending(aRow.step, bRow.step));
+    let smoothed;
+    for (const row of ordered) {
+      const value = Number(row.value);
+      if (!Number.isFinite(value)) continue;
+      smoothed = smoothed == null ? value : a * value + (1 - a) * smoothed;
+      out.push({...row, value: smoothed});
+    }
+  }
+  return out;
 }
 
 function boolLikeLabel(value) {
@@ -296,8 +394,9 @@ function runMatchesOptions(runName, summary, options = {}) {
 
 function plotLossAcrossAblations(historyByRun, runNames, mainByRun, excludeStart, excludeEnd, yScale = "linear", yMax) {
   const warmRunColors = d3.quantize(d3.interpolateWarm, Math.max(runNames.length, 2)).slice(0, runNames.length);
+  const referenceRows = runNames.flatMap((runName) => historyByRun.get(runName) || []);
   const rows = runNames.flatMap((runName) => {
-    const trimmed = trimPoints(historyByRun.get(runName) || [], excludeStart, excludeEnd);
+    const trimmed = trimPoints(historyByRun.get(runName) || [], excludeStart, excludeEnd, referenceRows);
     return trimmed
       .filter((row) => Number.isFinite(row.step) && isFinitePositive(row.loss))
       .map((row) => ({
@@ -339,13 +438,14 @@ function plotEvalLossAcrossAblations(
   mainByRun,
   excludeStart,
   excludeEnd,
-  splineCurve,
+  evalLossCurve = EVAL_LOSS_CURVE,
   yScale = "linear",
   yMax
 ) {
   const warmRunColors = d3.quantize(d3.interpolateWarm, Math.max(runNames.length, 2)).slice(0, runNames.length);
+  const referenceRows = runNames.flatMap((runName) => historyByRun.get(runName) || []);
   const rows = runNames.flatMap((runName) => {
-    const trimmed = trimPoints(historyByRun.get(runName) || [], excludeStart, excludeEnd);
+    const trimmed = trimPoints(historyByRun.get(runName) || [], excludeStart, excludeEnd, referenceRows);
     return trimmed
       .filter((row) => Number.isFinite(row.step) && isFinitePositive(row.eval_loss))
       .map((row) => ({
@@ -370,7 +470,7 @@ function plotEvalLossAcrossAblations(
         x: "step",
         y: "eval_loss",
         stroke: "run_name",
-        curve: splineCurve,
+        curve: evalLossCurve,
         tip: true,
         title: (d) => {
           const label = d.run_label ? `${d.run_label} (${d.run_name})` : d.run_name;
@@ -383,8 +483,9 @@ function plotEvalLossAcrossAblations(
 
 function plotGradNormAcrossAblations(historyByRun, runNames, mainByRun, excludeStart, excludeEnd, yScale = "linear", yMax) {
   const warmRunColors = d3.quantize(d3.interpolateWarm, Math.max(runNames.length, 2)).slice(0, runNames.length);
+  const referenceRows = runNames.flatMap((runName) => historyByRun.get(runName) || []);
   const rows = runNames.flatMap((runName) => {
-    const trimmed = trimPoints(historyByRun.get(runName) || [], excludeStart, excludeEnd);
+    const trimmed = trimPoints(historyByRun.get(runName) || [], excludeStart, excludeEnd, referenceRows);
     return trimmed
       .filter((row) => Number.isFinite(row.step) && isFinitePositive(row.grad_norm_unclipped))
       .map((row) => ({
@@ -428,9 +529,10 @@ function plotGradNormAcrossAblations(historyByRun, runNames, mainByRun, excludeS
   });
 }
 
-function gradNormStabilityRows(historyByRun, runNames, mainByRun, excludeStart, excludeEnd, highPercentile) {
+function gradNormStabilityRows(historyByRun, runNames, mainByRun, excludeStart, excludeEnd, highPercentile, referenceRows) {
   return runNames.map((runName) => {
-    const trimmed = trimPoints(historyByRun.get(runName) || [], excludeStart, excludeEnd);
+    const runRows = historyByRun.get(runName) || [];
+    const trimmed = trimPoints(runRows, excludeStart, excludeEnd, referenceRows || runRows);
     const values = trimmed
       .map((row) => Number(row.grad_norm_unclipped))
       .filter((value) => isFinitePositive(value))
@@ -579,8 +681,8 @@ async function loadAblationData() {
   return ablationDataPromise;
 }
 
-function plotLossCurves(historyRows, evalSplineCurve, yScale = "linear", yMax) {
-  const lossRows = historyRows
+function plotLossCurves(historyRows, yScale = "linear", yMax, lossSmoothAlpha = 0.08, evalLossCurve = EVAL_LOSS_CURVE) {
+  const lossRowsRaw = historyRows
     .filter((row) => Number.isFinite(row.step) && isFinitePositive(row.loss))
     .map((row) => ({
       run_name: row.run_name,
@@ -589,6 +691,10 @@ function plotLossCurves(historyRows, evalSplineCurve, yScale = "linear", yMax) {
       metric: "Loss",
       value: row.loss
     }));
+  const lossRows = smoothEwmaBySeries(lossRowsRaw, lossSmoothAlpha).map((row) => ({
+    ...row,
+    series_key: `${row.series_label} | Loss`
+  }));
   const evalLossRows = historyRows
     .filter((row) => Number.isFinite(row.step) && isFinitePositive(row.eval_loss))
     .map((row) => ({
@@ -596,33 +702,27 @@ function plotLossCurves(historyRows, evalSplineCurve, yScale = "linear", yMax) {
       series_label: row.series_label || row.run_name,
       step: row.step,
       metric: "Eval Loss",
-      value: row.eval_loss
+      value: row.eval_loss,
+      series_key: `${row.series_label} | Eval Loss`
     }));
 
   if (lossRows.length === 0 && evalLossRows.length === 0) return emptyState("No finite Loss / Eval Loss history for this ablation.");
   const allRows = [...lossRows, ...evalLossRows];
-  const seriesLabels = Array.from(new Set(allRows.map((row) => row.series_label)));
-  const baselineLabel = seriesLabels.find((label) => normalizeText(label).includes("baseline"));
-  const seriesColors =
-    seriesLabels.length === 1
-      ? [d3.interpolateWarm(0.78)]
-      : baselineLabel
-      ? seriesLabels.map((label) => (label === baselineLabel ? d3.interpolateWarm(0.25) : d3.interpolateWarm(0.82)))
-      : d3.quantize(d3.interpolateWarm, Math.max(seriesLabels.length, 2)).slice(0, seriesLabels.length);
+  const seriesKeys = Array.from(new Set(allRows.map((row) => row.series_key)));
+  const seriesColors = d3.quantize(d3.interpolateWarm, Math.max(seriesKeys.length, 2)).slice(0, seriesKeys.length);
   const yValues = [...lossRows.map((row) => row.value), ...evalLossRows.map((row) => row.value)];
+  const alphaText = (Math.round(Math.max(0.005, Math.min(1, Number(lossSmoothAlpha) || 0.08)) * 1000) / 1000).toFixed(3);
   return Plot.plot({
     width: 860,
     height: 280,
     x: buildXAxisConfig(allRows, "Step"),
-    y: buildYAxisConfig(yValues, `Loss (train linear; eval spline: ${evalSplineCurve})`, yScale, yMax),
-    color: {legend: true, domain: seriesLabels, range: seriesColors},
-    strokeDash: {legend: true, domain: ["Loss", "Eval Loss"], range: [null, "4,3"]},
+    y: buildYAxisConfig(yValues, `Loss / Eval Loss (Loss EWMA alpha=${alphaText}, Eval spline=${evalLossCurve})`, yScale, yMax),
+    color: {legend: true, domain: seriesKeys, range: seriesColors},
     marks: [
       Plot.lineY(lossRows, {
         x: "step",
         y: "value",
-        stroke: "series_label",
-        strokeDash: "metric",
+        stroke: "series_key",
         curve: "linear",
         tip: true,
         title: (d) => `${d.series_label}\n${d.metric}\nstep: ${d.step}\nvalue: ${fmt(d.value, 6)}`
@@ -630,9 +730,8 @@ function plotLossCurves(historyRows, evalSplineCurve, yScale = "linear", yMax) {
       Plot.lineY(evalLossRows, {
         x: "step",
         y: "value",
-        stroke: "series_label",
-        strokeDash: "metric",
-        curve: evalSplineCurve,
+        stroke: "series_key",
+        curve: evalLossCurve,
         tip: true,
         title: (d) => `${d.series_label}\n${d.metric}\nstep: ${d.step}\nvalue: ${fmt(d.value, 6)}`
       })
@@ -707,7 +806,7 @@ export async function renderAblationsByRun(options = {}) {
     title.style.margin = "0";
     const subtitle = el(
       "p",
-      "Each ablation includes linear training-loss curves, spline eval-loss curves, and an unclipped grad-norm dot plot."
+      "Each ablation includes aggressively smoothed training loss, spline eval loss, and an unclipped grad-norm dot plot."
     );
     subtitle.style.margin = "0";
     root.append(title, subtitle);
@@ -728,7 +827,8 @@ export async function renderAblationsByRun(options = {}) {
   const runSet = new Set(runNames);
   const scopedHistoryRows = historyRows.filter((row) => runSet.has(row.run_name));
 
-  const maxHistoryPoints = runNames.reduce((max, runName) => Math.max(max, (historyByRun.get(runName) || []).length), 0);
+  const scopedStepCount = new Set(scopedHistoryRows.map((row) => Number(row.step)).filter((value) => Number.isFinite(value))).size;
+  const gradBoundsOptions = {stepMultiplier: 0.1};
 
   if (showOverall) {
     const allChartCard = card();
@@ -742,7 +842,7 @@ export async function renderAblationsByRun(options = {}) {
       options.lossYScale || "linear",
       options.lossYMax
     );
-    const allMaxTrim = Math.max(0, maxHistoryPoints - 1);
+    const allMaxTrim = Math.max(0, scopedStepCount - 1);
     const allExcludeStartControl = rangeControl("Exclude first N points", 0, allMaxTrim, 1, options.excludeStart ?? 0);
     const allExcludeEndControl = rangeControl("Exclude last N points", 0, allMaxTrim, 1, options.excludeEnd ?? 0);
     allControls.append(
@@ -763,7 +863,7 @@ export async function renderAblationsByRun(options = {}) {
       const excludeStart = Math.max(0, Number(allExcludeStartControl.input.value) || 0);
       const excludeEnd = Math.max(0, Number(allExcludeEndControl.input.value) || 0);
       const visibleLossValues = runNames.flatMap((name) =>
-        trimPoints(historyByRun.get(name) || [], excludeStart, excludeEnd)
+        trimPoints(historyByRun.get(name) || [], excludeStart, excludeEnd, scopedHistoryRows)
           .map((row) => Number(row.loss))
           .filter((value) => isFinitePositive(value))
       );
@@ -803,7 +903,7 @@ export async function renderAblationsByRun(options = {}) {
       options.evalYScale || "linear",
       options.evalYMax
     );
-    const evalMaxTrim = Math.max(0, maxHistoryPoints - 1);
+    const evalMaxTrim = Math.max(0, scopedStepCount - 1);
     const evalExcludeStartControl = rangeControl("Exclude first N points", 0, evalMaxTrim, 1, options.excludeStart ?? 0);
     const evalExcludeEndControl = rangeControl("Exclude last N points", 0, evalMaxTrim, 1, options.excludeEnd ?? 0);
     const evalCurveControl = selectControl(
@@ -813,7 +913,7 @@ export async function renderAblationsByRun(options = {}) {
         {value: "basis", label: "Basis"},
         {value: "natural", label: "Natural"}
       ],
-      options.splineCurve || "catmull-rom"
+      options.evalSplineCurve || options.splineCurve || EVAL_LOSS_CURVE
     );
     evalControls.append(
       evalCurveControl.node,
@@ -834,17 +934,26 @@ export async function renderAblationsByRun(options = {}) {
       const excludeStart = Math.max(0, Number(evalExcludeStartControl.input.value) || 0);
       const excludeEnd = Math.max(0, Number(evalExcludeEndControl.input.value) || 0);
       const visibleEvalValues = runNames.flatMap((name) =>
-        trimPoints(historyByRun.get(name) || [], excludeStart, excludeEnd)
+        trimPoints(historyByRun.get(name) || [], excludeStart, excludeEnd, scopedHistoryRows)
           .map((row) => Number(row.eval_loss))
           .filter((value) => isFinitePositive(value))
       );
       syncYMaxControl(allEvalYAxis.yMaxControl, visibleEvalValues, allEvalAutoY);
-      const splineCurve = evalCurveControl.select.value || "catmull-rom";
+      const evalLossCurve = evalCurveControl.select.value || EVAL_LOSS_CURVE;
       const yScale = allEvalYAxis.yScaleControl.select.value || "linear";
       const yMax = Number(allEvalYAxis.yMaxControl.input.value);
       clearNode(evalChartHost);
       evalChartHost.appendChild(
-        plotEvalLossAcrossAblations(historyByRun, runNames, mainByRun, excludeStart, excludeEnd, splineCurve, yScale, yMax)
+        plotEvalLossAcrossAblations(
+          historyByRun,
+          runNames,
+          mainByRun,
+          excludeStart,
+          excludeEnd,
+          evalLossCurve,
+          yScale,
+          yMax
+        )
       );
     }
 
@@ -874,14 +983,20 @@ export async function renderAblationsByRun(options = {}) {
       "Grad",
       allGradValues,
       options.gradYScale || "linear",
-      options.gradYMax
+      options.gradYMax,
+      gradBoundsOptions
     );
-    const gradMaxTrim = Math.max(0, maxHistoryPoints - 1);
+    const gradBounds = applyYAxisBoundsOptions(yTopBounds(allGradValues), gradBoundsOptions);
+    const gradDefaultMax = Number.isFinite(Number(options.gradYMax))
+      ? clamp(Number(options.gradYMax), gradBounds.min, gradBounds.max)
+      : gradBounds.initial;
+    const allGradYMaxControl = createLogMappedRangeControl("Grad Y max", gradBounds.min, gradBounds.max, gradDefaultMax);
+    const gradMaxTrim = Math.max(0, scopedStepCount - 1);
     const gradExcludeStartControl = rangeControl("Exclude first N points", 0, gradMaxTrim, 1, options.excludeStart ?? 0);
     const gradExcludeEndControl = rangeControl("Exclude last N points", 0, gradMaxTrim, 1, options.excludeEnd ?? 0);
     gradControls.append(
       allGradYAxis.yScaleControl.node,
-      allGradYAxis.yMaxControl.node,
+      allGradYMaxControl.node,
       gradExcludeStartControl.node,
       gradExcludeEndControl.node
     );
@@ -897,13 +1012,13 @@ export async function renderAblationsByRun(options = {}) {
       const excludeStart = Math.max(0, Number(gradExcludeStartControl.input.value) || 0);
       const excludeEnd = Math.max(0, Number(gradExcludeEndControl.input.value) || 0);
       const visibleGradValues = runNames.flatMap((name) =>
-        trimPoints(historyByRun.get(name) || [], excludeStart, excludeEnd)
+        trimPoints(historyByRun.get(name) || [], excludeStart, excludeEnd, scopedHistoryRows)
           .map((row) => Number(row.grad_norm_unclipped))
           .filter((value) => isFinitePositive(value))
       );
-      syncYMaxControl(allGradYAxis.yMaxControl, visibleGradValues, allGradAutoY);
+      syncLogYMaxControl(allGradYMaxControl, visibleGradValues, allGradAutoY, gradBoundsOptions);
       const yScale = allGradYAxis.yScaleControl.select.value || "linear";
-      const yMax = Number(allGradYAxis.yMaxControl.input.value);
+      const yMax = getLogMappedRangeValue(allGradYMaxControl);
       clearNode(gradAllChartHost);
       gradAllChartHost.appendChild(
         plotGradNormAcrossAblations(historyByRun, runNames, mainByRun, excludeStart, excludeEnd, yScale, yMax)
@@ -912,7 +1027,7 @@ export async function renderAblationsByRun(options = {}) {
 
     const refreshGradChartDebounced = debounce(refreshGradChart, 120);
     allGradYAxis.yScaleControl.select.addEventListener("change", refreshGradChartDebounced);
-    allGradYAxis.yMaxControl.input.addEventListener("input", () => {
+    allGradYMaxControl.input.addEventListener("input", () => {
       allGradAutoY = false;
       refreshGradChartDebounced();
     });
@@ -930,7 +1045,7 @@ export async function renderAblationsByRun(options = {}) {
     stabilityCard.appendChild(sectionHeading("Grad-Norm Stability Summary"));
     const stabilityControls = card();
     stabilityControls.style.gridTemplateColumns = "repeat(auto-fit, minmax(280px, 1fr))";
-    const stabilityMaxTrim = Math.max(0, maxHistoryPoints - 1);
+    const stabilityMaxTrim = Math.max(0, scopedStepCount - 1);
     const stabilityExcludeStartControl = rangeControl("Exclude first N points", 0, stabilityMaxTrim, 1, options.excludeStart ?? 0);
     const stabilityExcludeEndControl = rangeControl("Exclude last N points", 0, stabilityMaxTrim, 1, options.excludeEnd ?? 0);
     const stabilityPercentileControl = selectControl(
@@ -946,7 +1061,8 @@ export async function renderAblationsByRun(options = {}) {
       "Summary",
       allGradValues,
       options.stabilityYScale || "linear",
-      options.stabilityYMax
+      options.stabilityYMax,
+      gradBoundsOptions
     );
     stabilityControls.append(
       stabilityPercentileControl.node,
@@ -967,9 +1083,17 @@ export async function renderAblationsByRun(options = {}) {
       const excludeStart = Math.max(0, Number(stabilityExcludeStartControl.input.value) || 0);
       const excludeEnd = Math.max(0, Number(stabilityExcludeEndControl.input.value) || 0);
       const highPercentile = Math.max(0.5, Math.min(0.999, Number(stabilityPercentileControl.select.value) || 0.95));
-      const rows = gradNormStabilityRows(historyByRun, runNames, mainByRun, excludeStart, excludeEnd, highPercentile);
+      const rows = gradNormStabilityRows(
+        historyByRun,
+        runNames,
+        mainByRun,
+        excludeStart,
+        excludeEnd,
+        highPercentile,
+        scopedHistoryRows
+      );
       const valueRows = rows.flatMap((row) => [Number(row.median), Number(row.high)]).filter((value) => isFinitePositive(value));
-      syncYMaxControl(stabilityYAxis.yMaxControl, valueRows, stabilityAutoY);
+      syncYMaxControl(stabilityYAxis.yMaxControl, valueRows, stabilityAutoY, gradBoundsOptions);
       const valueScale = stabilityYAxis.yScaleControl.select.value || "linear";
       const valueMax = Number(stabilityYAxis.yMaxControl.input.value);
       clearNode(stabilityHost);
@@ -1013,7 +1137,9 @@ export async function renderAblationsByRun(options = {}) {
         includeBaselineComparison && baselineRunName && baselineRunName !== runName
           ? historyByRun.get(baselineRunName) || []
           : [];
-      const maxTrim = Math.max(0, history.length - 1);
+      const panelReferenceRows = [...history, ...baselineHistory];
+      const panelStepCount = new Set(panelReferenceRows.map((row) => Number(row.step)).filter((value) => Number.isFinite(value))).size;
+      const maxTrim = Math.max(0, panelStepCount - 1);
 
       const panel = card();
       panel.style.padding = "0.25rem 0";
@@ -1035,21 +1161,24 @@ export async function renderAblationsByRun(options = {}) {
         options.lossYScale || "linear",
         options.lossYMax
       );
-      const lossCurveControl = selectControl(
+      const evalCurveControl = selectControl(
         "Eval-loss spline curve",
         [
           {value: "catmull-rom", label: "Catmull-Rom"},
           {value: "basis", label: "Basis"},
           {value: "natural", label: "Natural"}
         ],
-        options.splineCurve || "catmull-rom"
+        options.evalSplineCurve || options.splineCurve || EVAL_LOSS_CURVE
       );
+      const lossSmoothControl = rangeControl("Loss smooth alpha", 0.005, 1, 0.005, options.lossSmoothAlpha ?? 0.08);
+      setRangeOutput(lossSmoothControl);
       const lossExcludeStartControl = rangeControl("Loss exclude first N", 0, maxTrim, 1, options.excludeStart ?? 0);
       const lossExcludeEndControl = rangeControl("Loss exclude last N", 0, maxTrim, 1, options.excludeEnd ?? 0);
       lossControls.append(
-        lossCurveControl.node,
+        evalCurveControl.node,
         runLossYAxis.yScaleControl.node,
         runLossYAxis.yMaxControl.node,
+        lossSmoothControl.node,
         lossExcludeStartControl.node,
         lossExcludeEndControl.node
       );
@@ -1069,7 +1198,8 @@ export async function renderAblationsByRun(options = {}) {
         "Grad",
         runGradValues,
         options.gradYScale || "linear",
-        options.gradYMax
+        options.gradYMax,
+        gradBoundsOptions
       );
       const gradExcludeStartControl = rangeControl("Grad exclude first N", 0, maxTrim, 1, options.excludeStart ?? 0);
       const gradExcludeEndControl = rangeControl("Grad exclude last N", 0, maxTrim, 1, options.excludeEnd ?? 0);
@@ -1100,19 +1230,22 @@ export async function renderAblationsByRun(options = {}) {
         const lossEnd = Math.max(0, Number(lossExcludeEndControl.input.value) || 0);
         const gradStart = Math.max(0, Number(gradExcludeStartControl.input.value) || 0);
         const gradEnd = Math.max(0, Number(gradExcludeEndControl.input.value) || 0);
-        const lossCurve = lossCurveControl.select.value || "catmull-rom";
+        const lossSmoothAlpha = Math.max(0.005, Math.min(1, Number(lossSmoothControl.input.value) || 0.08));
+        const evalLossCurve = evalCurveControl.select.value || EVAL_LOSS_CURVE;
         const lossYScale = runLossYAxis.yScaleControl.select.value || "linear";
         const gradYScale = runGradYAxis.yScaleControl.select.value || "linear";
 
-        const trimmedForLoss = trimPoints(history, lossStart, lossEnd);
-        const baselineLossTrimmed = baselineHistory.length > 0 ? trimPoints(baselineHistory, lossStart, lossEnd) : [];
+        const trimmedForLoss = trimPoints(history, lossStart, lossEnd, panelReferenceRows);
+        const baselineLossTrimmed =
+          baselineHistory.length > 0 ? trimPoints(baselineHistory, lossStart, lossEnd, panelReferenceRows) : [];
         const comparisonLossRows = [
           ...trimmedForLoss.map((row) => ({...row, series_label: runLabel})),
           ...baselineLossTrimmed.map((row) => ({...row, series_label: baselineLabel || "Baseline"}))
         ];
 
-        const trimmedForGrad = trimPoints(history, gradStart, gradEnd);
-        const baselineGradTrimmed = baselineHistory.length > 0 ? trimPoints(baselineHistory, gradStart, gradEnd) : [];
+        const trimmedForGrad = trimPoints(history, gradStart, gradEnd, panelReferenceRows);
+        const baselineGradTrimmed =
+          baselineHistory.length > 0 ? trimPoints(baselineHistory, gradStart, gradEnd, panelReferenceRows) : [];
         const comparisonGradRows = [
           ...trimmedForGrad.map((row) => ({...row, series_label: runLabel})),
           ...baselineGradTrimmed.map((row) => ({...row, series_label: baselineLabel || "Baseline"}))
@@ -1124,26 +1257,30 @@ export async function renderAblationsByRun(options = {}) {
           .map((row) => Number(row.grad_norm_unclipped))
           .filter((value) => isFinitePositive(value));
         syncYMaxControl(runLossYAxis.yMaxControl, lossValues, runLossAutoY);
-        syncYMaxControl(runGradYAxis.yMaxControl, gradValues, runGradAutoY);
+        syncYMaxControl(runGradYAxis.yMaxControl, gradValues, runGradAutoY, gradBoundsOptions);
         const lossYMax = Number(runLossYAxis.yMaxControl.input.value);
         const gradYMax = Number(runGradYAxis.yMaxControl.input.value);
+        setRangeOutput(lossSmoothControl);
 
         summaryText.textContent = runSummaryText(summary, history, trimmedForLoss);
 
         clearNode(lossChartHost);
-        lossChartHost.appendChild(plotLossCurves(comparisonLossRows, lossCurve, lossYScale, lossYMax));
+        lossChartHost.appendChild(
+          plotLossCurves(comparisonLossRows, lossYScale, lossYMax, lossSmoothAlpha, evalLossCurve)
+        );
 
         clearNode(gradChartHost);
         gradChartHost.appendChild(plotGradNorm(comparisonGradRows, gradYScale, gradYMax));
       }
 
       const refreshRunPanelDebounced = debounce(refreshRunPanel, 120);
-      lossCurveControl.select.addEventListener("change", refreshRunPanelDebounced);
+      evalCurveControl.select.addEventListener("change", refreshRunPanelDebounced);
       runLossYAxis.yScaleControl.select.addEventListener("change", refreshRunPanelDebounced);
       runLossYAxis.yMaxControl.input.addEventListener("input", () => {
         runLossAutoY = false;
         refreshRunPanelDebounced();
       });
+      lossSmoothControl.input.addEventListener("input", refreshRunPanelDebounced);
       runGradYAxis.yScaleControl.select.addEventListener("change", refreshRunPanelDebounced);
       runGradYAxis.yMaxControl.input.addEventListener("input", () => {
         runGradAutoY = false;
