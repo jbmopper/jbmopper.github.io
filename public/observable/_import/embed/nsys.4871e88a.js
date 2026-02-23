@@ -1,27 +1,12 @@
-import {FileAttachment} from "../../_observablehq/stdlib.43270668.js";
 import * as Plot from "../../_npm/@observablehq/plot@0.6.17/7c43807f.js";
 import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
 import {calculateForwardFlops, calculateMemoryAccounting, calculateModelParams, calculateTrainingStepFlops} from "../components/perf-estimates.d771a94d.js";
 import {formatBytes, formatMs} from "../components/data-utils.e2caa41c.js";
 import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.d6dae979.js";
+import {TRACE_NAMES, loadTraceRowsSummary} from "./nsys-dataset.bc4d863d.js";
+export {TRACE_NAMES} from "./nsys-dataset.bc4d863d.js";
 
-const TRACE_ATTACHMENTS = {
-  bad_head_size: FileAttachment({"name":"../../data/raw/traces/bad_head_size_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/bad_head_size_nsys.0e5fcf94.parquet","lastModified":1771465633642,"size":699507}, import.meta.url),
-  bandwidth_bound: FileAttachment({"name":"../../data/raw/traces/bandwidth_bound_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/bandwidth_bound_nsys.0570a4e8.parquet","lastModified":1771465633645,"size":526034}, import.meta.url),
-  compute_bound: FileAttachment({"name":"../../data/raw/traces/compute_bound_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/compute_bound_nsys.9be21553.parquet","lastModified":1771465633647,"size":1020491}, import.meta.url),
-  deep_sequential: FileAttachment({"name":"../../data/raw/traces/deep_sequential_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/deep_sequential_nsys.4ed702eb.parquet","lastModified":1771465633653,"size":3186034}, import.meta.url),
-  latency_bound: FileAttachment({"name":"../../data/raw/traces/latency_bound_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/latency_bound_nsys.5b9c4edd.parquet","lastModified":1771465633657,"size":1104236}, import.meta.url),
-  misaligned_dims: FileAttachment({"name":"../../data/raw/traces/misaligned_dims_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/misaligned_dims_nsys.accc5b6e.parquet","lastModified":1771606521284,"size":669386}, import.meta.url),
-  model_a: FileAttachment({"name":"../../data/raw/traces/model_a_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/model_a_nsys.7c95f1f4.parquet","lastModified":1771465633660,"size":294932}, import.meta.url),
-  model_b: FileAttachment({"name":"../../data/raw/traces/model_b_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/model_b_nsys.d909797c.parquet","lastModified":1771465633662,"size":1231233}, import.meta.url),
-  vocab_bottleneck: FileAttachment({"name":"../../data/raw/traces/vocab_bottleneck_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/vocab_bottleneck_nsys.c6e0b393.parquet","lastModified":1771465633665,"size":509294}, import.meta.url),
-  wide_ffn: FileAttachment({"name":"../../data/raw/traces/wide_ffn_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/wide_ffn_nsys.e3df5806.parquet","lastModified":1771465633667,"size":715444}, import.meta.url)
-};
-
-export const TRACE_NAMES = Object.keys(TRACE_ATTACHMENTS);
 export const EVENT_TYPES = ["kernel", "memcpy", "memset"];
-const traceCache = new Map();
-const traceLoadPromises = new Map();
 
 export const TRACE_RESOURCE_CONFIGS = [
   {
@@ -150,17 +135,6 @@ function card() {
   return node;
 }
 
-function nsToMs(value) {
-  if (typeof value === "bigint") return Number(value) / 1e6;
-  const n = Number(value);
-  return Number.isFinite(n) ? n / 1e6 : NaN;
-}
-
-function safeNumber(value, fallback = NaN) {
-  const n = Number(value);
-  return Number.isFinite(n) ? n : fallback;
-}
-
 function checkboxGroup(values, initialValues, legendText, keyPrefix) {
   const fieldset = el("fieldset");
   fieldset.style.border = "none";
@@ -255,44 +229,7 @@ function debounce(fn, waitMs = 120) {
 }
 
 export async function loadTraceRows(traceName) {
-  if (traceCache.has(traceName)) return traceCache.get(traceName);
-  if (traceLoadPromises.has(traceName)) return traceLoadPromises.get(traceName);
-
-  const attachment = TRACE_ATTACHMENTS[traceName];
-  if (!attachment) throw new Error(`Unknown trace: ${traceName}`);
-
-  const loadPromise = (async () => {
-    const table = await attachment.parquet();
-    const rows = Array.from(table, (row) => {
-      const startMs = nsToMs(row.start_ns);
-      const endMs = nsToMs(row.end_ns);
-      const durationMs = Number.isFinite(Number(row.duration_ms))
-        ? Number(row.duration_ms)
-        : Number.isFinite(startMs) && Number.isFinite(endMs)
-          ? Math.max(0, endMs - startMs)
-          : NaN;
-
-      return {
-        trace: traceName,
-        event_type: String(row.event_type || "unknown"),
-        event_name: String(row.event_name || "unknown"),
-        start_ms: startMs,
-        end_ms: endMs,
-        duration_ms: durationMs,
-        bytes: safeNumber(row.bytes, 0)
-      };
-    }).filter((row) => Number.isFinite(row.start_ms) && Number.isFinite(row.end_ms));
-
-    traceCache.set(traceName, rows);
-    return rows;
-  })();
-
-  traceLoadPromises.set(traceName, loadPromise);
-  try {
-    return await loadPromise;
-  } finally {
-    traceLoadPromises.delete(traceName);
-  }
+  return loadTraceRowsSummary(traceName);
 }
 
 export function aggregateSummary(rows) {

@@ -5,8 +5,8 @@ import {formatMs} from "../components/data-utils.e2caa41c.js";
 import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.d6dae979.js";
 
 const ATTACHMENTS = {
-  main: FileAttachment({"name":"../../data/raw/benchmarks/ablations_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/ablations_main.912ec8a5.parquet","lastModified":1771466904212,"size":26405}, import.meta.url),
-  history: FileAttachment({"name":"../../data/raw/benchmarks/ablations_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/ablations_history.c15e6588.parquet","lastModified":1771468208647,"size":2777049}, import.meta.url)
+  main: FileAttachment({"name":"../../data/raw/benchmarks/ablations_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/ablations_main.912ec8a5.parquet","lastModified":1771874136911,"size":26405}, import.meta.url),
+  history: FileAttachment({"name":"../../data/raw/benchmarks/ablations_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/ablations_history.c15e6588.parquet","lastModified":1771874136910,"size":2777049}, import.meta.url)
 };
 
 const EVAL_LOSS_CURVE = "catmull-rom";

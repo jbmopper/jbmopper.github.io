@@ -4,11 +4,18 @@ import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
 import {clearNode, emptyState, renderSimpleTable, collapsible} from "../components/dom-utils.d6dae979.js";
 
 const ATTACHMENTS = {
-  main: FileAttachment({"name":"../../data/raw/benchmarks/lr_sweeps_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/lr_sweeps_main.98e6db0c.parquet","lastModified":1771466904236,"size":15015}, import.meta.url),
-  history: FileAttachment({"name":"../../data/raw/benchmarks/lr_sweeps_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/lr_sweeps_history.4f809053.parquet","lastModified":1771468224300,"size":3312658}, import.meta.url)
+  main: FileAttachment({"name":"../../data/raw/benchmarks/lr_sweeps_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/lr_sweeps_main.98e6db0c.parquet","lastModified":1771874136930,"size":15015}, import.meta.url),
+  history: FileAttachment({"name":"../../data/raw/benchmarks/lr_sweeps_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/lr_sweeps_history.4f809053.parquet","lastModified":1771874136930,"size":3312658}, import.meta.url)
 };
 
 let sweepDataPromise;
+
+const OPTIMIZER_SWEEP_ATTACHMENTS = {
+  main: FileAttachment({"name":"../../data/raw/benchmarks/optimizer_sweep_l28yv8f7_20260222_151711_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/optimizer_sweep_l28yv8f7_20260222_151711_main.5801ffde.parquet","lastModified":1771874136940,"size":61729}, import.meta.url),
+  history: FileAttachment({"name":"../../data/raw/benchmarks/optimizer_sweep_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/optimizer_sweep_history.94921937.parquet","lastModified":1771882112224,"size":8766116}, import.meta.url)
+};
+
+let optimizerSweepDataPromise;
 
 function el(tag, text) {
   const node = document.createElement(tag);
@@ -448,6 +455,647 @@ async function loadSweepData() {
   return sweepDataPromise;
 }
 
+async function loadOptimizerSweepData() {
+  if (!optimizerSweepDataPromise) {
+    optimizerSweepDataPromise = (async () => {
+      const [mainTable, historyTable] = await Promise.all([
+        OPTIMIZER_SWEEP_ATTACHMENTS.main.parquet(),
+        OPTIMIZER_SWEEP_ATTACHMENTS.history.parquet()
+      ]);
+
+      const mainRows = Array.from(mainTable, (row) => {
+        const run_name = pickString(row, ["run_name", "config.run_name", "name", "run_id"], "unknown-run");
+        return {
+          run_name,
+          run_number: runNumber(run_name),
+          state: pickString(row, ["state"], "unknown"),
+          optimizer_beta2: pickNumber(row, ["config.optimizer_beta2", "optimizer_beta2"]),
+          optimizer_weight_decay: pickNumber(row, ["config.optimizer_weight_decay", "optimizer_weight_decay"]),
+          lr_max: pickNumber(row, ["config.scheduler_lr_max", "config.lr_max", "lr_max", "LR"]),
+          sweep_metric_m: pickNumber(row, ["Sweep Metric M"]),
+          eval_best_loss: pickNumber(row, ["Eval Best loss", "Eval/Best loss"]),
+          eval_loss: normalizeEvalLoss(pickNumber(row, ["Eval Loss", "Eval/Loss"]))
+        };
+      }).sort((a, b) => d3.ascending(a.run_number, b.run_number) || d3.ascending(a.run_name, b.run_name));
+
+      const runNumberByName = new Map(
+        mainRows
+          .filter((row) => row.run_name && Number.isFinite(row.run_number))
+          .map((row) => [row.run_name, row.run_number])
+      );
+
+      const historyRows = Array.from(historyTable, (row) => {
+        const run_name = pickString(row, ["run_name", "config.run_name", "name", "run_id"], "unknown-run");
+        const parsedRunNumber = runNumber(run_name);
+        return {
+          run_name,
+          run_number: Number.isFinite(parsedRunNumber) ? parsedRunNumber : runNumberByName.get(run_name),
+          step: pickNumber(row, ["_step", "step"]),
+          lr: pickNumber(row, ["LR", "config.scheduler_lr_max", "lr_max"]),
+          loss: pickNumber(row, ["Loss"]),
+          eval_loss: normalizeEvalLoss(pickNumber(row, ["Eval Loss", "Eval/Loss"])),
+          eval_best_loss: pickNumber(row, ["Eval Best loss", "Eval/Best loss"]),
+          sweep_metric_m: pickNumber(row, ["Sweep Metric M"]),
+          grad_clipped: pickNumber(row, ["Grad/Norm (clipped)"]),
+          grad_unclipped: pickNumber(row, ["Grad/Norm (unclipped)"]),
+          tokens_per_sec: pickNumber(row, ["Throughput/Tokens per sec"]),
+          step_s: pickNumber(row, ["Time/Total step"])
+        };
+      })
+        .filter((row) => Number.isFinite(row.step))
+        .sort(
+          (a, b) =>
+            d3.ascending(a.run_number, b.run_number) ||
+            d3.ascending(a.run_name, b.run_name) ||
+            d3.ascending(a.step, b.step)
+        );
+
+      return {mainRows, historyRows};
+    })();
+  }
+
+  return optimizerSweepDataPromise;
+}
+
+export async function renderOptimizerSweepTriangle(options = {}) {
+  const root = el("section");
+  root.className = "observable-embed observable-embed-optimizer-sweep-triangle";
+  root.style.display = "grid";
+  root.style.gap = "1rem";
+
+  let data;
+  try {
+    data = await loadOptimizerSweepData();
+  } catch (error) {
+    root.appendChild(emptyState(`Failed to load optimizer sweep parquet snapshots: ${error.message}`));
+    return root;
+  }
+
+  const {mainRows} = data;
+  const rows = mainRows
+    .filter(
+      (row) =>
+        Number.isFinite(row.optimizer_beta2) &&
+        Number.isFinite(row.optimizer_weight_decay) &&
+        row.optimizer_weight_decay > 0 &&
+        Number.isFinite(row.lr_max) &&
+        row.lr_max > 0
+    )
+    .sort((a, b) => d3.ascending(a.run_number, b.run_number) || d3.ascending(a.run_name, b.run_name));
+  if (rows.length === 0) {
+    root.appendChild(emptyState("No optimizer-sweep rows with β2, weight decay, and max LR values."));
+    return root;
+  }
+
+  const beta2Min = d3.min(rows, (row) => row.optimizer_beta2) ?? 0;
+  const beta2Max = d3.max(rows, (row) => row.optimizer_beta2) ?? 1;
+  const wdLogMin = d3.min(rows, (row) => Math.log10(row.optimizer_weight_decay)) ?? -6;
+  const wdLogMax = d3.max(rows, (row) => Math.log10(row.optimizer_weight_decay)) ?? 0;
+  const lrLogMin = d3.min(rows, (row) => Math.log10(row.lr_max)) ?? -6;
+  const lrLogMax = d3.max(rows, (row) => Math.log10(row.lr_max)) ?? 0;
+  const h = Math.sqrt(3) / 2;
+  const TRIANGLE_WIDTH = 860;
+  const TRIANGLE_MARGIN_LEFT = 44;
+  const TRIANGLE_MARGIN_RIGHT = 44;
+  const TRIANGLE_MARGIN_TOP = 46;
+  const TRIANGLE_MARGIN_BOTTOM = 40;
+  const TRIANGLE_INNER_WIDTH = TRIANGLE_WIDTH - TRIANGLE_MARGIN_LEFT - TRIANGLE_MARGIN_RIGHT;
+  const TRIANGLE_INNER_HEIGHT = Math.round(TRIANGLE_INNER_WIDTH * h);
+  const TRIANGLE_HEIGHT = TRIANGLE_MARGIN_TOP + TRIANGLE_MARGIN_BOTTOM + TRIANGLE_INNER_HEIGHT;
+
+  function normalize(value, min, max) {
+    if (!Number.isFinite(value)) return NaN;
+    if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) return 0.5;
+    return Math.max(0, Math.min(1, (value - min) / (max - min)));
+  }
+
+  const points = rows.map((row, idx) => {
+    const beta2Norm = normalize(row.optimizer_beta2, beta2Min, beta2Max);
+    const wdNorm = normalize(Math.log10(row.optimizer_weight_decay), wdLogMin, wdLogMax);
+    const lrNorm = normalize(Math.log10(row.lr_max), lrLogMin, lrLogMax);
+    const rawSum = beta2Norm + wdNorm + lrNorm;
+    const wBeta2 = rawSum > 0 ? beta2Norm / rawSum : 1 / 3;
+    const wWd = rawSum > 0 ? wdNorm / rawSum : 1 / 3;
+    const wLr = rawSum > 0 ? lrNorm / rawSum : 1 / 3;
+    return {
+      ...row,
+      run_order: idx + 1,
+      run_color: Number.isFinite(row.run_number) ? row.run_number : idx + 1,
+      beta2_norm: beta2Norm,
+      wd_norm: wdNorm,
+      lr_norm: lrNorm,
+      w_beta2: wBeta2,
+      w_wd: wWd,
+      w_lr: wLr,
+      x: wWd + 0.5 * wLr,
+      y: h * wLr
+    };
+  });
+
+  const sortedForPath = [...points].sort(
+    (a, b) => d3.ascending(a.run_number, b.run_number) || d3.ascending(a.run_order, b.run_order)
+  );
+  const segmentsAll = [];
+  for (let idx = 0; idx + 1 < sortedForPath.length; idx += 1) {
+    const source = sortedForPath[idx];
+    const target = sortedForPath[idx + 1];
+    if (!source || !target) continue;
+    segmentsAll.push({
+      x1: source.x,
+      y1: source.y,
+      x2: target.x,
+      y2: target.y,
+      source_run_number: source.run_color,
+      source_order: source.run_order,
+      target_order: target.run_order
+    });
+  }
+
+  const controls = card();
+
+  const animateToggleLabel = el("label");
+  animateToggleLabel.style.display = "flex";
+  animateToggleLabel.style.alignItems = "center";
+  animateToggleLabel.style.gap = "0.5rem";
+  const animateToggle = el("input");
+  animateToggle.type = "checkbox";
+  animateToggle.checked = options.animateTriangle ?? true;
+  animateToggleLabel.append(animateToggle, document.createTextNode("Animate window"));
+
+  const lineToggleLabel = el("label");
+  lineToggleLabel.style.display = "flex";
+  lineToggleLabel.style.alignItems = "center";
+  lineToggleLabel.style.gap = "0.5rem";
+  const lineToggle = el("input");
+  lineToggle.type = "checkbox";
+  lineToggle.checked = options.showTrajectoryLines ?? true;
+  lineToggleLabel.append(lineToggle, document.createTextNode("Show trajectory lines"));
+
+  const speedControl = rangeControl(
+    "Frame delay (ms)",
+    120,
+    2000,
+    20,
+    Number.isFinite(Number(options.triangleFrameMs)) ? Number(options.triangleFrameMs) : 450
+  );
+  const runControl = rangeControl(
+    "Current run index",
+    0,
+    points.length,
+    1,
+    Number.isFinite(Number(options.currentRunIndex))
+      ? Math.max(0, Math.min(points.length, Number(options.currentRunIndex)))
+      : points.length
+  );
+  const windowSizeControl = rangeControl(
+    "Visible runs (window)",
+    1,
+    points.length,
+    1,
+    Number.isFinite(Number(options.triangleWindowSize))
+      ? Math.max(1, Math.min(points.length, Number(options.triangleWindowSize)))
+      : Math.min(4, points.length)
+  );
+  controls.append(animateToggleLabel, lineToggleLabel, speedControl.node, runControl.node, windowSizeControl.node);
+
+  const chartHost = el("div");
+  const windowTableHost = el("div");
+  const summaryHost = el("p");
+  summaryHost.style.margin = "0";
+  root.append(controls, chartHost, windowTableHost, summaryHost);
+
+  const runColorExtent = d3.extent(points, (point) => point.run_color);
+  const runColorMin = Number.isFinite(runColorExtent[0]) ? runColorExtent[0] : 1;
+  const runColorMax = Number.isFinite(runColorExtent[1]) ? runColorExtent[1] : points.length;
+  const runColorScale = d3
+    .scaleSequential([runColorMin, runColorMax > runColorMin ? runColorMax : runColorMin + 1], d3.interpolateWarm)
+    .clamp(true);
+
+  function clampCurrent(value) {
+    return Math.max(0, Math.min(points.length, Math.round(Number(value) || 0)));
+  }
+
+  function toPixelX(value) {
+    return TRIANGLE_MARGIN_LEFT + value * TRIANGLE_INNER_WIDTH;
+  }
+
+  function toPixelY(value) {
+    return TRIANGLE_MARGIN_TOP + ((h - value) / h) * TRIANGLE_INNER_HEIGHT;
+  }
+
+  function barycentricPoint(wBeta2, wWd, wLr) {
+    return {
+      x: wWd + 0.5 * wLr,
+      y: h * wLr
+    };
+  }
+
+  function barycentricPixel(wBeta2, wWd, wLr) {
+    const point = barycentricPoint(wBeta2, wWd, wLr);
+    return {x: toPixelX(point.x), y: toPixelY(point.y)};
+  }
+
+  const plotCard = card();
+  const plotTitle = el("strong", "Optimizer Hyperparameter Triangle (Bayesian Sweep)");
+  plotCard.appendChild(plotTitle);
+
+  const svgNs = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNs, "svg");
+  svg.setAttribute("viewBox", `0 0 ${TRIANGLE_WIDTH} ${TRIANGLE_HEIGHT}`);
+  svg.setAttribute("width", String(TRIANGLE_WIDTH));
+  svg.setAttribute("height", String(TRIANGLE_HEIGHT));
+  svg.style.maxWidth = "100%";
+  svg.style.height = "auto";
+  svg.style.display = "block";
+
+  const baseline = document.createElementNS(svgNs, "line");
+  baseline.setAttribute("x1", String(toPixelX(0)));
+  baseline.setAttribute("y1", String(toPixelY(0)));
+  baseline.setAttribute("x2", String(toPixelX(1)));
+  baseline.setAttribute("y2", String(toPixelY(0)));
+  baseline.setAttribute("stroke", "currentColor");
+  baseline.setAttribute("stroke-opacity", "0.08");
+  baseline.setAttribute("stroke-width", "1");
+  baseline.setAttribute("vector-effect", "non-scaling-stroke");
+  svg.appendChild(baseline);
+
+  const triangle = document.createElementNS(svgNs, "polyline");
+  triangle.setAttribute(
+    "points",
+    `${toPixelX(0)},${toPixelY(0)} ${toPixelX(1)},${toPixelY(0)} ${toPixelX(0.5)},${toPixelY(h)} ${toPixelX(0)},${toPixelY(0)}`
+  );
+  triangle.setAttribute("fill", "none");
+  triangle.setAttribute("stroke", "currentColor");
+  triangle.setAttribute("stroke-opacity", "0.6");
+  triangle.setAttribute("stroke-width", "1.5");
+  triangle.setAttribute("vector-effect", "non-scaling-stroke");
+  svg.appendChild(triangle);
+
+  const gridLayer = document.createElementNS(svgNs, "g");
+  svg.appendChild(gridLayer);
+  const gridTicks = [0.2, 0.4, 0.6, 0.8];
+  for (const tick of gridTicks) {
+    const betaA = barycentricPixel(tick, 1 - tick, 0);
+    const betaB = barycentricPixel(tick, 0, 1 - tick);
+    const wdA = barycentricPixel(1 - tick, tick, 0);
+    const wdB = barycentricPixel(0, tick, 1 - tick);
+    const lrA = barycentricPixel(1 - tick, 0, tick);
+    const lrB = barycentricPixel(0, 1 - tick, tick);
+
+    for (const [start, end] of [
+      [betaA, betaB],
+      [wdA, wdB],
+      [lrA, lrB]
+    ]) {
+      const line = document.createElementNS(svgNs, "line");
+      line.setAttribute("x1", String(start.x));
+      line.setAttribute("y1", String(start.y));
+      line.setAttribute("x2", String(end.x));
+      line.setAttribute("y2", String(end.y));
+      line.setAttribute("stroke", "currentColor");
+      line.setAttribute("stroke-opacity", "0.12");
+      line.setAttribute("stroke-width", "1");
+      line.setAttribute("stroke-dasharray", "3 4");
+      line.setAttribute("vector-effect", "non-scaling-stroke");
+      gridLayer.appendChild(line);
+    }
+  }
+
+  const segmentLayer = document.createElementNS(svgNs, "g");
+  svg.appendChild(segmentLayer);
+  const pointLayer = document.createElementNS(svgNs, "g");
+  svg.appendChild(pointLayer);
+  const labelLayer = document.createElementNS(svgNs, "g");
+  svg.appendChild(labelLayer);
+
+  const segmentNodes = segmentsAll.map((segment) => {
+    const node = document.createElementNS(svgNs, "line");
+    node.setAttribute("x1", String(toPixelX(segment.x1)));
+    node.setAttribute("y1", String(toPixelY(segment.y1)));
+    node.setAttribute("x2", String(toPixelX(segment.x2)));
+    node.setAttribute("y2", String(toPixelY(segment.y2)));
+    node.setAttribute("stroke", runColorScale(segment.source_run_number));
+    node.setAttribute("stroke-opacity", "0.6");
+    node.setAttribute("stroke-width", "1.2");
+    node.setAttribute("vector-effect", "non-scaling-stroke");
+    segmentLayer.appendChild(node);
+    return {segment, node};
+  });
+
+  const pointNodes = sortedForPath.map((point) => {
+    const node = document.createElementNS(svgNs, "circle");
+    node.setAttribute("cx", String(toPixelX(point.x)));
+    node.setAttribute("cy", String(toPixelY(point.y)));
+    node.setAttribute("r", "0");
+    node.setAttribute("fill", runColorScale(point.run_color));
+    node.setAttribute("stroke", "white");
+    node.setAttribute("stroke-width", "0.45");
+    node.setAttribute("vector-effect", "non-scaling-stroke");
+    const title = document.createElementNS(svgNs, "title");
+    title.textContent = `${point.run_name}\nRun # ${Number.isFinite(point.run_number) ? point.run_number : "n/a"}\nβ2 ${Number(
+      point.optimizer_beta2
+    ).toFixed(6)}\nWeight decay ${Number(point.optimizer_weight_decay).toExponential(3)}\nMax LR ${Number(point.lr_max).toExponential(3)}`;
+    node.appendChild(title);
+    pointLayer.appendChild(node);
+    return {point, node};
+  });
+
+  function lerp(min, max, t) {
+    return min + (max - min) * t;
+  }
+
+  function denormalizeLinear(t, min, max) {
+    if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) return NaN;
+    return lerp(min, max, t);
+  }
+
+  function denormalizeLog(t, logMin, logMax) {
+    if (!Number.isFinite(logMin) || !Number.isFinite(logMax) || logMax <= logMin) return NaN;
+    return 10 ** lerp(logMin, logMax, t);
+  }
+
+  function formatBeta2(value) {
+    return Number.isFinite(value) ? value.toFixed(4) : "n/a";
+  }
+
+  function formatSci(value) {
+    return Number.isFinite(value) ? value.toExponential(1) : "n/a";
+  }
+
+  function sideLabel(text, position, angleDeg = 0) {
+    const node = document.createElementNS(svgNs, "text");
+    node.setAttribute("x", String(position.x));
+    node.setAttribute("y", String(position.y));
+    node.setAttribute("text-anchor", "middle");
+    node.setAttribute("font-size", "12");
+    node.setAttribute("font-weight", "600");
+    node.setAttribute("fill", "currentColor");
+    if (angleDeg !== 0) {
+      node.setAttribute("transform", `rotate(${angleDeg} ${position.x} ${position.y})`);
+    }
+    node.textContent = text;
+    labelLayer.appendChild(node);
+  }
+
+  const betaSideMid = barycentricPixel(0.5, 0.5, 0);
+  const wdSideMid = barycentricPixel(0, 0.5, 0.5);
+  const lrSideMid = barycentricPixel(0.5, 0, 0.5);
+  sideLabel("β2", {x: betaSideMid.x, y: betaSideMid.y + 30}, 0);
+  sideLabel("weight decay", {x: wdSideMid.x + 56, y: wdSideMid.y + 16}, 60);
+  sideLabel("max LR", {x: lrSideMid.x - 56, y: lrSideMid.y + 16}, -60);
+
+  const scaleLabelLayer = document.createElementNS(svgNs, "g");
+  svg.appendChild(scaleLabelLayer);
+  const scaleTicks = [0, 0.25, 0.5, 0.75, 1];
+  for (const tick of scaleTicks) {
+    const betaTick = barycentricPixel(tick, 1 - tick, 0);
+    const betaText = document.createElementNS(svgNs, "text");
+    betaText.setAttribute("x", String(betaTick.x));
+    betaText.setAttribute("y", String(betaTick.y + 14));
+    betaText.setAttribute("text-anchor", "middle");
+    betaText.setAttribute("font-size", "10");
+    betaText.setAttribute("fill", "currentColor");
+    betaText.setAttribute("opacity", "0.82");
+    betaText.textContent = formatBeta2(denormalizeLinear(tick, beta2Min, beta2Max));
+    scaleLabelLayer.appendChild(betaText);
+
+    const wdTick = barycentricPixel(0, tick, 1 - tick);
+    const wdText = document.createElementNS(svgNs, "text");
+    wdText.setAttribute("x", String(wdTick.x + 7));
+    wdText.setAttribute("y", String(wdTick.y + 3));
+    wdText.setAttribute("text-anchor", "start");
+    wdText.setAttribute("font-size", "10");
+    wdText.setAttribute("fill", "currentColor");
+    wdText.setAttribute("opacity", "0.82");
+    wdText.textContent = formatSci(denormalizeLog(tick, wdLogMin, wdLogMax));
+    scaleLabelLayer.appendChild(wdText);
+
+    const lrTick = barycentricPixel(1 - tick, 0, tick);
+    const lrText = document.createElementNS(svgNs, "text");
+    lrText.setAttribute("x", String(lrTick.x - 7));
+    lrText.setAttribute("y", String(lrTick.y + 3));
+    lrText.setAttribute("text-anchor", "end");
+    lrText.setAttribute("font-size", "10");
+    lrText.setAttribute("fill", "currentColor");
+    lrText.setAttribute("opacity", "0.82");
+    lrText.textContent = formatSci(denormalizeLog(tick, lrLogMin, lrLogMax));
+    scaleLabelLayer.appendChild(lrText);
+  }
+
+  plotCard.appendChild(svg);
+
+  const legend = el("div");
+  legend.style.display = "flex";
+  legend.style.alignItems = "center";
+  legend.style.gap = "0.5rem";
+  legend.style.flexWrap = "wrap";
+  const legendLabel = el("span", "Run #");
+  legendLabel.style.fontSize = "0.85rem";
+  const legendMin = el("span", String(Math.round(runColorMin)));
+  legendMin.style.fontVariantNumeric = "tabular-nums";
+  legendMin.style.fontSize = "0.8rem";
+  const legendSwatch = el("div");
+  legendSwatch.style.width = "160px";
+  legendSwatch.style.height = "10px";
+  legendSwatch.style.borderRadius = "999px";
+  legendSwatch.style.border = "1px solid rgba(127, 127, 127, 0.35)";
+  legendSwatch.style.background = `linear-gradient(to right, ${runColorScale(runColorMin)}, ${runColorScale(runColorMax)})`;
+  const legendMax = el("span", String(Math.round(runColorMax)));
+  legendMax.style.fontVariantNumeric = "tabular-nums";
+  legendMax.style.fontSize = "0.8rem";
+  legend.append(legendLabel, legendMin, legendSwatch, legendMax);
+  plotCard.appendChild(legend);
+  const scaleHelp = el(
+    "div",
+    "Side ticks are shown in original parameter units. Point geometry still represents the normalized ternary mix used to place each run."
+  );
+  scaleHelp.style.fontSize = "0.8rem";
+  scaleHelp.style.opacity = "0.8";
+  plotCard.appendChild(scaleHelp);
+  chartHost.appendChild(plotCard);
+
+  const tableCard = card();
+  const tableTitle = el("strong", "Current run window");
+  tableCard.appendChild(tableTitle);
+  const table = el("table");
+  table.style.width = "100%";
+  table.style.borderCollapse = "collapse";
+  table.style.fontSize = "0.9rem";
+  const tableHead = el("thead");
+  const headRow = el("tr");
+  for (const column of ["Run #", "Run", "β2", "Weight Decay", "Max LR"]) {
+    const th = el("th", column);
+    th.style.padding = "0.2rem 0.45rem";
+    th.style.textAlign = column === "Run" ? "left" : "right";
+    th.style.borderBottom = "1px solid rgba(127, 127, 127, 0.22)";
+    headRow.appendChild(th);
+  }
+  tableHead.appendChild(headRow);
+  const tableBody = el("tbody");
+  table.append(tableHead, tableBody);
+  const tableEmpty = el("p", "Run window is empty at index 0.");
+  tableEmpty.style.margin = "0";
+  tableCard.append(table, tableEmpty);
+  windowTableHost.appendChild(tableCard);
+
+  let timerId = null;
+  function stopAnimation() {
+    if (timerId != null) {
+      window.clearInterval(timerId);
+      timerId = null;
+    }
+  }
+  function startAnimation() {
+    stopAnimation();
+    const frameMs = Math.max(120, Number(speedControl.input.value) || 450);
+    timerId = window.setInterval(() => {
+      if (!root.isConnected) {
+        stopAnimation();
+        return;
+      }
+      let current = Number(runControl.input.value);
+      if (!Number.isFinite(current)) current = 0;
+      current = (Math.round(current) + 1) % (points.length + 1);
+      runControl.input.value = String(current);
+      refresh();
+    }, frameMs);
+  }
+
+  function refresh() {
+    speedControl.output.textContent = String(Math.round(Number(speedControl.input.value)));
+    runControl.output.textContent = String(Math.round(Number(runControl.input.value)));
+    windowSizeControl.output.textContent = String(Math.round(Number(windowSizeControl.input.value)));
+
+    speedControl.input.disabled = !animateToggle.checked;
+    runControl.input.disabled = !animateToggle.checked;
+
+    const animateEnabled = animateToggle.checked;
+    const current = animateEnabled ? clampCurrent(runControl.input.value) : points.length;
+    runControl.input.value = String(current);
+    const windowSize = Math.max(1, Math.min(points.length, Math.round(Number(windowSizeControl.input.value) || 1)));
+    windowSizeControl.input.value = String(windowSize);
+    const start = animateEnabled ? Math.max(1, current - windowSize + 1) : 1;
+    const end = animateEnabled ? current : points.length;
+
+    const visiblePoints = [];
+    for (const {point, node} of pointNodes) {
+      const isVisible = point.run_order >= start && point.run_order <= end;
+      node.style.display = isVisible ? "" : "none";
+      if (!isVisible) continue;
+      const pointSize = animateEnabled
+        ? current <= 0
+          ? 0
+          : Math.max(2.5, 5 - (current - point.run_order))
+        : 3.2;
+      node.setAttribute("r", String(pointSize));
+      visiblePoints.push(point);
+    }
+
+    let visibleSegmentsCount = 0;
+    if (lineToggle.checked) {
+      for (const {segment, node} of segmentNodes) {
+        const isVisible = segment.source_order >= start && segment.target_order <= end;
+        node.style.display = isVisible ? "" : "none";
+        if (isVisible) visibleSegmentsCount += 1;
+      }
+    } else {
+      for (const {node} of segmentNodes) node.style.display = "none";
+    }
+
+    const tableRows = visiblePoints.map((point) => ({
+      run_number: point.run_number,
+      run_name: point.run_name,
+      optimizer_beta2: point.optimizer_beta2,
+      optimizer_weight_decay: point.optimizer_weight_decay,
+      lr_max: point.lr_max
+    }));
+
+    const showingAllRuns = tableRows.length === points.length;
+    if (showingAllRuns) {
+      tableCard.style.display = "none";
+    } else {
+      tableCard.style.display = "";
+      clearNode(tableBody);
+      if (tableRows.length > 0) {
+        const fragment = document.createDocumentFragment();
+        for (const row of tableRows) {
+          const tr = el("tr");
+
+          const runNumberCell = el("td", Number.isFinite(row.run_number) ? String(Math.round(row.run_number)) : "n/a");
+          runNumberCell.style.padding = "0.2rem 0.45rem";
+          runNumberCell.style.textAlign = "right";
+          tr.appendChild(runNumberCell);
+
+          const runNameCell = el("td", row.run_name || "");
+          runNameCell.style.padding = "0.2rem 0.45rem";
+          runNameCell.style.textAlign = "left";
+          tr.appendChild(runNameCell);
+
+          const betaCell = el("td", Number.isFinite(Number(row.optimizer_beta2)) ? Number(row.optimizer_beta2).toFixed(6) : "n/a");
+          betaCell.style.padding = "0.2rem 0.45rem";
+          betaCell.style.textAlign = "right";
+          tr.appendChild(betaCell);
+
+          const wdCell = el(
+            "td",
+            Number.isFinite(Number(row.optimizer_weight_decay)) ? Number(row.optimizer_weight_decay).toExponential(3) : "n/a"
+          );
+          wdCell.style.padding = "0.2rem 0.45rem";
+          wdCell.style.textAlign = "right";
+          tr.appendChild(wdCell);
+
+          const lrCell = el("td", Number.isFinite(Number(row.lr_max)) ? Number(row.lr_max).toExponential(3) : "n/a");
+          lrCell.style.padding = "0.2rem 0.45rem";
+          lrCell.style.textAlign = "right";
+          tr.appendChild(lrCell);
+
+          fragment.appendChild(tr);
+        }
+        tableBody.appendChild(fragment);
+        table.style.display = "";
+        tableEmpty.style.display = "none";
+      } else {
+        table.style.display = "none";
+        tableEmpty.style.display = "";
+      }
+    }
+
+    if (animateEnabled) {
+      summaryHost.textContent = `Run index ${current.toLocaleString("en-US")} / ${points.length.toLocaleString(
+        "en-US"
+      )}, showing up to ${windowSize.toLocaleString("en-US")} run(s) in the window${
+        lineToggle.checked ? `, ${visibleSegmentsCount.toLocaleString("en-US")} line segment(s)` : ""
+      }.`;
+    } else {
+      summaryHost.textContent = `Animation off: showing all ${tableRows.length.toLocaleString("en-US")} run(s)${
+        lineToggle.checked ? `, ${visibleSegmentsCount.toLocaleString("en-US")} line segment(s)` : ""
+      }.`;
+    }
+  }
+
+  animateToggle.addEventListener("change", () => {
+    if (animateToggle.checked) {
+      if (Number(runControl.input.value) === points.length) {
+        runControl.input.value = "0";
+      }
+      startAnimation();
+    } else {
+      stopAnimation();
+    }
+    refresh();
+  });
+  lineToggle.addEventListener("change", refresh);
+  runControl.input.addEventListener("input", refresh);
+  windowSizeControl.input.addEventListener("input", refresh);
+  speedControl.input.addEventListener("input", () => {
+    if (animateToggle.checked) startAnimation();
+    refresh();
+  });
+  refresh();
+  if (animateToggle.checked) startAnimation();
+  return root;
+}
+
 function inferColumns(rows) {
   if (rows.length === 0) return {all: [], numeric: []};
   const all = Array.from(new Set(rows.flatMap((row) => Object.keys(row))));
@@ -540,6 +1188,213 @@ export async function renderLrSweepFrontier(options = {}) {
   host.appendChild(details);
   root.appendChild(host);
 
+  return root;
+}
+
+export async function renderOptimizerSweepEvalLoss(options = {}) {
+  const root = el("section");
+  root.className = "observable-embed observable-embed-optimizer-sweep-eval-loss";
+  root.style.display = "grid";
+  root.style.gap = "1rem";
+
+  let data;
+  try {
+    data = await loadOptimizerSweepData();
+  } catch (error) {
+    root.appendChild(emptyState(`Failed to load optimizer sweep parquet snapshots: ${error.message}`));
+    return root;
+  }
+
+  const {historyRows} = data;
+  const rows = historyRows
+    .filter((row) => Number.isFinite(row.step))
+    .sort(
+      (a, b) =>
+        d3.ascending(a.run_number, b.run_number) ||
+        d3.ascending(a.run_name, b.run_name) ||
+        d3.ascending(a.step, b.step)
+    );
+  if (rows.length === 0) {
+    root.appendChild(emptyState("No optimizer sweep history rows available."));
+    return root;
+  }
+
+  const runNames = Array.from(new Set(rows.map((row) => row.run_name))).sort();
+  const runIndexByName = new Map(runNames.map((runName, idx) => [runName, idx + 1]));
+  const enrichedRows = rows.map((row) => ({
+    ...row,
+    run_color: Number.isFinite(row.run_number) ? row.run_number : runIndexByName.get(row.run_name)
+  }));
+
+  const stepMin = Math.floor(d3.min(enrichedRows, (row) => row.step) ?? 0);
+  const stepMax = Math.ceil(d3.max(enrichedRows, (row) => row.step) ?? stepMin);
+  const stepSpan = Math.max(0, stepMax - stepMin);
+  const defaultExcludeFirst = Math.max(0, Math.min(stepSpan, Number(options.excludeFirstIterations ?? 0)));
+  const defaultExcludeLast = Math.max(0, Math.min(stepSpan, Number(options.excludeLastIterations ?? 0)));
+
+  const panel = card();
+  const controlsRow = el("div");
+  controlsRow.style.display = "grid";
+  controlsRow.style.gap = "0.5rem";
+
+  const excludeFirstControl = rangeControl(
+    "Exclude first iterations",
+    0,
+    stepSpan,
+    1,
+    Math.round(defaultExcludeFirst)
+  );
+  const excludeLastControl = rangeControl(
+    "Exclude last iterations",
+    0,
+    stepSpan,
+    1,
+    Math.round(defaultExcludeLast)
+  );
+  controlsRow.append(excludeFirstControl.node, excludeLastControl.node);
+
+  const summaryHost = el("p");
+  summaryHost.style.margin = "0";
+  const evalHost = el("div");
+  const gradHost = el("div");
+  panel.append(controlsRow, summaryHost, evalHost, gradHost);
+  root.appendChild(panel);
+
+  const stepDiffs = [];
+  for (const [, runRows] of d3.group(enrichedRows, (row) => row.run_name)) {
+    const runEval = runRows.filter((row) => Number.isFinite(row.eval_loss) && row.eval_loss > 0);
+    for (let idx = 1; idx < runEval.length; idx += 1) {
+      const delta = runEval[idx].step - runEval[idx - 1].step;
+      if (Number.isFinite(delta) && delta > 0) stepDiffs.push(delta);
+    }
+  }
+  const medianEvalInterval = d3.median(stepDiffs);
+
+  function syncExcludeValues(activeHandle = null) {
+    let first = Number(excludeFirstControl.input.value);
+    let last = Number(excludeLastControl.input.value);
+    if (!Number.isFinite(first)) first = 0;
+    if (!Number.isFinite(last)) last = 0;
+    if (first + last > stepSpan) {
+      if (activeHandle === "first") {
+        last = Math.max(0, stepSpan - first);
+      } else if (activeHandle === "last") {
+        first = Math.max(0, stepSpan - last);
+      } else {
+        const scale = stepSpan / (first + last || 1);
+        first = Math.floor(first * scale);
+        last = Math.max(0, stepSpan - first);
+      }
+    }
+    excludeFirstControl.input.value = String(Math.round(first));
+    excludeLastControl.input.value = String(Math.round(last));
+    excludeFirstControl.output.textContent = String(Math.round(first));
+    excludeLastControl.output.textContent = String(Math.round(last));
+    return {first: Math.round(first), last: Math.round(last)};
+  }
+
+  function refresh() {
+    const {first, last} = syncExcludeValues();
+    const minStep = stepMin + first;
+    const maxStep = stepMax - last;
+
+    const windowRows = enrichedRows.filter((row) => row.step >= minStep && row.step <= maxStep);
+    const evalRows = windowRows.filter((row) => Number.isFinite(row.eval_loss) && row.eval_loss > 0);
+    const gradRows = windowRows.filter((row) => Number.isFinite(row.grad_unclipped) && row.grad_unclipped > 0);
+
+    clearNode(evalHost);
+    clearNode(gradHost);
+
+    summaryHost.textContent = `${runNames.length.toLocaleString("en-US")} runs, ${evalRows.length.toLocaleString(
+      "en-US"
+    )} eval points, ${gradRows.length.toLocaleString("en-US")} grad points${
+      Number.isFinite(medianEvalInterval)
+        ? `, median eval interval ${Number(medianEvalInterval).toFixed(0)} iterations`
+        : ""
+    }, window [${minStep.toLocaleString("en-US")}, ${maxStep.toLocaleString("en-US")}].`;
+
+    if (evalRows.length === 0) {
+      evalHost.appendChild(emptyState("No eval-loss points in the selected iteration window."));
+    } else {
+      const evalYMin = d3.min(evalRows, (row) => row.eval_loss) ?? 1e-8;
+      const evalYMax = d3.max(evalRows, (row) => row.eval_loss) ?? 1;
+      evalHost.appendChild(
+        Plot.plot({
+          title: "Optimizer Sweep Eval Loss vs Iteration (All Runs)",
+          width: 920,
+          height: 360,
+          x: {label: "Iteration", grid: true, domain: [minStep, maxStep]},
+          y: {type: "log", label: "Eval Loss", grid: true, domain: [evalYMin * 0.95, evalYMax * 1.05]},
+          color: {type: "linear", interpolate: d3.interpolateWarm, legend: true, label: "Run #"},
+          marks: [
+            Plot.lineY(evalRows, {
+              x: "step",
+              y: "eval_loss",
+              z: "run_name",
+              stroke: "run_color"
+            }),
+            Plot.dot(evalRows, {
+              x: "step",
+              y: "eval_loss",
+              z: "run_name",
+              fill: "run_color",
+              r: 1.8,
+              opacity: 0.55,
+              title: (d) =>
+                `${d.run_name}\nStep ${Math.round(d.step)}\nEval Loss ${Number(d.eval_loss).toFixed(6)}`,
+              tip: true
+            })
+          ]
+        })
+      );
+    }
+
+    if (gradRows.length === 0) {
+      gradHost.appendChild(emptyState("No unclipped-grad-norm points in the selected iteration window."));
+    } else {
+      const gradYMin = d3.min(gradRows, (row) => row.grad_unclipped) ?? 1e-8;
+      const gradYMax = d3.max(gradRows, (row) => row.grad_unclipped) ?? 1;
+      gradHost.appendChild(
+        Plot.plot({
+          title: "Optimizer Sweep Unclipped Grad Norm vs Iteration (All Runs)",
+          width: 920,
+          height: 340,
+          x: {label: "Iteration", grid: true, domain: [minStep, maxStep]},
+          y: {type: "log", label: "Unclipped Grad Norm", grid: true, domain: [gradYMin * 0.95, gradYMax * 1.05]},
+          color: {type: "linear", interpolate: d3.interpolateWarm, legend: false, label: "Run #"},
+          marks: [
+            Plot.lineY(gradRows, {
+              x: "step",
+              y: "grad_unclipped",
+              z: "run_name",
+              stroke: "run_color"
+            }),
+            Plot.dot(gradRows, {
+              x: "step",
+              y: "grad_unclipped",
+              z: "run_name",
+              fill: "run_color",
+              r: 1.6,
+              opacity: 0.45,
+              title: (d) =>
+                `${d.run_name}\nStep ${Math.round(d.step)}\nGrad Norm ${Number(d.grad_unclipped).toFixed(6)}`,
+              tip: true
+            })
+          ]
+        })
+      );
+    }
+  }
+
+  excludeFirstControl.input.addEventListener("input", () => {
+    syncExcludeValues("first");
+    refresh();
+  });
+  excludeLastControl.input.addEventListener("input", () => {
+    syncExcludeValues("last");
+    refresh();
+  });
+  refresh();
   return root;
 }
 
