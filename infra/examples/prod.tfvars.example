@@ -1,0 +1,42 @@
+project_name = "juliusm-site"
+environment  = "prod"
+aws_region   = "us-east-1"
+stage_name   = "prod"
+
+# Existing Lambda integrations (set ARN values to enable routes)
+resume_lambda_arn = "arn:aws:lambda:us-east-1:123456789012:function:resume-generator"
+chat_lambda_arn   = "arn:aws:lambda:us-east-1:123456789012:function:custom-chatbot"
+
+# Option A: existing inference Lambda
+# infer_lambda_arn = "arn:aws:lambda:us-east-1:123456789012:function:onnx-inference"
+
+# Option B: Modal proxy Lambda managed by this stack
+enable_modal_inference_proxy = true
+modal_endpoint_url           = "https://your-modal-endpoint.modal.run"
+# Optional: if omitted, Terraform creates a secret placeholder and you set it manually.
+# modal_proxy_auth_secret_arn = "arn:aws:secretsmanager:us-east-1:123456789012:secret:modal-auth"
+
+# Optional: pass existing secrets (if omitted, Terraform creates placeholders)
+# turnstile_secret_arn        = "arn:aws:secretsmanager:us-east-1:123456789012:secret:turnstile"
+# session_signing_secret_arn  = "arn:aws:secretsmanager:us-east-1:123456789012:secret:session-signing"
+
+allowed_origins = [
+  "https://juliusm.com",
+  "https://www.juliusm.com"
+]
+
+waf_global_rate_limit = 1000
+waf_resume_rate_limit = 120
+waf_chat_rate_limit   = 300
+waf_infer_rate_limit  = 120
+
+manage_lambda_permissions = true
+
+enable_custom_domain   = true
+api_custom_domain_name = "api.juliusm.com"
+api_certificate_arn    = "arn:aws:acm:us-east-1:123456789012:certificate/00000000-0000-0000-0000-000000000000"
+
+# optional extra tags
+tags = {
+  Owner = "julius"
+}
