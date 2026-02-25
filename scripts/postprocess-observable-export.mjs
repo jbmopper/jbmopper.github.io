@@ -1,10 +1,11 @@
-import {readdir, readFile, writeFile} from "node:fs/promises";
+import {readdir, readFile, writeFile, access} from "node:fs/promises";
 import path from "node:path";
 import {fileURLToPath} from "node:url";
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(SCRIPT_DIR, "..");
 const OBSERVABLE_ROOT = path.join(PROJECT_ROOT, "public/observable");
+const MUSHBOT_BUNDLE = path.join(OBSERVABLE_ROOT, "_import/mushbot-standalone.js");
 
 const PROJECT_ROOT_PATH_CHECK = /^\/projects(?:\/index\.html)?\/?$/;
 const LEGACY_PROJECT_ROOT_PATH_CHECK = /^\/projects\/?$/;
@@ -60,12 +61,31 @@ function normalizeProjectRootMatcher(html) {
   return html.replaceAll(LEGACY_PROJECT_ROOT_PATH_CHECK.toString(), PROJECT_ROOT_PATH_CHECK.toString());
 }
 
-async function processHtmlFile(fullPath) {
+function injectMushbotScript(html) {
+  const tag = `<script src="/observable/_import/mushbot-standalone.js" defer><\/script>`;
+  html = html.replace(/<script[^>]*mushbot-standalone\.js[^>]*><\/script>\n?/g, "");
+  if (html.includes("</head>")) {
+    return html.replace("</head>", `${tag}\n</head>`);
+  }
+  return html;
+}
+
+async function mushbotBundleExists() {
+  try {
+    await access(MUSHBOT_BUNDLE);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function processHtmlFile(fullPath, injectMushbot) {
   const relativePath = path.relative(OBSERVABLE_ROOT, fullPath);
   let html = await readFile(fullPath, "utf8");
 
   html = upsertBaseHref(html, getCanonicalBaseHref(relativePath));
   html = normalizeProjectRootMatcher(html);
+  if (injectMushbot) html = injectMushbotScript(html);
 
   await writeFile(fullPath, html, "utf8");
 }
@@ -73,12 +93,14 @@ async function processHtmlFile(fullPath) {
 async function main() {
   const allFiles = await walkDirectory(OBSERVABLE_ROOT);
   const htmlFiles = allFiles.filter((filePath) => filePath.endsWith(".html"));
+  const injectMushbot = await mushbotBundleExists();
 
   for (const htmlFile of htmlFiles) {
-    await processHtmlFile(htmlFile);
+    await processHtmlFile(htmlFile, injectMushbot);
   }
 
-  console.log(`Post-processed Observable export HTML (${htmlFiles.length} files).`);
+  const mushbotNote = injectMushbot ? " (with Mushbot injection)" : "";
+  console.log(`Post-processed Observable export HTML (${htmlFiles.length} files)${mushbotNote}.`);
 }
 
 main().catch((error) => {
