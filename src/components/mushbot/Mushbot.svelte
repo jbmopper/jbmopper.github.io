@@ -125,7 +125,7 @@
     >
       <header class="panel-header">
         <SpritePlayer animation={animationState} width={32} height={32} />
-        <span class="panel-title">Mushy Mushbot</span>
+        <span class="panel-title">Chatbot Placeholder</span>
         <button class="close-btn" onclick={toggle} aria-label="Close chat">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <path d="M18 6 6 18"/><path d="M6 6 18 18"/>
