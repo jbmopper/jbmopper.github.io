@@ -1,0 +1,8 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ResumeGenerator from "../components/resume/ResumeGenerator.svelte";
+---
+
+<BaseLayout title="Resume Generator | juliusm.com" description="AI-generated tailored resume from a job description">
+  <ResumeGenerator client:load />
+</BaseLayout>
