@@ -1,0 +1,63 @@
+name: Infra Plan
+
+on:
+  pull_request:
+    paths:
+      - "infra/**"
+      - ".github/workflows/infra-plan.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "infra/**"
+      - ".github/workflows/infra-plan.yml"
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+
+jobs:
+  plan:
+    if: ${{ vars.AWS_TERRAFORM_ROLE_ARN != '' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Run infra lambda unit tests
+        run: ./scripts/test-infra-lambdas.sh
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_TERRAFORM_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terraform format check
+        run: terraform -chdir=infra fmt -check -recursive
+
+      - name: Terraform init
+        run: terraform -chdir=infra init -input=false
+
+      - name: Terraform validate
+        run: terraform -chdir=infra validate
+
+      - name: Terraform plan
+        run: terraform -chdir=infra plan -input=false -lock=false
+
+  missing-role-config:
+    if: ${{ vars.AWS_TERRAFORM_ROLE_ARN == '' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Missing role configuration
+        run: |
+          echo "Skipping infra plan because repo variable AWS_TERRAFORM_ROLE_ARN is not configured."

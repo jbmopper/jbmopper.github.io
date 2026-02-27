@@ -71,3 +71,46 @@ Minimal safeguards:
 - Sign or validate conversation IDs (don’t trust arbitrary client IDs).
 - Add TTL/cleanup and rate limits.
 - If auth exists, bind conversation to user id; if anonymous, treat as untrusted and scoped.
+
+# Security Requirements
+
+Documenting security in this file is not itself a security risk if we keep it at the requirements and control level. Do not include secrets, account identifiers, private endpoints, token values, or exact detection thresholds.
+
+## Security Architecture (Required)
+
+- Public frontend remains static and is served without embedded secrets.
+- Protected backend features run behind API Gateway and AWS WAF.
+- Human verification is required with Cloudflare Turnstile for sensitive/expensive actions (resume generation, chatbot turns, inference requests).
+- GPU inference may be proxied to Modal, but requests must still pass project-controlled validation and abuse controls first.
+
+## Implementation Controls (Required)
+
+- Validate Turnstile token server-side before processing protected requests.
+- Apply WAF managed protections and rate-based rules at API Gateway.
+- Enforce strict request schemas, payload size limits, and content-type checks in Lambda handlers.
+- Use signed or server-issued conversation IDs; do not trust arbitrary client-provided IDs.
+- Configure CORS to explicit origins and allowed methods/headers only.
+- Use least-privilege IAM per function and per environment.
+- Keep secrets in AWS Secrets Manager or SSM Parameter Store; never commit secrets to git.
+- Apply short timeouts and bounded retries for upstream calls (including Modal).
+
+## Operations and Delivery Practices
+
+- Infrastructure changes are made through Terraform and reviewed in pull requests.
+- CI runs test and plan checks before apply.
+- Production apply is controlled (manual approval and AWS SSO-based operator access).
+- Security-relevant logs are enabled for API Gateway and Lambda with request correlation IDs.
+- Add alarms for elevated 4xx/5xx rates, Lambda errors, and anomalous request volume.
+- Rotate secrets and API keys on a defined cadence and on incident trigger.
+
+## Documentation Boundaries
+
+Safe to include here:
+- Which controls exist and why.
+- High-level architecture and trust boundaries.
+- Required operational practices and verification gates.
+
+Do not include here:
+- Secrets, keys, tokens, account IDs, or internal hostnames.
+- Full WAF rule tuning values that could help evasion.
+- Incident-specific forensic details or exploit reproduction steps.
