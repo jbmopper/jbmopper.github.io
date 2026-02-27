@@ -32,6 +32,6 @@ locals {
   )
 
   cors_allowed_headers = "Content-Type,Authorization,X-Requested-With"
-  cors_allowed_methods = "OPTIONS,POST"
+  cors_allowed_methods = "OPTIONS,GET,POST"
   cors_max_age         = "300"
 }

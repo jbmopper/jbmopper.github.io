@@ -1,6 +1,6 @@
 <script lang="ts">
   import { loadTurnstileScript, renderTurnstile } from "../../lib/turnstile.js";
-  import { submitResume, submitResumeFile, pollJobStatus } from "./resume-api.js";
+  import { verifyTurnstile, submitResume, submitResumeFile, pollJobStatus } from "./resume-api.js";
   import type { JobStatusResponse } from "./resume-api.js";
 
   type FlowStep = "intro" | "turnstile" | "input" | "processing" | "complete" | "error";
@@ -15,7 +15,7 @@
   const MAX_POLLS = 120;
 
   let step: FlowStep = $state("intro");
-  let turnstileToken: string | null = $state(null);
+  let sessionToken: string = $state("");
   let turnstileEl: HTMLDivElement | undefined = $state();
 
   let inputMode: "text" | "file" = $state("text");
@@ -41,7 +41,7 @@
 
   function goToTurnstile() {
     if (!SITE_KEY) {
-      turnstileToken = null;
+      sessionToken = "mock-session-token";
       step = "input";
       return;
     }
@@ -57,11 +57,12 @@
   async function initTurnstile() {
     try {
       await loadTurnstileScript();
-      const token = await renderTurnstile(turnstileEl!, SITE_KEY);
-      turnstileToken = token;
+      const cfToken = await renderTurnstile(turnstileEl!, SITE_KEY);
+      const session = await verifyTurnstile(cfToken);
+      sessionToken = session.sessionToken;
       step = "input";
     } catch (err: any) {
-      showError(err.message ?? "Turnstile verification failed", "intro");
+      showError(err.message ?? "Verification failed", "intro");
     }
   }
 
@@ -92,15 +93,17 @@
       if (inputMode === "file" && selectedFile) {
         result = await submitResumeFile(
           selectedFile,
+          sessionToken,
           jobTitleText.trim() || undefined,
-          turnstileToken ?? undefined,
         );
       } else {
-        result = await submitResume({
-          job_description: jobDescriptionText.trim(),
-          job_title: jobTitleText.trim() || undefined,
-          turnstile_token: turnstileToken ?? undefined,
-        });
+        result = await submitResume(
+          {
+            job_description: jobDescriptionText.trim(),
+            job_title: jobTitleText.trim() || undefined,
+          },
+          sessionToken,
+        );
       }
 
       jobId = result.job_id;
@@ -126,7 +129,7 @@
       }
 
       try {
-        const status: JobStatusResponse = await pollJobStatus(jobId);
+        const status: JobStatusResponse = await pollJobStatus(jobId, sessionToken);
         jobStatus = status.status;
 
         if (status.status === "COMPLETE" && status.pdf_url) {
@@ -162,7 +165,7 @@
   function resetFlow() {
     clearTimers();
     step = "intro";
-    turnstileToken = null;
+    sessionToken = "";
     jobDescriptionText = "";
     jobTitleText = "";
     selectedFile = null;

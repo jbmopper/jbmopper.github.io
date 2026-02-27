@@ -148,6 +148,17 @@ variable "waf_infer_rate_limit" {
   default     = 120
 }
 
+variable "authorizer_cache_ttl_seconds" {
+  description = "How long API Gateway caches authorizer results per token (0 disables caching)."
+  type        = number
+  default     = 300
+
+  validation {
+    condition     = var.authorizer_cache_ttl_seconds >= 0 && var.authorizer_cache_ttl_seconds <= 3600
+    error_message = "authorizer_cache_ttl_seconds must be between 0 and 3600."
+  }
+}
+
 variable "manage_lambda_permissions" {
   description = "Whether Terraform should create aws_lambda_permission resources for API Gateway invocation."
   type        = bool

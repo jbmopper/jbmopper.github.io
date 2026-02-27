@@ -92,7 +92,8 @@ resource "aws_api_gateway_method" "resume_post" {
   rest_api_id   = aws_api_gateway_rest_api.main.id
   resource_id   = aws_api_gateway_resource.resume_generate.id
   http_method   = "POST"
-  authorization = "NONE"
+  authorization = "CUSTOM"
+  authorizer_id = aws_api_gateway_authorizer.session.id
 }
 
 resource "aws_api_gateway_integration" "resume_post" {
@@ -104,6 +105,99 @@ resource "aws_api_gateway_integration" "resume_post" {
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = var.resume_lambda_arn
+}
+
+# --- Resume job status polling route: GET /v1/resume/job/{jobId} ---
+
+resource "aws_api_gateway_resource" "resume_job" {
+  count = local.resume_route_enabled ? 1 : 0
+
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  parent_id   = aws_api_gateway_resource.resume.id
+  path_part   = "job"
+}
+
+resource "aws_api_gateway_resource" "resume_job_id" {
+  count = local.resume_route_enabled ? 1 : 0
+
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  parent_id   = aws_api_gateway_resource.resume_job[0].id
+  path_part   = "{jobId}"
+}
+
+resource "aws_api_gateway_method" "resume_job_get" {
+  count = local.resume_route_enabled ? 1 : 0
+
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.resume_job_id[0].id
+  http_method   = "GET"
+  authorization = "CUSTOM"
+  authorizer_id = aws_api_gateway_authorizer.session.id
+}
+
+resource "aws_api_gateway_integration" "resume_job_get" {
+  count = local.resume_route_enabled ? 1 : 0
+
+  rest_api_id             = aws_api_gateway_rest_api.main.id
+  resource_id             = aws_api_gateway_resource.resume_job_id[0].id
+  http_method             = aws_api_gateway_method.resume_job_get[0].http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = var.resume_lambda_arn
+}
+
+resource "aws_api_gateway_method" "options_resume_job" {
+  count = local.resume_route_enabled ? 1 : 0
+
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.resume_job_id[0].id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "options_resume_job" {
+  count = local.resume_route_enabled ? 1 : 0
+
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.resume_job_id[0].id
+  http_method = aws_api_gateway_method.options_resume_job[0].http_method
+  type        = "MOCK"
+
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+resource "aws_api_gateway_method_response" "options_resume_job_200" {
+  count = local.resume_route_enabled ? 1 : 0
+
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.resume_job_id[0].id
+  http_method = aws_api_gateway_method.options_resume_job[0].http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Max-Age"       = true
+  }
+}
+
+resource "aws_api_gateway_integration_response" "options_resume_job_200" {
+  count = local.resume_route_enabled ? 1 : 0
+
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.resume_job_id[0].id
+  http_method = aws_api_gateway_method.options_resume_job[0].http_method
+  status_code = aws_api_gateway_method_response.options_resume_job_200[0].status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Methods" = "'${local.cors_allowed_methods}'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allowed_headers}'"
+    "method.response.header.Access-Control-Max-Age"       = "'${local.cors_max_age}'"
+  }
 }
 
 resource "aws_api_gateway_method" "chat_post" {
@@ -367,12 +461,16 @@ resource "aws_api_gateway_deployment" "main" {
           try(aws_api_gateway_integration.resume_post[0].id, ""),
           try(aws_api_gateway_integration.options_resume[0].id, ""),
           try(aws_api_gateway_integration_response.options_resume_200[0].id, ""),
+          try(aws_api_gateway_integration.resume_job_get[0].id, ""),
+          try(aws_api_gateway_integration.options_resume_job[0].id, ""),
+          try(aws_api_gateway_integration_response.options_resume_job_200[0].id, ""),
           try(aws_api_gateway_integration.chat_post[0].id, ""),
           try(aws_api_gateway_integration.options_chat[0].id, ""),
           try(aws_api_gateway_integration_response.options_chat_200[0].id, ""),
           try(aws_api_gateway_integration.infer_post[0].id, ""),
           try(aws_api_gateway_integration.options_infer[0].id, ""),
-          try(aws_api_gateway_integration_response.options_infer_200[0].id, "")
+          try(aws_api_gateway_integration_response.options_infer_200[0].id, ""),
+          aws_api_gateway_authorizer.session.id
         ])
       )
     )
@@ -389,6 +487,9 @@ resource "aws_api_gateway_deployment" "main" {
     aws_api_gateway_integration.resume_post,
     aws_api_gateway_integration.options_resume,
     aws_api_gateway_integration_response.options_resume_200,
+    aws_api_gateway_integration.resume_job_get,
+    aws_api_gateway_integration.options_resume_job,
+    aws_api_gateway_integration_response.options_resume_job_200,
     aws_api_gateway_integration.chat_post,
     aws_api_gateway_integration.options_chat,
     aws_api_gateway_integration_response.options_chat_200,
@@ -450,6 +551,16 @@ resource "aws_lambda_permission" "allow_resume" {
   function_name = var.resume_lambda_arn
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/POST/v1/resume/generate"
+}
+
+resource "aws_lambda_permission" "allow_resume_job_status" {
+  count = var.manage_lambda_permissions && local.resume_route_enabled ? 1 : 0
+
+  statement_id  = "AllowExecutionFromAPIGatewayResumeJobStatus"
+  action        = "lambda:InvokeFunction"
+  function_name = var.resume_lambda_arn
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/GET/v1/resume/job/*"
 }
 
 resource "aws_lambda_permission" "allow_chat" {
