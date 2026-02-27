@@ -104,7 +104,7 @@ resource "aws_api_gateway_integration" "resume_post" {
   http_method             = aws_api_gateway_method.resume_post[0].http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = var.resume_lambda_arn
+  uri                     = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${var.resume_lambda_arn}/invocations"
 }
 
 # --- Resume job status polling route: GET /v1/resume/job/{jobId} ---
@@ -143,7 +143,7 @@ resource "aws_api_gateway_integration" "resume_job_get" {
   http_method             = aws_api_gateway_method.resume_job_get[0].http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = var.resume_lambda_arn
+  uri                     = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${var.resume_lambda_arn}/invocations"
 }
 
 resource "aws_api_gateway_method" "options_resume_job" {
@@ -217,7 +217,7 @@ resource "aws_api_gateway_integration" "chat_post" {
   http_method             = aws_api_gateway_method.chat_post[0].http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = var.chat_lambda_arn
+  uri                     = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${var.chat_lambda_arn}/invocations"
 }
 
 resource "aws_api_gateway_method" "infer_post" {
@@ -237,7 +237,7 @@ resource "aws_api_gateway_integration" "infer_post" {
   http_method             = aws_api_gateway_method.infer_post[0].http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = local.infer_integration_lambda_arn
+  uri                     = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${local.infer_integration_lambda_arn}/invocations"
 }
 
 resource "aws_api_gateway_method" "options_turnstile" {
