@@ -3,10 +3,9 @@ title = "jbmopper.github.io gitleaks config"
 [extend]
 useDefault = true
 
-[[allowlists]]
-description = "Observable generated chart label false positives"
-regexTarget = "secret"
-regexes = [
-  '''^pct_survived_200$''',
-  '''^pct_survived_600$''',
+[allowlist]
+description = "Observable generated chart key false positives"
+stopwords = [
+  "pct_survived_200",
+  "pct_survived_600",
 ]
