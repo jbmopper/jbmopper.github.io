@@ -12,7 +12,7 @@ const ATTACHMENTS = {
   gpu_history: FileAttachment({"name":"../../data/raw/benchmarks/gpu_comp_history.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/gpu_comp_history.e18efbee.parquet","lastModified":1771874136917,"size":1389327}, import.meta.url),
   train: FileAttachment({"name":"../../data/raw/benchmarks/train_benchmark_20260127_092323.json","mimeType":"application/json","path":"../../_file/data/raw/benchmarks/train_benchmark_20260127_092323.e80aa474.json","lastModified":1771465633684,"size":1945563}, import.meta.url),
   micro: FileAttachment({"name":"../../data/raw/benchmarks/micro_benchmarks_20260126_130256.json","mimeType":"application/json","path":"../../_file/data/raw/benchmarks/micro_benchmarks_20260126_130256.0003d6fe.json","lastModified":1771465633680,"size":2403}, import.meta.url),
-  catalog: FileAttachment({"name":"../../data/raw/llm-fundamentals/model-config-catalog.json","mimeType":"application/json","path":"../../_file/data/raw/llm-fundamentals/model-config-catalog.3b260981.json","lastModified":1771314318102,"size":18447}, import.meta.url)
+  catalog: FileAttachment({"name":"../../data/raw/llm-fundamentals/model-config-catalog.json","mimeType":"application/json","path":"../../_file/data/raw/llm-fundamentals/model-config-catalog.556b23f1.json","lastModified":1772246988772,"size":8539}, import.meta.url)
 };
 
 let empiricalDataPromise;

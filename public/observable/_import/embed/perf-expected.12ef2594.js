@@ -8,7 +8,7 @@ import {
 } from "../components/perf-estimates.d771a94d.js";
 import {clearNode, emptyState, renderSimpleTable, sectionHeading} from "../components/dom-utils.d6dae979.js";
 
-const MODEL_CONFIG_CATALOG = FileAttachment({"name":"../../data/raw/llm-fundamentals/model-config-catalog.json","mimeType":"application/json","path":"../../_file/data/raw/llm-fundamentals/model-config-catalog.3b260981.json","lastModified":1771314318102,"size":18447}, import.meta.url);
+const MODEL_CONFIG_CATALOG = FileAttachment({"name":"../../data/raw/llm-fundamentals/model-config-catalog.json","mimeType":"application/json","path":"../../_file/data/raw/llm-fundamentals/model-config-catalog.556b23f1.json","lastModified":1772246988772,"size":8539}, import.meta.url);
 const FORWARD_ARCH_SVG = FileAttachment({"name":"../../data/raw/llm-fundamentals/cs336_forward.svg","mimeType":"image/svg+xml","path":"../../_file/data/raw/llm-fundamentals/cs336_forward.e4ce8080.svg","lastModified":1771360719984,"size":28688}, import.meta.url);
 const D_HEAD_CHOICES = [32, 64, 96, 128];
 const DTYPE_BYTES = {

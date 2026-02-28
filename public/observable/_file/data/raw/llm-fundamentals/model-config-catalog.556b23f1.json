@@ -1,0 +1,330 @@
+{
+  "schema_version": "1.0",
+  "updated_at": "2026-02-27",
+  "purpose": "Consolidated model config catalog for notebook reuse.",
+  "fields": [
+    "batch_size",
+    "seq_len",
+    "d_model",
+    "num_heads",
+    "d_head",
+    "num_layers",
+    "d_ff",
+    "vocab_size"
+  ],
+  "named_config_count": 13,
+  "named_configs": [
+    {
+      "id": "models_yaml:assignment_default",
+      "source_repo": "assignment1-basics",
+      "source_file": "/Users/juliusmopper/Dev/stanford-cs336/assignment1-basics/configs/models.yaml",
+      "source_key": "assignment_default",
+      "category": "assignment_default",
+      "name": "Assignment_Default",
+      "batch_size": 32,
+      "seq_len": 256,
+      "d_model": 512,
+      "num_heads": 16,
+      "num_layers": 4,
+      "d_ff": 1344,
+      "vocab_size": 10000,
+      "extras": {
+        "rope_theta": 10000
+      },
+      "d_head": 32
+    },
+    {
+      "id": "models_yaml:model_a",
+      "source_repo": "assignment1-basics",
+      "source_file": "/Users/juliusmopper/Dev/stanford-cs336/assignment1-basics/configs/models.yaml",
+      "source_key": "model_a",
+      "category": "canonical_model",
+      "name": "Model_A_wide",
+      "batch_size": 32,
+      "seq_len": 256,
+      "d_model": 768,
+      "num_heads": 12,
+      "num_layers": 2,
+      "d_ff": 2048,
+      "vocab_size": 10000,
+      "extras": {
+        "rope_theta": 10000
+      },
+      "d_head": 64
+    },
+    {
+      "id": "models_yaml:model_b",
+      "source_repo": "assignment1-basics",
+      "source_file": "/Users/juliusmopper/Dev/stanford-cs336/assignment1-basics/configs/models.yaml",
+      "source_key": "model_b",
+      "category": "canonical_model",
+      "name": "Model_B_deep",
+      "batch_size": 32,
+      "seq_len": 256,
+      "d_model": 384,
+      "num_heads": 12,
+      "num_layers": 12,
+      "d_ff": 1024,
+      "vocab_size": 10000,
+      "extras": {
+        "rope_theta": 10000
+      },
+      "d_head": 32
+    },
+    {
+      "id": "model_comp:model_i",
+      "source_repo": "assignment1-basics",
+      "source_file": "/Users/juliusmopper/Dev/stanford-cs336/assignment1-basics/runpod/run_optimized_checkpoints.sh",
+      "source_key": "run_exp(model_I)",
+      "category": "model_comp",
+      "name": "Model_I",
+      "batch_size": 64,
+      "seq_len": 256,
+      "d_model": 640,
+      "num_heads": 10,
+      "num_layers": 10,
+      "d_ff": 1024,
+      "vocab_size": 10000,
+      "extras": {
+        "rope_theta": 10000
+      },
+      "d_head": 64
+    },
+    {
+      "id": "model_comp:model_j",
+      "source_repo": "assignment1-basics",
+      "source_file": "/Users/juliusmopper/Dev/stanford-cs336/assignment1-basics/runpod/run_optimized_checkpoints.sh",
+      "source_key": "run_exp(model_J)",
+      "category": "model_comp",
+      "name": "Model_J",
+      "batch_size": 48,
+      "seq_len": 256,
+      "d_model": 384,
+      "num_heads": 12,
+      "num_layers": 12,
+      "d_ff": 1728,
+      "vocab_size": 10000,
+      "extras": {
+        "rope_theta": 10000
+      },
+      "d_head": 32
+    },
+    {
+      "id": "nsys:latency_bound",
+      "source_repo": "Notebooks",
+      "source_file": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/nsys_analysis.py",
+      "source_key": "configs[trace=latency_bound]",
+      "category": "stress",
+      "name": "latency_bound",
+      "batch_size": 1,
+      "seq_len": 128,
+      "d_model": 512,
+      "num_heads": 8,
+      "num_layers": 12,
+      "d_ff": 1536,
+      "vocab_size": 10000,
+      "d_head": 64
+    },
+    {
+      "id": "nsys:misaligned_dims",
+      "source_repo": "Notebooks",
+      "source_file": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/nsys_analysis.py",
+      "source_key": "configs[trace=misaligned_dims]",
+      "category": "stress",
+      "name": "misaligned_dims",
+      "batch_size": 34,
+      "seq_len": 257,
+      "d_model": 514,
+      "num_heads": 2,
+      "num_layers": 6,
+      "d_ff": 1538,
+      "vocab_size": 10000,
+      "d_head": 257
+    },
+    {
+      "id": "nsys:bad_head_size",
+      "source_repo": "Notebooks",
+      "source_file": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/nsys_analysis.py",
+      "source_key": "configs[trace=bad_head_size]",
+      "category": "stress",
+      "name": "bad_head_size",
+      "batch_size": 32,
+      "seq_len": 256,
+      "d_model": 672,
+      "num_heads": 12,
+      "num_layers": 6,
+      "d_ff": 1792,
+      "vocab_size": 10000,
+      "d_head": 56
+    },
+    {
+      "id": "nsys:vocab_bottleneck",
+      "source_repo": "Notebooks",
+      "source_file": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/nsys_analysis.py",
+      "source_key": "configs[trace=vocab_bottleneck]",
+      "category": "stress",
+      "name": "vocab_bottleneck",
+      "batch_size": 64,
+      "seq_len": 256,
+      "d_model": 512,
+      "num_heads": 8,
+      "num_layers": 4,
+      "d_ff": 1536,
+      "vocab_size": 50257,
+      "d_head": 64
+    },
+    {
+      "id": "nsys:wide_ffn",
+      "source_repo": "Notebooks",
+      "source_file": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/nsys_analysis.py",
+      "source_key": "configs[trace=wide_ffn]",
+      "category": "stress",
+      "name": "wide_ffn",
+      "batch_size": 32,
+      "seq_len": 256,
+      "d_model": 768,
+      "num_heads": 12,
+      "num_layers": 6,
+      "d_ff": 4096,
+      "vocab_size": 10000,
+      "d_head": 64
+    },
+    {
+      "id": "nsys:bandwidth_bound",
+      "source_repo": "Notebooks",
+      "source_file": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/nsys_analysis.py",
+      "source_key": "configs[trace=bandwidth_bound]",
+      "category": "stress",
+      "name": "bandwidth_bound",
+      "batch_size": 256,
+      "seq_len": 256,
+      "d_model": 384,
+      "num_heads": 6,
+      "num_layers": 4,
+      "d_ff": 1024,
+      "vocab_size": 10000,
+      "d_head": 64
+    },
+    {
+      "id": "nsys:compute_bound",
+      "source_repo": "Notebooks",
+      "source_file": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/nsys_analysis.py",
+      "source_key": "configs[trace=compute_bound]",
+      "category": "stress",
+      "name": "compute_bound",
+      "batch_size": 32,
+      "seq_len": 256,
+      "d_model": 1536,
+      "num_heads": 24,
+      "num_layers": 8,
+      "d_ff": 4096,
+      "vocab_size": 10000,
+      "d_head": 64
+    },
+    {
+      "id": "nsys:deep_sequential",
+      "source_repo": "Notebooks",
+      "source_file": "/Users/juliusmopper/Dev/Notebooks/deep-language-fundamentals/nsys_analysis.py",
+      "source_key": "configs[trace=deep_sequential]",
+      "category": "stress",
+      "name": "deep_sequential",
+      "batch_size": 32,
+      "seq_len": 256,
+      "d_model": 512,
+      "num_heads": 8,
+      "num_layers": 32,
+      "d_ff": 1536,
+      "vocab_size": 10000,
+      "d_head": 64
+    }
+  ],
+  "benchmark_spaces": [
+    {
+      "id": "assignment1:train_benchmark_20260127_092323",
+      "source_file": "/Users/juliusmopper/Dev/stanford-cs336/assignment1-basics/notebooks/benchmark_results/train_benchmark_20260127_092323.json",
+      "shape": "explicit_grid_results",
+      "run_count": 4739,
+      "dimensions": {
+        "batch_size": [
+          8,
+          16,
+          32,
+          48,
+          64,
+          80
+        ],
+        "seq_len": [
+          256,
+          512,
+          768,
+          1024
+        ],
+        "d_model": [
+          256,
+          384,
+          512,
+          640,
+          768
+        ],
+        "d_head": [
+          32,
+          64,
+          96,
+          128
+        ],
+        "num_heads": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          8,
+          10,
+          12,
+          16,
+          20,
+          24
+        ],
+        "num_layers": [
+          8,
+          10,
+          12,
+          14,
+          16
+        ],
+        "d_ff": [
+          640,
+          704,
+          1024,
+          1344,
+          1728,
+          2048
+        ]
+      }
+    },
+    {
+      "id": "assignment1:micro_benchmarks_20260126_130256",
+      "source_file": "/Users/juliusmopper/Dev/stanford-cs336/assignment1-basics/notebooks/benchmark_results/micro_benchmarks_20260126_130256.json",
+      "shape": "attention_kernel_micro_benchmark",
+      "run_count": 12,
+      "dimensions": {
+        "batch_size": [
+          8,
+          32
+        ],
+        "seq_len": [
+          256,
+          512,
+          1024
+        ],
+        "d_head": [
+          64,
+          128
+        ],
+        "num_heads": [
+          8
+        ]
+      }
+    }
+  ]
+}
