@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="generator" content="Observable Framework v1.13.3">
+<base href="/observable/projects/llm-fundamentals/ablations/">
 <title>Ablations | Project Writeup Sandbox</title>
 
 <link rel="preload" as="style" href="../../../_import/astro-bridge-theme.21c55a64.css">
@@ -13,11 +14,11 @@
 <link rel="modulepreload" href="../../../_observablehq/client.12828d98.js">
 <link rel="modulepreload" href="../../../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../../../_import/embed/ablations.22e22772.js">
+<link rel="modulepreload" href="../../../_import/embed/ablations.754766a2.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib/tex.c79b643a.js">
-<link rel="modulepreload" href="../../../_import/components/echart-plot.1ac4f9d1.js">
+<link rel="modulepreload" href="../../../_import/components/echart-plot.334353fc.js">
 <link rel="modulepreload" href="../../../_import/components/data-utils.e2caa41c.js">
-<link rel="modulepreload" href="../../../_import/components/dom-utils.167339c7.js">
+<link rel="modulepreload" href="../../../_import/components/dom-utils.facbe44a.js">
 <link rel="modulepreload" href="../../../_npm/d3@7.9.0/e324157d.js">
 <link rel="modulepreload" href="../../../_import/components/echart.24e04cd8.js">
 <link rel="modulepreload" href="../../../_import/components/echart-theme.ac72768d.js">
@@ -186,7 +187,7 @@ registerFile("../../../data/raw/benchmarks/ablations_history.parquet", {"name":"
 registerFile("../../../data/raw/benchmarks/ablations_main.parquet", {"name":"../../../data/raw/benchmarks/ablations_main.parquet","path":"../../../_file/data/raw/benchmarks/ablations_main.912ec8a5.parquet","lastModified":1771874136911,"size":26405});
 
 define({id: "e3b26b0a", outputs: ["renderAblationsOverviewCharts","renderAblationSection"], body: async () => {
-const {renderAblationsOverviewCharts, renderAblationSection} = await import("../../../_import/embed/ablations.22e22772.js");
+const {renderAblationsOverviewCharts, renderAblationSection} = await import("../../../_import/embed/ablations.754766a2.js");
 
 return {renderAblationsOverviewCharts,renderAblationSection};
 }});
@@ -228,6 +229,7 @@ await renderAblationSection({matchAny: ["no norm", "no_norm", "without norm"], s
 }});
 
 </script>
+<script src="/observable/_import/mushbot-standalone.js" defer></script>
 </head>
 <body>
 <input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
@@ -246,8 +248,17 @@ await renderAblationSection({matchAny: ["no norm", "no_norm", "without norm"], s
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <header id="observablehq-header">
-<nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">Home</a><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><details id="portfolio-current-project-menu" class="portfolio-project-menu"><summary class="portfolio-nav-link portfolio-project-toggle">LLM Fundamentals</summary><div class="portfolio-project-dropdown"><a class="portfolio-project-item" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/');">Introduction</a><a class="portfolio-project-item" href="../perf-expected/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/perf-expected/');">Architecture and Expected Performance Analysis</a><a class="portfolio-project-item" href="../perf-empirical/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/perf-empirical/');">Benchmarks and Empirical Performance Analysis</a><a class="portfolio-project-item" href="../nsys/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/nsys/');">Nvidia CUDA Nsys Trace Analysis</a><a class="portfolio-project-item" href="../nsys-viewer/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/nsys-viewer/');">Nsys GPU Trace Viewer</a><a class="portfolio-project-item" href="../lr-sweep/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/lr-sweep/');">Learning Parameter Sweeps</a><a class="portfolio-project-item" href="./" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/ablations/');">Architectural Variations (Ablations)</a></div></details></nav><script>(function(){const path=window.location.pathname.replace(/^\/observable(?=\/|$)/,""); const menu=document.getElementById("portfolio-current-project-menu"); if(menu && /^\/projects\/?$/.test(path)){menu.remove();} if(menu){document.addEventListener("click",(event)=>{if(!menu.hasAttribute("open")) return; if(!menu.contains(event.target)) menu.removeAttribute("open");}); document.addEventListener("keydown",(event)=>{if(event.key==="Escape") menu.removeAttribute("open");});} for(const id of ["observablehq-sidebar-toggle","observablehq-sidebar-backdrop","observablehq-sidebar"]){const node=document.getElementById(id); if(node) node.remove();}})();</script>
+<nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">Home</a><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><details id="portfolio-current-project-menu" class="portfolio-project-menu"><summary class="portfolio-nav-link portfolio-project-toggle">LLM Fundamentals</summary><div class="portfolio-project-dropdown"><a class="portfolio-project-item" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/');">Introduction</a><a class="portfolio-project-item" href="../perf-expected/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/perf-expected/');">Architecture and Expected Performance Analysis</a><a class="portfolio-project-item" href="../perf-empirical/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/perf-empirical/');">Benchmarks and Empirical Performance Analysis</a><a class="portfolio-project-item" href="../nsys/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/nsys/');">Nvidia CUDA Nsys Trace Analysis</a><a class="portfolio-project-item" href="../nsys-viewer/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/nsys-viewer/');">Nsys GPU Trace Viewer</a><a class="portfolio-project-item" href="../optimizer-sweep/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/optimizer-sweep/');">Learning Parameter Sweeps</a><a class="portfolio-project-item" href="./" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable/') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/llm-fundamentals/ablations/');">Architectural Variations (Ablations)</a></div></details></nav><script>(function(){const path=window.location.pathname.replace(/^\/observable(?=\/|$)/,""); const menu=document.getElementById("portfolio-current-project-menu"); if(menu && /^\/projects(?:\/index\.html)?\/?$/.test(path)){menu.remove();} if(menu){document.addEventListener("click",(event)=>{if(!menu.hasAttribute("open")) return; if(!menu.contains(event.target)) menu.removeAttribute("open");}); document.addEventListener("keydown",(event)=>{if(event.key==="Escape") menu.removeAttribute("open");});} for(const id of ["observablehq-sidebar-toggle","observablehq-sidebar-backdrop","observablehq-sidebar"]){const node=document.getElementById(id); if(node) node.remove();}})();</script>
 </header>
+<aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
+<nav>
+<div>Contents</div>
+<ol>
+<li class="observablehq-secondary-link"><a href="#results">Results</a></li>
+<li class="observablehq-secondary-link"><a href="#conclusion">Conclusion</a></li>
+</ol>
+</nav>
+</aside>
 <main id="observablehq-main" class="observablehq">
 <div class="observablehq observablehq--block"><!--:e3b26b0a:--></div>
 <h1 id="ablation-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#ablation-analysis">Ablation Analysis</a></h1>
@@ -283,7 +294,7 @@ Add some sort of statistical significnce test or other analysis on the grad norm
 <p>Furthermore, the spectacular failure of the No Norm ablation serves as a clear illustration of why normalization techniques like RMSNorm are ubiquitous in modern transformer architectures. Without them, the delicate balance of forward activations and backward gradients quickly spirals out of control, highlighting the importance of persistent residual stream conditioning in preventing exploding gradients. Ultimately, these ablations validate the standard architectural choices in modern LLMs, proving that each component—from gating mechanisms to positional encodings and layer normalization—serves a distinct and necessary purpose for stable and efficient training.</p>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-03-04T00:33:59">Mar 4, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-03-04T16:40:09">Mar 4, 2026</a>.</div>
 </footer>
 </div>
 </body>

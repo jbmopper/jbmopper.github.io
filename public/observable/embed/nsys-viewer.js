@@ -1,7 +1,7 @@
 import "../_import/components/echart.24e04cd8.js";
 import "../_import/components/data-utils.e2caa41c.js";
 import "../_import/components/nsys-viewer-core.ec8c6c6d.js";
-import "../_import/components/dom-utils.167339c7.js";
+import "../_import/components/dom-utils.facbe44a.js";
 import "../_import/embed/nsys-dataset.82cf6963.js";
 import "../_import/components/echart-theme.ac72768d.js";
 import "../_npm/echarts@5.6.0/dist/echarts.esm.min.js.43ee27f9.js";
@@ -10,4 +10,4 @@ import "../_npm/apache-arrow@21.1.0/63de76cd.js";
 import "../_npm/parquet-wasm@0.7.1/68d81b68.js";
 import "../_npm/tslib@2.8.1/b62a9c4a.js";
 import "../_npm/flatbuffers@25.9.23/c82700c2.js";
-export * from "../_import/embed/nsys-viewer.4a75a2e5.js";
+export * from "../_import/embed/nsys-viewer.1f278eb6.js";

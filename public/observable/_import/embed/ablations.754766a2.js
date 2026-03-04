@@ -1,5 +1,5 @@
 import {FileAttachment} from "../../_observablehq/stdlib.43270668.js";
-import * as Plot from "../components/echart-plot.1ac4f9d1.js";
+import * as Plot from "../components/echart-plot.334353fc.js";
 import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
 import {formatMs} from "../components/data-utils.e2caa41c.js";
 import {
@@ -12,7 +12,7 @@ import {
   selectControl,
   rangeControl,
   debounce
-} from "../components/dom-utils.167339c7.js";
+} from "../components/dom-utils.facbe44a.js";
 
 const ATTACHMENTS = {
   main: FileAttachment({"name":"../../data/raw/benchmarks/ablations_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/ablations_main.912ec8a5.parquet","lastModified":1771874136911,"size":26405}, import.meta.url),

@@ -1710,10 +1710,7 @@ export function plot(config = {}) {
     }
     if (typeof priorCleanup === "function") priorCleanup();
   };
-  host.classList.add("deck-plot-host");
   host.classList.add("echart-plot-host");
-  host.__deckLayerStats = [];
-  host.__deckObjectCount = option.series.reduce((sum, series) => sum + (Array.isArray(series.data) ? series.data.length : 0), 0);
   return host;
 }
 

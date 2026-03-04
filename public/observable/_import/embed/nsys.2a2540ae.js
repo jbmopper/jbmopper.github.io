@@ -1,4 +1,4 @@
-import * as Plot from "../components/echart-plot.1ac4f9d1.js";
+import * as Plot from "../components/echart-plot.334353fc.js";
 import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
 import {calculateForwardFlops, calculateMemoryAccounting, calculateModelParams, calculateTrainingStepFlops} from "../components/perf-estimates.d771a94d.js";
 import {formatBytes, formatMs} from "../components/data-utils.e2caa41c.js";
@@ -13,7 +13,7 @@ import {
   selectControl,
   rangeControl,
   debounce
-} from "../components/dom-utils.167339c7.js";
+} from "../components/dom-utils.facbe44a.js";
 import {TRACE_NAMES, loadTraceRowsSummary} from "./nsys-dataset.82cf6963.js";
 export {TRACE_NAMES} from "./nsys-dataset.82cf6963.js";
 

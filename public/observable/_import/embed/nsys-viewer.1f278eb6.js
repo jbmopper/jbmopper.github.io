@@ -12,7 +12,7 @@ import {
   selectControl,
   rangeControl,
   debounce
-} from "../components/dom-utils.167339c7.js";
+} from "../components/dom-utils.facbe44a.js";
 import {TRACE_NAMES, loadTraceRowsDetailed} from "./nsys-dataset.82cf6963.js";
 
 const EVENT_TYPES = ["kernel", "memcpy", "memset"];
@@ -110,6 +110,22 @@ function selectOptions(select, values, activeValue) {
     if (value === activeValue) option.selected = true;
     select.appendChild(option);
   }
+}
+
+function checkboxGroup(values, initialValues, legendText, keyPrefix) {
+  void keyPrefix;
+  const control = multiSelectControl(
+    legendText,
+    values.map((value) => ({value: String(value), label: String(value)})),
+    (initialValues || []).map((value) => String(value)),
+    {size: 10}
+  );
+  return {
+    node: control.node,
+    getSelected: control.getSelected,
+    setSelected: control.setSelected,
+    onChange: control.onChange
+  };
 }
 
 function renderDiagnostics(host, selectedTraces, errorsByTrace) {

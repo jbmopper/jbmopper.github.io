@@ -1,5 +1,5 @@
 import {FileAttachment} from "../../_observablehq/stdlib.43270668.js";
-import * as Plot from "../components/echart-plot.1ac4f9d1.js";
+import * as Plot from "../components/echart-plot.334353fc.js";
 import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
 import {formatBytes} from "../components/data-utils.e2caa41c.js";
 import {
@@ -7,8 +7,10 @@ import {
   emptyState,
   renderSimpleTable,
   sectionHeading,
-  multiSelectControl
-} from "../components/dom-utils.167339c7.js";
+  multiSelectControl,
+  selectControl,
+  rangeControl
+} from "../components/dom-utils.facbe44a.js";
 
 const MANIFEST_ATTACHMENT = FileAttachment({"name":"../../data/manifest.json","mimeType":"application/json","path":"../../_file/data/manifest.d04279d7.json","lastModified":1771874136886,"size":13400}, import.meta.url);
 
@@ -358,54 +360,6 @@ async function loadDataset(datasetById, datasetId, sampleLimit) {
   setDatasetCacheEntry(cacheKey, promise);
   touchDatasetCache();
   return promise;
-}
-
-function selectControl(labelText, options, currentValue) {
-  const wrapper = el("label");
-  wrapper.style.display = "flex";
-  wrapper.style.alignItems = "center";
-  wrapper.style.gap = "0.5rem";
-  wrapper.style.flexWrap = "wrap";
-
-  const text = el("span", labelText);
-  text.style.fontWeight = "600";
-  text.style.minWidth = "10rem";
-
-  const select = el("select");
-  for (const optionSpec of options) {
-    const option = el("option", optionSpec.label);
-    option.value = optionSpec.value;
-    if (optionSpec.value === currentValue) option.selected = true;
-    select.appendChild(option);
-  }
-
-  wrapper.append(text, select);
-  return {node: wrapper, select};
-}
-
-function rangeControl(labelText, min, max, step, value) {
-  const wrapper = el("label");
-  wrapper.style.display = "flex";
-  wrapper.style.alignItems = "center";
-  wrapper.style.gap = "0.5rem";
-  wrapper.style.flexWrap = "wrap";
-
-  const text = el("span", labelText);
-  text.style.fontWeight = "600";
-  text.style.minWidth = "10rem";
-
-  const input = el("input");
-  input.type = "range";
-  input.min = String(min);
-  input.max = String(max);
-  input.step = String(step);
-  input.value = String(value);
-
-  const output = el("output", String(value));
-  output.style.minWidth = "3rem";
-
-  wrapper.append(text, input, output);
-  return {node: wrapper, input, output};
 }
 
 function checkboxGroup(values, initialValues, legendText, keyPrefix) {
