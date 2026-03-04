@@ -1,4 +1,4 @@
-import {readFile, stat} from "node:fs/promises";
+import {readdir, readFile, stat} from "node:fs/promises";
 import {fileURLToPath} from "node:url";
 import path from "node:path";
 
@@ -116,6 +116,33 @@ async function assertKatexAssets() {
   }
 }
 
+async function assertEchartsRuntimeAsset() {
+  const componentsDir = path.join(PROJECT_ROOT, "public/observable/_import/components");
+  const componentFiles = await readdir(componentsDir);
+  const echartComponentFile = componentFiles.find((filename) => /^echart\..+\.js$/.test(filename));
+
+  if (!echartComponentFile) {
+    throw new Error("Missing Observable echart component bundle in public/observable/_import/components.");
+  }
+
+  const componentAbsolutePath = path.join(componentsDir, echartComponentFile);
+  const componentSource = await readFile(componentAbsolutePath, "utf8");
+  const echartsImportMatch = componentSource.match(/from "(\.\.\/\.\.\/_npm\/echarts[^"]+)"/);
+
+  if (!echartsImportMatch) {
+    throw new Error(`Unable to resolve ECharts import path from ${path.relative(PROJECT_ROOT, componentAbsolutePath)}.`);
+  }
+
+  const echartsAssetAbsolutePath = path.resolve(path.dirname(componentAbsolutePath), echartsImportMatch[1]);
+  try {
+    await stat(echartsAssetAbsolutePath);
+  } catch {
+    throw new Error(
+      `Missing ECharts runtime asset referenced by ${path.relative(PROJECT_ROOT, componentAbsolutePath)}: ${echartsImportMatch[1]}`
+    );
+  }
+}
+
 async function main() {
   for (const item of requiredSharedArtifacts) {
     await assertExists(item);
@@ -123,6 +150,7 @@ async function main() {
   await assertCanonicalRoutes();
   await assertBaseHrefs();
   await assertKatexAssets();
+  await assertEchartsRuntimeAsset();
   console.log("Observable artifact check passed (canonical project routes found).");
 }
 
