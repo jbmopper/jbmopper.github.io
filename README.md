@@ -43,6 +43,8 @@ npm run test:ci    # full CI pipeline: verify Observable, build, E2E tests
 
 Automated via `.github/workflows/deploy-pages.yml` on push to `main`.
 
+Deploy output includes `dist/.nojekyll` so GitHub Pages does not strip underscore-prefixed Observable assets (`/observable/_npm`, `/observable/_observablehq`, etc.).
+
 The workflow needs these GitHub Actions **variables** (Settings > Secrets and variables > Actions > Variables):
 
 | Variable | Description |

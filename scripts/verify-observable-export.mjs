@@ -5,6 +5,7 @@ import path from "node:path";
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(SCRIPT_DIR, "..");
 const requiredSharedArtifacts = [
+  "public/.nojekyll",
   "public/observable/index.html",
   "public/observable/embed/nsys.js",
   "public/observable/embed/ablations.js",
