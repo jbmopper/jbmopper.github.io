@@ -29,13 +29,8 @@ output "turnstile_secret_arn" {
 }
 
 output "session_signing_secret_arn" {
-  description = "Session signing secret ARN used by broker/proxy lambdas."
+  description = "Session signing secret ARN used by broker/authorizer lambdas."
   value       = local.session_secret_arn
-}
-
-output "modal_proxy_lambda_arn" {
-  description = "Modal inference proxy Lambda ARN when enabled."
-  value       = try(aws_lambda_function.modal_inference_proxy[0].arn, null)
 }
 
 output "custom_domain_target" {

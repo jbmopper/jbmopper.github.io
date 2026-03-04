@@ -81,7 +81,7 @@ Documenting security in this file is not itself a security risk if we keep it at
 - Public frontend remains static and is served without embedded secrets.
 - Protected backend features run behind API Gateway and AWS WAF.
 - Human verification is required with Cloudflare Turnstile for sensitive/expensive actions (resume generation, chatbot turns, inference requests).
-- GPU inference may be proxied to Modal, but requests must still pass project-controlled validation and abuse controls first.
+- GPU inference may be proxied to an external provider, but requests must still pass project-controlled validation and abuse controls first.
 
 ## Implementation Controls (Required)
 
@@ -92,7 +92,7 @@ Documenting security in this file is not itself a security risk if we keep it at
 - Configure CORS to explicit origins and allowed methods/headers only.
 - Use least-privilege IAM per function and per environment.
 - Keep secrets in AWS Secrets Manager or SSM Parameter Store; never commit secrets to git.
-- Apply short timeouts and bounded retries for upstream calls (including Modal).
+- Apply short timeouts and bounded retries for upstream calls.
 
 ## Operations and Delivery Practices
 

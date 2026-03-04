@@ -115,7 +115,6 @@ public/observable/             -- Observable Framework static exports (project w
 infra/                         -- Terraform: API Gateway, WAF, Lambdas, IAM, secrets
   lambdas/turnstile_broker/    -- Turnstile verification + JWT minting
   lambdas/session_authorizer/  -- JWT validation for API Gateway authorizer
-  lambdas/modal_inference_proxy/ -- optional Modal GPU proxy
 
 tests/e2e/                     -- Playwright E2E tests
 scripts/                       -- build helpers, Observable post-processing, infra scripts

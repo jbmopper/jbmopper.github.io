@@ -7,7 +7,6 @@ from unittest.mock import MagicMock
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 TURNSTILE_PATH = REPO_ROOT / "infra" / "lambdas" / "turnstile_broker" / "index.py"
-MODAL_PATH = REPO_ROOT / "infra" / "lambdas" / "modal_inference_proxy" / "index.py"
 
 
 def load_module(module_path: Path, prefix: str):
@@ -36,7 +35,3 @@ def load_module(module_path: Path, prefix: str):
 
 def load_turnstile_module():
     return load_module(TURNSTILE_PATH, "turnstile_broker_test")
-
-
-def load_modal_module():
-    return load_module(MODAL_PATH, "modal_proxy_test")

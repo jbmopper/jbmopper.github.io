@@ -57,7 +57,7 @@ async function liveSubmitInference(
   params: SubmitInferenceParams,
   sessionToken: string,
 ): Promise<InferenceSseEvent> {
-  const res = await fetch(`${API_BASE}/v1/resume/generate`, {
+  const res = await fetch(`${API_BASE}/v1/infer/run`, {
     method: "POST",
     headers: authHeaders(sessionToken),
     body: JSON.stringify(params),
@@ -77,4 +77,11 @@ async function liveSubmitInference(
 export async function verifyTurnstile(turnstileToken: string): Promise<SessionTokenResponse> {
   // if (!API_BASE) return mockVerifyTurnstile(turnstileToken);
   return liveVerifyTurnstile(turnstileToken);
+}
+
+export async function submitInference(
+  params: SubmitInferenceParams,
+  sessionToken: string,
+): Promise<InferenceSseEvent> {
+  return liveSubmitInference(params, sessionToken);
 }

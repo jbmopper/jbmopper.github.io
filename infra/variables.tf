@@ -81,47 +81,9 @@ variable "chat_lambda_arn" {
 }
 
 variable "infer_lambda_arn" {
-  description = "Existing inference Lambda ARN. Leave empty to optionally use Modal proxy Lambda."
+  description = "Existing inference Lambda ARN. Leave empty to skip inference route wiring."
   type        = string
   default     = ""
-}
-
-variable "enable_modal_inference_proxy" {
-  description = "If true and infer_lambda_arn is empty, deploy a Modal inference proxy Lambda."
-  type        = bool
-  default     = false
-}
-
-variable "modal_endpoint_url" {
-  description = "Modal HTTPS endpoint for GPU inference. Required when using modal proxy."
-  type        = string
-  default     = ""
-
-  validation {
-    condition = (
-      trimspace(var.infer_lambda_arn) != "" ||
-      var.enable_modal_inference_proxy == false ||
-      can(regex("^https://", trimspace(var.modal_endpoint_url)))
-    )
-    error_message = "modal_endpoint_url must be an HTTPS URL when infer_lambda_arn is empty and enable_modal_inference_proxy is true."
-  }
-}
-
-variable "modal_proxy_auth_secret_arn" {
-  description = "Existing Secrets Manager ARN holding Modal proxy auth material. Leave empty to create one when modal proxy is enabled."
-  type        = string
-  default     = ""
-}
-
-variable "modal_request_timeout_seconds" {
-  description = "Timeout used by the modal proxy Lambda when calling Modal."
-  type        = number
-  default     = 30
-
-  validation {
-    condition     = var.modal_request_timeout_seconds >= 3 && var.modal_request_timeout_seconds <= 90
-    error_message = "modal_request_timeout_seconds must be between 3 and 90."
-  }
 }
 
 variable "waf_global_rate_limit" {

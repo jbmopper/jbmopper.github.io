@@ -1,4 +1,4 @@
-# AWS API Security Stack (API Gateway + WAF + Turnstile + Modal Proxy)
+# AWS API Security Stack (API Gateway + WAF + Turnstile)
 
 This directory provisions a protected API layer in AWS for backend Lambda workloads used by the site.
 
@@ -8,10 +8,9 @@ This directory provisions a protected API layer in AWS for backend Lambda worklo
   - `POST /v1/session/turnstile-verify` (always created)
   - `POST /v1/resume/generate` (if `resume_lambda_arn` is set)
   - `POST /v1/chat/respond` (if `chat_lambda_arn` is set)
-  - `POST /v1/infer/run` (if `infer_lambda_arn` is set, or if modal proxy is enabled)
+  - `POST /v1/infer/run` (if `infer_lambda_arn` is set)
 - AWS WAFv2 Web ACL attached to the API stage
 - Turnstile broker Lambda (verifies token and mints short-lived session token)
-- Optional Modal proxy Lambda for inference
 - Secrets Manager placeholders for required secrets (unless existing ARNs are supplied)
 
 ## Authentication and deploy model
@@ -46,7 +45,6 @@ cp infra/examples/prod.tfvars.example infra/prod.tfvars
 Populate:
 
 - existing Lambda ARNs for resume/chat (and optionally infer)
-- Modal endpoint URL if `enable_modal_inference_proxy = true`
 - optional existing secret ARNs
 - custom domain/certificate if desired
 
@@ -70,14 +68,6 @@ JSON example:
 {"session_signing_key":"<long-random-hmac-secret>"}
 ```
 
-### Modal proxy auth
-
-JSON example:
-
-```json
-{"modal_key":"<modal-key>","modal_secret":"<modal-secret>"}
-```
-
 ## Apply locally
 
 ```bash
@@ -90,7 +80,7 @@ terraform -chdir=infra apply -var-file=prod.tfvars
 
 ## Lambda unit tests
 
-Run unit tests for Turnstile broker and Modal proxy handlers:
+Run unit tests for infra Lambda handlers:
 
 ```bash
 ./scripts/test-infra-lambdas.sh
@@ -117,4 +107,3 @@ Create a Cloudflare CNAME for `api.juliusm.com` to the `custom_domain_target`.
 
 - WAF protection in this stack covers API Gateway traffic.
 - If traffic goes directly from browser to external providers, WAF does not protect it.
-- Keep Modal endpoints private behind the Lambda/API broker path.

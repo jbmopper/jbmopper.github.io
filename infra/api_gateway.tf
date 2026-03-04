@@ -237,7 +237,7 @@ resource "aws_api_gateway_integration" "infer_post" {
   http_method             = aws_api_gateway_method.infer_post[0].http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${local.infer_integration_lambda_arn}/invocations"
+  uri                     = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${var.infer_lambda_arn}/invocations"
 }
 
 resource "aws_api_gateway_method" "options_turnstile" {
@@ -578,7 +578,7 @@ resource "aws_lambda_permission" "allow_infer" {
 
   statement_id  = "AllowExecutionFromAPIGatewayInfer"
   action        = "lambda:InvokeFunction"
-  function_name = local.infer_integration_lambda_arn
+  function_name = var.infer_lambda_arn
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/POST/v1/infer/run"
 }

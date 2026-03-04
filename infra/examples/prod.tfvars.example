@@ -7,14 +7,8 @@ stage_name   = "prod"
 resume_lambda_arn = "arn:aws:lambda:us-east-1:123456789012:function:resume-generator"
 chat_lambda_arn   = "arn:aws:lambda:us-east-1:123456789012:function:custom-chatbot"
 
-# Option A: existing inference Lambda
+# Optional: existing inference Lambda (set to enable /v1/infer/run)
 # infer_lambda_arn = "arn:aws:lambda:us-east-1:123456789012:function:onnx-inference"
-
-# Option B: Modal proxy Lambda managed by this stack
-enable_modal_inference_proxy = true
-modal_endpoint_url           = "https://your-modal-endpoint.modal.run"
-# Optional: if omitted, Terraform creates a secret placeholder and you set it manually.
-# modal_proxy_auth_secret_arn = "arn:aws:secretsmanager:us-east-1:123456789012:secret:modal-auth"
 
 # Optional: pass existing secrets (if omitted, Terraform creates placeholders)
 # turnstile_secret_arn        = "arn:aws:secretsmanager:us-east-1:123456789012:secret:turnstile"
