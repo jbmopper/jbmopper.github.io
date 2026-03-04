@@ -10,17 +10,17 @@
 <link rel="preload" as="style" href="../../../_npm/katex@0.16.28/dist/katex.min.css">
 <link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.21c55a64.css">
 <link rel="stylesheet" type="text/css" href="../../../_npm/katex@0.16.28/dist/katex.min.css">
-<link rel="modulepreload" href="../../../_observablehq/client.cbf2d9f3.js">
+<link rel="modulepreload" href="../../../_observablehq/client.12828d98.js">
 <link rel="modulepreload" href="../../../_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../../../_import/embed/perf-expected.12ef2594.js">
+<link rel="modulepreload" href="../../../_import/embed/perf-expected.1c5257c5.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib/tex.c79b643a.js">
 <link rel="modulepreload" href="../../../_import/components/perf-estimates.d771a94d.js">
-<link rel="modulepreload" href="../../../_import/components/dom-utils.d6dae979.js">
+<link rel="modulepreload" href="../../../_import/components/dom-utils.167339c7.js">
 <link rel="modulepreload" href="../../../_npm/katex@0.16.28/f76b8a99.js">
 <script type="module">
 
-import {define} from "../../../_observablehq/client.cbf2d9f3.js";
+import {define} from "../../../_observablehq/client.12828d98.js";
 import {registerFile} from "../../../_observablehq/stdlib.43270668.js";
 
 registerFile("../../../data/raw/llm-fundamentals/cs336_forward.svg", {"name":"../../../data/raw/llm-fundamentals/cs336_forward.svg","mimeType":"image/svg+xml","path":"../../../_file/data/raw/llm-fundamentals/cs336_forward.e4ce8080.svg","lastModified":1771360719984,"size":28688});
@@ -236,7 +236,7 @@ tex.block`\mathcal{l} = -\frac{1}{b s} \sum_{b=1}^{b} \sum_{s=1}^{s}\log p_\thet
 }});
 
 define({id: "42f595d0", outputs: ["renderPerfExpected"], body: async () => {
-const {renderPerfExpected} = await import("../../../_import/embed/perf-expected.12ef2594.js");
+const {renderPerfExpected} = await import("../../../_import/embed/perf-expected.1c5257c5.js");
 
 return {renderPerfExpected};
 }});
@@ -422,7 +422,7 @@ await renderPerfExpected()
 <p>Overall this is a standard transformer architecture with well-characterized performance.  Since the point of the exercise was to implement it from scratch, there are a variety of optimizations that were left on the table, such as gradient checkpointing, or a more efficient code path for gradient clipping and reporting the gradient norm during training.  For a deeper dive into the actual performance of this architecture under various settings, please continue to <a href="../perf-empirical/">Benchmarks and Empirical Performance Analysis</a>.</p>
 </main>
 <footer id="observablehq-footer">
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-27T20:26:40">Feb 27, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-03-04T00:33:59">Mar 4, 2026</a>.</div>
 </footer>
 </div>
 </body>
