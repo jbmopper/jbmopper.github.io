@@ -23,7 +23,7 @@ const requiredCanonicalRoutes = [
   "projects/llm-fundamentals/perf-expected",
   "projects/llm-fundamentals/perf-empirical",
   "projects/llm-fundamentals/nsys",
-  "projects/llm-fundamentals/lr-sweep",
+  "projects/llm-fundamentals/optimizer-sweep",
   "projects/llm-fundamentals/ablations",
   "projects/data-playground"
 ];
@@ -59,7 +59,15 @@ async function assertCanonicalRoutes() {
   }
 
   if (missing.length > 0) {
-    throw new Error(`Missing canonical Observable routes: ${missing.join(", ")}`);
+    const details = missing.map((item) => `  - ${item}`).join("\n");
+    throw new Error(
+      [
+        "Canonical Observable route check failed.",
+        "Missing route index files:",
+        details,
+        "Re-export Observable pages or update scripts/verify-observable-export.mjs route expectations."
+      ].join("\n")
+    );
   }
 }
 
@@ -151,10 +159,11 @@ async function main() {
   await assertBaseHrefs();
   await assertKatexAssets();
   await assertEchartsRuntimeAsset();
-  console.log("Observable artifact check passed (canonical project routes found).");
+  console.log("[verify:observable] PASS: Observable artifact check passed (canonical project routes found).");
 }
 
 main().catch((error) => {
+  console.error("[verify:observable] FAIL:");
   console.error(error.message);
   process.exitCode = 1;
 });

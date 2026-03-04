@@ -3,6 +3,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 const deepLearningDescription =
   "Fundamentals of deep learning, including transformer implementation in Pytorch, training and inference, performance analysis, hyperparameter tuning, and architectural variations (ablations).";
+const resumeGeneratorDescription =
+  "A resume generation workflow that tailors output to job descriptions while preserving quality, structure, and clear delivery UX.";
 ---
 
 <BaseLayout title="juliusm.com | Portfolio Site" description="Julius M's Portfolio Site">
@@ -34,11 +36,12 @@ const deepLearningDescription =
   <section id="projects" class="panel">
     <h2>Projects</h2>
     <article class="project-card">
-      <h3>
-        <a href="/observable/projects/llm-fundamentals/">Deep Learning Fundamentals</a>
-        <a href="/observable/projects/resume-generator/">Resume Generator</a>
-      </h3>
+      <h3><a href="/observable/projects/llm-fundamentals/">Deep Learning Fundamentals</a></h3>
       <p>{deepLearningDescription}</p>
+    </article>
+    <article class="project-card">
+      <h3><a href="/observable/projects/resume-generator/">Resume Generator</a></h3>
+      <p>{resumeGeneratorDescription}</p>
     </article>
   </section>
 </BaseLayout>
@@ -104,6 +107,10 @@ const deepLearningDescription =
 
   .project-card h3 {
     margin: 0 0 0.5rem;
+  }
+
+  .project-card + .project-card {
+    margin-top: 1rem;
   }
 
   .project-card a {
