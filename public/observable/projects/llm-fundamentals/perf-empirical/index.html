@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="generator" content="Observable Framework v1.13.3">
+<meta name="generator" content="Observable Framework v1.13.4">
 <base href="/observable/projects/llm-fundamentals/perf-empirical/">
 <title>Empirical Performance | Project Writeup Sandbox</title>
 
-<link rel="preload" as="style" href="../../../_import/astro-bridge-theme.21c55a64.css">
+<link rel="preload" as="style" href="../../../_import/astro-bridge-theme.d84a4d96.css">
 <link rel="preload" as="style" href="../../../_npm/katex@0.16.28/dist/katex.min.css">
-<link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.21c55a64.css">
+<link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.d84a4d96.css">
 <link rel="stylesheet" type="text/css" href="../../../_npm/katex@0.16.28/dist/katex.min.css">
-<link rel="modulepreload" href="../../../_observablehq/client.fa9b3bd5.js">
-<link rel="modulepreload" href="../../../_observablehq/runtime.e080113b.js">
-<link rel="modulepreload" href="../../../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../../../_import/embed/perf-empirical.056a3c18.js">
+<link rel="modulepreload" href="../../../_observablehq/client.b8f66ce7.js">
+<link rel="modulepreload" href="../../../_observablehq/runtime.607a8173.js">
+<link rel="modulepreload" href="../../../_observablehq/stdlib.a50b4fda.js">
+<link rel="modulepreload" href="../../../_import/embed/perf-empirical.2a8383e7.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib/tex.c79b643a.js">
 <link rel="modulepreload" href="../../../_import/components/echart-plot.334353fc.js">
 <link rel="modulepreload" href="../../../_import/components/data-utils.e2caa41c.js">
@@ -181,8 +181,8 @@
 <link rel="modulepreload" href="../../../_npm/robust-predicates@3.0.2/aa00730b.js">
 <script type="module">
 
-import {define} from "../../../_observablehq/client.fa9b3bd5.js";
-import {registerFile} from "../../../_observablehq/stdlib.43270668.js";
+import {define} from "../../../_observablehq/client.b8f66ce7.js";
+import {registerFile} from "../../../_observablehq/stdlib.a50b4fda.js";
 
 registerFile("../../../data/raw/benchmarks/gpu_comp_history.parquet", {"name":"../../../data/raw/benchmarks/gpu_comp_history.parquet","path":"../../../_file/data/raw/benchmarks/gpu_comp_history.e18efbee.parquet","lastModified":1771874136917,"size":1389327});
 registerFile("../../../data/raw/benchmarks/gpu_comp_main.parquet", {"name":"../../../data/raw/benchmarks/gpu_comp_main.parquet","path":"../../../_file/data/raw/benchmarks/gpu_comp_main.d82fa693.parquet","lastModified":1771874136918,"size":21863});
@@ -241,7 +241,7 @@ tex`d_{ff}`
 }});
 
 define({id: "009ce9a3", outputs: ["renderPerfEmpiricalTrainBenchmark","renderPerfEmpiricalExpectedVsActual","renderPerfEmpiricalDeviceComparison","renderPerfEmpiricalModelSelection","renderPerfEmpiricalTrainingCurves"], body: async () => {
-const {renderPerfEmpiricalTrainBenchmark, renderPerfEmpiricalExpectedVsActual, renderPerfEmpiricalDeviceComparison, renderPerfEmpiricalModelSelection, renderPerfEmpiricalTrainingCurves} = await import("../../../_import/embed/perf-empirical.056a3c18.js");
+const {renderPerfEmpiricalTrainBenchmark, renderPerfEmpiricalExpectedVsActual, renderPerfEmpiricalDeviceComparison, renderPerfEmpiricalModelSelection, renderPerfEmpiricalTrainingCurves} = await import("../../../_import/embed/perf-empirical.2a8383e7.js");
 
 return {renderPerfEmpiricalTrainBenchmark,renderPerfEmpiricalExpectedVsActual,renderPerfEmpiricalDeviceComparison,renderPerfEmpiricalModelSelection,renderPerfEmpiricalTrainingCurves};
 }});

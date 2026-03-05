@@ -13,7 +13,7 @@ import {
   rangeControl,
   debounce
 } from "../components/dom-utils.facbe44a.js";
-import {TRACE_NAMES, loadTraceRowsDetailed} from "./nsys-dataset.82cf6963.js";
+import {TRACE_NAMES, loadTraceRowsDetailed} from "./nsys-dataset.de7ccfd9.js";
 
 const EVENT_TYPES = ["kernel", "memcpy", "memset"];
 

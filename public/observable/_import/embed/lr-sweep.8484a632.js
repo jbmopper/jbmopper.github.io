@@ -1,4 +1,4 @@
-import {FileAttachment} from "../../_observablehq/stdlib.43270668.js";
+import {FileAttachment} from "../../_observablehq/stdlib.a50b4fda.js";
 import * as Plot from "../components/echart-plot.334353fc.js";
 import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
 import {

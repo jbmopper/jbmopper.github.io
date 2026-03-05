@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="generator" content="Observable Framework v1.13.3">
+<meta name="generator" content="Observable Framework v1.13.4">
 <base href="/observable/projects/llm-fundamentals/optimizer-sweep/">
 <title>Optimizer Sweep | Project Writeup Sandbox</title>
 
-<link rel="preload" as="style" href="../../../_import/astro-bridge-theme.21c55a64.css">
+<link rel="preload" as="style" href="../../../_import/astro-bridge-theme.d84a4d96.css">
 <link rel="preload" as="style" href="../../../_npm/katex@0.16.28/dist/katex.min.css">
-<link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.21c55a64.css">
+<link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.d84a4d96.css">
 <link rel="stylesheet" type="text/css" href="../../../_npm/katex@0.16.28/dist/katex.min.css">
-<link rel="modulepreload" href="../../../_observablehq/client.fa9b3bd5.js">
-<link rel="modulepreload" href="../../../_observablehq/runtime.e080113b.js">
-<link rel="modulepreload" href="../../../_observablehq/stdlib.43270668.js">
-<link rel="modulepreload" href="../../../_import/embed/lr-sweep.1e83628e.js">
+<link rel="modulepreload" href="../../../_observablehq/client.b8f66ce7.js">
+<link rel="modulepreload" href="../../../_observablehq/runtime.607a8173.js">
+<link rel="modulepreload" href="../../../_observablehq/stdlib.a50b4fda.js">
+<link rel="modulepreload" href="../../../_import/embed/lr-sweep.8484a632.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib/tex.c79b643a.js">
 <link rel="modulepreload" href="../../../_import/components/echart-plot.334353fc.js">
 <link rel="modulepreload" href="../../../_import/components/dom-utils.facbe44a.js">
@@ -179,8 +179,8 @@
 <link rel="modulepreload" href="../../../_npm/robust-predicates@3.0.2/aa00730b.js">
 <script type="module">
 
-import {define} from "../../../_observablehq/client.fa9b3bd5.js";
-import {registerFile} from "../../../_observablehq/stdlib.43270668.js";
+import {define} from "../../../_observablehq/client.b8f66ce7.js";
+import {registerFile} from "../../../_observablehq/stdlib.a50b4fda.js";
 
 registerFile("../../../data/raw/benchmarks/lr_sweeps_history.parquet", {"name":"../../../data/raw/benchmarks/lr_sweeps_history.parquet","path":"../../../_file/data/raw/benchmarks/lr_sweeps_history.4f809053.parquet","lastModified":1771874136930,"size":3312658});
 registerFile("../../../data/raw/benchmarks/lr_sweeps_main.parquet", {"name":"../../../data/raw/benchmarks/lr_sweeps_main.parquet","path":"../../../_file/data/raw/benchmarks/lr_sweeps_main.98e6db0c.parquet","lastModified":1771874136930,"size":15015});
@@ -188,7 +188,7 @@ registerFile("../../../data/raw/benchmarks/optimizer_sweep_history.parquet", {"n
 registerFile("../../../data/raw/benchmarks/optimizer_sweep_l28yv8f7_20260222_151711_main.parquet", {"name":"../../../data/raw/benchmarks/optimizer_sweep_l28yv8f7_20260222_151711_main.parquet","path":"../../../_file/data/raw/benchmarks/optimizer_sweep_l28yv8f7_20260222_151711_main.5801ffde.parquet","lastModified":1771874136940,"size":61729});
 
 define({id: "b4e79e12", outputs: ["renderOptimizerSweepPaths","renderOptimizerSweepSubsetClusters","renderOptimizerSweepEvalLossChart","renderOptimizerSweepGradNormChart","renderOptimizerSweepRankCorrelationTable","renderOptimizerSweepRegressionCoefficients","renderOptimizerSweepLogisticTable","renderOptimizerSweepQuadrantAnalysis","renderOptimizerSweepRunEvalLoss","renderLrSweepSummaryTable","renderLrSweepLrGradScatter","renderLrSweepLrClipHistogram"], body: async () => {
-const {renderOptimizerSweepPaths, renderOptimizerSweepSubsetClusters, renderOptimizerSweepEvalLossChart, renderOptimizerSweepGradNormChart, renderOptimizerSweepRankCorrelationTable, renderOptimizerSweepRegressionCoefficients, renderOptimizerSweepLogisticTable, renderOptimizerSweepQuadrantAnalysis, renderOptimizerSweepRunEvalLoss, renderLrSweepSummaryTable, renderLrSweepLrGradScatter, renderLrSweepLrClipHistogram} = await import("../../../_import/embed/lr-sweep.1e83628e.js");
+const {renderOptimizerSweepPaths, renderOptimizerSweepSubsetClusters, renderOptimizerSweepEvalLossChart, renderOptimizerSweepGradNormChart, renderOptimizerSweepRankCorrelationTable, renderOptimizerSweepRegressionCoefficients, renderOptimizerSweepLogisticTable, renderOptimizerSweepQuadrantAnalysis, renderOptimizerSweepRunEvalLoss, renderLrSweepSummaryTable, renderLrSweepLrGradScatter, renderLrSweepLrClipHistogram} = await import("../../../_import/embed/lr-sweep.8484a632.js");
 
 return {renderOptimizerSweepPaths,renderOptimizerSweepSubsetClusters,renderOptimizerSweepEvalLossChart,renderOptimizerSweepGradNormChart,renderOptimizerSweepRankCorrelationTable,renderOptimizerSweepRegressionCoefficients,renderOptimizerSweepLogisticTable,renderOptimizerSweepQuadrantAnalysis,renderOptimizerSweepRunEvalLoss,renderLrSweepSummaryTable,renderLrSweepLrGradScatter,renderLrSweepLrClipHistogram};
 }});

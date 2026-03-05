@@ -14,8 +14,8 @@ import {
   rangeControl,
   debounce
 } from "../components/dom-utils.facbe44a.js";
-import {TRACE_NAMES, loadTraceRowsSummary} from "./nsys-dataset.82cf6963.js";
-export {TRACE_NAMES} from "./nsys-dataset.82cf6963.js";
+import {TRACE_NAMES, loadTraceRowsSummary} from "./nsys-dataset.de7ccfd9.js";
+export {TRACE_NAMES} from "./nsys-dataset.de7ccfd9.js";
 
 export const EVENT_TYPES = ["kernel", "memcpy", "memset"];
 

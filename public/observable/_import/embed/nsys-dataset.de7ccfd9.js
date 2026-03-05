@@ -1,4 +1,4 @@
-import {FileAttachment} from "../../_observablehq/stdlib.43270668.js";
+import {FileAttachment} from "../../_observablehq/stdlib.a50b4fda.js";
 
 const TRACE_ATTACHMENTS = {
   bad_head_size: FileAttachment({"name":"../../data/raw/traces/bad_head_size_nsys.parquet","mimeType":undefined,"path":"../../_file/data/raw/traces/bad_head_size_nsys.0e5fcf94.parquet","lastModified":1771465633642,"size":699507}, import.meta.url),
