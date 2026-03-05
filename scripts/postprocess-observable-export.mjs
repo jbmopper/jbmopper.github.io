@@ -61,6 +61,14 @@ function normalizeProjectRootMatcher(html) {
   return html.replaceAll(LEGACY_PROJECT_ROOT_PATH_CHECK.toString(), PROJECT_ROOT_PATH_CHECK.toString());
 }
 
+function normalizeHeaderHomeLink(html) {
+  // Keep Observable header behavior aligned with Astro/nav tests:
+  // label should be "Home" and route should be "/" (not "/#welcome").
+  html = html.replace(/(<a class="portfolio-nav-link"[^>]*>)Welcome(<\/a>)/g, "$1Home$2");
+  html = html.replaceAll("/#welcome", "/");
+  return html;
+}
+
 function stripModulePreloads(html) {
   // Safari can aggressively allocate memory for large modulepreload graphs.
   // Runtime loading still works without these hints and uses less peak memory.
@@ -91,6 +99,7 @@ async function processHtmlFile(fullPath, injectMushbot) {
 
   html = upsertBaseHref(html, getCanonicalBaseHref(relativePath));
   html = normalizeProjectRootMatcher(html);
+  html = normalizeHeaderHomeLink(html);
   html = stripModulePreloads(html);
   if (injectMushbot) html = injectMushbotScript(html);
 
