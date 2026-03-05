@@ -63,10 +63,11 @@ function normalizeProjectRootMatcher(html) {
 
 function normalizeHeaderHomeLink(html) {
   // Keep Observable header behavior aligned with Astro/nav tests:
-  // label should be "Home" and route should be "/" (not "/#welcome").
-  html = html.replace(/(<a class="portfolio-nav-link"[^>]*>)Welcome(<\/a>)/g, "$1Home$2");
-  html = html.replaceAll("/#welcome", "/");
-  return html;
+  // label should be "Welcome" and route should be "/#welcome".
+  return html.replace(
+    /(<a class="portfolio-nav-link"[^>]*onclick="event\.preventDefault\(\); window\.location\.assign\(window\.location\.origin \+ ')(?:\/#welcome|\/|#welcome)('\);">)(?:Home|Welcome)(<\/a>)/g,
+    "$1/#welcome$2Welcome$3"
+  );
 }
 
 function stripModulePreloads(html) {

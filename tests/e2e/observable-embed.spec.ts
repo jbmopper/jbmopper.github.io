@@ -15,13 +15,13 @@ test("landing project link opens canonical notebook and navigation is available"
   await expect(page.getByRole("heading", {name: "Projects"})).toBeVisible();
 });
 
-test("observable navigation uses same-tab Home and hides project-only controls on root projects page", async ({page}) => {
+test("observable navigation uses same-tab Welcome and hides project-only controls on root projects page", async ({page}) => {
   await page.goto("/observable/projects/llm-fundamentals/");
-  const homeNavLink = page.locator("#observablehq-header a", {hasText: /^Home$/});
-  await expect(homeNavLink).toBeVisible();
-  await expect(homeNavLink).not.toHaveAttribute("target", "_blank");
-  await homeNavLink.click();
-  await expect(page).toHaveURL("/");
+  const welcomeNavLink = page.locator("#observablehq-header a", {hasText: /^Welcome$/});
+  await expect(welcomeNavLink).toBeVisible();
+  await expect(welcomeNavLink).not.toHaveAttribute("target", "_blank");
+  await welcomeNavLink.click();
+  await expect(page).toHaveURL(/\/(?:#welcome)?$/);
   await expect(page.getByRole("heading", {name: "juliusm.com"})).toBeVisible();
 
   await page.goto("/observable/projects/");
