@@ -17,6 +17,9 @@ const year = new Date().getFullYear();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&display=swap" rel="stylesheet" />
     <title>{title}</title>
   </head>
   <body>
@@ -52,6 +55,8 @@ const year = new Date().getFullYear();
   body {
     margin: 0;
     min-height: 100%;
+    font-size: 16px;
+    line-height: 1.5;
     background:
       radial-gradient(1200px 600px at 100% -10%, #1a3850 0%, transparent 60%),
       radial-gradient(900px 500px at -10% 10%, #2a1f3e 0%, transparent 55%),
