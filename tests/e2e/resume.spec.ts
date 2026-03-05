@@ -1,4 +1,23 @@
 import {expect, test} from "@playwright/test";
+import type {Page} from "@playwright/test";
+
+async function continueToInput(page: Page) {
+  const continueBtn = page.getByRole("button", {name: "Continue"});
+  const inputHeading = page.getByRole("heading", {name: "Job Description"});
+
+  await expect(continueBtn).toBeVisible();
+  await continueBtn.click();
+
+  // The resume widget hydrates on client load; a very early click can be ignored.
+  if (!(await inputHeading.isVisible())) {
+    await page.waitForTimeout(300);
+    if (await continueBtn.isVisible()) {
+      await continueBtn.click();
+    }
+  }
+
+  await expect(inputHeading).toBeVisible();
+}
 
 test.describe("Resume Generator page", () => {
   test("page loads and shows intro", async ({page}) => {
@@ -15,21 +34,20 @@ test.describe("Resume Generator page", () => {
 
   test("continue skips turnstile in mock mode and shows input", async ({page}) => {
     await page.goto("/resume/");
-    await page.getByRole("button", {name: "Continue"}).click();
-    await expect(page.getByRole("heading", {name: "Job Description"})).toBeVisible();
+    await continueToInput(page);
     await expect(page.getByPlaceholder("Paste the job description here...")).toBeVisible();
   });
 
   test("generate button is disabled without input", async ({page}) => {
     await page.goto("/resume/");
-    await page.getByRole("button", {name: "Continue"}).click();
+    await continueToInput(page);
     const genBtn = page.getByRole("button", {name: "Generate Resume"});
     await expect(genBtn).toBeDisabled();
   });
 
   test("mock flow completes end-to-end", async ({page}) => {
     await page.goto("/resume/");
-    await page.getByRole("button", {name: "Continue"}).click();
+    await continueToInput(page);
 
     const textarea = page.getByPlaceholder("Paste the job description here...");
     await textarea.fill(
@@ -47,8 +65,7 @@ test.describe("Resume Generator page", () => {
 
   test("back button returns to intro", async ({page}) => {
     await page.goto("/resume/");
-    await page.getByRole("button", {name: "Continue"}).click();
-    await expect(page.getByRole("heading", {name: "Job Description"})).toBeVisible();
+    await continueToInput(page);
 
     await page.getByRole("button", {name: "Back"}).click();
     await expect(page.getByRole("heading", {name: "Resume Generator"})).toBeVisible();
@@ -56,7 +73,7 @@ test.describe("Resume Generator page", () => {
 
   test("can switch between text and file tabs", async ({page}) => {
     await page.goto("/resume/");
-    await page.getByRole("button", {name: "Continue"}).click();
+    await continueToInput(page);
 
     await page.getByRole("tab", {name: "Upload File"}).click();
     await expect(page.locator(".file-prompt")).toBeVisible();
