@@ -27,14 +27,15 @@ const year = new Date().getFullYear();
         <a href="/#welcome">Welcome</a>
         <a href="/observable/projects/">Projects</a>
         <a href="/resume/">Resume Generator</a>
-        <a href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">Contact</a>
+        <a href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a>
+        <a href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a>
       </nav>
     </header>
     <main>
       <slot />
     </main>
     <footer>© {year} juliusm.com</footer>
-    <Mushbot client:load transition:persist="chatbot" />
+    <Mushbot client:idle transition:persist="chatbot" />
   </body>
 </html>
 

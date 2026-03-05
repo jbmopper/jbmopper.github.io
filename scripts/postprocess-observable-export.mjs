@@ -61,6 +61,12 @@ function normalizeProjectRootMatcher(html) {
   return html.replaceAll(LEGACY_PROJECT_ROOT_PATH_CHECK.toString(), PROJECT_ROOT_PATH_CHECK.toString());
 }
 
+function stripModulePreloads(html) {
+  // Safari can aggressively allocate memory for large modulepreload graphs.
+  // Runtime loading still works without these hints and uses less peak memory.
+  return html.replace(/^\s*<link rel="modulepreload"[^>]*>\n?/gm, "");
+}
+
 function injectMushbotScript(html) {
   const tag = `<script src="/observable/_import/mushbot-standalone.js" defer><\/script>`;
   html = html.replace(/<script[^>]*mushbot-standalone\.js[^>]*><\/script>\n?/g, "");
@@ -85,6 +91,7 @@ async function processHtmlFile(fullPath, injectMushbot) {
 
   html = upsertBaseHref(html, getCanonicalBaseHref(relativePath));
   html = normalizeProjectRootMatcher(html);
+  html = stripModulePreloads(html);
   if (injectMushbot) html = injectMushbotScript(html);
 
   await writeFile(fullPath, html, "utf8");
