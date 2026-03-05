@@ -4,7 +4,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 const deepLearningDescription =
   "Fundamentals of deep learning, including transformer implementation in Pytorch, training and inference, performance analysis, hyperparameter tuning, and architectural variations (ablations).";
 const resumeGeneratorDescription =
-  "A resume generation workflow that tailors output to job descriptions while preserving quality, structure, and clear delivery UX.";
+  "A serverless resume generator utilizing the Anthropic messages API to create a structured markdown/html output that is rendered into a polished PDF resume, tailored to the input job description.";
 ---
 
 <BaseLayout title="juliusm.com | Portfolio Site" description="Julius M's Portfolio Site">
@@ -12,7 +12,7 @@ const resumeGeneratorDescription =
     <p class="eyebrow">Portfolio Site</p>
     <h1>juliusm.com</h1>
     <p class="intro">
-      "Applied ML Engineer & Researcher."
+      Building AI systems that <i>scale</i>.
     </p>
     <div class="link-row">
       <a href="#welcome">Welcome</a>
@@ -24,12 +24,19 @@ const resumeGeneratorDescription =
 
   <section id="welcome" class="panel">
     <h2>Welcome</h2>
+    <!--
     <p>
       This is the portfolio site for Julius Mopper, a talented up-and-coming AI engineer.  Julius has a strong background in machine learning and backend web portal design, having spent over three years in roles specializing in each.
-
-      After a reduction in force at his last position, he has been beavering away learning all about the new era of deep learning.  Julius is sincerely excited about this amazing new technology, and believes we are on the cusp of a true third industrial revolution.
-
-      Please enjoy browsing the writeups he has created for his projects and appreciate his skills in understanding and communicating complex technical topics, applied to his projects.  If you have a job you think might be a good fit for Julius, head over to the <a href="/resume">Resume Generator</a> with your job description and be amazed at the polished, high-quality resume you receive!
+    </p>
+    <p>
+      After a reduction in force at his last position, he has been beavering away learning all about the new era of deep learning.  Julius is sincerely excited about this amazing new technology, and believes we are on the cusp of a third industrial revolution.
+    </p>
+    -->
+    <p>
+      I'm a researcher and engineer who loves the entire lifecycle of an AI product—from building and training sequence models from scratch, to deploying them via serverless cloud architectures, to ensuring they drive real business value.
+    </p>
+    <p>
+      Check out my project writeups to see how I break down complex deep learning topics, or if you have a role that might be a good fit, head over to the <a href="/resume">Resume Generator</a> with your job description and let my serverless pipeline build a custom resume for you!
     </p>
   </section>
 
@@ -103,6 +110,14 @@ const resumeGeneratorDescription =
 
   .panel h2 {
     margin: 0 0 0.75rem;
+  }
+
+  .panel p a {
+    color: var(--accent);
+  }
+
+  .panel p a:hover {
+    color: var(--text-0);
   }
 
   .project-card h3 {
