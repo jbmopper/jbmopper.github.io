@@ -36,6 +36,42 @@ Keep Astro as the landing shell and publish Observable as static pages under `/o
 - `Projects` navigation returns to `/observable/projects/` on the same origin.
 - No broken notebook section links from `/observable/projects/llm-fundamentals/`.
 
+## Inline notebook widgets
+- Inline Svelte widgets may be mounted into exported notebook content, but only through explicit mount markers in the generated HTML.
+- Preferred marker contract from `ns_obv`:
+  - add a plain HTML container with class `jm-inference-mount`
+  - configure instance props with `data-inference-*` attributes
+  - example:
+
+```html
+<div
+  class="jm-inference-mount"
+  data-inference-title="TinyStories Demo"
+  data-inference-description="Run the notebook's current ONNX checkpoint inline."
+  data-inference-warmup-path="/warmup"
+  data-inference-locked-model="tinystories-base"
+  data-inference-prompt-placeholder="Prompt the writeup model..."
+></div>
+```
+
+- Supported `data-inference-*` attributes:
+  - `eyebrow`
+  - `title`
+  - `description`
+  - `verification-title`
+  - `verification-message`
+  - `prompt-label`
+  - `prompt-placeholder`
+  - `submit-label`
+  - `reset-label`
+  - `warmup-path`
+  - `initial-model`
+  - `locked-model`
+  - `prompt-rows`
+  - `models` (JSON array string)
+- Astro-side postprocess injects `/observable/_import/inference-standalone.js` only on pages containing `jm-inference-mount`.
+- Keep widget placement in `ns_obv` so the notebook source controls where inline inference appears within writeup content.
+
 ## Common failures
 - `verify:observable` fails:
   - Export step not run or `public/observable` incomplete. Re-run build + export in `ns_obv`.

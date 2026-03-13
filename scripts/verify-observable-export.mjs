@@ -15,6 +15,7 @@ const requiredSharedArtifacts = [
   "public/observable/embed/data-playground.js",
   "public/observable/_observablehq",
   "public/observable/_import",
+  "public/observable/_import/inference-standalone.js",
   "public/observable/_file",
   "public/observable/_npm"
 ];
@@ -151,6 +152,42 @@ async function assertEchartsRuntimeAsset() {
   }
 }
 
+async function walkDirectory(directory) {
+  const entries = await readdir(directory, {withFileTypes: true});
+  const files = [];
+
+  for (const entry of entries) {
+    const fullPath = path.join(directory, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...(await walkDirectory(fullPath)));
+      continue;
+    }
+
+    files.push(fullPath);
+  }
+
+  return files;
+}
+
+async function assertInferenceMountsAreWired() {
+  const observableRoot = path.join(PROJECT_ROOT, "public/observable");
+  const files = await walkDirectory(observableRoot);
+  const htmlFiles = files.filter((filePath) => filePath.endsWith(".html"));
+
+  for (const absoluteHtmlPath of htmlFiles) {
+    const html = await readFile(absoluteHtmlPath, "utf8");
+    if (!html.includes("jm-inference-mount")) {
+      continue;
+    }
+
+    if (!html.includes("/observable/_import/inference-standalone.js")) {
+      throw new Error(
+        `Missing inline inference standalone script in ${path.relative(PROJECT_ROOT, absoluteHtmlPath)}.`,
+      );
+    }
+  }
+}
+
 async function main() {
   for (const item of requiredSharedArtifacts) {
     await assertExists(item);
@@ -159,6 +196,7 @@ async function main() {
   await assertBaseHrefs();
   await assertKatexAssets();
   await assertEchartsRuntimeAsset();
+  await assertInferenceMountsAreWired();
   console.log("[verify:observable] PASS: Observable artifact check passed (canonical project routes found).");
 }
 

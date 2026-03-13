@@ -10,10 +10,10 @@ export default defineConfig({
   plugins: [svelte({compilerOptions: {css: "injected"}})],
   build: {
     lib: {
-      entry: "src/components/mushbot/standalone.ts",
+      entry: "src/components/inference/standalone.ts",
       formats: ["iife"],
-      name: "Mushbot",
-      fileName: () => "mushbot-standalone.js",
+      name: "NotebookInference",
+      fileName: () => "inference-standalone.js",
     },
     outDir: "public/observable/_import",
     emptyOutDir: false,
@@ -24,7 +24,7 @@ export default defineConfig({
     },
   },
   define: {
-    "import.meta.env.PUBLIC_MUSHBOT_API": envLiteral(process.env.PUBLIC_MUSHBOT_API),
+    "import.meta.env.PUBLIC_RESUME_API": envLiteral(process.env.PUBLIC_RESUME_API),
     "import.meta.env.PUBLIC_TURNSTILE_SITE_KEY": envLiteral(process.env.PUBLIC_TURNSTILE_SITE_KEY),
   },
 });

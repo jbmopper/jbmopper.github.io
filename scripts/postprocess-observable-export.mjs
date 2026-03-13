@@ -6,9 +6,15 @@ const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(SCRIPT_DIR, "..");
 const OBSERVABLE_ROOT = path.join(PROJECT_ROOT, "public/observable");
 const MUSHBOT_BUNDLE = path.join(OBSERVABLE_ROOT, "_import/mushbot-standalone.js");
+const INFERENCE_BUNDLE = path.join(OBSERVABLE_ROOT, "_import/inference-standalone.js");
+const INFERENCE_MOUNT_CLASS = "jm-inference-mount";
 
 const PROJECT_ROOT_PATH_CHECK = /^\/projects(?:\/index\.html)?\/?$/;
 const LEGACY_PROJECT_ROOT_PATH_CHECK = /^\/projects\/?$/;
+const INFERENCE_MOUNTS_BY_PAGE = new Map([
+  // Prefer explicit markers emitted by ns_obv for exact inline placement.
+  // This map is only for Astro-side fallback injections keyed by exported HTML path.
+]);
 
 async function walkDirectory(directory) {
   const entries = await readdir(directory, {withFileTypes: true});
@@ -85,6 +91,77 @@ function injectMushbotScript(html) {
   return html;
 }
 
+function escapeHtmlAttribute(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
+
+function renderInferenceMount(config = {}) {
+  const attributes = [`class="${INFERENCE_MOUNT_CLASS}"`];
+  const attributeMap = [
+    ["eyebrow", "data-inference-eyebrow"],
+    ["title", "data-inference-title"],
+    ["description", "data-inference-description"],
+    ["verificationTitle", "data-inference-verification-title"],
+    ["verificationMessage", "data-inference-verification-message"],
+    ["promptLabel", "data-inference-prompt-label"],
+    ["promptPlaceholder", "data-inference-prompt-placeholder"],
+    ["submitLabel", "data-inference-submit-label"],
+    ["resetLabel", "data-inference-reset-label"],
+    ["warmupPath", "data-inference-warmup-path"],
+    ["initialModel", "data-inference-initial-model"],
+    ["lockedModel", "data-inference-locked-model"],
+    ["promptRows", "data-inference-prompt-rows"],
+  ];
+
+  for (const [configKey, attributeName] of attributeMap) {
+    if (!(configKey in config) || config[configKey] === undefined || config[configKey] === null) {
+      continue;
+    }
+    attributes.push(`${attributeName}="${escapeHtmlAttribute(config[configKey])}"`);
+  }
+
+  if (Array.isArray(config.models) && config.models.length > 0) {
+    attributes.push(`data-inference-models="${escapeHtmlAttribute(JSON.stringify(config.models))}"`);
+  }
+
+  return `<div ${attributes.join(" ")}></div>`;
+}
+
+function ensureConfiguredInferenceMounts(html, relativePath) {
+  const pageConfigs = INFERENCE_MOUNTS_BY_PAGE.get(relativePath);
+  if (!pageConfigs || pageConfigs.length === 0) {
+    return html;
+  }
+
+  if (html.includes(INFERENCE_MOUNT_CLASS)) {
+    return html;
+  }
+
+  const renderedMounts = pageConfigs.map((config) => renderInferenceMount(config)).join("\n");
+  if (html.includes("</main>")) {
+    return html.replace("</main>", `\n${renderedMounts}\n</main>`);
+  }
+
+  return html;
+}
+
+function hasInlineInferenceMount(html) {
+  return html.includes(INFERENCE_MOUNT_CLASS);
+}
+
+function injectInferenceScript(html) {
+  const tag = `<script src="/observable/_import/inference-standalone.js" defer><\/script>`;
+  html = html.replace(/<script[^>]*inference-standalone\.js[^>]*><\/script>\n?/g, "");
+  if (html.includes("</head>")) {
+    return html.replace("</head>", `${tag}\n</head>`);
+  }
+  return html;
+}
+
 async function mushbotBundleExists() {
   try {
     await access(MUSHBOT_BUNDLE);
@@ -94,15 +171,26 @@ async function mushbotBundleExists() {
   }
 }
 
-async function processHtmlFile(fullPath, injectMushbot) {
-  const relativePath = path.relative(OBSERVABLE_ROOT, fullPath);
+async function inferenceBundleExists() {
+  try {
+    await access(INFERENCE_BUNDLE);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function processHtmlFile(fullPath, injectMushbot, injectInference) {
+  const relativePath = path.relative(OBSERVABLE_ROOT, fullPath).split(path.sep).join("/");
   let html = await readFile(fullPath, "utf8");
 
   html = upsertBaseHref(html, getCanonicalBaseHref(relativePath));
   html = normalizeProjectRootMatcher(html);
   html = normalizeHeaderHomeLink(html);
   html = stripModulePreloads(html);
+  html = ensureConfiguredInferenceMounts(html, relativePath);
   if (injectMushbot) html = injectMushbotScript(html);
+  if (injectInference && hasInlineInferenceMount(html)) html = injectInferenceScript(html);
 
   await writeFile(fullPath, html, "utf8");
 }
@@ -111,13 +199,17 @@ async function main() {
   const allFiles = await walkDirectory(OBSERVABLE_ROOT);
   const htmlFiles = allFiles.filter((filePath) => filePath.endsWith(".html"));
   const injectMushbot = await mushbotBundleExists();
+  const injectInference = await inferenceBundleExists();
 
   for (const htmlFile of htmlFiles) {
-    await processHtmlFile(htmlFile, injectMushbot);
+    await processHtmlFile(htmlFile, injectMushbot, injectInference);
   }
 
-  const mushbotNote = injectMushbot ? " (with Mushbot injection)" : "";
-  console.log(`Post-processed Observable export HTML (${htmlFiles.length} files)${mushbotNote}.`);
+  const notes = [];
+  if (injectMushbot) notes.push("Mushbot injection");
+  if (injectInference) notes.push("inline inference injection");
+  const suffix = notes.length > 0 ? ` (with ${notes.join(" + ")})` : "";
+  console.log(`Post-processed Observable export HTML (${htmlFiles.length} files)${suffix}.`);
 }
 
 main().catch((error) => {

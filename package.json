@@ -4,12 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "npm run prepare:observable && astro dev",
     "build:mushbot": "node scripts/build-mushbot-standalone.mjs",
-    "build": "npm run build:mushbot && astro build",
+    "build:inference": "node scripts/build-inference-standalone.mjs",
+    "build:observable-widgets": "npm run build:mushbot && npm run build:inference",
+    "prepare:observable": "npm run build:observable-widgets && npm run postprocess:observable",
+    "build": "npm run prepare:observable && astro build",
     "preview": "astro preview",
     "postprocess:observable": "node scripts/postprocess-observable-export.mjs",
-    "verify:observable": "npm run build:mushbot && npm run postprocess:observable && node scripts/verify-observable-export.mjs",
+    "verify:observable": "npm run prepare:observable && node scripts/verify-observable-export.mjs",
     "test:e2e": "playwright test",
     "test:ci": "npm run verify:observable && npm run build && npm run test:e2e"
   },
