@@ -22,7 +22,7 @@ _secret_cache: Dict[str, str] = {}
 ACTION_ROUTE_MAP: Dict[str, list[str]] = {
     "resume": ["/v1/resume/*"],
     "chat": ["/v1/chat/*"],
-    "infer": ["/v1/infer/*"],
+    "infer": ["/generate", "/warmup"],
 }
 
 

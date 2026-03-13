@@ -58,16 +58,20 @@ resource "aws_api_gateway_resource" "chat_respond" {
   path_part   = "respond"
 }
 
-resource "aws_api_gateway_resource" "infer" {
+resource "aws_api_gateway_resource" "infer_generate" {
+  count = local.infer_route_enabled ? 1 : 0
+
   rest_api_id = aws_api_gateway_rest_api.main.id
-  parent_id   = aws_api_gateway_resource.v1.id
-  path_part   = "infer"
+  parent_id   = aws_api_gateway_rest_api.main.root_resource_id
+  path_part   = "generate"
 }
 
-resource "aws_api_gateway_resource" "infer_run" {
+resource "aws_api_gateway_resource" "infer_warmup" {
+  count = local.infer_route_enabled ? 1 : 0
+
   rest_api_id = aws_api_gateway_rest_api.main.id
-  parent_id   = aws_api_gateway_resource.infer.id
-  path_part   = "run"
+  parent_id   = aws_api_gateway_rest_api.main.root_resource_id
+  path_part   = "warmup"
 }
 
 resource "aws_api_gateway_method" "turnstile_post" {
@@ -220,21 +224,46 @@ resource "aws_api_gateway_integration" "chat_post" {
   uri                     = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${var.chat_lambda_arn}/invocations"
 }
 
-resource "aws_api_gateway_method" "infer_post" {
+resource "aws_api_gateway_method" "infer_generate_post" {
   count = local.infer_route_enabled ? 1 : 0
 
   rest_api_id   = aws_api_gateway_rest_api.main.id
-  resource_id   = aws_api_gateway_resource.infer_run.id
+  resource_id   = aws_api_gateway_resource.infer_generate[0].id
+  authorizer_id = aws_api_gateway_authorizer.session.id
   http_method   = "POST"
-  authorization = "NONE"
+  authorization = "CUSTOM"
 }
 
-resource "aws_api_gateway_integration" "infer_post" {
+resource "aws_api_gateway_integration" "infer_generate_post" {
   count = local.infer_route_enabled ? 1 : 0
 
   rest_api_id             = aws_api_gateway_rest_api.main.id
-  resource_id             = aws_api_gateway_resource.infer_run.id
-  http_method             = aws_api_gateway_method.infer_post[0].http_method
+  resource_id             = aws_api_gateway_resource.infer_generate[0].id
+  http_method             = aws_api_gateway_method.infer_generate_post[0].http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  response_transfer_mode  = "STREAM"
+  accept                  = "text/event-stream"
+  timeout_milliseconds    = 600000
+  uri                     = "arn:aws:apigateway:${var.aws_region}:lambda:path/2021-11-15/functions/${var.infer_lambda_arn}/response-streaming-invocations"
+}
+
+resource "aws_api_gateway_method" "infer_warmup_post" {
+  count = local.infer_route_enabled ? 1 : 0
+
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.infer_warmup[0].id
+  authorizer_id = aws_api_gateway_authorizer.session.id
+  http_method   = "POST"
+  authorization = "CUSTOM"
+}
+
+resource "aws_api_gateway_integration" "infer_warmup_post" {
+  count = local.infer_route_enabled ? 1 : 0
+
+  rest_api_id             = aws_api_gateway_rest_api.main.id
+  resource_id             = aws_api_gateway_resource.infer_warmup[0].id
+  http_method             = aws_api_gateway_method.infer_warmup_post[0].http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${var.infer_lambda_arn}/invocations"
@@ -394,21 +423,21 @@ resource "aws_api_gateway_integration_response" "options_chat_200" {
   }
 }
 
-resource "aws_api_gateway_method" "options_infer" {
+resource "aws_api_gateway_method" "options_infer_generate" {
   count = local.infer_route_enabled ? 1 : 0
 
   rest_api_id   = aws_api_gateway_rest_api.main.id
-  resource_id   = aws_api_gateway_resource.infer_run.id
+  resource_id   = aws_api_gateway_resource.infer_generate[0].id
   http_method   = "OPTIONS"
   authorization = "NONE"
 }
 
-resource "aws_api_gateway_integration" "options_infer" {
+resource "aws_api_gateway_integration" "options_infer_generate" {
   count = local.infer_route_enabled ? 1 : 0
 
   rest_api_id = aws_api_gateway_rest_api.main.id
-  resource_id = aws_api_gateway_resource.infer_run.id
-  http_method = aws_api_gateway_method.options_infer[0].http_method
+  resource_id = aws_api_gateway_resource.infer_generate[0].id
+  http_method = aws_api_gateway_method.options_infer_generate[0].http_method
   type        = "MOCK"
 
   request_templates = {
@@ -416,12 +445,12 @@ resource "aws_api_gateway_integration" "options_infer" {
   }
 }
 
-resource "aws_api_gateway_method_response" "options_infer_200" {
+resource "aws_api_gateway_method_response" "options_infer_generate_200" {
   count = local.infer_route_enabled ? 1 : 0
 
   rest_api_id = aws_api_gateway_rest_api.main.id
-  resource_id = aws_api_gateway_resource.infer_run.id
-  http_method = aws_api_gateway_method.options_infer[0].http_method
+  resource_id = aws_api_gateway_resource.infer_generate[0].id
+  http_method = aws_api_gateway_method.options_infer_generate[0].http_method
   status_code = "200"
 
   response_parameters = {
@@ -432,13 +461,67 @@ resource "aws_api_gateway_method_response" "options_infer_200" {
   }
 }
 
-resource "aws_api_gateway_integration_response" "options_infer_200" {
+resource "aws_api_gateway_integration_response" "options_infer_generate_200" {
   count = local.infer_route_enabled ? 1 : 0
 
   rest_api_id = aws_api_gateway_rest_api.main.id
-  resource_id = aws_api_gateway_resource.infer_run.id
-  http_method = aws_api_gateway_method.options_infer[0].http_method
-  status_code = aws_api_gateway_method_response.options_infer_200[0].status_code
+  resource_id = aws_api_gateway_resource.infer_generate[0].id
+  http_method = aws_api_gateway_method.options_infer_generate[0].http_method
+  status_code = aws_api_gateway_method_response.options_infer_generate_200[0].status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Methods" = "'${local.cors_allowed_methods}'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allowed_headers}'"
+    "method.response.header.Access-Control-Max-Age"       = "'${local.cors_max_age}'"
+  }
+}
+
+resource "aws_api_gateway_method" "options_infer_warmup" {
+  count = local.infer_route_enabled ? 1 : 0
+
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.infer_warmup[0].id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "options_infer_warmup" {
+  count = local.infer_route_enabled ? 1 : 0
+
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.infer_warmup[0].id
+  http_method = aws_api_gateway_method.options_infer_warmup[0].http_method
+  type        = "MOCK"
+
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+resource "aws_api_gateway_method_response" "options_infer_warmup_200" {
+  count = local.infer_route_enabled ? 1 : 0
+
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.infer_warmup[0].id
+  http_method = aws_api_gateway_method.options_infer_warmup[0].http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Max-Age"       = true
+  }
+}
+
+resource "aws_api_gateway_integration_response" "options_infer_warmup_200" {
+  count = local.infer_route_enabled ? 1 : 0
+
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.infer_warmup[0].id
+  http_method = aws_api_gateway_method.options_infer_warmup[0].http_method
+  status_code = aws_api_gateway_method_response.options_infer_warmup_200[0].status_code
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
@@ -467,9 +550,12 @@ resource "aws_api_gateway_deployment" "main" {
           try(aws_api_gateway_integration.chat_post[0].id, ""),
           try(aws_api_gateway_integration.options_chat[0].id, ""),
           try(aws_api_gateway_integration_response.options_chat_200[0].id, ""),
-          try(aws_api_gateway_integration.infer_post[0].id, ""),
-          try(aws_api_gateway_integration.options_infer[0].id, ""),
-          try(aws_api_gateway_integration_response.options_infer_200[0].id, ""),
+          try(aws_api_gateway_integration.infer_generate_post[0].id, ""),
+          try(aws_api_gateway_integration.options_infer_generate[0].id, ""),
+          try(aws_api_gateway_integration_response.options_infer_generate_200[0].id, ""),
+          try(aws_api_gateway_integration.infer_warmup_post[0].id, ""),
+          try(aws_api_gateway_integration.options_infer_warmup[0].id, ""),
+          try(aws_api_gateway_integration_response.options_infer_warmup_200[0].id, ""),
           aws_api_gateway_authorizer.session.id
         ])
       )
@@ -493,9 +579,12 @@ resource "aws_api_gateway_deployment" "main" {
     aws_api_gateway_integration.chat_post,
     aws_api_gateway_integration.options_chat,
     aws_api_gateway_integration_response.options_chat_200,
-    aws_api_gateway_integration.infer_post,
-    aws_api_gateway_integration.options_infer,
-    aws_api_gateway_integration_response.options_infer_200
+    aws_api_gateway_integration.infer_generate_post,
+    aws_api_gateway_integration.options_infer_generate,
+    aws_api_gateway_integration_response.options_infer_generate_200,
+    aws_api_gateway_integration.infer_warmup_post,
+    aws_api_gateway_integration.options_infer_warmup,
+    aws_api_gateway_integration_response.options_infer_warmup_200
   ]
 }
 
@@ -573,14 +662,24 @@ resource "aws_lambda_permission" "allow_chat" {
   source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/POST/v1/chat/respond"
 }
 
-resource "aws_lambda_permission" "allow_infer" {
+resource "aws_lambda_permission" "allow_infer_generate" {
   count = var.manage_lambda_permissions && local.infer_route_enabled ? 1 : 0
 
-  statement_id  = "AllowExecutionFromAPIGatewayInfer"
+  statement_id  = "AllowExecutionFromAPIGatewayInferGenerate"
   action        = "lambda:InvokeFunction"
   function_name = var.infer_lambda_arn
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/POST/v1/infer/run"
+  source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/POST/generate"
+}
+
+resource "aws_lambda_permission" "allow_infer_warmup" {
+  count = var.manage_lambda_permissions && local.infer_route_enabled ? 1 : 0
+
+  statement_id  = "AllowExecutionFromAPIGatewayInferWarmup"
+  action        = "lambda:InvokeFunction"
+  function_name = var.infer_lambda_arn
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/POST/warmup"
 }
 
 resource "aws_api_gateway_domain_name" "main" {

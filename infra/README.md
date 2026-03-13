@@ -4,11 +4,12 @@ This directory provisions a protected API layer in AWS for backend Lambda worklo
 
 ## What this stack creates
 
-- API Gateway REST API (`/v1/...`) with optional routes:
+- API Gateway REST API with optional routes:
   - `POST /v1/session/turnstile-verify` (always created)
   - `POST /v1/resume/generate` (if `resume_lambda_arn` is set)
   - `POST /v1/chat/respond` (if `chat_lambda_arn` is set)
-  - `POST /v1/infer/run` (if `infer_lambda_arn` is set)
+  - `POST /generate` (if `infer_lambda_arn` is set)
+  - `POST /warmup` (if `infer_lambda_arn` is set)
 - AWS WAFv2 Web ACL attached to the API stage
 - Turnstile broker Lambda (verifies token and mints short-lived session token)
 - Secrets Manager placeholders for required secrets (unless existing ARNs are supplied)
@@ -47,6 +48,11 @@ Populate:
 - existing Lambda ARNs for resume/chat (and optionally infer)
 - optional existing secret ARNs
 - custom domain/certificate if desired
+
+Current inference integration note:
+
+- this stack exposes the unchanged inference Lambda's native `POST /generate` and `POST /warmup` routes
+- frontend/component changes are deferred to a later pass, so callers must currently send the Lambda's native request shape
 
 ## Secrets payload formats
 
