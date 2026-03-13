@@ -39,7 +39,7 @@
     promptPlaceholder = "Ask the model to summarize, explain, or generate something useful.",
     submitLabel = "Run inference",
     resetLabel = "Fresh round",
-    warmupPath = "",
+    warmupPath = "/warmup",
     models = [],
     initialModel = "",
     lockedModel = "",
@@ -203,9 +203,8 @@
     try {
       await submitInference(
         {
-          model_selection: effectiveModel || undefined,
+          model: effectiveModel || undefined,
           prompt: promptText.trim(),
-          stream: true,
         },
         sessionToken,
         handleInferenceEvent,

@@ -10,9 +10,8 @@ export interface SessionTokenResponse {
 }
 
 export interface SubmitInferenceParams {
-  model_selection?: string;
+  model?: string;
   prompt?: string;
-  stream?: boolean;
 }
 
 export type InferenceSseEvent =
@@ -134,7 +133,7 @@ async function mockSubmitInference(
   params: SubmitInferenceParams,
   onEvent: InferenceEventHandler,
 ): Promise<void> {
-  const modelLabel = params.model_selection ? ` on ${params.model_selection}` : "";
+  const modelLabel = params.model ? ` on ${params.model}` : "";
   const promptLabel = params.prompt?.trim() ? ` Prompt received:${"\n"}${params.prompt.trim()}${"\n\n"}` : "";
   const text = `${MOCK_STREAM_TEXT}${modelLabel}.${"\n\n"}${promptLabel}`;
   const chunks = text.split(/(\s+)/).filter(Boolean);
@@ -175,16 +174,13 @@ async function liveSubmitInference(
   sessionToken: string,
   onEvent: InferenceEventHandler,
 ): Promise<void> {
-  const res = await fetch(resolveApiUrl("/v1/infer/run"), {
+  const res = await fetch(resolveApiUrl("/generate"), {
     method: "POST",
     headers: {
       ...authHeaders(sessionToken),
       Accept: "text/event-stream",
     },
-    body: JSON.stringify({
-      ...params,
-      stream: params.stream ?? true,
-    }),
+    body: JSON.stringify(params),
   });
 
   if (!res.ok) {
@@ -243,7 +239,7 @@ async function liveWarmInferenceModel(
   const res = await fetch(resolveApiUrl(warmupPath), {
     method: "POST",
     headers: authHeaders(sessionToken),
-    body: JSON.stringify({ model_selection: modelSelection }),
+    body: JSON.stringify({ model: modelSelection }),
   });
 
   if (!res.ok) {
@@ -273,7 +269,9 @@ export async function warmInferenceModel(
   sessionToken: string,
   warmupPath?: string,
 ): Promise<void> {
-  if (!warmupPath || !modelSelection) {
+  const resolvedWarmupPath = warmupPath ?? "/warmup";
+
+  if (!modelSelection) {
     return;
   }
 
@@ -281,5 +279,5 @@ export async function warmInferenceModel(
     return mockWarmInferenceModel();
   }
 
-  return liveWarmInferenceModel(modelSelection, sessionToken, warmupPath);
+  return liveWarmInferenceModel(modelSelection, sessionToken, resolvedWarmupPath);
 }
