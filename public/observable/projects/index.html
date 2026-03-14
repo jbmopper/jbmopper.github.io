@@ -28,6 +28,7 @@ import "../_observablehq/client.b8f66ce7.js";
   <ol>
     <li class="observablehq-link observablehq-link-active"><a href="./">Projects</a></li>
     <li class="observablehq-link"><a href="./llm-fundamentals/">LLM Fundamentals</a></li>
+    <li class="observablehq-link"><a href="./site-creation/">Portfolio Site Creation</a></li>
     <li class="observablehq-link"><a href="./data-playground/">Data Playground</a></li>
   </ol>
 </nav>
@@ -106,8 +107,38 @@ import "../_observablehq/client.b8f66ce7.js";
               document.addEventListener('keydown', function(event){
                 if (event.key === 'Escape') details.removeAttribute('open');
               });
+            } else if (slug === 'site-creation') {
+              const details = document.createElement('details');
+              details.id = 'portfolio-current-project-menu';
+              details.className = 'portfolio-project-menu';
+
+              const summary = document.createElement('summary');
+              summary.className = 'portfolio-nav-link portfolio-project-toggle';
+              summary.textContent = 'Portfolio Site Creation';
+              details.appendChild(summary);
+
+              const dropdown = document.createElement('div');
+              dropdown.className = 'portfolio-project-dropdown';
+              const items = [
+                ['Introduction', '/projects/site-creation/'],
+                ['Resume Generator', '/projects/site-creation/resume-generator/']
+              ];
+              for (const [label, target] of items) {
+                dropdown.appendChild(makeProjectItem(label, mount + target));
+              }
+              details.appendChild(dropdown);
+              slot.replaceWith(details);
+
+              document.addEventListener('click', function(event){
+                if (!details.hasAttribute('open')) return;
+                if (!details.contains(event.target)) details.removeAttribute('open');
+              });
+              document.addEventListener('keydown', function(event){
+                if (event.key === 'Escape') details.removeAttribute('open');
+              });
             } else {
               const labels = {
+                'site-creation': 'Portfolio Site Creation',
                 'resume-generator': 'Resume Generator',
                 'data-playground': 'Data Playground'
               };
@@ -132,7 +163,7 @@ import "../_observablehq/client.b8f66ce7.js";
 <h1 id="projects" tabindex="-1"><a class="observablehq-header-anchor" href="#projects">Projects</a></h1>
 <ul>
 <li><a href="./llm-fundamentals/">LLM Fundamentals</a></li>
-<li><a href="./resume-generator/">Resume Lambda</a></li>
+<li><a href="./site-creation/">Portfolio Site Creation</a></li>
 </ul>
 <!--
 - [Data Playground](/projects/data-playground/)

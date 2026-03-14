@@ -28,6 +28,7 @@ import "../../_observablehq/client.b8f66ce7.js";
   <ol>
     <li class="observablehq-link"><a href="../">Projects</a></li>
     <li class="observablehq-link observablehq-link-active"><a href="./">LLM Fundamentals</a></li>
+    <li class="observablehq-link"><a href="../site-creation/">Portfolio Site Creation</a></li>
     <li class="observablehq-link"><a href="../data-playground/">Data Playground</a></li>
   </ol>
 </nav>
@@ -106,8 +107,38 @@ import "../../_observablehq/client.b8f66ce7.js";
               document.addEventListener('keydown', function(event){
                 if (event.key === 'Escape') details.removeAttribute('open');
               });
+            } else if (slug === 'site-creation') {
+              const details = document.createElement('details');
+              details.id = 'portfolio-current-project-menu';
+              details.className = 'portfolio-project-menu';
+
+              const summary = document.createElement('summary');
+              summary.className = 'portfolio-nav-link portfolio-project-toggle';
+              summary.textContent = 'Portfolio Site Creation';
+              details.appendChild(summary);
+
+              const dropdown = document.createElement('div');
+              dropdown.className = 'portfolio-project-dropdown';
+              const items = [
+                ['Introduction', '/projects/site-creation/'],
+                ['Resume Generator', '/projects/site-creation/resume-generator/']
+              ];
+              for (const [label, target] of items) {
+                dropdown.appendChild(makeProjectItem(label, mount + target));
+              }
+              details.appendChild(dropdown);
+              slot.replaceWith(details);
+
+              document.addEventListener('click', function(event){
+                if (!details.hasAttribute('open')) return;
+                if (!details.contains(event.target)) details.removeAttribute('open');
+              });
+              document.addEventListener('keydown', function(event){
+                if (event.key === 'Escape') details.removeAttribute('open');
+              });
             } else {
               const labels = {
+                'site-creation': 'Portfolio Site Creation',
                 'resume-generator': 'Resume Generator',
                 'data-playground': 'Data Playground'
               };
@@ -135,6 +166,7 @@ import "../../_observablehq/client.b8f66ce7.js";
 <li class="observablehq-secondary-link"><a href="#introduction">Introduction </a></li>
 <li class="observablehq-secondary-link"><a href="#knowledge-gained-learnings">Knowledge Gained (Learnings) </a></li>
 <li class="observablehq-secondary-link"><a href="#project-components">Project Components </a></li>
+<li class="observablehq-secondary-link"><a href="#deployment">Deployment</a></li>
 <li class="observablehq-secondary-link"><a href="#conclusions">Conclusions</a></li>
 </ol>
 </nav>
@@ -160,6 +192,7 @@ import "../../_observablehq/client.b8f66ce7.js";
 <li><a href="./ablations/">Architectural Variations (Ablations)</a></li>
 </ol>
 </li>
+<li><a href="./deployment/">Deployment</a></li>
 <li><a href="#conclusions">Conclusions and Demonstration</a></li>
 </ol>
 <h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction <a id="intro"></a></a></h2>
@@ -209,6 +242,8 @@ import "../../_observablehq/client.b8f66ce7.js";
 <p>A robust and creative exploration of conducting hyperparameter sweeps using the <a href="https://wandb.ai" target="_blank" rel="noopener noreferrer">wandb</a> Bayesian sweep algorithm and Hyperband early-stopping algorithm.  <strong>A novel sweep metric is proposed and implemented</strong> in order to elicit preferred behavior from these systems, and its performance is assessed.  Optimal optimizer parameters are determined.</p>
 <h3 id="6-architectural-variations-ablation-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#6-architectural-variations-ablation-analysis">6. <a href="./ablations/">Architectural Variations (Ablation) Analysis</a></a></h3>
 <p>Suggested ablation tests from the CS336 assignment are conducted, such as removing the positional encoder or changing normalization timing.  Their impact on model training is assessed and observations are interpreted based on the purpose of these architectural features within the model.</p>
+<h2 id="deployment" tabindex="-1"><a class="observablehq-header-anchor" href="#deployment"><a href="./deployment/">Deployment</a></a></h2>
+<p>To deploy trained models, ONNX snapshots were generated and the tokenizer and decoder were ported into a lambda.  In order to deliver streaming responses, a FastAPI app is run behind a modified AWS Linux image and site API gateway configs were updated.</p>
 <h2 id="conclusions" tabindex="-1"><a class="observablehq-header-anchor" href="#conclusions">Conclusions<a id="conclusions"></a></a></h2>
 <p>Overall, this project represents a successful transition from theoretical machine learning concepts to the gritty reality of modern Large Language Model engineering. By setting aside pre-packaged high-level modules in favor of a from-scratch PyTorch implementation, the exercise forced a component-level engagement with the architecture. Constructing the BPE tokenizer, manually wiring the Transformer blocks, and orchestrating the training loop provided an irreplaceable understanding of how mechanisms like rotary positional embeddings, SwiGLU activations, and the compute graph actually function under the hood.</p>
 <p>Moving beyond initial implementation, the work evolved into a robust exploration of performance profiling and optimization. The subsequent analyses—ranging from empirical benchmarking across Apple Silicon and CUDA hardware to kernel-level tracing and Bayesian hyperparameter sweeps—highlighted the critical intersection of deep learning and systems engineering. Furthermore, the targeted ablation studies validated standard architectural heuristics, proving empirically why ubiquitous techniques like persistent residual stream conditioning are indispensable for stable model training.</p>

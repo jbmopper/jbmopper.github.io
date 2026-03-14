@@ -4,52 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="generator" content="Observable Framework v1.13.4">
-<title>NSYS Trace Viewer | Project Writeup Sandbox</title>
+<title>Resume Generator | Project Writeup Sandbox</title>
 
 <link rel="preload" as="style" href="../../../_import/astro-bridge-theme.1f3a5004.css">
 <link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.1f3a5004.css">
 <link rel="modulepreload" href="../../../_observablehq/client.b8f66ce7.js">
 <link rel="modulepreload" href="../../../_observablehq/runtime.607a8173.js">
 <link rel="modulepreload" href="../../../_observablehq/stdlib.a50b4fda.js">
-<link rel="modulepreload" href="../../../_import/embed/nsys-viewer.1f278eb6.js">
-<link rel="modulepreload" href="../../../_import/components/echart.24e04cd8.js">
-<link rel="modulepreload" href="../../../_import/components/data-utils.e2caa41c.js">
-<link rel="modulepreload" href="../../../_import/components/nsys-viewer-core.ec8c6c6d.js">
-<link rel="modulepreload" href="../../../_import/components/dom-utils.facbe44a.js">
-<link rel="modulepreload" href="../../../_import/embed/nsys-dataset.de7ccfd9.js">
-<link rel="modulepreload" href="../../../_import/components/echart-theme.ac72768d.js">
-<link rel="modulepreload" href="../../../_npm/echarts@5.6.0/dist/echarts.esm.min.js.43ee27f9.js">
-<link rel="modulepreload" href="../../../_npm/apache-arrow@21.1.0/63de76cd.js">
-<link rel="modulepreload" href="../../../_npm/parquet-wasm@0.7.1/68d81b68.js">
-<link rel="modulepreload" href="../../../_npm/tslib@2.8.1/b62a9c4a.js">
-<link rel="modulepreload" href="../../../_npm/flatbuffers@25.9.23/c82700c2.js">
 <script type="module">
 
-import {define} from "../../../_observablehq/client.b8f66ce7.js";
-import {registerFile} from "../../../_observablehq/stdlib.a50b4fda.js";
-
-registerFile("../../../data/raw/traces/bad_head_size_nsys.parquet", {"name":"../../../data/raw/traces/bad_head_size_nsys.parquet","path":"../../../_file/data/raw/traces/bad_head_size_nsys.0e5fcf94.parquet","lastModified":1771465633642,"size":699507});
-registerFile("../../../data/raw/traces/bandwidth_bound_nsys.parquet", {"name":"../../../data/raw/traces/bandwidth_bound_nsys.parquet","path":"../../../_file/data/raw/traces/bandwidth_bound_nsys.0570a4e8.parquet","lastModified":1771465633645,"size":526034});
-registerFile("../../../data/raw/traces/compute_bound_nsys.parquet", {"name":"../../../data/raw/traces/compute_bound_nsys.parquet","path":"../../../_file/data/raw/traces/compute_bound_nsys.9be21553.parquet","lastModified":1771465633647,"size":1020491});
-registerFile("../../../data/raw/traces/deep_sequential_nsys.parquet", {"name":"../../../data/raw/traces/deep_sequential_nsys.parquet","path":"../../../_file/data/raw/traces/deep_sequential_nsys.4ed702eb.parquet","lastModified":1771465633653,"size":3186034});
-registerFile("../../../data/raw/traces/latency_bound_nsys.parquet", {"name":"../../../data/raw/traces/latency_bound_nsys.parquet","path":"../../../_file/data/raw/traces/latency_bound_nsys.5b9c4edd.parquet","lastModified":1771465633657,"size":1104236});
-registerFile("../../../data/raw/traces/misaligned_dims_nsys.parquet", {"name":"../../../data/raw/traces/misaligned_dims_nsys.parquet","path":"../../../_file/data/raw/traces/misaligned_dims_nsys.accc5b6e.parquet","lastModified":1771874136944,"size":669386});
-registerFile("../../../data/raw/traces/model_a_nsys.parquet", {"name":"../../../data/raw/traces/model_a_nsys.parquet","path":"../../../_file/data/raw/traces/model_a_nsys.7c95f1f4.parquet","lastModified":1771465633660,"size":294932});
-registerFile("../../../data/raw/traces/model_b_nsys.parquet", {"name":"../../../data/raw/traces/model_b_nsys.parquet","path":"../../../_file/data/raw/traces/model_b_nsys.d909797c.parquet","lastModified":1771465633662,"size":1231233});
-registerFile("../../../data/raw/traces/vocab_bottleneck_nsys.parquet", {"name":"../../../data/raw/traces/vocab_bottleneck_nsys.parquet","path":"../../../_file/data/raw/traces/vocab_bottleneck_nsys.c6e0b393.parquet","lastModified":1771465633665,"size":509294});
-registerFile("../../../data/raw/traces/wide_ffn_nsys.parquet", {"name":"../../../data/raw/traces/wide_ffn_nsys.parquet","path":"../../../_file/data/raw/traces/wide_ffn_nsys.e3df5806.parquet","lastModified":1771465633667,"size":715444});
-
-define({id: "4fbe5c32", outputs: ["renderNsysViewer"], body: async () => {
-const {renderNsysViewer} = await import("../../../_import/embed/nsys-viewer.1f278eb6.js");
-
-return {renderNsysViewer};
-}});
-
-define({id: "b96fad44", inputs: ["renderNsysViewer","display"], body: async (renderNsysViewer,display) => {
-display(await(
-await renderNsysViewer()
-))
-}});
+import "../../../_observablehq/client.b8f66ce7.js";
 
 </script>
 </head>
@@ -63,8 +27,8 @@ await renderNsysViewer()
   </ol>
   <ol>
     <li class="observablehq-link"><a href="../../">Projects</a></li>
-    <li class="observablehq-link"><a href="../">LLM Fundamentals</a></li>
-    <li class="observablehq-link"><a href="../../site-creation/">Portfolio Site Creation</a></li>
+    <li class="observablehq-link"><a href="../../llm-fundamentals/">LLM Fundamentals</a></li>
+    <li class="observablehq-link"><a href="../">Portfolio Site Creation</a></li>
     <li class="observablehq-link"><a href="../../data-playground/">Data Playground</a></li>
   </ol>
 </nav>
@@ -197,12 +161,17 @@ await renderNsysViewer()
 </header>
 <aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
 <nav>
+<div>Contents</div>
+<ol>
+<li class="observablehq-secondary-link"><a href="#introduction">Introduction</a></li>
+</ol>
 </nav>
 </aside>
 <main id="observablehq-main" class="observablehq">
-<h1 id="nsys-gpu-trace-viewer" tabindex="-1"><a class="observablehq-header-anchor" href="#nsys-gpu-trace-viewer">NSYS GPU Trace Viewer</a></h1>
-<div class="observablehq observablehq--block"><!--:4fbe5c32:--></div>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:b96fad44:--></div>
+<h1 id="resume-generator" tabindex="-1"><a class="observablehq-header-anchor" href="#resume-generator">Resume Generator</a></h1>
+<p>This page is now part of the broader <a href="../">Portfolio Site Creation</a> project.</p>
+<h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
+<p>Check it out here: <a href="https://juliusm.com/resume/" target="_self" rel="noopener noreferrer">Resume Generator</a></p>
 </main>
 </div>
 </body>
