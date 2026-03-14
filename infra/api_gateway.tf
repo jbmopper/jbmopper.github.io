@@ -243,7 +243,6 @@ resource "aws_api_gateway_integration" "infer_generate_post" {
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   response_transfer_mode  = "STREAM"
-  accept                  = "text/event-stream"
   timeout_milliseconds    = 600000
   uri                     = "arn:aws:apigateway:${var.aws_region}:lambda:path/2021-11-15/functions/${var.infer_lambda_arn}/response-streaming-invocations"
 }
