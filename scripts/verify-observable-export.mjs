@@ -26,6 +26,7 @@ const requiredCanonicalRoutes = [
   "projects/llm-fundamentals/nsys",
   "projects/llm-fundamentals/optimizer-sweep",
   "projects/llm-fundamentals/ablations",
+  "projects/llm-fundamentals/deployment",
   "projects/data-playground"
 ];
 const expectedBaseHrefByPage = new Map([

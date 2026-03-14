@@ -26,6 +26,9 @@ export interface InferenceResponse {
   error?: string | null;
 }
 
+const END_OF_TEXT_MARKER = "<|endoftext|>";
+const MOCK_WARMUP_FAILURE_MODEL = "__fail_warmup__";
+const MOCK_INFERENCE_FAILURE_PROMPT = "__fail_inference__";
 const MOCK_STREAM_TEXT =
   "Mock inference stream online. Wire the real inference Lambda and this panel will render token deltas from the live SSE response.";
 
@@ -133,9 +136,14 @@ async function mockSubmitInference(
   params: SubmitInferenceParams,
   onEvent: InferenceEventHandler,
 ): Promise<void> {
+  if (params.prompt?.trim() === MOCK_INFERENCE_FAILURE_PROMPT) {
+    await delay(80);
+    throw new Error("Mock inference failure");
+  }
+
   const modelLabel = params.model ? ` on ${params.model}` : "";
   const promptLabel = params.prompt?.trim() ? ` Prompt received:${"\n"}${params.prompt.trim()}${"\n\n"}` : "";
-  const text = `${MOCK_STREAM_TEXT}${modelLabel}.${"\n\n"}${promptLabel}`;
+  const text = `${MOCK_STREAM_TEXT}${modelLabel}.${"\n\n"}${promptLabel}${END_OF_TEXT_MARKER}`;
   const chunks = text.split(/(\s+)/).filter(Boolean);
 
   for (const chunk of chunks) {
@@ -146,8 +154,11 @@ async function mockSubmitInference(
   onEvent({ type: "done" });
 }
 
-async function mockWarmInferenceModel(): Promise<void> {
-  await delay(300);
+async function mockWarmInferenceModel(modelSelection: string): Promise<void> {
+  await delay(650);
+  if (modelSelection === MOCK_WARMUP_FAILURE_MODEL) {
+    throw new Error("Mock warmup failure");
+  }
 }
 
 async function liveVerifyTurnstile(turnstileToken: string): Promise<SessionTokenResponse> {
@@ -276,7 +287,7 @@ export async function warmInferenceModel(
   }
 
   if (!API_BASE) {
-    return mockWarmInferenceModel();
+    return mockWarmInferenceModel(modelSelection);
   }
 
   return liveWarmInferenceModel(modelSelection, sessionToken, resolvedWarmupPath);

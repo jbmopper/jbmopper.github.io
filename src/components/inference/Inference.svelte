@@ -1,7 +1,7 @@
 <script lang="ts">
   import { loadTurnstileScript, renderTurnstile } from "../../lib/turnstile.js";
   import { submitInference, verifyTurnstile, warmInferenceModel } from "./inference-api.js";
-  import type { InferenceSseEvent } from "./inference-api.js";
+  import type { InferenceSseEvent, SessionTokenResponse } from "./inference-api.js";
 
   interface InferenceModelOption {
     value: string;
@@ -26,18 +26,34 @@
     promptRows?: number;
   }
 
-  type FlowStep = "gating" | "ready" | "streaming" | "complete" | "error";
-  type WarmupState = "idle" | "warming" | "ready" | "error";
+  type FlowStep = "gating" | "model_select" | "warming" | "prompt" | "streaming" | "complete" | "error";
+  type ErrorContext = "verification" | "locked_warmup";
+
+  const END_OF_TEXT_MARKER = "<|endoftext|>";
+  const DEFAULT_PROMPT_PLACEHOLDER = "Once upon a time";
+  const GENERIC_ERROR_MESSAGE = "Something went wrong, please try again later.";
+  const MOCK_SESSION_DELAY_MS = 250;
+  const CANONICAL_MODEL_OPTIONS: InferenceModelOption[] = [
+    {value: "baseline", label: "Assignment Default"},
+    {value: "ablation_no_norm", label: "No-Norm Ablation"},
+    {value: "ablation_nope", label: "No RoPE Ablation"},
+    {value: "ablation_post_norm", label: "Post-Norm Ablation"},
+    {value: "ablation_silu", label: "SiLU Activation Ablation"},
+    {value: "model_A_wide", label: "\"Model A\" Wide Benchmarking Model"},
+    {value: "model_B_deep", label: "\"Model B\" Deep Benchmarking Model"},
+    {value: "model_I", label: "Larger Wide-ish Model"},
+    {value: "model_J", label: "Larger Deep-ish Model"},
+  ];
 
   let {
     eyebrow = "Live inference",
     title = "Inference Playground",
-    description = "Complete verification, choose a model, and stream a response token by token.",
+    description = "Complete verification, prepare a model, and stream a response token by token.",
     verificationTitle = "Verification",
     verificationMessage = "Complete the Turnstile check to unlock the inference endpoint.",
     promptLabel = "Prompt",
-    promptPlaceholder = "Ask the model to summarize, explain, or generate something useful.",
-    submitLabel = "Run inference",
+    promptPlaceholder = DEFAULT_PROMPT_PLACEHOLDER,
+    submitLabel = "Continue",
     resetLabel = "Fresh round",
     warmupPath = "/warmup",
     models = [],
@@ -50,77 +66,95 @@
     typeof import.meta !== "undefined"
       ? (import.meta as Record<string, any>).env?.PUBLIC_TURNSTILE_SITE_KEY
       : undefined;
-  const END_OF_TEXT_MARKER = "<|endoftext|>";
 
   let step: FlowStep = $state("gating");
-  let warmupState: WarmupState = $state("idle");
   let turnstileEl: HTMLDivElement | undefined = $state();
-  let selectedModel = $state(lockedModel || initialModel || models[0]?.value || "");
+  let selectedModel = $state("");
   let sessionToken = $state("");
   let sessionExpiresAt = $state(0);
   let promptText = $state("");
   let outputText = $state("");
   let completionMessage = $state("");
   let warmupMessage = $state("");
+  let inlineErrorMessage = $state("");
   let errorMessage = $state("");
-  let errorReturnStep: FlowStep = $state("gating");
+  let errorContext: ErrorContext = $state("verification");
   let verificationStarted = $state(false);
   let isVerifying = $state(false);
 
   let warmupRequestId = 0;
-  let lastWarmupKey = "";
 
+  let availableModels = $derived(models.length > 0 ? models : CANONICAL_MODEL_OPTIONS);
   let effectiveModel = $derived(lockedModel || selectedModel);
-  let activeModel = $derived(
-    models.find((model) => model.value === effectiveModel) ??
-      (effectiveModel
-        ? {
-            value: effectiveModel,
-            label: effectiveModel,
-          }
-        : null)
-  );
-  let canChangeModel = $derived(!lockedModel && models.length > 1);
+  let activeModel = $derived(resolveModelOption(effectiveModel));
+  let isLockedFlow = $derived(Boolean(lockedModel));
   let canSubmit = $derived(
-    step !== "gating" &&
-      step !== "streaming" &&
-      promptText.trim().length > 0 &&
-      (models.length === 0 || Boolean(effectiveModel))
+    (step === "prompt" || step === "complete") && Boolean(effectiveModel) && step !== "streaming"
   );
+  let promptPlaceholderText = $derived(DEFAULT_PROMPT_PLACEHOLDER);
 
   $effect(() => {
-    if (!SITE_KEY && !sessionToken) {
-      sessionToken = "mock-inference-session";
-      sessionExpiresAt = Math.floor(Date.now() / 1000) + 600;
-      step = "ready";
+    if (isLockedFlow) {
+      return;
+    }
+
+    const preferredModel = initialModel || availableModels[0]?.value || "";
+    if (!preferredModel) {
+      selectedModel = "";
+      return;
+    }
+
+    if (!selectedModel || !availableModels.some((model) => model.value === selectedModel)) {
+      selectedModel = preferredModel;
     }
   });
 
   $effect(() => {
-    if (!SITE_KEY || step !== "gating" || !turnstileEl || verificationStarted) {
+    if (step !== "gating" || verificationStarted) {
       return;
     }
 
     verificationStarted = true;
-    void initializeTurnstile();
-  });
 
-  $effect(() => {
-    const modelSelection = effectiveModel;
-
-    if (!warmupPath || !sessionToken || !modelSelection) {
-      if (!warmupPath || !modelSelection) {
-        warmupState = "idle";
-        warmupMessage = "";
-      }
+    if (!SITE_KEY) {
+      void initializeMockSession();
       return;
     }
 
-    void maybeWarmModel(modelSelection);
+    if (!turnstileEl) {
+      verificationStarted = false;
+      return;
+    }
+
+    void initializeTurnstile();
   });
+
+  function delay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async function initializeMockSession() {
+    isVerifying = true;
+
+    try {
+      await delay(MOCK_SESSION_DELAY_MS);
+      const session = {
+        sessionToken: "mock-inference-session",
+        expiresAt: Math.floor(Date.now() / 1000) + 600,
+        allowedActions: ["infer"],
+      } satisfies SessionTokenResponse;
+      await handleVerificationSuccess(session);
+    } catch (err: unknown) {
+      showError(asMessage(err, "Verification failed."), "verification");
+      verificationStarted = false;
+    } finally {
+      isVerifying = false;
+    }
+  }
 
   async function initializeTurnstile() {
     if (!turnstileEl) {
+      verificationStarted = false;
       return;
     }
 
@@ -130,12 +164,9 @@
       await loadTurnstileScript();
       const turnstileToken = await renderTurnstile(turnstileEl, SITE_KEY);
       const session = await verifyTurnstile(turnstileToken);
-      sessionToken = session.sessionToken;
-      sessionExpiresAt = session.expiresAt;
-      step = "ready";
-      errorMessage = "";
+      await handleVerificationSuccess(session);
     } catch (err: unknown) {
-      showError(asMessage(err, "Verification failed."), "gating");
+      showError(asMessage(err, "Verification failed."), "verification");
       verificationStarted = false;
       if (turnstileEl) {
         turnstileEl.innerHTML = "";
@@ -145,18 +176,42 @@
     }
   }
 
-  async function maybeWarmModel(modelSelection: string) {
-    const warmupKey = `${warmupPath}:${sessionToken}:${modelSelection}`;
-    if (warmupKey === lastWarmupKey) {
+  async function handleVerificationSuccess(session: SessionTokenResponse) {
+    sessionToken = session.sessionToken;
+    sessionExpiresAt = session.expiresAt;
+    errorMessage = "";
+    inlineErrorMessage = "";
+    completionMessage = "";
+
+    if (lockedModel) {
+      await prepareModel(lockedModel, true);
       return;
     }
 
-    lastWarmupKey = warmupKey;
-    const requestId = ++warmupRequestId;
-    const modelLabel = activeModel?.label ?? modelSelection;
+    step = "model_select";
+  }
 
-    warmupState = "warming";
-    warmupMessage = `Warming ${modelLabel}...`;
+  async function prepareModel(modelSelection: string, treatFailureAsLockedError: boolean) {
+    if (!modelSelection) {
+      step = "model_select";
+      return;
+    }
+
+    inlineErrorMessage = "";
+    errorMessage = "";
+    completionMessage = "";
+    outputText = "";
+
+    if (!warmupPath) {
+      warmupMessage = "";
+      step = "prompt";
+      return;
+    }
+
+    const requestId = ++warmupRequestId;
+    const modelLabel = resolveModelOption(modelSelection)?.label ?? modelSelection;
+    warmupMessage = `Preparing ${modelLabel}...`;
+    step = "warming";
 
     try {
       await warmInferenceModel(modelSelection, sessionToken, warmupPath);
@@ -164,25 +219,43 @@
         return;
       }
 
-      warmupState = "ready";
-      warmupMessage = `${modelLabel} is warm and ready.`;
-    } catch (err: unknown) {
+      warmupMessage = "";
+      step = "prompt";
+    } catch {
       if (requestId !== warmupRequestId) {
         return;
       }
 
-      warmupState = "error";
-      warmupMessage = asMessage(err, "Model warmup failed.");
+      warmupMessage = "";
+      if (treatFailureAsLockedError) {
+        showError(GENERIC_ERROR_MESSAGE, "locked_warmup");
+        return;
+      }
+
+      inlineErrorMessage = GENERIC_ERROR_MESSAGE;
+      step = "model_select";
     }
   }
 
   function handleModelChange(event: Event) {
-    const nextModel = (event.currentTarget as HTMLSelectElement).value;
-    const nextModelLabel = models.find((model) => model.value === nextModel)?.label ?? nextModel;
+    selectedModel = (event.currentTarget as HTMLSelectElement).value;
+    inlineErrorMessage = "";
+  }
 
-    selectedModel = nextModel;
-    warmupState = warmupPath ? "warming" : "idle";
-    warmupMessage = warmupPath ? `Queueing warmup for ${nextModelLabel}...` : "";
+  async function handleSelectModel() {
+    if (!selectedModel) {
+      return;
+    }
+
+    if (!hasActiveSession()) {
+      showError("Verification expired. Run the Turnstile check again.", "verification");
+      return;
+    }
+
+    promptText = "";
+    outputText = "";
+    completionMessage = "";
+    await prepareModel(selectedModel, false);
   }
 
   async function handleSubmit() {
@@ -191,12 +264,14 @@
     }
 
     if (!hasActiveSession()) {
-      showError("Verification expired. Run the Turnstile check again.", "gating");
+      showError("Verification expired. Run the Turnstile check again.", "verification");
       return;
     }
 
+    const prompt = promptText.trim().length > 0 ? promptText.trim() : END_OF_TEXT_MARKER;
     outputText = "";
     completionMessage = "";
+    inlineErrorMessage = "";
     errorMessage = "";
     step = "streaming";
 
@@ -204,7 +279,7 @@
       await submitInference(
         {
           model: effectiveModel || undefined,
-          prompt: promptText.trim(),
+          prompt,
         },
         sessionToken,
         handleInferenceEvent,
@@ -216,14 +291,17 @@
           : "The model completed without returning text.";
         step = "complete";
       }
-    } catch (err: unknown) {
-      showError(asMessage(err, "Inference request failed."), "ready");
+    } catch {
+      outputText = "";
+      completionMessage = "";
+      inlineErrorMessage = GENERIC_ERROR_MESSAGE;
+      step = "prompt";
     }
   }
 
   function handleInferenceEvent(event: InferenceSseEvent) {
     if (event.type === "delta") {
-      const { text, done } = consumeDelta(event.text);
+      const {text, done} = consumeDelta(event.text);
       if (text) {
         outputText += text;
       }
@@ -244,13 +322,16 @@
       return;
     }
 
-    showError(event.error, "ready");
+    outputText = "";
+    completionMessage = "";
+    inlineErrorMessage = GENERIC_ERROR_MESSAGE;
+    step = "prompt";
   }
 
   function consumeDelta(text: string): { text: string; done: boolean } {
     const markerIndex = text.indexOf(END_OF_TEXT_MARKER);
     if (markerIndex === -1) {
-      return { text, done: false };
+      return {text, done: false};
     }
 
     return {
@@ -263,35 +344,48 @@
     promptText = "";
     outputText = "";
     completionMessage = "";
-    errorMessage = "";
-    step = "ready";
+    inlineErrorMessage = "";
+    step = "prompt";
+  }
+
+  function changeModel() {
+    promptText = "";
+    outputText = "";
+    completionMessage = "";
+    inlineErrorMessage = "";
+    step = "model_select";
   }
 
   function retryAfterError() {
     errorMessage = "";
-    completionMessage = "";
 
-    if (errorReturnStep === "gating") {
+    if (errorContext === "verification") {
       resetVerification();
       return;
     }
 
-    step = errorReturnStep;
+    if (lockedModel) {
+      void prepareModel(lockedModel, true);
+    }
   }
 
   function resetVerification() {
     sessionToken = "";
     sessionExpiresAt = 0;
     verificationStarted = false;
+    isVerifying = false;
+    inlineErrorMessage = "";
+    errorMessage = "";
+    completionMessage = "";
     step = "gating";
     if (turnstileEl) {
       turnstileEl.innerHTML = "";
     }
   }
 
-  function showError(message: string, returnTo: FlowStep) {
+  function showError(message: string, nextContext: ErrorContext) {
     errorMessage = message;
-    errorReturnStep = returnTo;
+    errorContext = nextContext;
     step = "error";
   }
 
@@ -305,6 +399,21 @@
     }
 
     return fallback;
+  }
+
+  function resolveModelOption(modelId: string): InferenceModelOption | null {
+    if (!modelId) {
+      return null;
+    }
+
+    return (
+      availableModels.find((model) => model.value === modelId) ??
+      CANONICAL_MODEL_OPTIONS.find((model) => model.value === modelId) ??
+      {
+        value: modelId,
+        label: modelId,
+      }
+    );
   }
 </script>
 
@@ -345,47 +454,59 @@
 
         <div class="actions">
           <button class="btn-primary" onclick={retryAfterError}>
-            {errorReturnStep === "gating" ? "Retry verification" : "Back to prompt"}
+            {errorContext === "verification" ? "Retry verification" : "Try again"}
           </button>
+        </div>
+      </div>
+    {:else if step === "model_select"}
+      <div class="section-block">
+        <div class="section-copy">
+          <h3>Select a model</h3>
+          <p>Choose a model and prepare it for inference.</p>
+        </div>
+
+        {#if inlineErrorMessage}
+          <div class="alert alert-error">
+            <h3>Something went wrong</h3>
+            <p>{inlineErrorMessage}</p>
+          </div>
+        {/if}
+
+        <label class="field">
+          <span>Model</span>
+          <select class="select-input" value={selectedModel} onchange={handleModelChange}>
+            {#each availableModels as model}
+              <option value={model.value}>{model.label}</option>
+            {/each}
+          </select>
+        </label>
+
+        {#if activeModel?.description}
+          <p class="helper-text">{activeModel.description}</p>
+        {/if}
+
+        <div class="actions">
+          <button class="btn-primary" onclick={handleSelectModel} disabled={!selectedModel}>Select</button>
+        </div>
+      </div>
+    {:else if step === "warming"}
+      <div class="section-block">
+        <div class="loading-shell" aria-live="polite">
+          <div class="spinner" aria-hidden="true"></div>
+          <h3>Preparing model</h3>
+          <p>{warmupMessage || `Preparing ${activeModel?.label ?? "model"}...`}</p>
         </div>
       </div>
     {:else}
       <div class="section-block">
-        <div class="status-row">
-          <span class="status-pill success">Verified</span>
-          {#if activeModel}
-            <span class="status-pill">{activeModel.label}</span>
-          {/if}
-          {#if warmupPath && effectiveModel}
-            <span
-              class="status-pill"
-              class:warming={warmupState === "warming"}
-              class:error={warmupState === "error"}
-              class:success={warmupState === "ready"}
-            >
-              {#if warmupState === "warming"}
-                Warming
-              {:else if warmupState === "ready"}
-                Warm
-              {:else if warmupState === "error"}
-                Warmup failed
-              {:else}
-                Warmup idle
-              {/if}
-            </span>
-          {/if}
-        </div>
+        {#if inlineErrorMessage}
+          <div class="alert alert-error">
+            <h3>Something went wrong</h3>
+            <p>{inlineErrorMessage}</p>
+          </div>
+        {/if}
 
-        {#if canChangeModel}
-          <label class="field">
-            <span>Model</span>
-            <select class="select-input" value={selectedModel} onchange={handleModelChange} disabled={step === "streaming"}>
-              {#each models as model}
-                <option value={model.value}>{model.label}</option>
-              {/each}
-            </select>
-          </label>
-        {:else if activeModel}
+        {#if activeModel}
           <div class="field">
             <span>Model</span>
             <div class="locked-model">{activeModel.label}</div>
@@ -396,28 +517,30 @@
           <p class="helper-text">{activeModel.description}</p>
         {/if}
 
-        {#if warmupMessage}
-          <p class="helper-text" class:error-copy={warmupState === "error"}>{warmupMessage}</p>
-        {/if}
-
-        <label class="field">
+        <div class="field">
           <span>{promptLabel}</span>
           <textarea
             class="prompt-input"
             bind:value={promptText}
             rows={promptRows}
-            placeholder={promptPlaceholder}
+            placeholder={promptPlaceholderText || promptPlaceholder}
+            aria-label={promptLabel}
             disabled={step === "streaming"}
           ></textarea>
-        </label>
+        </div>
 
         <div class="actions">
           <button class="btn-primary" onclick={handleSubmit} disabled={!canSubmit}>
-            {step === "streaming" ? "Streaming..." : submitLabel}
+            {step === "streaming" ? "Continuing..." : submitLabel}
           </button>
           <button class="btn-secondary" onclick={resetRound} disabled={step === "streaming"}>
             {resetLabel}
           </button>
+          {#if !isLockedFlow}
+            <button class="btn-secondary" onclick={changeModel} disabled={step === "streaming"}>
+              Change model
+            </button>
+          {/if}
         </div>
 
         <section class="output-panel">
@@ -516,33 +639,31 @@
     background: color-mix(in srgb, var(--bg-1) 72%, transparent);
   }
 
-  .status-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-  }
-
-  .status-pill {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.35rem 0.75rem;
-    border-radius: 999px;
+  .loading-shell {
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+    padding: 1.5rem 1rem;
+    text-align: center;
     border: 1px solid var(--stroke);
-    background: color-mix(in srgb, var(--surface) 86%, transparent);
-    color: var(--text-0);
-    font-size: 0.9rem;
+    border-radius: 14px;
+    background:
+      radial-gradient(320px 180px at 100% 0%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 72%),
+      color-mix(in srgb, var(--bg-1) 78%, transparent);
   }
 
-  .status-pill.success {
-    border-color: color-mix(in srgb, var(--accent) 50%, var(--stroke));
+  .loading-shell p {
+    margin: 0;
+    color: var(--text-1);
   }
 
-  .status-pill.warming {
-    border-color: color-mix(in srgb, #f3c969 58%, var(--stroke));
-  }
-
-  .status-pill.error {
-    border-color: color-mix(in srgb, #ff7d7d 58%, var(--stroke));
+  .spinner {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: 3px solid color-mix(in srgb, var(--stroke) 88%, transparent);
+    border-top-color: var(--accent);
+    animation: spin 0.9s linear infinite;
   }
 
   .field {
@@ -713,8 +834,10 @@
     background: color-mix(in srgb, #451e1e 40%, transparent);
   }
 
-  .error-copy {
-    color: #ffb1b1;
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   @keyframes pulse {

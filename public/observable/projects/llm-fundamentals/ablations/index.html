@@ -4,179 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="generator" content="Observable Framework v1.13.4">
+<base href="/observable/projects/llm-fundamentals/ablations/">
 <title>Ablations | Project Writeup Sandbox</title>
 
 <link rel="preload" as="style" href="../../../_import/astro-bridge-theme.1f3a5004.css">
 <link rel="preload" as="style" href="../../../_npm/katex@0.16.28/dist/katex.min.css">
 <link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.1f3a5004.css">
 <link rel="stylesheet" type="text/css" href="../../../_npm/katex@0.16.28/dist/katex.min.css">
-<link rel="modulepreload" href="../../../_observablehq/client.b8f66ce7.js">
-<link rel="modulepreload" href="../../../_observablehq/runtime.607a8173.js">
-<link rel="modulepreload" href="../../../_observablehq/stdlib.a50b4fda.js">
-<link rel="modulepreload" href="../../../_import/embed/ablations.13a5d5eb.js">
-<link rel="modulepreload" href="../../../_observablehq/stdlib/tex.c79b643a.js">
-<link rel="modulepreload" href="../../../_import/components/echart-plot.334353fc.js">
-<link rel="modulepreload" href="../../../_import/components/data-utils.e2caa41c.js">
-<link rel="modulepreload" href="../../../_import/components/dom-utils.facbe44a.js">
-<link rel="modulepreload" href="../../../_npm/d3@7.9.0/e324157d.js">
-<link rel="modulepreload" href="../../../_import/components/echart.24e04cd8.js">
-<link rel="modulepreload" href="../../../_import/components/echart-theme.ac72768d.js">
-<link rel="modulepreload" href="../../../_npm/echarts-gl@2.0.9/cd541656.js">
-<link rel="modulepreload" href="../../../_npm/echarts@5.6.0/dist/echarts.esm.min.js.43ee27f9.js">
-<link rel="modulepreload" href="../../../_npm/apache-arrow@21.1.0/63de76cd.js">
-<link rel="modulepreload" href="../../../_npm/parquet-wasm@0.7.1/68d81b68.js">
-<link rel="modulepreload" href="../../../_npm/katex@0.16.28/f76b8a99.js">
-<link rel="modulepreload" href="../../../_npm/d3-array@3.2.4/e93ca09f.js">
-<link rel="modulepreload" href="../../../_npm/d3-axis@3.0.0/0f2de24d.js">
-<link rel="modulepreload" href="../../../_npm/d3-brush@3.0.0/65eb105b.js">
-<link rel="modulepreload" href="../../../_npm/d3-chord@3.0.1/7ef8fb2e.js">
-<link rel="modulepreload" href="../../../_npm/d3-color@3.1.0/aeb57b94.js">
-<link rel="modulepreload" href="../../../_npm/d3-contour@4.0.2/1d2aed74.js">
-<link rel="modulepreload" href="../../../_npm/d3-delaunay@6.0.4/5ced1d52.js">
-<link rel="modulepreload" href="../../../_npm/d3-dispatch@3.0.1/9ba9c7f3.js">
-<link rel="modulepreload" href="../../../_npm/d3-drag@3.0.0/4202580c.js">
-<link rel="modulepreload" href="../../../_npm/d3-dsv@3.0.1/9cffc2bd.js">
-<link rel="modulepreload" href="../../../_npm/d3-ease@3.0.1/cdd7e898.js">
-<link rel="modulepreload" href="../../../_npm/d3-fetch@3.0.1/b4e2ad9a.js">
-<link rel="modulepreload" href="../../../_npm/d3-force@3.0.0/5e804d15.js">
-<link rel="modulepreload" href="../../../_npm/d3-format@3.1.2/3785bf2d.js">
-<link rel="modulepreload" href="../../../_npm/d3-geo@3.1.1/40599fb3.js">
-<link rel="modulepreload" href="../../../_npm/d3-hierarchy@3.1.2/e49e792c.js">
-<link rel="modulepreload" href="../../../_npm/d3-interpolate@3.0.1/8d1e5425.js">
-<link rel="modulepreload" href="../../../_npm/d3-path@3.1.0/20d3f133.js">
-<link rel="modulepreload" href="../../../_npm/d3-polygon@3.0.1/7553081f.js">
-<link rel="modulepreload" href="../../../_npm/d3-quadtree@3.0.1/0dfd751c.js">
-<link rel="modulepreload" href="../../../_npm/d3-random@3.0.1/3c90ee06.js">
-<link rel="modulepreload" href="../../../_npm/d3-scale@4.0.2/720b7f0a.js">
-<link rel="modulepreload" href="../../../_npm/d3-scale-chromatic@3.1.0/ba24c2e7.js">
-<link rel="modulepreload" href="../../../_npm/d3-selection@3.0.0/4d94e5b7.js">
-<link rel="modulepreload" href="../../../_npm/d3-shape@3.2.0/6d3a6726.js">
-<link rel="modulepreload" href="../../../_npm/d3-time@3.1.0/9f03c579.js">
-<link rel="modulepreload" href="../../../_npm/d3-time-format@4.1.0/07c9626f.js">
-<link rel="modulepreload" href="../../../_npm/d3-timer@3.0.1/b58a267d.js">
-<link rel="modulepreload" href="../../../_npm/d3-transition@3.0.1/004da2ac.js">
-<link rel="modulepreload" href="../../../_npm/d3-zoom@3.0.0/b5786b3f.js">
-<link rel="modulepreload" href="../../../_npm/echarts@5.6.0/lib/echarts.6e3bde88.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/Renderer.2eec983f.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/picking/RayPicking.7e727df7.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/Texture.0843f5d7.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/Mesh.2b3b2e8b.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/Texture2D.d9d87297.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/Shader.fb1a1b0e.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/Material.e3368f49.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/Node.9614ddd2.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/Geometry.ba8aa363.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/Scene.b31a6a33.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/core/LRU.8f31a101.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/util/texture.9a482939.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/math/Vector3.f51c3224.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/math/Vector2.b541ba03.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/light/AmbientCubemap.695c4ae2.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/light/AmbientSH.148d972a.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/util/sh.8da7b514.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/geometry/Sphere.2eef1f2c.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/geometry/Plane.a98d81ea.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/geometry/Cube.39c28d56.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/light/Ambient.6bc24c2c.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/light/Directional.0831e0a4.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/light/Point.60cc0c3a.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/light/Spot.b64929b1.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/camera/Perspective.04312c39.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/camera/Orthographic.c7333eee.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/math/Vector4.f554af97.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/math/Quaternion.b42fff26.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/math/Matrix2.32d0a7c5.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/math/Matrix2d.61062f11.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/math/Matrix3.4d344074.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/math/Matrix4.5db13cc4.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/math/Plane.25ade77c.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/math/Ray.be240beb.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/math/BoundingBox.ecd7888e.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/math/Frustum.3c71ea08.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/animation/Animator.f6d14c76.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/shader/source/util.glsl.js.242b4e84.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/shader/source/prez.glsl.js.5753b06e.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/core/mixin/notifier.8300b53f.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/animation/requestAnimationFrame.5363734d.js">
-<link rel="modulepreload" href="../../../_npm/echarts@5.6.0/lib/label/labelStyle.668f006a.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/core/Base.3c63f7fb.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/dep/glmatrix.33c92694.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/plugin/Skybox.2b6a78a1.js">
-<link rel="modulepreload" href="../../../_npm/echarts@5.6.0/lib/coord/cartesian/Cartesian.35e80a5a.js">
-<link rel="modulepreload" href="../../../_npm/echarts@5.6.0/lib/util/layout.57af945a.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/prePass/ShadowMap.9cefb641.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/FrameBuffer.e1f19494.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/compositor/createCompositor.ef2ed32e.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/compositor/Pass.cb08c04e.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/util/cubemap.525f009a.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/shader/source/compositor/blur.glsl.js.43546ce9.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/shader/source/compositor/lut.glsl.js.5707f2f8.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/shader/source/compositor/output.glsl.js.c55d10eb.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/shader/source/compositor/bright.glsl.js.e53bf29b.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/shader/source/compositor/downsample.glsl.js.20e53a0a.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/shader/source/compositor/upsample.glsl.js.bef33675.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/shader/source/compositor/hdr.glsl.js.bd51eb2d.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/shader/source/compositor/blend.glsl.js.09d6c05e.js">
-<link rel="modulepreload" href="../../../_npm/claygl@1.3.0/src/shader/source/compositor/fxaa.glsl.js.f227e118.js">
-<link rel="modulepreload" href="../../../_npm/echarts@5.6.0/lib/data/OrdinalMeta.71e381f5.js">
-<link rel="modulepreload" href="../../../_npm/echarts@5.6.0/lib/coord/geo/fix/textCoord.42a81902.js">
-<link rel="modulepreload" href="../../../_npm/echarts@5.6.0/lib/coord/geo/fix/geoCoord.700b228d.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/contain/line.70ef1db1.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/core/matrix.32f057be.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/core/vector.9a7be4e4.js">
-<link rel="modulepreload" href="../../../_npm/echarts@5.6.0/lib/data/Graph.93e6f167.js">
-<link rel="modulepreload" href="../../../_npm/echarts@5.6.0/lib/data/helper/linkList.8ad13e98.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/core/util.6eaf82a7.js">
-<link rel="modulepreload" href="../../../_npm/tslib@2.8.1/b62a9c4a.js">
-<link rel="modulepreload" href="../../../_npm/flatbuffers@25.9.23/c82700c2.js">
-<link rel="modulepreload" href="../../../_npm/internmap@2.0.3/e08981d9.js">
-<link rel="modulepreload" href="../../../_npm/delaunator@5.0.1/02d43215.js">
-<link rel="modulepreload" href="../../../_npm/tslib@2.3.0/7d5a3f4c.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/zrender.js.6af14443.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/core/util.js.6eaf82a7.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/core/env.js.5aac7c9c.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/core/timsort.js.37f50b08.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/core/Eventful.js.cfd40790.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/graphic/Text.js.2e5b6500.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/tool/color.js.4a6f7e23.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/graphic/Path.js.f72d1ad4.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/tool/path.js.47faf657.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/core/matrix.js.32f057be.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/core/vector.js.9a7be4e4.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/core/Transformable.js.f3914c48.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/graphic/Image.js.b0bf0ed1.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/graphic/Group.js.837a0eda.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/graphic/shape/Circle.js.e78562f7.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/graphic/shape/Ellipse.js.c69bf28a.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/graphic/shape/Sector.js.ab7ce2e0.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/graphic/shape/Ring.js.40a65d74.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/graphic/shape/Polygon.js.c2eb61df.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/graphic/shape/Polyline.js.f50b5305.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/graphic/shape/Rect.js.727b1f31.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/graphic/shape/Line.js.ae17eac2.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/graphic/shape/BezierCurve.js.2605b9cf.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/graphic/shape/Arc.js.d41e69c9.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/graphic/CompoundPath.js.26ea6a79.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/graphic/LinearGradient.js.1231b5fb.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/graphic/RadialGradient.js.bcbd6cfb.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/core/BoundingRect.js.5358f5f3.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/core/OrientedBoundingRect.js.5d44b0c9.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/core/Point.js.94b277cc.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/graphic/IncrementalDisplayable.js.5e42210c.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/graphic/helper/subPixelOptimize.js.4e8ad434.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/core/dom.js.8d288175.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/graphic/helper/parseText.js.bbb48c7a.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/core/WeakMap.js.9822c851.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/core/LRU.js.8f31a101.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/contain/text.js.af8aba53.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/canvas/graphic.js.ba1b3a3a.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/core/platform.js.ed7aa6fa.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/contain/polygon.js.d0a63ec1.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/core/PathProxy.js.353e5edc.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/contain/util.js.61457953.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/core/curve.js.0ba8e5a4.js">
-<link rel="modulepreload" href="../../../_npm/zrender@5.6.1/lib/canvas/Painter.js.6d63e334.js">
-<link rel="modulepreload" href="../../../_npm/robust-predicates@3.0.2/aa00730b.js">
 <script type="module">
 
 import {define} from "../../../_observablehq/client.b8f66ce7.js";
@@ -228,6 +62,7 @@ await renderAblationSection({matchAny: ["no norm", "no_norm", "without norm"], s
 }});
 
 </script>
+<script src="/observable/_import/mushbot-standalone.js" defer></script>
 </head>
 <body>
 <input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">

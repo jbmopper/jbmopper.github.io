@@ -3,7 +3,9 @@ import Inference from "./Inference.svelte";
 
 const MOUNT_SELECTOR = ".jm-inference-mount";
 const OBSERVER_ROOT_MARGIN = "320px 0px";
+const MOUNTED_FLAG = "data-jm-inference-mounted";
 const mountedNodes = new WeakSet<HTMLElement>();
+let mountObserver: MutationObserver | null = null;
 
 interface InferenceModelOption {
   value: string;
@@ -123,11 +125,12 @@ function readConfig(element: HTMLElement): InferenceProps {
 }
 
 function mountInference(element: HTMLElement) {
-  if (mountedNodes.has(element)) {
+  if (mountedNodes.has(element) || element.getAttribute(MOUNTED_FLAG) === "true") {
     return;
   }
 
   mountedNodes.add(element);
+  element.setAttribute(MOUNTED_FLAG, "true");
   mount(Inference, {
     target: element,
     props: readConfig(element),
@@ -164,14 +167,57 @@ function observeMounts(elements: HTMLElement[]) {
 
 function init() {
   const mounts = Array.from(document.querySelectorAll<HTMLElement>(MOUNT_SELECTOR)).filter(
-    (element) => !mountedNodes.has(element),
+    (element) => !mountedNodes.has(element) && element.getAttribute(MOUNTED_FLAG) !== "true",
   );
 
   if (mounts.length === 0) {
+    startWatchingForMounts();
     return;
   }
 
   observeMounts(mounts);
+  startWatchingForMounts();
+}
+
+function collectNewMounts(node: Node): HTMLElement[] {
+  if (!(node instanceof HTMLElement)) {
+    return [];
+  }
+
+  const mounts: HTMLElement[] = [];
+  if (node.matches(MOUNT_SELECTOR)) {
+    mounts.push(node);
+  }
+
+  mounts.push(...node.querySelectorAll<HTMLElement>(MOUNT_SELECTOR));
+  return mounts.filter(
+    (element) => !mountedNodes.has(element) && element.getAttribute(MOUNTED_FLAG) !== "true",
+  );
+}
+
+function startWatchingForMounts() {
+  if (typeof window === "undefined" || mountObserver || typeof MutationObserver === "undefined") {
+    return;
+  }
+
+  mountObserver = new MutationObserver((records) => {
+    const mounts: HTMLElement[] = [];
+
+    for (const record of records) {
+      for (const node of record.addedNodes) {
+        mounts.push(...collectNewMounts(node));
+      }
+    }
+
+    if (mounts.length > 0) {
+      observeMounts(mounts);
+    }
+  });
+
+  mountObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
 }
 
 if (document.readyState === "loading") {
