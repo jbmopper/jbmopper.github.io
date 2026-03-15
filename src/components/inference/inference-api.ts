@@ -1,13 +1,18 @@
-const SESSION_API_BASE: string | undefined =
-  typeof import.meta !== "undefined"
-    ? (import.meta as Record<string, any>).env?.PUBLIC_RESUME_API
-    : undefined;
+function readPublicEnv(name: string): string | undefined {
+  if (typeof import.meta === "undefined") {
+    return undefined;
+  }
 
-const INFERENCE_API_BASE: string | undefined =
-  typeof import.meta !== "undefined"
-    ? (import.meta as Record<string, any>).env?.PUBLIC_INFERENCE_API ??
-      (import.meta as Record<string, any>).env?.PUBLIC_RESUME_API
-    : undefined;
+  const value = (import.meta as Record<string, any>).env?.[name];
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
+const SERVERLESS_API_BASE = readPublicEnv("PUBLIC_AWS_SERVERLESS_API");
 
 export interface SessionTokenResponse {
   sessionToken: string;
@@ -54,11 +59,11 @@ function resolveSessionApiUrl(path: string): string {
     return path;
   }
 
-  if (!SESSION_API_BASE) {
+  if (!SERVERLESS_API_BASE) {
     throw new Error("No session API base configured.");
   }
 
-  return `${SESSION_API_BASE}${path.startsWith("/") ? path : `/${path}`}`;
+  return `${SERVERLESS_API_BASE}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
 function resolveInferenceApiUrl(path: string): string {
@@ -66,11 +71,11 @@ function resolveInferenceApiUrl(path: string): string {
     return path;
   }
 
-  if (!INFERENCE_API_BASE) {
+  if (!SERVERLESS_API_BASE) {
     throw new Error("No inference API base configured.");
   }
 
-  return `${INFERENCE_API_BASE}${path.startsWith("/") ? path : `/${path}`}`;
+  return `${SERVERLESS_API_BASE}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
 function parseErrorMessage(raw: string, status: number): string {
@@ -280,7 +285,7 @@ async function liveWarmInferenceModel(
 // public api
 
 export async function verifyTurnstile(turnstileToken: string): Promise<SessionTokenResponse> {
-  if (!SESSION_API_BASE) return mockVerifyTurnstile(turnstileToken);
+  if (!SERVERLESS_API_BASE) return mockVerifyTurnstile(turnstileToken);
   return liveVerifyTurnstile(turnstileToken);
 }
 
@@ -289,7 +294,7 @@ export async function submitInference(
   sessionToken: string,
   onEvent: InferenceEventHandler,
 ): Promise<void> {
-  if (!INFERENCE_API_BASE) return mockSubmitInference(params, onEvent);
+  if (!SERVERLESS_API_BASE) return mockSubmitInference(params, onEvent);
   return liveSubmitInference(params, sessionToken, onEvent);
 }
 
@@ -304,7 +309,7 @@ export async function warmInferenceModel(
     return;
   }
 
-  if (!INFERENCE_API_BASE) {
+  if (!SERVERLESS_API_BASE) {
     return mockWarmInferenceModel(modelSelection);
   }
 

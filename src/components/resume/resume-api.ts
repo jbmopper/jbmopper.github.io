@@ -1,7 +1,18 @@
-const API_BASE: string | undefined =
-  typeof import.meta !== "undefined"
-    ? (import.meta as Record<string, any>).env?.PUBLIC_RESUME_API
-    : undefined;
+function readPublicEnv(name: string): string | undefined {
+  if (typeof import.meta === "undefined") {
+    return undefined;
+  }
+
+  const value = (import.meta as Record<string, any>).env?.[name];
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
+const API_BASE = readPublicEnv("PUBLIC_AWS_SERVERLESS_API");
 
 export interface SessionTokenResponse {
   sessionToken: string;

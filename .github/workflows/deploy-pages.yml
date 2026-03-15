@@ -42,9 +42,8 @@ jobs:
       - name: Build website for production deploy
         run: npm run build
         env:
-          PUBLIC_INFERENCE_API: ${{ vars.PUBLIC_INFERENCE_API }}
+          PUBLIC_AWS_SERVERLESS_API: ${{ vars.PUBLIC_AWS_SERVERLESS_API }}
           PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.PUBLIC_TURNSTILE_SITE_KEY }}
-          PUBLIC_RESUME_API: ${{ vars.PUBLIC_RESUME_API }}
 
       - name: Ensure Pages serves underscore-prefixed Observable assets
         run: touch dist/.nojekyll

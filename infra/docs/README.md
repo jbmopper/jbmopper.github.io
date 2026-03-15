@@ -27,7 +27,7 @@ npm install
 npm run dev        # http://localhost:4321
 ```
 
-Without `PUBLIC_TURNSTILE_SITE_KEY` and `PUBLIC_RESUME_API` env vars, the resume generator runs in mock mode (simulated responses, no real API calls). Without `PUBLIC_INFERENCE_API`, the inference widget falls back to `PUBLIC_RESUME_API`.
+Without `PUBLIC_TURNSTILE_SITE_KEY` and `PUBLIC_AWS_SERVERLESS_API` env vars, the resume generator and inference widget run in mock mode instead of calling the deployed API.
 
 ## Build and test
 
@@ -49,9 +49,8 @@ The workflow needs these GitHub Actions **variables** (Settings > Secrets and va
 
 | Variable | Description |
 |---|---|
-| `PUBLIC_INFERENCE_API` | Inference API base URL or Lambda Function URL base (e.g. `https://abc.lambda-url.us-east-1.on.aws`) |
+| `PUBLIC_AWS_SERVERLESS_API` | Shared API Gateway base URL for Turnstile, resume, and inference (e.g. `https://xyz.execute-api.us-east-1.amazonaws.com/prod`) |
 | `PUBLIC_TURNSTILE_SITE_KEY` | Cloudflare Turnstile site key (public) |
-| `PUBLIC_RESUME_API` | API Gateway base URL (e.g. `https://xyz.execute-api.us-east-1.amazonaws.com/prod`) |
 
 These are baked into the static JS at build time via Astro's `import.meta.env`.
 
