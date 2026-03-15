@@ -55,7 +55,7 @@
     promptPlaceholder = DEFAULT_PROMPT_PLACEHOLDER,
     submitLabel = "Continue",
     resetLabel = "Fresh round",
-    warmupPath = "/warmup",
+    warmupPath = "/v1/infer/warmup",
     models = [],
     initialModel = "",
     lockedModel = "",

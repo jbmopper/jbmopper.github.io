@@ -82,6 +82,13 @@ function stripModulePreloads(html) {
   return html.replace(/^\s*<link rel="modulepreload"[^>]*>\n?/gm, "");
 }
 
+function normalizeInferenceMountPaths(html) {
+  return html.replaceAll(
+    'data-inference-warmup-path="/warmup"',
+    'data-inference-warmup-path="/v1/infer/warmup"'
+  );
+}
+
 function injectMushbotScript(html) {
   const tag = `<script src="/observable/_import/mushbot-standalone.js" defer><\/script>`;
   html = html.replace(/<script[^>]*mushbot-standalone\.js[^>]*><\/script>\n?/g, "");
@@ -188,6 +195,7 @@ async function processHtmlFile(fullPath, injectMushbot, injectInference) {
   html = normalizeProjectRootMatcher(html);
   html = normalizeHeaderHomeLink(html);
   html = stripModulePreloads(html);
+  html = normalizeInferenceMountPaths(html);
   html = ensureConfiguredInferenceMounts(html, relativePath);
   if (injectMushbot) html = injectMushbotScript(html);
   if (injectInference && hasInlineInferenceMount(html)) html = injectInferenceScript(html);

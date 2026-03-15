@@ -48,7 +48,7 @@ Keep Astro as the landing shell and publish Observable as static pages under `/o
   class="jm-inference-mount"
   data-inference-title="TinyStories Demo"
   data-inference-description="Run the notebook's current ONNX checkpoint inline."
-  data-inference-warmup-path="/warmup"
+  data-inference-warmup-path="/v1/inferwarmup"
   data-inference-locked-model="tinystories-base"
   data-inference-prompt-placeholder="Prompt the writeup model..."
 ></div>

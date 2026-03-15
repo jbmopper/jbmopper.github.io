@@ -9,8 +9,8 @@ class SessionAuthorizerTests(unittest.TestCase):
     def setUp(self):
         self.module = load_session_authorizer_module()
         self.base_method_arn = "arn:aws:execute-api:us-east-1:123456789012:api123/prod"
-        self.generate_post_arn = f"{self.base_method_arn}/POST/generate"
-        self.warmup_post_arn = f"{self.base_method_arn}/POST/warmup"
+        self.generate_post_arn = f"{self.base_method_arn}/POST/v1/infer/generate"
+        self.warmup_post_arn = f"{self.base_method_arn}/POST/v1/infer/warmup"
 
     def _event(self, method_arn: str) -> dict[str, str]:
         return {
