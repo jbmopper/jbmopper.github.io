@@ -123,3 +123,33 @@ resource "aws_api_gateway_gateway_response" "access_denied" {
     "application/json" = "{\"code\": \"access_denied\", \"message\": \"Access denied\"}"
   }
 }
+
+resource "aws_api_gateway_gateway_response" "default_4xx" {
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  response_type = "DEFAULT_4XX"
+
+  response_parameters = {
+    "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
+    "gatewayresponse.header.Access-Control-Allow-Headers" = "'${local.cors_allowed_headers}'"
+    "gatewayresponse.header.Access-Control-Allow-Methods" = "'${local.cors_allowed_methods}'"
+  }
+
+  response_templates = {
+    "application/json" = "{\"code\": \"bad_request\", \"message\": $context.error.messageString}"
+  }
+}
+
+resource "aws_api_gateway_gateway_response" "default_5xx" {
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  response_type = "DEFAULT_5XX"
+
+  response_parameters = {
+    "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
+    "gatewayresponse.header.Access-Control-Allow-Headers" = "'${local.cors_allowed_headers}'"
+    "gatewayresponse.header.Access-Control-Allow-Methods" = "'${local.cors_allowed_methods}'"
+  }
+
+  response_templates = {
+    "application/json" = "{\"code\": \"server_error\", \"message\": $context.error.messageString}"
+  }
+}

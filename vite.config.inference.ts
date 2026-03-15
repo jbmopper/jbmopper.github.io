@@ -24,6 +24,7 @@ export default defineConfig({
     },
   },
   define: {
+    "import.meta.env.PUBLIC_INFERENCE_API": envLiteral(process.env.PUBLIC_INFERENCE_API),
     "import.meta.env.PUBLIC_RESUME_API": envLiteral(process.env.PUBLIC_RESUME_API),
     "import.meta.env.PUBLIC_TURNSTILE_SITE_KEY": envLiteral(process.env.PUBLIC_TURNSTILE_SITE_KEY),
   },

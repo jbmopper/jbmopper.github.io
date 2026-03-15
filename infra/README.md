@@ -8,8 +8,8 @@ This directory provisions a protected API layer in AWS for backend Lambda worklo
   - `POST /v1/session/turnstile-verify` (always created)
   - `POST /v1/resume/generate` (if `resume_lambda_arn` is set)
   - `POST /v1/chat/respond` (if `chat_lambda_arn` is set)
-  - `POST /generate` (if `infer_lambda_arn` is set)
-  - `POST /warmup` (if `infer_lambda_arn` is set)
+  - `POST /v1/infer/generate` (if `infer_lambda_arn` is set)
+  - `POST /v1/infer/warmup` (if `infer_lambda_arn` is set)
 - AWS WAFv2 Web ACL attached to the API stage
 - Turnstile broker Lambda (verifies token and mints short-lived session token)
 - Secrets Manager placeholders for required secrets (unless existing ARNs are supplied)

@@ -188,7 +188,7 @@ resource "aws_wafv2_web_acl" "api" {
           or_statement {
             statement {
               byte_match_statement {
-                search_string         = "/generate"
+                search_string         = "/v1/infer/generate"
                 positional_constraint = "STARTS_WITH"
 
                 field_to_match {
@@ -204,7 +204,7 @@ resource "aws_wafv2_web_acl" "api" {
 
             statement {
               byte_match_statement {
-                search_string         = "/warmup"
+                search_string         = "/v1/infer/warmup"
                 positional_constraint = "STARTS_WITH"
 
                 field_to_match {

@@ -1,6 +1,12 @@
-const API_BASE: string | undefined =
+const SESSION_API_BASE: string | undefined =
   typeof import.meta !== "undefined"
     ? (import.meta as Record<string, any>).env?.PUBLIC_RESUME_API
+    : undefined;
+
+const INFERENCE_API_BASE: string | undefined =
+  typeof import.meta !== "undefined"
+    ? (import.meta as Record<string, any>).env?.PUBLIC_INFERENCE_API ??
+      (import.meta as Record<string, any>).env?.PUBLIC_RESUME_API
     : undefined;
 
 export interface SessionTokenResponse {
@@ -43,16 +49,28 @@ function authHeaders(sessionToken: string): Record<string, string> {
   };
 }
 
-function resolveApiUrl(path: string): string {
+function resolveSessionApiUrl(path: string): string {
   if (/^https?:\/\//.test(path)) {
     return path;
   }
 
-  if (!API_BASE) {
+  if (!SESSION_API_BASE) {
+    throw new Error("No session API base configured.");
+  }
+
+  return `${SESSION_API_BASE}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
+function resolveInferenceApiUrl(path: string): string {
+  if (/^https?:\/\//.test(path)) {
+    return path;
+  }
+
+  if (!INFERENCE_API_BASE) {
     throw new Error("No inference API base configured.");
   }
 
-  return `${API_BASE}${path.startsWith("/") ? path : `/${path}`}`;
+  return `${INFERENCE_API_BASE}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
 function parseErrorMessage(raw: string, status: number): string {
@@ -162,7 +180,7 @@ async function mockWarmInferenceModel(modelSelection: string): Promise<void> {
 }
 
 async function liveVerifyTurnstile(turnstileToken: string): Promise<SessionTokenResponse> {
-  const res = await fetch(resolveApiUrl("/v1/session/turnstile-verify"), {
+  const res = await fetch(resolveSessionApiUrl("/v1/session/turnstile-verify"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -185,7 +203,7 @@ async function liveSubmitInference(
   sessionToken: string,
   onEvent: InferenceEventHandler,
 ): Promise<void> {
-  const res = await fetch(resolveApiUrl("/generate"), {
+  const res = await fetch(resolveInferenceApiUrl("/v1/infer/generate"), {
     method: "POST",
     headers: {
       ...authHeaders(sessionToken),
@@ -247,7 +265,7 @@ async function liveWarmInferenceModel(
   sessionToken: string,
   warmupPath: string,
 ): Promise<void> {
-  const res = await fetch(resolveApiUrl(warmupPath), {
+  const res = await fetch(resolveInferenceApiUrl(warmupPath), {
     method: "POST",
     headers: authHeaders(sessionToken),
     body: JSON.stringify({ model: modelSelection }),
@@ -262,7 +280,7 @@ async function liveWarmInferenceModel(
 // public api
 
 export async function verifyTurnstile(turnstileToken: string): Promise<SessionTokenResponse> {
-  if (!API_BASE) return mockVerifyTurnstile(turnstileToken);
+  if (!SESSION_API_BASE) return mockVerifyTurnstile(turnstileToken);
   return liveVerifyTurnstile(turnstileToken);
 }
 
@@ -271,7 +289,7 @@ export async function submitInference(
   sessionToken: string,
   onEvent: InferenceEventHandler,
 ): Promise<void> {
-  if (!API_BASE) return mockSubmitInference(params, onEvent);
+  if (!INFERENCE_API_BASE) return mockSubmitInference(params, onEvent);
   return liveSubmitInference(params, sessionToken, onEvent);
 }
 
@@ -280,13 +298,13 @@ export async function warmInferenceModel(
   sessionToken: string,
   warmupPath?: string,
 ): Promise<void> {
-  const resolvedWarmupPath = warmupPath ?? "/warmup";
+  const resolvedWarmupPath = warmupPath ?? "/v1/infer/warmup";
 
   if (!modelSelection) {
     return;
   }
 
-  if (!API_BASE) {
+  if (!INFERENCE_API_BASE) {
     return mockWarmInferenceModel(modelSelection);
   }
 

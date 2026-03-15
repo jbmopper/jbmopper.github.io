@@ -83,7 +83,7 @@ variable "chat_lambda_arn" {
 variable "infer_lambda_arn" {
   description = "Existing inference Lambda ARN. Leave empty to skip inference route wiring."
   type        = string
-  default     = "arn:aws:lambda:us-west-2:287998774376:function:inference-lambda-InferenceFunction-MjnPeMJ0ho6N"
+  default     = ""
 }
 
 variable "waf_global_rate_limit" {

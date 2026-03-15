@@ -58,20 +58,28 @@ resource "aws_api_gateway_resource" "chat_respond" {
   path_part   = "respond"
 }
 
-resource "aws_api_gateway_resource" "infer_generate" {
+resource "aws_api_gateway_resource" "infer" {
   count = local.infer_route_enabled ? 1 : 0
 
   rest_api_id = aws_api_gateway_rest_api.main.id
-  parent_id   = aws_api_gateway_rest_api.main.root_resource_id
-  path_part   = "generate"
+  parent_id   = aws_api_gateway_resource.v1.id
+  path_part   = "infer"
 }
 
 resource "aws_api_gateway_resource" "infer_warmup" {
   count = local.infer_route_enabled ? 1 : 0
 
   rest_api_id = aws_api_gateway_rest_api.main.id
-  parent_id   = aws_api_gateway_rest_api.main.root_resource_id
+  parent_id   = aws_api_gateway_resource.infer[0].id
   path_part   = "warmup"
+}
+
+resource "aws_api_gateway_resource" "infer_generate" {
+  count = local.infer_route_enabled ? 1 : 0
+
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  parent_id   = aws_api_gateway_resource.infer[0].id
+  path_part   = "generate"
 }
 
 resource "aws_api_gateway_method" "turnstile_post" {
@@ -668,7 +676,7 @@ resource "aws_lambda_permission" "allow_infer_generate" {
   action        = "lambda:InvokeFunction"
   function_name = var.infer_lambda_arn
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/POST/generate"
+  source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/POST/v1/infer/generate"
 }
 
 resource "aws_lambda_permission" "allow_infer_warmup" {
@@ -678,7 +686,7 @@ resource "aws_lambda_permission" "allow_infer_warmup" {
   action        = "lambda:InvokeFunction"
   function_name = var.infer_lambda_arn
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/POST/warmup"
+  source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/POST/v1/infer/warmup"
 }
 
 resource "aws_api_gateway_domain_name" "main" {
