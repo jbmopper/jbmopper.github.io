@@ -161,11 +161,24 @@ import "../../../_observablehq/client.b8f66ce7.js";
 </header>
 <aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
 <nav>
+<div>Contents</div>
+<ol>
+<li class="observablehq-secondary-link"><a href="#tinystories">Tinystories</a></li>
+</ol>
 </nav>
 </aside>
 <main id="observablehq-main" class="observablehq">
 <h1 id="inference-deployment" tabindex="-1"><a class="observablehq-header-anchor" href="#inference-deployment">Inference Deployment</a></h1>
-<p>Please enjoy running inference on the trained models:</p>
+<p>The below component allows realtime inference on the model of your choosing.  The models are created as ONNX snapshots and inference is performed in an AWS Lambda.  How is inference possible in such a constrained environment?  Because the models are very small.</p>
+<h2 id="tinystories" tabindex="-1"><a class="observablehq-header-anchor" href="#tinystories">Tinystories</a></h2>
+<p>The models were trained on the 'tinystories' dataset, a synthetic dataset created for just this purpose.  Featuring simple syntax and limited vocabulary, even small Transformers can effectively learn the data.  Here is an example:</p>
+<blockquote>
+<p>Emily was very excited. She was going to the office to paint. She loved painting, and she had heard the office was very interesting.
+When she arrived, Emily couldn't believe her eyes! There was so much to paint - big walls, small walls, and even a ceiling. Emily was in heaven! She spent the whole day painting with bright colors and own ideas.
+At the end of the day, Emily was exhausted but very happy. She had painted her very own masterpiece! Every time she looked at it, she was filled with pride. The office was now full of wonderful pictures that she had created.
+Emily couldn't wait to go back and paint again. She knew that each time she returned, the office would be even more interesting!</p>
+</blockquote>
+<p>This should frame your expectations on what model outputs will look like.  Happy inferring!</p>
 <div class="jm-inference-mount" data-inference-title="Deployment Demo" data-inference-description="Run the deployed ONNX-backed model inline from the writeup." data-inference-verification-message="Complete verification to unlock the deployment demo." data-inference-warmup-path="/v1/infer/warmup" data-inference-locked-model="" data-inference-prompt-placeholder="Ask the deployed model something..." data-inference-submit-label="Run deployed model"></div></main>
 </div>
 </body>
