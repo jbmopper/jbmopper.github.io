@@ -273,8 +273,11 @@ resource "aws_api_gateway_integration" "infer_warmup_post" {
   http_method             = aws_api_gateway_method.infer_warmup_post[0].http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${var.infer_lambda_arn}/invocations"
+  response_transfer_mode  = "STREAM"
+  timeout_milliseconds    = 600000
+  uri                     = "arn:aws:apigateway:${var.aws_region}:lambda:path/2021-11-15/functions/${var.infer_lambda_arn}/response-streaming-invocations"
 }
+
 
 resource "aws_api_gateway_method" "options_turnstile" {
   rest_api_id   = aws_api_gateway_rest_api.main.id
@@ -578,20 +581,33 @@ resource "aws_api_gateway_deployment" "main" {
           try(aws_api_gateway_resource.infer_generate[0].id, ""),
           try(aws_api_gateway_resource.infer_warmup[0].id, ""),
           try(aws_api_gateway_method.infer_generate_post[0].id, ""),
+          try(aws_api_gateway_method.infer_generate_post[0].authorization, ""),
+          try(aws_api_gateway_method.infer_generate_post[0].authorizer_id, ""),
           try(aws_api_gateway_method.options_infer_generate[0].id, ""),
           try(aws_api_gateway_integration.infer_generate_post[0].id, ""),
+          try(aws_api_gateway_integration.infer_generate_post[0].uri, ""),
+          try(aws_api_gateway_integration.infer_generate_post[0].response_transfer_mode, ""),
+          try(aws_api_gateway_integration.infer_generate_post[0].timeout_milliseconds, ""),
           try(aws_api_gateway_integration.options_infer_generate[0].id, ""),
           try(aws_api_gateway_integration_response.options_infer_generate_200[0].id, ""),
           try(aws_api_gateway_method.infer_warmup_post[0].id, ""),
+          try(aws_api_gateway_method.infer_warmup_post[0].authorization, ""),
+          try(aws_api_gateway_method.infer_warmup_post[0].authorizer_id, ""),
           try(aws_api_gateway_method.options_infer_warmup[0].id, ""),
           try(aws_api_gateway_integration.infer_warmup_post[0].id, ""),
+          try(aws_api_gateway_integration.infer_warmup_post[0].uri, ""),
+          try(aws_api_gateway_integration.infer_warmup_post[0].response_transfer_mode, ""),
+          try(aws_api_gateway_integration.infer_warmup_post[0].timeout_milliseconds, ""),
           try(aws_api_gateway_integration.options_infer_warmup[0].id, ""),
           try(aws_api_gateway_integration_response.options_infer_warmup_200[0].id, ""),
           aws_api_gateway_gateway_response.unauthorized.id,
           aws_api_gateway_gateway_response.access_denied.id,
           aws_api_gateway_gateway_response.default_4xx.id,
           aws_api_gateway_gateway_response.default_5xx.id,
-          aws_api_gateway_authorizer.session.id
+          aws_api_gateway_authorizer.session.id,
+          aws_api_gateway_authorizer.session.authorizer_uri,
+          aws_api_gateway_authorizer.session.identity_source,
+          aws_api_gateway_authorizer.session.authorizer_result_ttl_in_seconds
         ])
       )
     )
