@@ -1,0 +1,35 @@
+---
+description: "Resume lambda repo boundary — use when working on resume generation features, debugging resume API issues, or discussing resume lambda config"
+alwaysApply: false
+---
+
+# Resume lambda boundary
+
+The resume lambda is a **separate SAM project** (`resume_lambda/`), not part of this repo. Understanding the boundary prevents editing the wrong codebase.
+
+## What lives HERE (jbmopper.github.io)
+
+- **Frontend:** `src/components/resume/ResumeGenerator.svelte` and `src/components/resume/resume-api.ts` — the browser-side UI and API client.
+- **Terraform:** `infra/` — wires the resume lambda ARN into API Gateway via `resume_lambda_arn`. Does not manage the lambda itself.
+- **E2E tests:** `tests/e2e/resume.spec.ts` — Playwright tests against the static site's mock flow.
+
+## What lives in the RESUME LAMBDA repo
+
+- **SAM template:** `template.yaml` — Lambda definitions, environment variables, SAM parameters.
+- **Python application:** `src/` — orchestrator, worker, adapters (S3, Postgres, metadata store), config, rendering.
+- **Cloud SQL schema:** `scripts/resume_jobs.sql`.
+- **Integration tests:** `tests/` — E2E scripts that invoke the Lambda directly.
+
+## Integration contract
+
+The two repos connect at these points:
+
+1. **Terraform → Lambda ARN:** This repo's Terraform takes `resume_lambda_arn` and grants API Gateway invoke permission.
+2. **API contract:** The frontend calls `POST /v1/resume/generate` and `GET /v1/resume/job/{id}`. Response shapes (`SubmitResumeResponse`, `JobStatusResponse`) are defined in `resume-api.ts`.
+3. **No shared config:** GCP Postgres, OTLP, and `JOB_METADATA_BACKEND` are SAM parameters in the resume lambda repo. This repo does not need those values.
+
+## When making changes
+
+- **API response shape changes** in the resume lambda require matching updates to `resume-api.ts` and potentially `ResumeGenerator.svelte`.
+- **New API routes** require Terraform changes in `infra/api_gateway.tf` and `infra/lambda.tf`.
+- **Backend-only changes** (metadata backend, tracing, rendering) are fully contained in the resume lambda repo and need no changes here.

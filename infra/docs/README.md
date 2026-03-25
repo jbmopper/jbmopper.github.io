@@ -17,6 +17,9 @@ Browser
         |-- Turnstile broker Lambda (verifies Cloudflare challenge, mints JWT)
         |-- Session authorizer Lambda (validates JWT on protected routes)
         |-- Resume Lambda (generates tailored PDF resumes via LLM)
+              |-- S3 (job artifacts: requests, markdown, PDFs)
+              |-- Cloud SQL Postgres (job metadata)
+              |-- Cloud Trace / OTLP (distributed tracing)
 ```
 
 ## Local development
@@ -78,7 +81,7 @@ CI workflows: `infra-plan.yml` runs on PRs, `infra-apply.yml` runs on merge to `
 
 ### Resume Lambda (separate repo)
 
-The resume lambda lives at `/resume_lambda` (separate SAM project). It has its own HTTP API for direct testing, but production traffic goes through the Terraform-managed REST API.
+The resume lambda lives in a separate SAM project (`resume_lambda/`). It has its own HTTP API for direct testing, but production traffic goes through the Terraform-managed REST API.
 
 ```bash
 cd /path/to/resume_lambda
@@ -86,17 +89,34 @@ sam build --use-container
 sam deploy
 ```
 
-The Terraform stack needs the resume lambda's ARN in `resume_lambda_arn` to wire it into the API Gateway.
+The Terraform stack needs the resume lambda's ARN in `resume_lambda_arn` to wire it into the API Gateway. All SAM parameters, GCP configuration, and Lambda environment variables are managed in the resume lambda's own `template.yaml`.
+
+#### Resume Lambda dependencies
+
+The resume lambda writes job artifacts (requests, markdown, PDFs) to S3 and stores job metadata in **Cloud SQL Postgres**. A `JOB_METADATA_BACKEND` env var controls the metadata path:
+
+| Backend | Reads from | Writes to | Use case |
+|---|---|---|---|
+| `s3` | S3 | S3 | Default, no GCP dependency |
+| `dual` | S3 | S3 + Postgres | Staging canary — proves Postgres writes without affecting reads |
+| `postgres` | Postgres | Postgres | Full cutover to Cloud SQL |
+
+The lambda connects to Cloud SQL via the **Cloud SQL Python Connector** (not a raw IP), so the Lambda runtime needs Google ADC/WIF credentials in addition to the DB username and password.
+
+Distributed tracing is exported over **OTLP** to a configurable collector endpoint (Cloud Trace, Langfuse, or both via a fan-out collector). Both the orchestrator and worker Lambdas emit spans.
 
 ## Secrets
 
-All secrets live in AWS Secrets Manager. Never commit secrets to git.
+All secrets live in AWS Secrets Manager or are passed as SAM parameters. Never commit secrets to git.
 
-| Secret | Used by | Format |
-|---|---|---|
-| Turnstile secret | Turnstile broker Lambda | `{"turnstile_secret":"..."}` |
-| Session signing key | Turnstile broker + session authorizer | `{"session_signing_key":"..."}` |
-| Anthropic API key | Resume Lambda | `{"ANTHROPIC_API_KEY":"..."}` |
+| Secret | Used by | Managed in | Format |
+|---|---|---|---|
+| Turnstile secret | Turnstile broker Lambda | Secrets Manager (this repo's Terraform) | `{"turnstile_secret":"..."}` |
+| Session signing key | Turnstile broker + session authorizer | Secrets Manager (this repo's Terraform) | `{"session_signing_key":"..."}` |
+| Anthropic API key | Resume Lambda | Secrets Manager (resume lambda SAM) | `{"ANTHROPIC_API_KEY":"..."}` |
+| GCP Postgres password | Resume Lambda (orchestrator) | SAM parameter (`GcpPostgresDbPassword`) | Plain string |
+| GCP ADC / WIF credentials | Resume Lambda (orchestrator) | Lambda execution role + GCP WIF config | IAM-based, no stored secret |
+| OTLP collector headers | Resume Lambda (both) | SAM parameter (`ResumeOtelCollectorHeaders`) | `key=value,key2=value2` |
 
 ## Project structure
 
