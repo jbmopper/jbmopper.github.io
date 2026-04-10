@@ -1,14 +1,14 @@
 import {mount} from "svelte";
-import Mushbot from "./Mushbot.svelte";
+import Jay from "./Jay.svelte";
 
-const MOUNT_ID = "mushbot-root";
+const MOUNT_ID = "jay-root";
 
 function init() {
   if (document.getElementById(MOUNT_ID)) return;
   const container = document.createElement("div");
   container.id = MOUNT_ID;
   document.body.appendChild(container);
-  mount(Mushbot, {target: container});
+  mount(Jay, {target: container});
 }
 
 function scheduleInit() {

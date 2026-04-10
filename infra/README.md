@@ -7,10 +7,10 @@ This directory provisions a protected API layer in AWS for backend Lambda worklo
 - API Gateway REST API with optional routes:
   - `POST /v1/session/turnstile-verify` (always created)
   - `POST /v1/resume/generate` (if `resume_lambda_arn` is set)
-  - `POST /v1/chat/respond` (if `chat_lambda_arn` is set)
+  - `POST /v1/chat/respond` (if `chat_endpoint_url` is set)
   - `POST /v1/infer/generate` (if `infer_lambda_arn` is set)
   - `POST /v1/infer/warmup` (if `infer_lambda_arn` is set)
-- AWS WAFv2 Web ACL attached to the API stage
+- Optional AWS WAFv2 Web ACL attached to the API stage
 - Turnstile broker Lambda (verifies token and mints short-lived session token)
 - Secrets Manager placeholders for required secrets (unless existing ARNs are supplied)
 
@@ -45,9 +45,11 @@ cp infra/examples/prod.tfvars.example infra/prod.tfvars
 
 Populate:
 
-- existing Lambda ARNs for resume/chat (and optionally infer)
+- existing Lambda ARNs for resume (and optionally infer)
+- Cloud Run URL and API key for Jay chatbot backend (`chat_endpoint_url`, `chat_api_key`)
 - optional existing secret ARNs
 - custom domain/certificate if desired
+- optional `enable_waf` override (defaults to enabled only when `environment = "prod"`)
 
 Current inference integration note:
 
@@ -111,5 +113,7 @@ Create a Cloudflare CNAME for `api.juliusm.com` to the `custom_domain_target`.
 
 ## Security notes
 
-- WAF protection in this stack covers API Gateway traffic.
+- When enabled, WAF protection in this stack covers API Gateway traffic.
+- The default WAF policy is intentionally minimal: Amazon IP reputation plus a global per-IP rate limit.
 - If traffic goes directly from browser to external providers, WAF does not protect it.
+- The Jay chatbot Cloud Run service validates a shared `x-api-key` header. API Gateway injects this via `request_parameters` on the HTTP_PROXY integration. The key is a sensitive Terraform variable (`chat_api_key`) — never commit it to git. Pass it via tfvars or `TF_VAR_chat_api_key` env var.

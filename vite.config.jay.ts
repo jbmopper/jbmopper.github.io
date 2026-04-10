@@ -10,10 +10,10 @@ export default defineConfig({
   plugins: [svelte({compilerOptions: {css: "injected"}})],
   build: {
     lib: {
-      entry: "src/components/mushbot/standalone.ts",
+      entry: "src/components/jay/standalone.ts",
       formats: ["iife"],
-      name: "Mushbot",
-      fileName: () => "mushbot-standalone.js",
+      name: "Jay",
+      fileName: () => "jay-standalone.js",
     },
     outDir: "public/observable/_import",
     emptyOutDir: false,
@@ -24,7 +24,7 @@ export default defineConfig({
     },
   },
   define: {
-    "import.meta.env.PUBLIC_MUSHBOT_API": envLiteral(process.env.PUBLIC_MUSHBOT_API),
+    "import.meta.env.PUBLIC_AWS_SERVERLESS_API": envLiteral(process.env.PUBLIC_AWS_SERVERLESS_API),
     "import.meta.env.PUBLIC_TURNSTILE_SITE_KEY": envLiteral(process.env.PUBLIC_TURNSTILE_SITE_KEY),
   },
 });

@@ -6,8 +6,8 @@ const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 
 
 await build({
   root: PROJECT_ROOT,
-  configFile: path.join(PROJECT_ROOT, "vite.config.mushbot.ts"),
+  configFile: path.join(PROJECT_ROOT, "vite.config.jay.ts"),
   logLevel: "warn",
 });
 
-console.log("Built mushbot-standalone.js → public/observable/_import/");
+console.log("Built jay-standalone.js → public/observable/_import/");

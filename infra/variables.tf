@@ -74,9 +74,16 @@ variable "resume_lambda_arn" {
   default     = ""
 }
 
-variable "chat_lambda_arn" {
-  description = "Existing chatbot Lambda ARN. Leave empty to skip chat route wiring."
+variable "chat_endpoint_url" {
+  description = "Cloud Run URL for the Jay chatbot backend. Leave empty to disable chat route."
   type        = string
+  default     = ""
+}
+
+variable "chat_api_key" {
+  description = "Shared secret sent as x-api-key to the Jay chatbot backend. Must be set when chat_endpoint_url is provided."
+  type        = string
+  sensitive   = true
   default     = ""
 }
 
@@ -84,6 +91,13 @@ variable "infer_lambda_arn" {
   description = "Existing inference Lambda ARN. Leave empty to skip inference route wiring."
   type        = string
   default     = ""
+}
+
+variable "enable_waf" {
+  description = "Whether to create the API WAF. Defaults to enabled only in prod when unset."
+  type        = bool
+  default     = null
+  nullable    = true
 }
 
 variable "waf_global_rate_limit" {

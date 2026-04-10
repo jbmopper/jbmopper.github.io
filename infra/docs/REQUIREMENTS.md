@@ -7,13 +7,13 @@ The site will be hosted, at least initally, on GitHub Pages.  Thus it will be a 
 The site will have a few main areas and features:
 1. a landing page with a small introduction and links to the projects, and a list of projects with small descriptions of the projects and links to subpages where the projects will be displayed
 2. the project pages, which will contain writeups and reports, and to the extent possible playgrounds, communicating the work to readers
-3. FUTURE: Mushy Mushbot, a mushroom-themed "AI assistant" that will "sell" the Engineer to potential employers
+3. Jay, an AI assistant backed by Vertex AI RAG that answers questions about Julius's projects and experience
 
 # Look and feel
 
 The site should use a dark theme and be clean and modern, such as by using sans serif fonts.  Spacing should give an easy feel without being too sparse, and there should be appealing yet subdued visual variety of elements.  For example, many undifferentiated unindented lines jammed next to each other, presenting a block of text, is not accptable.  Indentation, spacing, horizontal dividers, or even images should be used to prevent bad design.  Innovation is better than ugliness.
 
-FUTURE: a mushroom-oriented theme to complement the AI assistant
+The site theme is dark and modern; the chatbot UI is consistent with the overall design
 
 All elements in the site should be consistent.  All text should be visible against the background.  Any elements or libraries should display in a way consistent with the rest of the site.
 
@@ -41,7 +41,7 @@ Each project will have a root page.  It is expected that most projects will have
 
 The site overall will be a static site built using Astro.  It is expected that we will use Svelte for the chatbot, although that is part of the future phase, we want the site to be forward-compatible with this change.  
 
-The chatbot Svelte component should be in the root layout with client:load and transition:persist="chatbot"; session ID and (future) chat history in sessionStorage.  It will be served by a Lambda behind API Gateway and Clouflare Turnstile, probably.  The Lambda will then coordinate communication with an LLM API.
+The Jay chatbot Svelte component is in the root layout with client:idle and transition:persist="chatbot"; session ID in localStorage, UI state in sessionStorage.  The backend is a Cloud Run service (~/Dev/jay) backed by Vertex AI RAG + Gemini, proxied through API Gateway with WAF rate limiting.
 
 Project display is the complicated part.  It will ideally 
 
@@ -49,9 +49,9 @@ Project display is the complicated part.  It will ideally
 Stack
 
 Site: Astro (static), @astrojs/svelte, View Transitions via ClientRouter
-Chatbot: Svelte component in root layout with client:load and transition:persist="chatbot"; session ID and (future) chat history in sessionStorage
+Chatbot: Jay — Svelte component in root layout with client:idle and transition:persist="chatbot"; session ID in localStorage, UI state in sessionStorage
 
-Backend (not wired yet): Lambda + API Gateway + Cloudflare Turnstile + LLM (e.g. Gemini)
+Backend: Cloud Run (jay-chatbot, us-west1) → Vertex AI RAG + Gemini 3 Flash; proxied through API Gateway + WAF
 
 --- 
 
@@ -86,7 +86,7 @@ Documenting security in this file is not itself a security risk if we keep it at
 ## Implementation Controls (Required)
 
 - Validate Turnstile token server-side before processing protected requests.
-- Apply WAF managed protections and rate-based rules at API Gateway.
+- Apply simple WAF managed protection and rate-based rule at API Gateway.
 - Enforce strict request schemas, payload size limits, and content-type checks in Lambda handlers.
 - Use signed or server-issued conversation IDs; do not trust arbitrary client-provided IDs.
 - Configure CORS to explicit origins and allowed methods/headers only.
@@ -114,3 +114,21 @@ Do not include here:
 - Secrets, keys, tokens, account IDs, or internal hostnames.
 - Full WAF rule tuning values that could help evasion.
 - Incident-specific forensic details or exploit reproduction steps.
+
+# Graphics Prompts
+
+```
+abstract neural network architecture visualization, layered transformer
+blocks, glowing teal data flow on dark navy background, minimal technical
+diagram style, flat design asset, no text --ar 3:2 --style raw --s 50
+```
+
+```
+the sensation of understanding arriving in layers, each stratum sharper than the last, crystalline geometries resolving from noise, warm-cool sylvan hues  against deep void, minimal technical diagram style, flat design asset, no text --ar 3:2 --style raw --s 50
+```
+```
+abstract envisioning of genius, rendered as shape, texture, and color. Warm-cool sylvan hues dissolve into a jagged latticework of piercing neon beams. Surfaces appear smooth but are actually covered in an amazingly fine and uniform fur.
+```
+```
+raw material transmuting into form, rough edges flowing into clean planes, the moment chaos becomes structure, sylvan and warm amber tones solidifying into cool graphite, minimal technical diagram crossed with brutalist style, flat design asset, no text --ar 3:2 --style raw --s 50
+```

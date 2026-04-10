@@ -5,7 +5,8 @@ stage_name   = "prod"
 
 # Existing Lambda integrations (set ARN values to enable routes)
 resume_lambda_arn = "arn:aws:lambda:us-east-1:123456789012:function:resume-generator"
-chat_lambda_arn   = "arn:aws:lambda:us-east-1:123456789012:function:custom-chatbot"
+chat_endpoint_url = "https://jay-chatbot-406609817311.us-west1.run.app"
+chat_api_key      = "REPLACE_WITH_JAY_API_KEY"
 
 # Optional: existing inference Lambda (set to enable /generate and /warmup)
 # infer_lambda_arn = "arn:aws:lambda:us-east-1:123456789012:function:onnx-inference"
@@ -19,10 +20,8 @@ allowed_origins = [
   "https://www.juliusm.com"
 ]
 
+enable_waf            = true
 waf_global_rate_limit = 1000
-waf_resume_rate_limit = 120
-waf_chat_rate_limit   = 300
-waf_infer_rate_limit  = 120
 
 manage_lambda_permissions = true
 

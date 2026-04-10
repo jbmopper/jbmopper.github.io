@@ -19,8 +19,8 @@ output "turnstile_verify_url" {
 }
 
 output "waf_web_acl_arn" {
-  description = "WAF Web ACL ARN associated with API stage."
-  value       = aws_wafv2_web_acl.api.arn
+  description = "WAF Web ACL ARN associated with API stage, or null when WAF is disabled."
+  value       = try(aws_wafv2_web_acl.api[0].arn, null)
 }
 
 output "turnstile_secret_arn" {

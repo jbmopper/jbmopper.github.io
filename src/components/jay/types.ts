@@ -8,7 +8,7 @@ export interface ChatMessage {
 export interface ChatRequest {
   conversationId: string;
   message: string;
-  turnstileToken?: string;
+  currentPage?: string;
 }
 
 export interface ChatResponse {

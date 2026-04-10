@@ -1,7 +1,7 @@
 import type {UIState} from "./types.js";
 
-const CONVERSATION_ID_KEY = "mushbot-conversation-id";
-const UI_STATE_KEY = "mushbot-ui-state";
+const CONVERSATION_ID_KEY = "jay-conversation-id";
+const UI_STATE_KEY = "jay-ui-state";
 
 const isBrowser = typeof window !== "undefined";
 

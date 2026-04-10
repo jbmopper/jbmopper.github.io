@@ -1,15 +1,15 @@
 import type {ChatRequest, ChatResponse} from "./types.js";
 
 const API_BASE: string | undefined =
-  typeof import.meta !== "undefined" && (import.meta as Record<string, any>).env?.PUBLIC_MUSHBOT_API;
+  typeof import.meta !== "undefined" && (import.meta as Record<string, any>).env?.PUBLIC_AWS_SERVERLESS_API;
 
 const MOCK_REPLIES = [
-  "Hi there! I'm Mushy Mushbot, the resident fungal assistant. Ask me about Julius's projects!",
+  "Hey! I'm Jay, Julius's AI assistant. Ask me about his projects!",
   "Julius built a full transformer from scratch in PyTorch — training, inference, profiling, the works.",
   "Want to know about the performance analysis pipeline? It includes Nsys GPU traces and custom ablation studies.",
   "The deep learning fundamentals project covers everything from attention mechanisms to learning rate sweeps.",
-  "I'm still getting my spores together, but I can tell you Julius is great at making AI systems that actually work.",
-  "Fun fact: mushrooms communicate through underground mycelial networks. I communicate through API Gateway. Same energy.",
+  "I can tell you all about Julius's work — he's great at making AI systems that actually scale.",
+  "I'm backed by Vertex AI RAG, so I can pull up specific details from the site's content. Try me!",
 ];
 
 function pickMockReply(): string {
@@ -21,10 +21,13 @@ async function mockSendMessage(req: ChatRequest): Promise<ChatResponse> {
   return {reply: pickMockReply(), conversationId: req.conversationId};
 }
 
-async function liveSendMessage(req: ChatRequest): Promise<ChatResponse> {
-  const res = await fetch(`${API_BASE}/chat`, {
+async function liveSendMessage(req: ChatRequest, sessionToken: string): Promise<ChatResponse> {
+  const res = await fetch(`${API_BASE}/v1/chat/respond`, {
     method: "POST",
-    headers: {"Content-Type": "application/json"},
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${sessionToken}`,
+    },
     body: JSON.stringify(req),
   });
   if (!res.ok) {
@@ -33,7 +36,11 @@ async function liveSendMessage(req: ChatRequest): Promise<ChatResponse> {
   return res.json();
 }
 
-export async function sendMessage(req: ChatRequest): Promise<ChatResponse> {
+export function isLiveMode(): boolean {
+  return !!API_BASE;
+}
+
+export async function sendMessage(req: ChatRequest, sessionToken: string): Promise<ChatResponse> {
   if (!API_BASE) return mockSendMessage(req);
-  return liveSendMessage(req);
+  return liveSendMessage(req, sessionToken);
 }

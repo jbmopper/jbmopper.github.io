@@ -1,11 +1,18 @@
 <script lang="ts">
   import type {ChatMessage as ChatMsg, AnimationState} from "./types.js";
   import {getConversationId, loadUIState, saveUIState} from "./session.js";
-  import {sendMessage} from "./api-client.js";
-  import {getTurnstileToken} from "./turnstile.js";
+  import {sendMessage, isLiveMode} from "./api-client.js";
+  import {loadTurnstileScript, renderTurnstile} from "../../lib/turnstile.js";
   import SpritePlayer from "./SpritePlayer.svelte";
   import ChatMessage from "./ChatMessage.svelte";
   import ChatInput from "./ChatInput.svelte";
+
+  const SITE_KEY: string | undefined =
+    typeof import.meta !== "undefined"
+      ? (import.meta as Record<string, any>).env?.PUBLIC_TURNSTILE_SITE_KEY
+      : undefined;
+
+  const needsVerification = isLiveMode() && !!SITE_KEY;
 
   let messages: ChatMsg[] = $state([]);
   let isOpen = $state(false);
@@ -17,6 +24,12 @@
   let inputRef: ChatInput | undefined = $state();
   let fabEl: HTMLButtonElement | undefined = $state();
   let conversationId = $state("");
+
+  let sessionToken = $state("");
+  let verified = $state(!needsVerification);
+  let verifying = $state(false);
+  let verifyError = $state("");
+  let turnstileEl: HTMLDivElement | undefined = $state();
 
   $effect(() => {
     conversationId = getConversationId();
@@ -30,10 +43,48 @@
   });
 
   $effect(() => {
-    if (isOpen && inputRef) {
+    if (isOpen && verified && inputRef) {
       inputRef.focus();
     }
   });
+
+  $effect(() => {
+    if (isOpen && !verified && turnstileEl && !verifying) {
+      initTurnstile();
+    }
+  });
+
+  async function initTurnstile() {
+    verifying = true;
+    verifyError = "";
+    try {
+      await loadTurnstileScript();
+      const cfToken = await renderTurnstile(turnstileEl!, SITE_KEY);
+      const res = await fetch(
+        `${(import.meta as Record<string, any>).env?.PUBLIC_AWS_SERVERLESS_API}/v1/session/turnstile-verify`,
+        {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({
+            turnstileToken: cfToken,
+            action: "chat",
+            clientNonce: crypto.randomUUID(),
+          }),
+        },
+      );
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.message ?? body.error ?? `Verification failed: ${res.status}`);
+      }
+      const session = await res.json();
+      sessionToken = session.sessionToken;
+      verified = true;
+    } catch (err: any) {
+      verifyError = err.message ?? "Verification failed. Please try again.";
+    } finally {
+      verifying = false;
+    }
+  }
 
   function scrollToBottom() {
     requestAnimationFrame(() => {
@@ -56,12 +107,14 @@
     scrollToBottom();
 
     try {
-      const token = await getTurnstileToken();
-      const response = await sendMessage({
-        conversationId,
-        message: text,
-        turnstileToken: token ?? undefined,
-      });
+      const response = await sendMessage(
+        {
+          conversationId,
+          message: text,
+          currentPage: typeof window !== "undefined" ? window.location.pathname : "",
+        },
+        sessionToken,
+      );
       const botMsg: ChatMsg = {id: generateMsgId(), role: "bot", text: response.reply, timestamp: Date.now()};
       messages = [...messages, botMsg];
       animationState = "talking";
@@ -112,20 +165,20 @@
   }
 </script>
 
-<div class="mushbot-root">
+<div class="jay-root">
   {#if isOpen}
     <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
     <div
       class="panel"
       bind:this={panelEl}
       role="dialog"
-      aria-label="Mushbot chat"
+      aria-label="Jay chat"
       tabindex="-1"
       onkeydown={(e) => { handlePanelKeydown(e); trapFocus(e); }}
     >
       <header class="panel-header">
         <SpritePlayer animation={animationState} width={32} height={32} />
-        <span class="panel-title">Chatbot Placeholder</span>
+        <span class="panel-title">Jay</span>
         <button class="close-btn" onclick={toggle} aria-label="Close chat">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <path d="M18 6 6 18"/><path d="M6 6 18 18"/>
@@ -133,32 +186,43 @@
         </button>
       </header>
 
-      <div class="messages" bind:this={messagesEl} role="log" aria-live="polite" aria-relevant="additions">
-        {#if messages.length === 0}
-          <p class="empty-hint">Ask me about Julius's projects!</p>
-        {/if}
-        {#each messages as msg (msg.id)}
-          <ChatMessage message={msg} />
-        {/each}
-      </div>
+      {#if !verified}
+        <div class="verify-section">
+          <p class="verify-prompt">Quick verification to start chatting.</p>
+          <div class="turnstile-container" bind:this={turnstileEl}></div>
+          {#if verifyError}
+            <p class="verify-error">{verifyError}</p>
+            <button class="retry-btn" onclick={() => initTurnstile()}>Retry</button>
+          {/if}
+        </div>
+      {:else}
+        <div class="messages" bind:this={messagesEl} role="log" aria-live="polite" aria-relevant="additions">
+          {#if messages.length === 0}
+            <p class="empty-hint">Ask me about Julius's projects!</p>
+          {/if}
+          {#each messages as msg (msg.id)}
+            <ChatMessage message={msg} />
+          {/each}
+        </div>
 
-      <ChatInput
-        bind:this={inputRef}
-        disabled={isSending}
-        bind:value={draftText}
-        onsubmit={handleSubmit}
-        oninput={(t) => { draftText = t; }}
-      />
+        <ChatInput
+          bind:this={inputRef}
+          disabled={isSending}
+          bind:value={draftText}
+          onsubmit={handleSubmit}
+          oninput={(t) => { draftText = t; }}
+        />
+      {/if}
     </div>
   {/if}
 
-  <button class="fab" bind:this={fabEl} onclick={toggle} aria-label={isOpen ? "Close Mushbot" : "Open Mushbot"}>
+  <button class="fab" bind:this={fabEl} onclick={toggle} aria-label={isOpen ? "Close Jay" : "Open Jay"}>
     <SpritePlayer animation={animationState} width={40} height={40} />
   </button>
 </div>
 
 <style>
-  .mushbot-root {
+  .jay-root {
     position: fixed;
     bottom: 1.25rem;
     right: 1.25rem;
@@ -246,6 +310,48 @@
     text-align: center;
     margin-top: 2rem;
     opacity: 0.7;
+  }
+
+  .verify-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 1rem;
+    gap: 0.75rem;
+  }
+
+  .verify-prompt {
+    color: var(--text-1, #b7c2d0);
+    font-size: 0.85rem;
+    margin: 0;
+  }
+
+  .turnstile-container {
+    display: flex;
+    justify-content: center;
+    min-height: 70px;
+  }
+
+  .verify-error {
+    color: #f87171;
+    font-size: 0.8rem;
+    margin: 0;
+    text-align: center;
+  }
+
+  .retry-btn {
+    background: var(--surface-2, #202c3b);
+    color: var(--text-0, #edf2f7);
+    border: 1px solid var(--stroke, #2d3e50);
+    border-radius: 6px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+
+  .retry-btn:hover {
+    background: var(--surface, #1a2330);
+    border-color: var(--accent, #65d9c6);
   }
 
   @media (max-width: 420px) {

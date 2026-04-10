@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "npm run prepare:observable && astro dev",
-    "build:mushbot": "node scripts/build-mushbot-standalone.mjs",
+    "build:jay": "node scripts/build-jay-standalone.mjs",
     "build:inference": "node scripts/build-inference-standalone.mjs",
-    "build:observable-widgets": "npm run build:mushbot && npm run build:inference",
+    "build:observable-widgets": "npm run build:jay && npm run build:inference",
     "prepare:observable": "npm run build:observable-widgets && npm run postprocess:observable",
     "build": "npm run prepare:observable && astro build",
     "preview": "astro preview",

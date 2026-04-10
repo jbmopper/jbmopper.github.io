@@ -1,6 +1,6 @@
 # juliusm.com
 
-Portfolio site for Julius Mopper -- AI engineer portfolio with interactive project writeups, a resume generator, and a chatbot (planned).
+Portfolio site for Julius Mopper -- AI engineer portfolio with interactive project writeups, a resume generator, and Jay (AI chatbot).
 
 **Live site:** https://jbmopper.github.io
 
@@ -13,12 +13,11 @@ Browser
   |     Landing page, project writeups (Observable), resume generator UI
   |
   |-- API Gateway REST API (/v1/...)
-        |-- WAFv2 (rate limits, managed rules, IP reputation)
+        |-- Optional WAFv2 (global rate limit, IP reputation)
         |-- Turnstile broker Lambda (verifies Cloudflare challenge, mints JWT)
         |-- Session authorizer Lambda (validates JWT on protected routes)
         |-- Resume Lambda (generates tailored PDF resumes via LLM)
               |-- S3 (job artifacts: requests, markdown, PDFs)
-              |-- Cloud SQL Postgres (job metadata)
               |-- Cloud Trace / OTLP (distributed tracing)
 ```
 
@@ -35,7 +34,7 @@ Without `PUBLIC_TURNSTILE_SITE_KEY` and `PUBLIC_AWS_SERVERLESS_API` env vars, th
 ## Build and test
 
 ```bash
-npm run build      # builds Mushbot standalone + Astro static site to dist/
+npm run build      # builds Jay standalone + Astro static site to dist/
 npm run test:e2e   # Playwright tests against built site
 npm run test:ci    # full CI pipeline: verify Observable, build, E2E tests
 ```
@@ -117,6 +116,7 @@ All secrets live in AWS Secrets Manager or are passed as SAM parameters. Never c
 | GCP Postgres password | Resume Lambda (orchestrator) | SAM parameter (`GcpPostgresDbPassword`) | Plain string |
 | GCP ADC / WIF credentials | Resume Lambda (orchestrator) | Lambda execution role + GCP WIF config | IAM-based, no stored secret |
 | OTLP collector headers | Resume Lambda (both) | SAM parameter (`ResumeOtelCollectorHeaders`) | `key=value,key2=value2` |
+| Jay API key | API Gateway → Cloud Run chat route | Terraform sensitive variable (`chat_api_key`) | Plain string (sent as `x-api-key` header) |
 
 ## Project structure
 
@@ -126,7 +126,7 @@ src/
   pages/index.astro            -- landing page
   pages/resume.astro           -- resume generator page
   components/resume/           -- ResumeGenerator Svelte component + API client
-  components/mushbot/          -- Mushbot chatbot (Svelte)
+  components/jay/              -- Jay chatbot (Svelte)
   lib/turnstile.ts             -- shared Cloudflare Turnstile client
   styles/theme-tokens.css      -- design system tokens
 

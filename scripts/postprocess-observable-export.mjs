@@ -5,7 +5,7 @@ import {fileURLToPath} from "node:url";
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(SCRIPT_DIR, "..");
 const OBSERVABLE_ROOT = path.join(PROJECT_ROOT, "public/observable");
-const MUSHBOT_BUNDLE = path.join(OBSERVABLE_ROOT, "_import/mushbot-standalone.js");
+const JAY_BUNDLE = path.join(OBSERVABLE_ROOT, "_import/jay-standalone.js");
 const INFERENCE_BUNDLE = path.join(OBSERVABLE_ROOT, "_import/inference-standalone.js");
 const INFERENCE_MOUNT_CLASS = "jm-inference-mount";
 
@@ -68,8 +68,6 @@ function normalizeProjectRootMatcher(html) {
 }
 
 function normalizeHeaderHomeLink(html) {
-  // Keep Observable header behavior aligned with Astro/nav tests:
-  // label should be "Welcome" and route should be "/#welcome".
   return html.replace(
     /(<a class="portfolio-nav-link"[^>]*onclick="event\.preventDefault\(\); window\.location\.assign\(window\.location\.origin \+ ')(?:\/#welcome|\/|#welcome)('\);">)(?:Home|Welcome)(<\/a>)/g,
     "$1/#welcome$2Welcome$3"
@@ -77,8 +75,6 @@ function normalizeHeaderHomeLink(html) {
 }
 
 function stripModulePreloads(html) {
-  // Safari can aggressively allocate memory for large modulepreload graphs.
-  // Runtime loading still works without these hints and uses less peak memory.
   return html.replace(/^\s*<link rel="modulepreload"[^>]*>\n?/gm, "");
 }
 
@@ -89,8 +85,9 @@ function normalizeInferenceMountPaths(html) {
   );
 }
 
-function injectMushbotScript(html) {
-  const tag = `<script src="/observable/_import/mushbot-standalone.js" defer><\/script>`;
+function injectJayScript(html) {
+  const tag = `<script src="/observable/_import/jay-standalone.js" defer><\/script>`;
+  html = html.replace(/<script[^>]*jay-standalone\.js[^>]*><\/script>\n?/g, "");
   html = html.replace(/<script[^>]*mushbot-standalone\.js[^>]*><\/script>\n?/g, "");
   if (html.includes("</head>")) {
     return html.replace("</head>", `${tag}\n</head>`);
@@ -169,9 +166,9 @@ function injectInferenceScript(html) {
   return html;
 }
 
-async function mushbotBundleExists() {
+async function jayBundleExists() {
   try {
-    await access(MUSHBOT_BUNDLE);
+    await access(JAY_BUNDLE);
     return true;
   } catch {
     return false;
@@ -187,7 +184,7 @@ async function inferenceBundleExists() {
   }
 }
 
-async function processHtmlFile(fullPath, injectMushbot, injectInference) {
+async function processHtmlFile(fullPath, injectJay, injectInference) {
   const relativePath = path.relative(OBSERVABLE_ROOT, fullPath).split(path.sep).join("/");
   let html = await readFile(fullPath, "utf8");
 
@@ -197,7 +194,7 @@ async function processHtmlFile(fullPath, injectMushbot, injectInference) {
   html = stripModulePreloads(html);
   html = normalizeInferenceMountPaths(html);
   html = ensureConfiguredInferenceMounts(html, relativePath);
-  if (injectMushbot) html = injectMushbotScript(html);
+  if (injectJay) html = injectJayScript(html);
   if (injectInference && hasInlineInferenceMount(html)) html = injectInferenceScript(html);
 
   await writeFile(fullPath, html, "utf8");
@@ -206,15 +203,15 @@ async function processHtmlFile(fullPath, injectMushbot, injectInference) {
 async function main() {
   const allFiles = await walkDirectory(OBSERVABLE_ROOT);
   const htmlFiles = allFiles.filter((filePath) => filePath.endsWith(".html"));
-  const injectMushbot = await mushbotBundleExists();
+  const injectJay = await jayBundleExists();
   const injectInference = await inferenceBundleExists();
 
   for (const htmlFile of htmlFiles) {
-    await processHtmlFile(htmlFile, injectMushbot, injectInference);
+    await processHtmlFile(htmlFile, injectJay, injectInference);
   }
 
   const notes = [];
-  if (injectMushbot) notes.push("Mushbot injection");
+  if (injectJay) notes.push("Jay injection");
   if (injectInference) notes.push("inline inference injection");
   const suffix = notes.length > 0 ? ` (with ${notes.join(" + ")})` : "";
   console.log(`Post-processed Observable export HTML (${htmlFiles.length} files)${suffix}.`);

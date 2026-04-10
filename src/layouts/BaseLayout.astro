@@ -1,6 +1,6 @@
 ---
 import {ClientRouter} from "astro:transitions";
-import Mushbot from "../components/mushbot/Mushbot.svelte";
+import Jay from "../components/jay/Jay.svelte";
 
 interface Props {
   title?: string;
@@ -38,7 +38,7 @@ const year = new Date().getFullYear();
       <slot />
     </main>
     <footer>© {year} juliusm.com</footer>
-    <Mushbot client:idle transition:persist="chatbot" />
+    <Jay client:idle transition:persist="chatbot" />
   </body>
 </html>
 

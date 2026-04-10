@@ -63,12 +63,12 @@
 </script>
 
 {#if usePlaceholder}
-  <div class="placeholder {pulseClass}" style:width="{width}px" style:height="{height}px" role="img" aria-label="Mushbot">
-    <img src="/sprites/mushbot-idle.svg" alt="" {width} {height} />
+  <div class="placeholder {pulseClass}" style:width="{width}px" style:height="{height}px" role="img" aria-label="Jay">
+    <img src="/sprites/jay-idle.svg" alt="" {width} {height} />
   </div>
 {:else}
   <!-- svelte-ignore a11y_no_interactive_element_to_noninteractive_role -->
-  <canvas bind:this={canvas} {width} {height} aria-label="Mushbot"></canvas>
+  <canvas bind:this={canvas} {width} {height} aria-label="Jay"></canvas>
 {/if}
 
 <style>

@@ -6,7 +6,7 @@
     oninput?: (text: string) => void;
   }
 
-  let {disabled = false, value = "", onsubmit, oninput}: Props = $props();
+  let {disabled = false, value = $bindable(""), onsubmit, oninput}: Props = $props();
 
   let inputEl: HTMLInputElement | undefined = $state();
 
@@ -30,7 +30,7 @@
   <input
     bind:this={inputEl}
     type="text"
-    placeholder="Ask Mushbot..."
+    placeholder="Ask Jay..."
     {disabled}
     bind:value
     oninput={() => oninput?.(value)}

@@ -218,7 +218,8 @@ resource "aws_api_gateway_method" "chat_post" {
   rest_api_id   = aws_api_gateway_rest_api.main.id
   resource_id   = aws_api_gateway_resource.chat_respond.id
   http_method   = "POST"
-  authorization = "NONE"
+  authorization = "CUSTOM"
+  authorizer_id = aws_api_gateway_authorizer.session.id
 }
 
 resource "aws_api_gateway_integration" "chat_post" {
@@ -228,8 +229,12 @@ resource "aws_api_gateway_integration" "chat_post" {
   resource_id             = aws_api_gateway_resource.chat_respond.id
   http_method             = aws_api_gateway_method.chat_post[0].http_method
   integration_http_method = "POST"
-  type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${var.chat_lambda_arn}/invocations"
+  type                    = "HTTP_PROXY"
+  uri                     = var.chat_endpoint_url
+
+  request_parameters = {
+    "integration.request.header.x-api-key" = "'${var.chat_api_key}'"
+  }
 }
 
 resource "aws_api_gateway_method" "infer_generate_post" {
@@ -703,15 +708,6 @@ resource "aws_lambda_permission" "allow_resume_job_status" {
   source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/GET/v1/resume/job/*"
 }
 
-resource "aws_lambda_permission" "allow_chat" {
-  count = var.manage_lambda_permissions && local.chat_route_enabled ? 1 : 0
-
-  statement_id  = "AllowExecutionFromAPIGatewayChat"
-  action        = "lambda:InvokeFunction"
-  function_name = var.chat_lambda_arn
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/POST/v1/chat/respond"
-}
 
 resource "aws_lambda_permission" "allow_infer_generate" {
   count = var.manage_lambda_permissions && local.infer_route_enabled ? 1 : 0
