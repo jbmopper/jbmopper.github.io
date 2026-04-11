@@ -75,9 +75,9 @@ variable "resume_lambda_arn" {
 }
 
 variable "chat_endpoint_url" {
-  description = "Cloud Run URL for the Jay chatbot backend. Leave empty to disable chat route."
+  description = "Cloud Run URL for the Jay chatbot backend."
   type        = string
-  default     = ""
+  default     = "https://jay-chatbot-406609817311.us-west1.run.app"
 }
 
 variable "chat_api_key" {
