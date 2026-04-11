@@ -1,7 +1,9 @@
-import type {ChatRequest, ChatResponse} from "./types.js";
+import type {ChatMessage, ChatRequest, ChatResponse, CurrentPage} from "./types.js";
 
 const API_BASE: string | undefined =
   typeof import.meta !== "undefined" && (import.meta as Record<string, any>).env?.PUBLIC_AWS_SERVERLESS_API;
+
+const MAX_HISTORY_MESSAGES = 40;
 
 const MOCK_REPLIES = [
   "Hey! I'm Jay, Julius's AI assistant. Ask me about his projects!",
@@ -16,9 +18,22 @@ function pickMockReply(): string {
   return MOCK_REPLIES[Math.floor(Math.random() * MOCK_REPLIES.length)];
 }
 
-async function mockSendMessage(req: ChatRequest): Promise<ChatResponse> {
+function buildRequest(
+  conversationId: string,
+  currentPage: CurrentPage,
+  history: ChatMessage[],
+): ChatRequest {
+  const trimmed = history.slice(-MAX_HISTORY_MESSAGES);
+  return {
+    conversationId,
+    currentPage,
+    messages: trimmed.map(({role, text}) => ({role, text})),
+  };
+}
+
+async function mockSendMessage(conversationId: string): Promise<ChatResponse> {
   await new Promise((resolve) => setTimeout(resolve, 600 + Math.random() * 800));
-  return {reply: pickMockReply(), conversationId: req.conversationId};
+  return {reply: pickMockReply(), conversationId};
 }
 
 async function liveSendMessage(req: ChatRequest, sessionToken: string): Promise<ChatResponse> {
@@ -40,7 +55,13 @@ export function isLiveMode(): boolean {
   return !!API_BASE;
 }
 
-export async function sendMessage(req: ChatRequest, sessionToken: string): Promise<ChatResponse> {
-  if (!API_BASE) return mockSendMessage(req);
+export async function sendMessage(
+  conversationId: string,
+  currentPage: CurrentPage,
+  history: ChatMessage[],
+  sessionToken: string,
+): Promise<ChatResponse> {
+  if (!API_BASE) return mockSendMessage(conversationId);
+  const req = buildRequest(conversationId, currentPage, history);
   return liveSendMessage(req, sessionToken);
 }

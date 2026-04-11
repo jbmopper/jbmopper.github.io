@@ -41,7 +41,7 @@ Each project will have a root page.  It is expected that most projects will have
 
 The site overall will be a static site built using Astro.  It is expected that we will use Svelte for the chatbot, although that is part of the future phase, we want the site to be forward-compatible with this change.  
 
-The Jay chatbot Svelte component is in the root layout with client:idle and transition:persist="chatbot"; session ID in localStorage, UI state in sessionStorage.  The backend is a Cloud Run service (~/Dev/jay) backed by Vertex AI RAG + Gemini, proxied through API Gateway with WAF rate limiting.
+The Jay chatbot Svelte component is in the root layout with client:load and transition:persist="chatbot"; session ID in localStorage, UI state in sessionStorage.  The backend is a Cloud Run service (~/Dev/jay) backed by Vertex AI RAG + Gemini, proxied through API Gateway with WAF rate limiting.
 
 Project display is the complicated part.  It will ideally 
 
@@ -49,7 +49,7 @@ Project display is the complicated part.  It will ideally
 Stack
 
 Site: Astro (static), @astrojs/svelte, View Transitions via ClientRouter
-Chatbot: Jay — Svelte component in root layout with client:idle and transition:persist="chatbot"; session ID in localStorage, UI state in sessionStorage
+Chatbot: Jay — Svelte component in root layout with client:load and transition:persist="chatbot"; session ID in localStorage, UI state in sessionStorage
 
 Backend: Cloud Run (jay-chatbot, us-west1) → Vertex AI RAG + Gemini 3 Flash; proxied through API Gateway + WAF
 

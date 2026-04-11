@@ -1,7 +1,17 @@
 <script lang="ts">
-  import type {ChatMessage as ChatMsg, AnimationState} from "./types.js";
-  import {getConversationId, loadUIState, saveUIState} from "./session.js";
+  import type {ChatMessage as ChatMsg, AnimationState, CurrentPage} from "./types.js";
+  import {getConversationId, resetConversationId, loadUIState, saveUIState} from "./session.js";
   import {sendMessage, isLiveMode} from "./api-client.js";
+
+  function getCurrentPage(): CurrentPage {
+    if (typeof document === "undefined") return {title: "", path: ""};
+    const raw = document.title;
+    const sep = raw.indexOf(" | ");
+    return {
+      title: sep > 0 ? raw.slice(0, sep) : raw,
+      path: window.location.pathname,
+    };
+  }
   import {loadTurnstileScript, renderTurnstile} from "../../lib/turnstile.js";
   import SpritePlayer from "./SpritePlayer.svelte";
   import ChatMessage from "./ChatMessage.svelte";
@@ -108,21 +118,19 @@
 
     try {
       const response = await sendMessage(
-        {
-          conversationId,
-          message: text,
-          currentPage: typeof window !== "undefined" ? window.location.pathname : "",
-        },
+        conversationId,
+        getCurrentPage(),
+        messages,
         sessionToken,
       );
-      const botMsg: ChatMsg = {id: generateMsgId(), role: "bot", text: response.reply, timestamp: Date.now()};
+      const botMsg: ChatMsg = {id: generateMsgId(), role: "model", text: response.reply, timestamp: Date.now()};
       messages = [...messages, botMsg];
       animationState = "talking";
       setTimeout(() => { animationState = "idle"; }, 2000);
     } catch {
       const errMsg: ChatMsg = {
         id: generateMsgId(),
-        role: "bot",
+        role: "model",
         text: "Sorry, something went wrong. Please try again.",
         timestamp: Date.now(),
       };
@@ -132,6 +140,12 @@
       isSending = false;
       scrollToBottom();
     }
+  }
+
+  function newChat() {
+    conversationId = resetConversationId();
+    messages = [];
+    animationState = "idle";
   }
 
   function toggle() {
@@ -179,6 +193,11 @@
       <header class="panel-header">
         <SpritePlayer animation={animationState} width={32} height={32} />
         <span class="panel-title">Jay</span>
+        <button class="new-chat-btn" onclick={newChat} aria-label="New chat" title="New chat">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M12 5v14"/><path d="M5 12h14"/>
+          </svg>
+        </button>
         <button class="close-btn" onclick={toggle} aria-label="Close chat">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <path d="M18 6 6 18"/><path d="M6 6 18 18"/>
@@ -280,6 +299,7 @@
     color: var(--text-0, #edf2f7);
   }
 
+  .new-chat-btn,
   .close-btn {
     background: none;
     border: none;
@@ -291,6 +311,7 @@
     align-items: center;
   }
 
+  .new-chat-btn:hover,
   .close-btn:hover {
     color: var(--text-0, #edf2f7);
     background: var(--surface-2, #202c3b);

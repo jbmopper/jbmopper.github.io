@@ -4,17 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="generator" content="Observable Framework v1.13.4">
-<base href="/observable/projects/site-creation/">
-<title>Portfolio Site Creation | Project Writeup Sandbox</title>
+<title>Portfolio Site Creation | juliusm.com</title>
 
 <link rel="preload" as="style" href="../../_import/astro-bridge-theme.1f3a5004.css">
 <link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.1f3a5004.css">
+<link rel="modulepreload" href="../../_observablehq/client.b8f66ce7.js">
+<link rel="modulepreload" href="../../_observablehq/runtime.607a8173.js">
+<link rel="modulepreload" href="../../_observablehq/stdlib.a50b4fda.js">
 <script type="module">
 
 import "../../_observablehq/client.b8f66ce7.js";
 
 </script>
-<script src="/observable/_import/jay-standalone.js" defer></script>
 </head>
 <body>
 <input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
@@ -22,12 +23,12 @@ import "../../_observablehq/client.b8f66ce7.js";
 <nav id="observablehq-sidebar">
   <ol>
     <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
-    <li class="observablehq-link"><a href="../../">Project Writeup Sandbox</a></li>
+    <li class="observablehq-link"><a href="../../">juliusm.com</a></li>
   </ol>
   <ol>
     <li class="observablehq-link"><a href="../">Projects</a></li>
     <li class="observablehq-link"><a href="../llm-fundamentals/">LLM Fundamentals</a></li>
-    <li class="observablehq-link observablehq-link-active"><a href="./">Portfolio Site Creation</a></li>
+    <li class="observablehq-link"><a href="../resume-generator/">Resume Generator</a></li>
     <li class="observablehq-link"><a href="../data-playground/">Data Playground</a></li>
   </ol>
 </nav>
@@ -106,38 +107,10 @@ import "../../_observablehq/client.b8f66ce7.js";
               document.addEventListener('keydown', function(event){
                 if (event.key === 'Escape') details.removeAttribute('open');
               });
-            } else if (slug === 'site-creation') {
-              const details = document.createElement('details');
-              details.id = 'portfolio-current-project-menu';
-              details.className = 'portfolio-project-menu';
-
-              const summary = document.createElement('summary');
-              summary.className = 'portfolio-nav-link portfolio-project-toggle';
-              summary.textContent = 'Portfolio Site Creation';
-              details.appendChild(summary);
-
-              const dropdown = document.createElement('div');
-              dropdown.className = 'portfolio-project-dropdown';
-              const items = [
-                ['Introduction', '/projects/site-creation/'],
-                ['Resume Generator', '/projects/site-creation/resume-generator/']
-              ];
-              for (const [label, target] of items) {
-                dropdown.appendChild(makeProjectItem(label, mount + target));
-              }
-              details.appendChild(dropdown);
-              slot.replaceWith(details);
-
-              document.addEventListener('click', function(event){
-                if (!details.hasAttribute('open')) return;
-                if (!details.contains(event.target)) details.removeAttribute('open');
-              });
-              document.addEventListener('keydown', function(event){
-                if (event.key === 'Escape') details.removeAttribute('open');
-              });
+            } else if (slug === 'resume-generator') {
+              slot.replaceWith(makeNavLink('Resume Generator', mount + '/projects/resume-generator/'));
             } else {
               const labels = {
-                'site-creation': 'Portfolio Site Creation',
                 'resume-generator': 'Resume Generator',
                 'data-playground': 'Data Playground'
               };
@@ -158,33 +131,10 @@ import "../../_observablehq/client.b8f66ce7.js";
         }
       })();</script>
 </header>
-<aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
-<nav>
-<div>Contents</div>
-<ol>
-<li class="observablehq-secondary-link"><a href="#table-of-contents">Table of Contents</a></li>
-<li class="observablehq-secondary-link"><a href="#project-overview">Project Overview </a></li>
-<li class="observablehq-secondary-link"><a href="#subprojects">Subprojects </a></li>
-</ol>
-</nav>
-</aside>
 <main id="observablehq-main" class="observablehq">
 <h1 id="portfolio-site-creation" tabindex="-1"><a class="observablehq-header-anchor" href="#portfolio-site-creation">Portfolio Site Creation</a></h1>
-<h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
-<p>This project collects writeups related to building and extending <code>juliusm.com</code> as a portfolio and technical writing site. The work includes page architecture, content organization, and standalone tools that support the broader site experience.</p>
-<h2 id="table-of-contents" tabindex="-1"><a class="observablehq-header-anchor" href="#table-of-contents">Table of Contents</a></h2>
-<ol>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#project-overview">Project Overview</a></li>
-<li><a href="#subprojects">Subprojects</a></li>
-</ol>
-<h2 id="project-overview" tabindex="-1"><a class="observablehq-header-anchor" href="#project-overview">Project Overview <a id="project-overview"></a></a></h2>
-<p>The goal of the site is to present technical work in a way that feels more like a set of connected projects than a flat collection of pages. Rather than treating each utility or experiment as a completely separate artifact, the site groups related work under broader efforts so the implementation details, design choices, and user-facing features can be discussed together.</p>
-<p>This section is intended to become the umbrella writeup for the site's creation and evolution. It can grow to include notes on framework choices, content structure, deployment decisions, styling, and the smaller tools that live inside the site.</p>
-<h2 id="subprojects" tabindex="-1"><a class="observablehq-header-anchor" href="#subprojects">Subprojects <a id="subprojects"></a></a></h2>
-<ul>
-<li><a href="./resume-generator/">Resume Generator</a></li>
-</ul>
+<p>This project has been reorganized. The Resume Generator now has its own top-level project page.</p>
+<p>Continue here: <a href="../resume-generator/">Resume Generator</a></p>
 </main>
 </div>
 </body>

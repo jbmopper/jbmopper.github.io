@@ -6,7 +6,7 @@
   }
 
   let {message}: Props = $props();
-  const isBot = $derived(message.role === "bot");
+  const isBot = $derived(message.role === "model");
 </script>
 
 <div class="msg" class:bot={isBot} class:user={!isBot}>

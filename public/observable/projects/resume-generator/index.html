@@ -4,17 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="generator" content="Observable Framework v1.13.4">
-<base href="/observable/projects/resume-generator/">
-<title>Resume Generator | Project Writeup Sandbox</title>
+<title>Resume Generator | juliusm.com</title>
 
 <link rel="preload" as="style" href="../../_import/astro-bridge-theme.1f3a5004.css">
 <link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.1f3a5004.css">
+<link rel="modulepreload" href="../../_observablehq/client.b8f66ce7.js">
+<link rel="modulepreload" href="../../_observablehq/runtime.607a8173.js">
+<link rel="modulepreload" href="../../_observablehq/stdlib.a50b4fda.js">
 <script type="module">
 
 import "../../_observablehq/client.b8f66ce7.js";
 
 </script>
-<script src="/observable/_import/jay-standalone.js" defer></script>
 </head>
 <body>
 <input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
@@ -22,12 +23,12 @@ import "../../_observablehq/client.b8f66ce7.js";
 <nav id="observablehq-sidebar">
   <ol>
     <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
-    <li class="observablehq-link"><a href="../../">Project Writeup Sandbox</a></li>
+    <li class="observablehq-link"><a href="../../">juliusm.com</a></li>
   </ol>
   <ol>
     <li class="observablehq-link"><a href="../">Projects</a></li>
     <li class="observablehq-link"><a href="../llm-fundamentals/">LLM Fundamentals</a></li>
-    <li class="observablehq-link"><a href="../site-creation/">Portfolio Site Creation</a></li>
+    <li class="observablehq-link observablehq-link-active"><a href="./">Resume Generator</a></li>
     <li class="observablehq-link"><a href="../data-playground/">Data Playground</a></li>
   </ol>
 </nav>
@@ -106,38 +107,10 @@ import "../../_observablehq/client.b8f66ce7.js";
               document.addEventListener('keydown', function(event){
                 if (event.key === 'Escape') details.removeAttribute('open');
               });
-            } else if (slug === 'site-creation') {
-              const details = document.createElement('details');
-              details.id = 'portfolio-current-project-menu';
-              details.className = 'portfolio-project-menu';
-
-              const summary = document.createElement('summary');
-              summary.className = 'portfolio-nav-link portfolio-project-toggle';
-              summary.textContent = 'Portfolio Site Creation';
-              details.appendChild(summary);
-
-              const dropdown = document.createElement('div');
-              dropdown.className = 'portfolio-project-dropdown';
-              const items = [
-                ['Introduction', '/projects/site-creation/'],
-                ['Resume Generator', '/projects/site-creation/resume-generator/']
-              ];
-              for (const [label, target] of items) {
-                dropdown.appendChild(makeProjectItem(label, mount + target));
-              }
-              details.appendChild(dropdown);
-              slot.replaceWith(details);
-
-              document.addEventListener('click', function(event){
-                if (!details.hasAttribute('open')) return;
-                if (!details.contains(event.target)) details.removeAttribute('open');
-              });
-              document.addEventListener('keydown', function(event){
-                if (event.key === 'Escape') details.removeAttribute('open');
-              });
+            } else if (slug === 'resume-generator') {
+              slot.replaceWith(makeNavLink('Resume Generator', mount + '/projects/resume-generator/'));
             } else {
               const labels = {
-                'site-creation': 'Portfolio Site Creation',
                 'resume-generator': 'Resume Generator',
                 'data-playground': 'Data Playground'
               };
@@ -164,8 +137,8 @@ import "../../_observablehq/client.b8f66ce7.js";
 </aside>
 <main id="observablehq-main" class="observablehq">
 <h1 id="resume-generator" tabindex="-1"><a class="observablehq-header-anchor" href="#resume-generator">Resume Generator</a></h1>
-<p>This writeup has moved under the broader <a href="../site-creation/">Portfolio Site Creation</a> project.</p>
-<p>Continue here: <a href="../site-creation/resume-generator/">Resume Generator</a></p>
+<h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
+<p>Check it out here: <a href="https://juliusm.com/resume/" target="_self" rel="noopener noreferrer">Resume Generator</a></p>
 </main>
 </div>
 </body>

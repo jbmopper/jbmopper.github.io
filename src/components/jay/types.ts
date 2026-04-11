@@ -1,14 +1,19 @@
 export interface ChatMessage {
   id: string;
-  role: "user" | "bot";
+  role: "user" | "model";
   text: string;
   timestamp: number;
 }
 
+export interface CurrentPage {
+  title: string;
+  path: string;
+}
+
 export interface ChatRequest {
   conversationId: string;
-  message: string;
-  currentPage?: string;
+  currentPage: CurrentPage;
+  messages: {role: "user" | "model"; text: string}[];
 }
 
 export interface ChatResponse {
