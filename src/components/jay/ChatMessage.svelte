@@ -1,16 +1,27 @@
 <script lang="ts">
   import type {ChatMessage} from "./types.js";
+  import {Marked} from "marked";
 
   interface Props {
     message: ChatMessage;
   }
 
   let {message}: Props = $props();
-  const isBot = $derived(message.role === "model");
+  const isModel = $derived(message.role === "model");
+
+  const md = new Marked({gfm: true, breaks: true});
+
+  const html = $derived(
+    isModel ? (md.parse(message.text) as string) : "",
+  );
 </script>
 
-<div class="msg" class:bot={isBot} class:user={!isBot}>
-  <div class="bubble">{message.text}</div>
+<div class="msg" class:bot={isModel} class:user={!isModel}>
+  {#if isModel}
+    <div class="bubble markdown">{@html html}</div>
+  {:else}
+    <div class="bubble">{message.text}</div>
+  {/if}
 </div>
 
 <style>
@@ -46,5 +57,52 @@
     background: var(--surface-2, #202c3b);
     color: var(--text-0, #edf2f7);
     border-bottom-left-radius: 4px;
+  }
+
+  .markdown :global(p) {
+    margin: 0 0 0.4em;
+  }
+
+  .markdown :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .markdown :global(ul),
+  .markdown :global(ol) {
+    margin: 0.2em 0 0.4em;
+    padding-left: 1.3em;
+  }
+
+  .markdown :global(li) {
+    margin-bottom: 0.15em;
+  }
+
+  .markdown :global(code) {
+    font-size: 0.8em;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0.1em 0.3em;
+    border-radius: 3px;
+  }
+
+  .markdown :global(pre) {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.5em 0.6em;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 0.3em 0;
+  }
+
+  .markdown :global(pre code) {
+    background: none;
+    padding: 0;
+  }
+
+  .markdown :global(strong) {
+    font-weight: 600;
+  }
+
+  .markdown :global(a) {
+    color: var(--accent, #65d9c6);
+    text-decoration: underline;
   }
 </style>
