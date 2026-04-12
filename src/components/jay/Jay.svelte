@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type {ChatMessage as ChatMsg, AnimationState, CurrentPage} from "./types.js";
+  import type {ChatMessage as ChatMsg, CurrentPage} from "./types.js";
   import {getConversationId, resetConversationId, loadUIState, saveUIState} from "./session.js";
   import {sendMessage, isLiveMode} from "./api-client.js";
 
@@ -13,9 +13,9 @@
     };
   }
   import {loadTurnstileScript, renderTurnstile} from "../../lib/turnstile.js";
-  import SpritePlayer from "./SpritePlayer.svelte";
   import ChatMessage from "./ChatMessage.svelte";
   import ChatInput from "./ChatInput.svelte";
+  const jayPortraitSrc = "/images/jay_cropped.png";
 
   const SITE_KEY: string | undefined =
     typeof import.meta !== "undefined"
@@ -28,13 +28,13 @@
   let isOpen = $state(false);
   let draftText = $state("");
   let isSending = $state(false);
-  let animationState: AnimationState = $state("idle");
   let panelEl: HTMLElement | undefined = $state();
   let messagesEl: HTMLElement | undefined = $state();
   let inputRef: ChatInput | undefined = $state();
   let fabEl: HTMLButtonElement | undefined = $state();
   let conversationId = $state("");
 
+  let abortController: AbortController | null = $state(null);
   let sessionToken = $state("");
   let verified = $state(!needsVerification);
   let verifying = $state(false);
@@ -113,7 +113,7 @@
     messages = [...messages, userMsg];
     draftText = "";
     isSending = true;
-    animationState = "thinking";
+    abortController = new AbortController();
     scrollToBottom();
 
     try {
@@ -122,12 +122,12 @@
         getCurrentPage(),
         messages,
         sessionToken,
+        abortController.signal,
       );
       const botMsg: ChatMsg = {id: generateMsgId(), role: "model", text: response.reply, timestamp: Date.now()};
       messages = [...messages, botMsg];
-      animationState = "talking";
-      setTimeout(() => { animationState = "idle"; }, 2000);
-    } catch {
+    } catch (err) {
+      if ((err as Error).name === "AbortError") return;
       const errMsg: ChatMsg = {
         id: generateMsgId(),
         role: "model",
@@ -135,17 +135,18 @@
         timestamp: Date.now(),
       };
       messages = [...messages, errMsg];
-      animationState = "idle";
     } finally {
+      abortController = null;
       isSending = false;
       scrollToBottom();
     }
   }
 
   function newChat() {
+    if (isSending) return;
+    abortController?.abort();
     conversationId = resetConversationId();
     messages = [];
-    animationState = "idle";
   }
 
   function toggle() {
@@ -191,15 +192,13 @@
       onkeydown={(e) => { handlePanelKeydown(e); trapFocus(e); }}
     >
       <header class="panel-header">
-        <SpritePlayer animation={animationState} width={32} height={32} />
-        <span class="panel-title">Jay</span>
-        <button class="new-chat-btn" onclick={newChat} aria-label="New chat" title="New chat">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <path d="M12 5v14"/><path d="M5 12h14"/>
+        <button class="header-btn" onclick={newChat} disabled={isSending} aria-label="New chat" title="New chat">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 1 1-3.2-6.86"/><polyline points="21 3 21 9 15 9"/>
           </svg>
         </button>
-        <button class="close-btn" onclick={toggle} aria-label="Close chat">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <button class="header-btn" onclick={toggle} aria-label="Close chat">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <path d="M18 6 6 18"/><path d="M6 6 18 18"/>
           </svg>
         </button>
@@ -222,6 +221,15 @@
           {#each messages as msg (msg.id)}
             <ChatMessage message={msg} />
           {/each}
+          {#if isSending}
+            <div class="msg bot">
+              <div class="bubble typing">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+            </div>
+          {/if}
         </div>
 
         <ChatInput
@@ -236,24 +244,24 @@
   {/if}
 
   <button class="fab" bind:this={fabEl} onclick={toggle} aria-label={isOpen ? "Close Jay" : "Open Jay"}>
-    <SpritePlayer animation={animationState} width={40} height={40} />
+    <img src={jayPortraitSrc} alt="Jay" class="fab-portrait" width="56" height="56" />
   </button>
 </div>
 
 <style>
   .jay-root {
     position: fixed;
-    bottom: 1.25rem;
+    bottom: 3.5rem;
     right: 1.25rem;
     z-index: 9999;
     font-family: var(--font-sans, "Manrope", "Segoe UI", sans-serif);
   }
 
   .fab {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    border: 2px solid var(--accent, #65d9c6);
+    width: 64px;
+    height: 64px;
+    border-radius: 10px;
+    border: 1px solid var(--accent, #65d9c6);
     background: var(--surface, #1a2330);
     cursor: pointer;
     display: flex;
@@ -261,6 +269,8 @@
     justify-content: center;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
+    padding: 0;
+    overflow: hidden;
   }
 
   .fab:hover {
@@ -268,9 +278,15 @@
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
   }
 
+  .fab-portrait {
+    border-radius: 8px;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
   .panel {
     position: absolute;
-    bottom: 68px;
+    bottom: 76px;
     right: 0;
     width: 340px;
     max-height: 480px;
@@ -286,35 +302,32 @@
   .panel-header {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 0.75rem;
+    justify-content: flex-end;
+    gap: 0.35rem;
+    padding: 0.45rem 0.6rem;
     border-bottom: 1px solid var(--stroke, #2d3e50);
     background: var(--surface, #1a2330);
   }
 
-  .panel-title {
-    flex: 1;
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--text-0, #edf2f7);
-  }
-
-  .new-chat-btn,
-  .close-btn {
+  .header-btn {
     background: none;
     border: none;
     color: var(--text-1, #b7c2d0);
     cursor: pointer;
-    padding: 0.2rem;
+    padding: 0.25rem;
     border-radius: 4px;
     display: flex;
     align-items: center;
   }
 
-  .new-chat-btn:hover,
-  .close-btn:hover {
+  .header-btn:hover:not(:disabled) {
     color: var(--text-0, #edf2f7);
     background: var(--surface-2, #202c3b);
+  }
+
+  .header-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
   }
 
   .messages {
@@ -323,6 +336,58 @@
     padding: 0.75rem;
     min-height: 200px;
     max-height: 340px;
+  }
+
+  .msg {
+    display: flex;
+    margin-bottom: 0.5rem;
+  }
+
+  .msg.bot {
+    justify-content: flex-start;
+  }
+
+  .bubble {
+    max-width: 80%;
+    padding: 0.5rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    line-height: 1.45;
+  }
+
+  .bubble.typing {
+    background: var(--surface-2, #202c3b);
+    display: flex;
+    gap: 0.3em;
+    padding: 0.65rem 0.85rem;
+    border-bottom-left-radius: 4px;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-1, #b7c2d0);
+    animation: bounce 1.2s infinite;
+  }
+
+  .dot:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+
+  .dot:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+
+  @keyframes bounce {
+    0%, 60%, 100% {
+      transform: translateY(0);
+      opacity: 0.4;
+    }
+    30% {
+      transform: translateY(-4px);
+      opacity: 1;
+    }
   }
 
   .empty-hint {

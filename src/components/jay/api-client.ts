@@ -36,7 +36,18 @@ async function mockSendMessage(conversationId: string): Promise<ChatResponse> {
   return {reply: pickMockReply(), conversationId};
 }
 
-async function liveSendMessage(req: ChatRequest, sessionToken: string): Promise<ChatResponse> {
+const REQUEST_TIMEOUT_MS = 30_000;
+
+async function liveSendMessage(
+  req: ChatRequest,
+  sessionToken: string,
+  signal?: AbortSignal,
+): Promise<ChatResponse> {
+  const timeout = AbortSignal.timeout(REQUEST_TIMEOUT_MS);
+  const combined = signal
+    ? AbortSignal.any([signal, timeout])
+    : timeout;
+
   const res = await fetch(`${API_BASE}/v1/chat/respond`, {
     method: "POST",
     headers: {
@@ -44,6 +55,7 @@ async function liveSendMessage(req: ChatRequest, sessionToken: string): Promise<
       Authorization: `Bearer ${sessionToken}`,
     },
     body: JSON.stringify(req),
+    signal: combined,
   });
   if (!res.ok) {
     throw new Error(`Chat request failed: ${res.status}`);
@@ -60,8 +72,9 @@ export async function sendMessage(
   currentPage: CurrentPage,
   history: ChatMessage[],
   sessionToken: string,
+  signal?: AbortSignal,
 ): Promise<ChatResponse> {
   if (!API_BASE) return mockSendMessage(conversationId);
   const req = buildRequest(conversationId, currentPage, history);
-  return liveSendMessage(req, sessionToken);
+  return liveSendMessage(req, sessionToken, signal);
 }
