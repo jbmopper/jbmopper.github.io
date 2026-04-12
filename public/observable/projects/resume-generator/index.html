@@ -29,6 +29,7 @@ import "../../_observablehq/client.b8f66ce7.js";
     <li class="observablehq-link"><a href="../llm-fundamentals/">LLM Fundamentals</a></li>
     <li class="observablehq-link observablehq-link-active"><a href="./">Resume Generator</a></li>
     <li class="observablehq-link"><a href="../data-playground/">Data Playground</a></li>
+    <li class="observablehq-link"><a href="../rag-chatbot/">RAG Chatbot</a></li>
   </ol>
 </nav>
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
@@ -111,7 +112,8 @@ import "../../_observablehq/client.b8f66ce7.js";
             } else {
               const labels = {
                 'resume-generator': 'Resume Generator',
-                'data-playground': 'Data Playground'
+                'data-playground': 'Data Playground',
+                'rag-chatbot': 'RAG Chatbot'
               };
               const fallback = slug
                 .split('-')
