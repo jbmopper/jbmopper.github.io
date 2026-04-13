@@ -60,8 +60,10 @@ test.describe("Jay chatbot", () => {
 
   test("conversation ID persists across navigation", async ({page}) => {
     await page.goto("/");
+    await expect(page.getByLabel("Open Jay")).toBeVisible();
     const id1 = await page.evaluate(() => localStorage.getItem("jay-conversation-id"));
     await page.goto("/");
+    await expect(page.getByLabel("Open Jay")).toBeVisible();
     const id2 = await page.evaluate(() => localStorage.getItem("jay-conversation-id"));
     expect(id1).toBeTruthy();
     expect(id1).toBe(id2);
