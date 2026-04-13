@@ -26,11 +26,11 @@ const published = projects.filter((p) => p.status === "published");
 return {published};
 }});
 
-define({id: "edc4ed17", inputs: ["html","published","display"], body: async (html,published,display) => {
+define({id: "6ac6eef8", inputs: ["html","published","display"], body: async (html,published,display) => {
 display(await(
 html`<div class="project-list">
   ${published.map((p) => html`
-    <a class="project-card" href="/projects/${p.slug}/">
+    <a class="project-card" href="./${p.slug}/">
       <h3>${p.title}</h3>
       <p>${p.description}</p>
     </a>
@@ -162,7 +162,7 @@ html`<div class="project-list">
 <h1 id="projects" tabindex="-1"><a class="observablehq-header-anchor" href="#projects">Projects</a></h1>
 <div class="observablehq observablehq--block"><!--:f9f2e3a0:--></div>
 <div class="observablehq observablehq--block"><!--:b7f2fceb:--></div>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:edc4ed17:--></div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:6ac6eef8:--></div>
 <style>
 .project-list {
   display: grid;
