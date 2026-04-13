@@ -1,6 +1,6 @@
 <script lang="ts">
   import type {ChatMessage as ChatMsg, CurrentPage} from "./types.js";
-  import {getConversationId, resetConversationId, loadUIState, saveUIState, getSessionToken, saveSessionToken, clearSessionToken} from "./session.js";
+  import {getConversationId, resetConversationId, loadUIState, saveUIState, getSessionToken, saveSessionToken, clearSessionToken, loadMessages, saveMessages} from "./session.js";
   import {sendMessage, isLiveMode} from "./api-client.js";
 
   function getCurrentPage(): CurrentPage {
@@ -46,6 +46,7 @@
     const saved = loadUIState();
     isOpen = saved.isOpen;
     draftText = saved.draftText;
+    messages = loadMessages();
 
     const stored = getSessionToken();
     if (stored && needsVerification) {
@@ -56,6 +57,10 @@
 
   $effect(() => {
     saveUIState({isOpen, draftText});
+  });
+
+  $effect(() => {
+    saveMessages(messages);
   });
 
   $effect(() => {

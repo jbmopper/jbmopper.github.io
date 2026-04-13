@@ -1,8 +1,9 @@
-import type {UIState} from "./types.js";
+import type {ChatMessage, UIState} from "./types.js";
 
 const CONVERSATION_ID_KEY = "jay-conversation-id";
 const UI_STATE_KEY = "jay-ui-state";
 const SESSION_TOKEN_KEY = "jay-session-token";
+const MESSAGES_KEY = "jay-messages";
 
 const isBrowser = typeof window !== "undefined";
 
@@ -75,5 +76,25 @@ export function clearSessionToken(): void {
     sessionStorage.removeItem(SESSION_TOKEN_KEY);
   } catch {
     // ignore
+  }
+}
+
+export function loadMessages(): ChatMessage[] {
+  if (!isBrowser) return [];
+  try {
+    const raw = sessionStorage.getItem(MESSAGES_KEY);
+    if (!raw) return [];
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
+
+export function saveMessages(messages: ChatMessage[]): void {
+  if (!isBrowser) return;
+  try {
+    sessionStorage.setItem(MESSAGES_KEY, JSON.stringify(messages));
+  } catch {
+    // sessionStorage may be unavailable or full
   }
 }
