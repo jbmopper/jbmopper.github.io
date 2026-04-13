@@ -1,6 +1,6 @@
 <script lang="ts">
   import type {ChatMessage as ChatMsg, CurrentPage} from "./types.js";
-  import {getConversationId, resetConversationId, loadUIState, saveUIState} from "./session.js";
+  import {getConversationId, resetConversationId, loadUIState, saveUIState, getSessionToken, saveSessionToken, clearSessionToken} from "./session.js";
   import {sendMessage, isLiveMode} from "./api-client.js";
 
   function getCurrentPage(): CurrentPage {
@@ -46,6 +46,12 @@
     const saved = loadUIState();
     isOpen = saved.isOpen;
     draftText = saved.draftText;
+
+    const stored = getSessionToken();
+    if (stored && needsVerification) {
+      sessionToken = stored;
+      verified = true;
+    }
   });
 
   $effect(() => {
@@ -88,6 +94,7 @@
       }
       const session = await res.json();
       sessionToken = session.sessionToken;
+      saveSessionToken(sessionToken);
       verified = true;
     } catch (err: any) {
       verifyError = err.message ?? "Verification failed. Please try again.";
@@ -128,10 +135,18 @@
       messages = [...messages, botMsg];
     } catch (err) {
       if ((err as Error).name === "AbortError") return;
+      const isAuthError = (err as Error).message?.includes("401") || (err as Error).message?.includes("403");
+      if (isAuthError && needsVerification) {
+        clearSessionToken();
+        sessionToken = "";
+        verified = false;
+      }
       const errMsg: ChatMsg = {
         id: generateMsgId(),
         role: "model",
-        text: "Sorry, something went wrong. Please try again.",
+        text: isAuthError
+          ? "Session expired — please verify again to continue."
+          : "Sorry, something went wrong. Please try again.",
         timestamp: Date.now(),
       };
       messages = [...messages, errMsg];

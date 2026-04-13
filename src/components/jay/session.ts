@@ -2,6 +2,7 @@ import type {UIState} from "./types.js";
 
 const CONVERSATION_ID_KEY = "jay-conversation-id";
 const UI_STATE_KEY = "jay-ui-state";
+const SESSION_TOKEN_KEY = "jay-session-token";
 
 const isBrowser = typeof window !== "undefined";
 
@@ -47,5 +48,32 @@ export function saveUIState(state: UIState): void {
     sessionStorage.setItem(UI_STATE_KEY, JSON.stringify(state));
   } catch {
     // sessionStorage may be unavailable in some contexts
+  }
+}
+
+export function getSessionToken(): string {
+  if (!isBrowser) return "";
+  try {
+    return sessionStorage.getItem(SESSION_TOKEN_KEY) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+export function saveSessionToken(token: string): void {
+  if (!isBrowser) return;
+  try {
+    sessionStorage.setItem(SESSION_TOKEN_KEY, token);
+  } catch {
+    // sessionStorage may be unavailable in some contexts
+  }
+}
+
+export function clearSessionToken(): void {
+  if (!isBrowser) return;
+  try {
+    sessionStorage.removeItem(SESSION_TOKEN_KEY);
+  } catch {
+    // ignore
   }
 }
