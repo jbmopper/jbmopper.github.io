@@ -136,7 +136,8 @@ import "../../_observablehq/client.b8f66ce7.js";
 <h1 id="chatbot-integration" tabindex="-1"><a class="observablehq-header-anchor" href="#chatbot-integration">Chatbot Integration</a></h1>
 <h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
 <p>The chatbot integrated with this site is an off-the-shelf integration with Google Gemini via the Google Cloud Platform Vertex AI service.  Interestingly, even such integrations can display interesting issues that provide an opportunity for research and problem-solving.</p>
-<p>First, some background. Vertex AI is Google's current</p>
+<p>First, some background. Vertex AI is Google Cloud Platform's current AI brand, with a variety products and services under its umbrella.  This includes API access to models like Gemini 3.0 Flash (which powers the chatbot) with baked-in integration of GCP's basic RAG implementation, RAG Engine.  This is an easy-to-use system, simply ingesting documents from a bucket on GCP and offering basic options for chunk size and overlap, as well as chunk boundary detection system selection that includes an LLM parser option.</p>
+<p>After selecting between an English-oriented or multilingual embedding model, the vector store is selected, in this case the default RAG store, which was chosen for its simplicity and perfectly adequate functionality for the small corpus used for the site chatbot.</p>
 </main>
 </div>
 </body>

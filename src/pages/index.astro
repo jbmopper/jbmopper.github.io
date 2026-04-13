@@ -1,10 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import projects from "../data/projects.json";
 
-const deepLearningDescription =
-  "Fundamentals of deep learning, including transformer implementation in Pytorch, training and inference, performance analysis, hyperparameter tuning, and architectural variations (ablations).";
-const resumeGeneratorDescription =
-  "A serverless resume generator utilizing the Anthropic messages API to create a structured markdown/html output that is rendered into a polished PDF resume, tailored to the input job description.";
+const publishedProjects = projects.filter((project) => project.status === "published");
 ---
 
 <BaseLayout title="juliusm.com | Portfolio Site" description="Julius M's Portfolio Site">
@@ -46,14 +44,12 @@ const resumeGeneratorDescription =
 
   <section id="projects" class="panel">
     <h2>Projects</h2>
-    <article class="project-card">
-      <h3><a href="/observable/projects/llm-fundamentals/">Deep Learning Fundamentals</a></h3>
-      <p>{deepLearningDescription}</p>
-    </article>
-    <article class="project-card">
-      <h3><a href="/observable/projects/resume-generator/">Resume Generator</a></h3>
-      <p>{resumeGeneratorDescription}</p>
-    </article>
+    {publishedProjects.map((project) => (
+      <article class="project-card">
+        <h3><a href={`/observable/projects/${project.slug}/`}>{project.title}</a></h3>
+        <p>{project.description}</p>
+      </article>
+    ))}
   </section>
 </BaseLayout>
 

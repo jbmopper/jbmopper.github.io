@@ -1,0 +1,30 @@
+[
+  {
+    "slug": "llm-fundamentals",
+    "title": "Deep Learning Fundamentals",
+    "description": "Fundamentals of deep learning, including transformer implementation in Pytorch, training and inference, performance analysis, hyperparameter tuning, and architectural variations (ablations).",
+    "art": null,
+    "status": "published"
+  },
+  {
+    "slug": "resume-generator",
+    "title": "Resume Generator",
+    "description": "A serverless resume generator utilizing the Anthropic messages API to create a structured markdown/html output that is rendered into a polished PDF resume, tailored to the input job description.",
+    "art": null,
+    "status": "published"
+  },
+  {
+    "slug": "rag-chatbot",
+    "title": "Chatbot Integration",
+    "description": "An off-the-shelf integration with Google Gemini via Google Cloud Platform Vertex AI, exploring the practical challenges of RAG-based chatbot deployment.",
+    "art": null,
+    "status": "published"
+  },
+  {
+    "slug": "data-playground",
+    "title": "Data Playground",
+    "description": "Interactive data exploration and visualization sandbox.",
+    "art": null,
+    "status": "draft"
+  }
+]

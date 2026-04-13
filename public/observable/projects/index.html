@@ -8,10 +8,44 @@
 <title>Projects | juliusm.com</title>
 
 <link rel="preload" as="style" href="../_import/astro-bridge-theme.1f3a5004.css">
+<link rel="preload" as="style" href="../_npm/katex@0.16.28/dist/katex.min.css">
 <link rel="stylesheet" type="text/css" href="../_import/astro-bridge-theme.1f3a5004.css">
+<link rel="stylesheet" type="text/css" href="../_npm/katex@0.16.28/dist/katex.min.css">
 <script type="module">
 
-import "../_observablehq/client.b8f66ce7.js";
+import {define} from "../_observablehq/client.b8f66ce7.js";
+import {registerFile} from "../_observablehq/stdlib.a50b4fda.js";
+
+registerFile("../data/projects.json", {"name":"../data/projects.json","mimeType":"application/json","path":"../_file/data/projects.97db3957.json","lastModified":1776046920699,"size":1156});
+
+define({id: "f9f2e3a0", inputs: ["FileAttachment"], outputs: ["projects"], body: (FileAttachment) => {
+const projects = FileAttachment("../data/projects.json").json();
+return {projects};
+}});
+
+define({id: "b7f2fceb", inputs: ["projects"], outputs: ["published"], body: (projects) => {
+const published = projects.filter((p) => p.status === "published");
+return {published};
+}});
+
+define({id: "c0888442", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`{published.map((p) => html${'`'}
+<a class="project-card" href="/projects/`
+))
+}});
+
+define({id: "32ba7bb3", mode: "inline", inputs: ["p","display"], body: async (p,display) => {
+display(await(
+p.title
+))
+}});
+
+define({id: "3e5a22a8", mode: "inline", inputs: ["p","display"], body: async (p,display) => {
+display(await(
+p.description
+))
+}});
 
 </script>
 <script src="/observable/_import/jay-standalone.js" defer></script>
@@ -134,14 +168,42 @@ import "../_observablehq/client.b8f66ce7.js";
 </header>
 <main id="observablehq-main" class="observablehq">
 <h1 id="projects" tabindex="-1"><a class="observablehq-header-anchor" href="#projects">Projects</a></h1>
-<ul>
-<li><a href="./llm-fundamentals/">LLM Fundamentals</a></li>
-<li><a href="./resume-generator/">Resume Generator</a></li>
-<li><a href="./rag-chatbot/">Chatbot Integration</a></li>
-</ul>
-<!--
-- [Data Playground](/projects/data-playground/)
--->
+<div class="observablehq observablehq--block"><!--:f9f2e3a0:--></div>
+<div class="observablehq observablehq--block"><!--:b7f2fceb:--></div>
+<div class="project-list">
+<p><observablehq-loading></observablehq-loading><!--:c0888442:-->{p.slug}/"&gt;</p>
+  <h3><observablehq-loading></observablehq-loading><!--:32ba7bb3:--></h3>
+  <p><observablehq-loading></observablehq-loading><!--:3e5a22a8:--></p>
+
+`)}
+</div>
+<style>
+.project-list {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.project-card {
+  display: block;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--theme-foreground-faintest);
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s;
+}
+.project-card:hover {
+  border-color: var(--theme-foreground-focus);
+}
+.project-card h3 {
+  margin: 0 0 0.4rem;
+}
+.project-card p {
+  margin: 0;
+  color: var(--theme-foreground-muted);
+  font-size: 0.9rem;
+}
+</style>
 </main>
 </div>
 </body>

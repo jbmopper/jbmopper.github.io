@@ -21,17 +21,20 @@ Keep Astro as the landing shell and publish Observable as static pages under `/o
 2. Export to Astro public assets:
    - `npm run export:astro`
    - This performs a copy-only sync from `ns_obv/dist` to `jbmopper.github.io/public/observable`.
+   - It also syncs the shared project catalog to `jbmopper.github.io/src/data/projects.json`.
+   - Treat `src/data/projects.json` as read-only in this repo; update it from `ns_obv`, not by hand.
 
 3. Validate Astro-side artifacts:
    - `cd /Users/juliusmopper/Dev/jbmopper.github.io`
    - `npm run verify:observable`
 
 4. Validate full site:
-   - `npm run build`
+   - `npm run build`https://jay-chatbot-406609817311.us-west1.run.app
    - `npm run test:e2e`
 
 ## Required behavior
-- Home project card links directly to `/observable/projects/llm-fundamentals/`.
+- Home project cards are rendered from `src/data/projects.json`, filtered to `status === "published"`.
+- Home project cards link directly to `/observable/projects/<slug>/`.
 - Notebook header exposes visible project navigation links.
 - `Projects` navigation returns to `/observable/projects/` on the same origin.
 - No broken notebook section links from `/observable/projects/llm-fundamentals/`.

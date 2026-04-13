@@ -51,6 +51,29 @@ async function assertExists(relativePath) {
   }
 }
 
+async function assertSharedProjectCatalog() {
+  const relativeCatalogPath = "src/data/projects.json";
+  const absoluteCatalogPath = path.join(PROJECT_ROOT, relativeCatalogPath);
+  await assertExists(relativeCatalogPath);
+  const rawCatalog = await readFile(absoluteCatalogPath, "utf8");
+
+  let catalog;
+  try {
+    catalog = JSON.parse(rawCatalog);
+  } catch (error) {
+    throw new Error(`Shared project catalog is not valid JSON: ${relativeCatalogPath}`);
+  }
+
+  if (!Array.isArray(catalog)) {
+    throw new Error(`Shared project catalog must be an array: ${relativeCatalogPath}`);
+  }
+
+  const publishedEntries = catalog.filter((entry) => entry?.status === "published");
+  if (publishedEntries.length === 0) {
+    throw new Error(`Shared project catalog has no published entries: ${relativeCatalogPath}`);
+  }
+}
+
 async function assertCanonicalRoutes() {
   const missing = [];
   for (const route of requiredCanonicalRoutes) {
@@ -193,6 +216,7 @@ async function main() {
   for (const item of requiredSharedArtifacts) {
     await assertExists(item);
   }
+  await assertSharedProjectCatalog();
   await assertCanonicalRoutes();
   await assertBaseHrefs();
   await assertKatexAssets();

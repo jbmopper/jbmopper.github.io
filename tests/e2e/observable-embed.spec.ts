@@ -1,6 +1,34 @@
 import {expect, test} from "@playwright/test";
+import {readFileSync} from "node:fs";
 
 const llmRoutePattern = /\/observable\/projects\/llm-fundamentals\/(?:index\.html)?$/;
+const projectCatalog = JSON.parse(
+  readFileSync(new URL("../../src/data/projects.json", import.meta.url), "utf8")
+) as Array<{slug: string; title: string; status: string}>;
+const publishedProjects = projectCatalog.filter((project) => project.status === "published");
+
+test("homepage project cards render from the shared catalog", async ({page}) => {
+  await page.goto("/");
+
+  const cards = page.locator("#projects .project-card");
+  const projectsSection = page.locator("#projects");
+  await expect(cards).toHaveCount(publishedProjects.length);
+
+  for (const project of publishedProjects) {
+    const link = projectsSection.getByRole("link", {name: project.title});
+    await expect(link).toBeVisible();
+    await expect(link).toHaveAttribute("href", `/observable/projects/${project.slug}/`);
+  }
+
+  await expect(projectsSection.getByRole("link", {name: "Deep Learning Fundamentals"})).toBeVisible();
+  await expect(projectsSection.getByRole("link", {name: "Resume Generator"})).toBeVisible();
+  await expect(projectsSection.getByRole("link", {name: "Chatbot Integration"})).toBeVisible();
+  await expect(projectsSection.getByRole("link", {name: "Data Playground"})).toHaveCount(0);
+
+  await projectsSection.getByRole("link", {name: "Chatbot Integration"}).click();
+  await expect(page).toHaveURL(/\/observable\/projects\/rag-chatbot\/(?:index\.html)?$/);
+  await expect(page.getByRole("heading", {name: "Chatbot Integration"})).toBeVisible();
+});
 
 test("landing project link opens canonical notebook and navigation is available", async ({page}) => {
   await page.goto("/");
