@@ -11,7 +11,23 @@
 <link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.1f3a5004.css">
 <script type="module">
 
-import "../../_observablehq/client.b8f66ce7.js";
+import {define} from "../../_observablehq/client.b8f66ce7.js";
+import {registerFile} from "../../_observablehq/stdlib.a50b4fda.js";
+
+registerFile("./mysterious_vertex_cause.png", {"name":"./mysterious_vertex_cause.png","mimeType":"image/png","path":"../../_file/projects/rag-chatbot/mysterious_vertex_cause.dae7efa3.png","lastModified":1776039506478,"size":226762});
+registerFile("./mysterious_vertex_problem.png", {"name":"./mysterious_vertex_problem.png","mimeType":"image/png","path":"../../_file/projects/rag-chatbot/mysterious_vertex_problem.52c3a7da.png","lastModified":1776039338562,"size":407869});
+
+define({id: "9e2569b8", inputs: ["FileAttachment","display"], body: async (FileAttachment,display) => {
+display(await(
+FileAttachment("./mysterious_vertex_problem.png").image({alt: "Langfuse trace showing the broken responses"})
+))
+}});
+
+define({id: "2aab86d3", inputs: ["FileAttachment","display"], body: async (FileAttachment,display) => {
+display(await(
+FileAttachment("./mysterious_vertex_cause.png").image({alt: "Langfuse trace showing the inappropriate RAG query"})
+))
+}});
 
 </script>
 <script src="/observable/_import/jay-standalone.js" defer></script>
@@ -135,9 +151,14 @@ import "../../_observablehq/client.b8f66ce7.js";
 <main id="observablehq-main" class="observablehq">
 <h1 id="chatbot-integration" tabindex="-1"><a class="observablehq-header-anchor" href="#chatbot-integration">Chatbot Integration</a></h1>
 <h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
-<p>The chatbot integrated with this site is an off-the-shelf integration with Google Gemini via the Google Cloud Platform Vertex AI service.  Interestingly, even such integrations can display interesting issues that provide an opportunity for research and problem-solving.</p>
+<p>This brief writeup is being created both to document interesting development issues for a very real-world kind of application, and also because these writeups (and other documents) comprise the retrieval-augmented generation (RAG) corpus used the ground the chatbot's responses.  Thus creating the writeup enables the chatbot to "know" about itself.  I've named it "Jay" and given it a Steller's Jay theme, in honor of the West Coast.</p>
+<p>The "Jay" chatbot is an off-the-shelf integration with Google Gemini via the Google Cloud Platform Vertex AI service.  Interestingly, even such integrations can display interesting issues that provide an opportunity for research and problem-solving.</p>
 <p>First, some background. Vertex AI is Google Cloud Platform's current AI brand, with a variety products and services under its umbrella.  This includes API access to models like Gemini 3.0 Flash (which powers the chatbot) with baked-in integration of GCP's basic RAG implementation, RAG Engine.  This is an easy-to-use system, simply ingesting documents from a bucket on GCP and offering basic options for chunk size and overlap, as well as chunk boundary detection system selection that includes an LLM parser option.</p>
-<p>After selecting between an English-oriented or multilingual embedding model, the vector store is selected, in this case the default RAG store, which was chosen for its simplicity and perfectly adequate functionality for the small corpus used for the site chatbot.</p>
+<p>After selecting between an English-oriented or multilingual embedding model, the vector store is selected, in this case the default RAG store, the enjoyably named "RagManaged Cloud Spanner", which was chosen for its simplicity and perfectly adequate functionality for the small corpus used for the site chatbot.  And then it just works. Beautiful.</p>
+<h2 id="api-design" tabindex="-1"><a class="observablehq-header-anchor" href="#api-design">API Design</a></h2>
+<h2 id="the-problem" tabindex="-1"><a class="observablehq-header-anchor" href="#the-problem">The Problem</a></h2>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:9e2569b8:--></div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:2aab86d3:--></div>
 </main>
 </div>
 </body>

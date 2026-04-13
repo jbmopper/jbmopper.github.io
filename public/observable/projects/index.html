@@ -8,9 +8,7 @@
 <title>Projects | juliusm.com</title>
 
 <link rel="preload" as="style" href="../_import/astro-bridge-theme.1f3a5004.css">
-<link rel="preload" as="style" href="../_npm/katex@0.16.28/dist/katex.min.css">
 <link rel="stylesheet" type="text/css" href="../_import/astro-bridge-theme.1f3a5004.css">
-<link rel="stylesheet" type="text/css" href="../_npm/katex@0.16.28/dist/katex.min.css">
 <script type="module">
 
 import {define} from "../_observablehq/client.b8f66ce7.js";
@@ -28,22 +26,16 @@ const published = projects.filter((p) => p.status === "published");
 return {published};
 }});
 
-define({id: "c0888442", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+define({id: "edc4ed17", inputs: ["html","published","display"], body: async (html,published,display) => {
 display(await(
-tex`{published.map((p) => html${'`'}
-<a class="project-card" href="/projects/`
-))
-}});
-
-define({id: "32ba7bb3", mode: "inline", inputs: ["p","display"], body: async (p,display) => {
-display(await(
-p.title
-))
-}});
-
-define({id: "3e5a22a8", mode: "inline", inputs: ["p","display"], body: async (p,display) => {
-display(await(
-p.description
+html`<div class="project-list">
+  ${published.map((p) => html`
+    <a class="project-card" href="/projects/${p.slug}/">
+      <h3>${p.title}</h3>
+      <p>${p.description}</p>
+    </a>
+  `)}
+</div>`
 ))
 }});
 
@@ -170,13 +162,7 @@ p.description
 <h1 id="projects" tabindex="-1"><a class="observablehq-header-anchor" href="#projects">Projects</a></h1>
 <div class="observablehq observablehq--block"><!--:f9f2e3a0:--></div>
 <div class="observablehq observablehq--block"><!--:b7f2fceb:--></div>
-<div class="project-list">
-<p><observablehq-loading></observablehq-loading><!--:c0888442:-->{p.slug}/"&gt;</p>
-  <h3><observablehq-loading></observablehq-loading><!--:32ba7bb3:--></h3>
-  <p><observablehq-loading></observablehq-loading><!--:3e5a22a8:--></p>
-
-`)}
-</div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:edc4ed17:--></div>
 <style>
 .project-list {
   display: grid;
