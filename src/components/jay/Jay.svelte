@@ -1,7 +1,22 @@
 <script lang="ts">
   import type {ChatMessage as ChatMsg, CurrentPage} from "./types.js";
-  import {getConversationId, resetConversationId, loadUIState, saveUIState, getSessionToken, saveSessionToken, clearSessionToken, loadMessages, saveMessages} from "./session.js";
+  import {getConversationId, resetConversationId, loadUIState, saveUIState, getSessionToken, getSessionExpiresAt, saveSessionToken, clearSessionToken, loadMessages, saveMessages} from "./session.js";
   import {sendMessage, isLiveMode} from "./api-client.js";
+  import {loadTurnstileScript, renderTurnstile} from "../../lib/turnstile.js";
+  import ChatMessage from "./ChatMessage.svelte";
+  import ChatInput from "./ChatInput.svelte";
+
+  interface SessionTokenResponse {
+    sessionToken: string;
+    expiresAt?: number;
+  }
+
+  interface PendingChatRequest {
+    conversationId: string;
+    currentPage: CurrentPage;
+    messages: ChatMsg[];
+    sessionRefreshCount: number;
+  }
 
   function getCurrentPage(): CurrentPage {
     if (typeof document === "undefined") return {title: "", path: ""};
@@ -12,9 +27,6 @@
       path: window.location.pathname,
     };
   }
-  import {loadTurnstileScript, renderTurnstile} from "../../lib/turnstile.js";
-  import ChatMessage from "./ChatMessage.svelte";
-  import ChatInput from "./ChatInput.svelte";
   const jayPortraitSrc = "/images/jay_cropped.png";
 
   const SITE_KEY: string | undefined =
@@ -36,9 +48,13 @@
 
   let abortController: AbortController | null = $state(null);
   let sessionToken = $state("");
+  let sessionExpiresAt = $state(0);
   let verified = $state(!needsVerification);
   let verifying = $state(false);
   let verifyError = $state("");
+  let verifyPrompt = $state("Quick verification to start chatting.");
+  let shouldRenderTurnstile = $state(needsVerification);
+  let pendingRequest: PendingChatRequest | null = $state(null);
   let turnstileEl: HTMLDivElement | undefined = $state();
 
   $effect(() => {
@@ -50,8 +66,17 @@
 
     const stored = getSessionToken();
     if (stored && needsVerification) {
-      sessionToken = stored;
-      verified = true;
+      const storedExpiresAt = getSessionExpiresAt() || parseJwtExpiry(stored);
+      if (storedExpiresAt && storedExpiresAt <= nowInSeconds()) {
+        clearSessionToken();
+      } else {
+        sessionToken = stored;
+        sessionExpiresAt = storedExpiresAt;
+        verified = true;
+        if (storedExpiresAt) {
+          saveSessionToken(stored, storedExpiresAt);
+        }
+      }
     }
   });
 
@@ -70,12 +95,60 @@
   });
 
   $effect(() => {
-    if (isOpen && !verified && turnstileEl && !verifying) {
-      initTurnstile();
+    if (isOpen && !verified && turnstileEl && shouldRenderTurnstile && !verifying) {
+      shouldRenderTurnstile = false;
+      void initTurnstile();
     }
   });
 
-  async function refreshToken(container: HTMLElement): Promise<string> {
+  function nowInSeconds(): number {
+    return Math.floor(Date.now() / 1000);
+  }
+
+  function parseJwtExpiry(token: string): number {
+    try {
+      const [, payload] = token.split(".");
+      if (!payload || typeof atob === "undefined") return 0;
+      const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+      const padded = normalized.padEnd(normalized.length + ((4 - (normalized.length % 4)) % 4), "=");
+      const claims = JSON.parse(atob(padded));
+      return typeof claims.exp === "number" ? claims.exp : 0;
+    } catch {
+      return 0;
+    }
+  }
+
+  function hasActiveSession(): boolean {
+    if (!needsVerification) return true;
+    if (!sessionToken) return false;
+    return sessionExpiresAt === 0 || nowInSeconds() < sessionExpiresAt;
+  }
+
+  function isAuthError(err: unknown): boolean {
+    return err instanceof Error && (err.message.includes("401") || err.message.includes("403"));
+  }
+
+  function clearVerifiedSession() {
+    clearSessionToken();
+    sessionToken = "";
+    sessionExpiresAt = 0;
+    verified = false;
+  }
+
+  function queueVerification(prompt: string, request?: PendingChatRequest) {
+    if (request) {
+      pendingRequest = request;
+    }
+    verifyPrompt = prompt;
+    verifyError = "";
+    clearVerifiedSession();
+    shouldRenderTurnstile = true;
+    if (turnstileEl) {
+      turnstileEl.innerHTML = "";
+    }
+  }
+
+  async function refreshToken(container: HTMLElement): Promise<SessionTokenResponse> {
     await loadTurnstileScript();
     const cfToken = await renderTurnstile(container, SITE_KEY);
     const res = await fetch(
@@ -94,17 +167,26 @@
       const body = await res.json().catch(() => ({}));
       throw new Error(body.message ?? body.error ?? `Verification failed: ${res.status}`);
     }
-    const session = await res.json();
-    saveSessionToken(session.sessionToken);
-    return session.sessionToken;
+    const session = await res.json() as SessionTokenResponse;
+    saveSessionToken(session.sessionToken, session.expiresAt ?? 0);
+    return session;
   }
 
   async function initTurnstile() {
     verifying = true;
     verifyError = "";
     try {
-      sessionToken = await refreshToken(turnstileEl!);
+      const session = await refreshToken(turnstileEl!);
+      sessionToken = session.sessionToken;
+      sessionExpiresAt = session.expiresAt ?? parseJwtExpiry(session.sessionToken);
       verified = true;
+      verifyPrompt = "Quick verification to start chatting.";
+
+      const queued = pendingRequest;
+      if (queued) {
+        pendingRequest = null;
+        await deliverPendingRequest(queued);
+      }
     } catch (err: any) {
       verifyError = err.message ?? "Verification failed. Please try again.";
     } finally {
@@ -122,50 +204,40 @@
     return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   }
 
-  async function handleSubmit(text: string) {
-    if (isSending) return;
-
-    const userMsg: ChatMsg = {id: generateMsgId(), role: "user", text, timestamp: Date.now()};
-    messages = [...messages, userMsg];
-    draftText = "";
+  async function deliverPendingRequest(request: PendingChatRequest) {
     isSending = true;
     abortController = new AbortController();
     scrollToBottom();
 
     try {
-      let response;
-      try {
-        response = await sendMessage(conversationId, getCurrentPage(), messages, sessionToken, abortController.signal);
-      } catch (err) {
-        if ((err as Error).name === "AbortError") throw err;
-        const isAuthError = (err as Error).message?.includes("401") || (err as Error).message?.includes("403");
-        if (!isAuthError || !needsVerification) throw err;
-
-        const tmp = document.createElement("div");
-        tmp.style.cssText = "position:fixed;bottom:0;right:0;opacity:0;pointer-events:none;";
-        document.body.appendChild(tmp);
-        try {
-          sessionToken = await refreshToken(tmp);
-          verified = true;
-          response = await sendMessage(conversationId, getCurrentPage(), messages, sessionToken, abortController.signal);
-        } finally {
-          tmp.remove();
-        }
-      }
+      const response = await sendMessage(
+        request.conversationId,
+        request.currentPage,
+        request.messages,
+        sessionToken,
+        abortController.signal,
+      );
       const botMsg: ChatMsg = {id: generateMsgId(), role: "model", text: response.reply, timestamp: Date.now()};
       messages = [...messages, botMsg];
     } catch (err) {
       if ((err as Error).name === "AbortError") return;
-      const isAuthError = (err as Error).message?.includes("401") || (err as Error).message?.includes("403");
-      if (isAuthError && needsVerification) {
-        clearSessionToken();
-        sessionToken = "";
-        verified = false;
+
+      if (isAuthError(err) && needsVerification && request.sessionRefreshCount < 1) {
+        queueVerification(
+          "Session expired. Complete verification to continue where you left off.",
+          {...request, sessionRefreshCount: request.sessionRefreshCount + 1},
+        );
+        return;
       }
+
+      if (isAuthError(err) && needsVerification) {
+        clearVerifiedSession();
+      }
+
       const errMsg: ChatMsg = {
         id: generateMsgId(),
         role: "model",
-        text: isAuthError
+        text: isAuthError(err)
           ? "Session expired — please verify again to continue."
           : "Sorry, something went wrong. Please try again.",
         timestamp: Date.now(),
@@ -178,11 +250,44 @@
     }
   }
 
+  async function handleSubmit(text: string) {
+    if (isSending) return;
+
+    const userMsg: ChatMsg = {id: generateMsgId(), role: "user", text, timestamp: Date.now()};
+    const nextMessages = [...messages, userMsg];
+    messages = nextMessages;
+    draftText = "";
+    scrollToBottom();
+
+    const request: PendingChatRequest = {
+      conversationId,
+      currentPage: getCurrentPage(),
+      messages: nextMessages,
+      sessionRefreshCount: 0,
+    };
+
+    if (needsVerification && !hasActiveSession()) {
+      queueVerification(
+        "Session expired. Complete verification to continue where you left off.",
+        request,
+      );
+      return;
+    }
+
+    await deliverPendingRequest(request);
+  }
+
   function newChat() {
     if (isSending) return;
     abortController?.abort();
+    pendingRequest = null;
     conversationId = resetConversationId();
     messages = [];
+    verifyError = "";
+    verifyPrompt = "Quick verification to start chatting.";
+    if (!verified && needsVerification) {
+      shouldRenderTurnstile = true;
+    }
   }
 
   function toggle() {
@@ -242,11 +347,14 @@
 
       {#if !verified}
         <div class="verify-section">
-          <p class="verify-prompt">Quick verification to start chatting.</p>
+          <p class="verify-prompt">{verifyPrompt}</p>
           <div class="turnstile-container" bind:this={turnstileEl}></div>
+          {#if verifying}
+            <p class="verify-help">Refreshing your chat session...</p>
+          {/if}
           {#if verifyError}
             <p class="verify-error">{verifyError}</p>
-            <button class="retry-btn" onclick={() => initTurnstile()}>Retry</button>
+            <button class="retry-btn" onclick={() => { shouldRenderTurnstile = true; }}>Retry</button>
           {/if}
         </div>
       {:else}
@@ -446,6 +554,13 @@
     color: var(--text-1, #b7c2d0);
     font-size: 0.85rem;
     margin: 0;
+  }
+
+  .verify-help {
+    color: var(--text-1, #b7c2d0);
+    font-size: 0.8rem;
+    margin: 0;
+    text-align: center;
   }
 
   .turnstile-container {

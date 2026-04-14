@@ -55,22 +55,41 @@ export function renderTurnstile(
   if (!key) return Promise.reject(new Error("No Turnstile site key configured"));
 
   return new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => reject(new Error("Turnstile challenge timed out")), 60_000);
+    container.innerHTML = "";
 
-    window.turnstile!.render(container, {
+    let widgetId = "";
+    let settled = false;
+
+    const settle = (callback: () => void) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeout);
+      if (widgetId && window.turnstile) {
+        try {
+          window.turnstile.remove(widgetId);
+        } catch {
+          // Ignore cleanup failures when the widget has already been torn down.
+        }
+      }
+      callback();
+    };
+
+    const timeout = setTimeout(
+      () => settle(() => reject(new Error("Turnstile challenge timed out"))),
+      60_000,
+    );
+
+    widgetId = window.turnstile!.render(container, {
       sitekey: key,
       theme: "dark",
       callback(token: string) {
-        clearTimeout(timeout);
-        resolve(token);
+        settle(() => resolve(token));
       },
       "error-callback"(code?: string) {
-        clearTimeout(timeout);
-        reject(new Error(`Turnstile error: ${code ?? "unknown"}`));
+        settle(() => reject(new Error(`Turnstile error: ${code ?? "unknown"}`)));
       },
       "expired-callback"() {
-        clearTimeout(timeout);
-        reject(new Error("Turnstile token expired"));
+        settle(() => reject(new Error("Turnstile token expired")));
       },
     });
   });

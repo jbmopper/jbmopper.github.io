@@ -88,6 +88,14 @@ test.describe("Jay chatbot", () => {
     expect(token).toBe("test-token-123");
   });
 
+  test("session expiry in sessionStorage survives navigation", async ({page}) => {
+    await page.goto("/");
+    await page.evaluate(() => sessionStorage.setItem("jay-session-expires-at", "1893456000"));
+    await page.goto("/observable/projects/llm-fundamentals/");
+    const expiresAt = await page.evaluate(() => sessionStorage.getItem("jay-session-expires-at"));
+    expect(expiresAt).toBe("1893456000");
+  });
+
   test("mock reply renders on Observable page", async ({page}) => {
     await page.goto("/observable/projects/llm-fundamentals/");
     const fab = page.locator("#jay-root button").first();

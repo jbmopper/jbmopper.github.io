@@ -3,6 +3,7 @@ import type {ChatMessage, UIState} from "./types.js";
 const CONVERSATION_ID_KEY = "jay-conversation-id";
 const UI_STATE_KEY = "jay-ui-state";
 const SESSION_TOKEN_KEY = "jay-session-token";
+const SESSION_EXPIRES_AT_KEY = "jay-session-expires-at";
 const MESSAGES_KEY = "jay-messages";
 
 const isBrowser = typeof window !== "undefined";
@@ -61,10 +62,27 @@ export function getSessionToken(): string {
   }
 }
 
-export function saveSessionToken(token: string): void {
+export function getSessionExpiresAt(): number {
+  if (!isBrowser) return 0;
+  try {
+    const raw = sessionStorage.getItem(SESSION_EXPIRES_AT_KEY);
+    if (!raw) return 0;
+    const value = Number(raw);
+    return Number.isFinite(value) && value > 0 ? value : 0;
+  } catch {
+    return 0;
+  }
+}
+
+export function saveSessionToken(token: string, expiresAt = 0): void {
   if (!isBrowser) return;
   try {
     sessionStorage.setItem(SESSION_TOKEN_KEY, token);
+    if (Number.isFinite(expiresAt) && expiresAt > 0) {
+      sessionStorage.setItem(SESSION_EXPIRES_AT_KEY, String(expiresAt));
+    } else {
+      sessionStorage.removeItem(SESSION_EXPIRES_AT_KEY);
+    }
   } catch {
     // sessionStorage may be unavailable in some contexts
   }
@@ -74,6 +92,7 @@ export function clearSessionToken(): void {
   if (!isBrowser) return;
   try {
     sessionStorage.removeItem(SESSION_TOKEN_KEY);
+    sessionStorage.removeItem(SESSION_EXPIRES_AT_KEY);
   } catch {
     // ignore
   }
