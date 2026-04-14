@@ -75,31 +75,35 @@
     }
   });
 
+  async function refreshToken(container: HTMLElement): Promise<string> {
+    await loadTurnstileScript();
+    const cfToken = await renderTurnstile(container, SITE_KEY);
+    const res = await fetch(
+      `${(import.meta as Record<string, any>).env?.PUBLIC_AWS_SERVERLESS_API}/v1/session/turnstile-verify`,
+      {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          turnstileToken: cfToken,
+          action: "chat",
+          clientNonce: crypto.randomUUID(),
+        }),
+      },
+    );
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.message ?? body.error ?? `Verification failed: ${res.status}`);
+    }
+    const session = await res.json();
+    saveSessionToken(session.sessionToken);
+    return session.sessionToken;
+  }
+
   async function initTurnstile() {
     verifying = true;
     verifyError = "";
     try {
-      await loadTurnstileScript();
-      const cfToken = await renderTurnstile(turnstileEl!, SITE_KEY);
-      const res = await fetch(
-        `${(import.meta as Record<string, any>).env?.PUBLIC_AWS_SERVERLESS_API}/v1/session/turnstile-verify`,
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({
-            turnstileToken: cfToken,
-            action: "chat",
-            clientNonce: crypto.randomUUID(),
-          }),
-        },
-      );
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.message ?? body.error ?? `Verification failed: ${res.status}`);
-      }
-      const session = await res.json();
-      sessionToken = session.sessionToken;
-      saveSessionToken(sessionToken);
+      sessionToken = await refreshToken(turnstileEl!);
       verified = true;
     } catch (err: any) {
       verifyError = err.message ?? "Verification failed. Please try again.";
@@ -129,13 +133,25 @@
     scrollToBottom();
 
     try {
-      const response = await sendMessage(
-        conversationId,
-        getCurrentPage(),
-        messages,
-        sessionToken,
-        abortController.signal,
-      );
+      let response;
+      try {
+        response = await sendMessage(conversationId, getCurrentPage(), messages, sessionToken, abortController.signal);
+      } catch (err) {
+        if ((err as Error).name === "AbortError") throw err;
+        const isAuthError = (err as Error).message?.includes("401") || (err as Error).message?.includes("403");
+        if (!isAuthError || !needsVerification) throw err;
+
+        const tmp = document.createElement("div");
+        tmp.style.cssText = "position:fixed;bottom:0;right:0;opacity:0;pointer-events:none;";
+        document.body.appendChild(tmp);
+        try {
+          sessionToken = await refreshToken(tmp);
+          verified = true;
+          response = await sendMessage(conversationId, getCurrentPage(), messages, sessionToken, abortController.signal);
+        } finally {
+          tmp.remove();
+        }
+      }
       const botMsg: ChatMsg = {id: generateMsgId(), role: "model", text: response.reply, timestamp: Date.now()};
       messages = [...messages, botMsg];
     } catch (err) {
