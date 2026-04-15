@@ -217,7 +217,13 @@
         sessionToken,
         abortController.signal,
       );
-      const botMsg: ChatMsg = {id: generateMsgId(), role: "model", text: response.reply, timestamp: Date.now()};
+      const botMsg: ChatMsg = {
+        id: generateMsgId(),
+        role: "model",
+        text: response.reply,
+        timestamp: Date.now(),
+        parts: response.modelParts,
+      };
       messages = [...messages, botMsg];
     } catch (err) {
       if ((err as Error).name === "AbortError") return;

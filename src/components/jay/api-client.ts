@@ -27,13 +27,16 @@ function buildRequest(
   return {
     conversationId,
     currentPage,
-    messages: trimmed.map(({role, text}) => ({role, text})),
+    messages: trimmed.map(({role, text, parts}) =>
+      role === "model" && parts ? {role, text, parts} : {role, text},
+    ),
   };
 }
 
 async function mockSendMessage(conversationId: string): Promise<ChatResponse> {
   await new Promise((resolve) => setTimeout(resolve, 600 + Math.random() * 800));
-  return {reply: pickMockReply(), conversationId};
+  const reply = pickMockReply();
+  return {reply, conversationId, modelParts: [{text: reply}]};
 }
 
 const REQUEST_TIMEOUT_MS = 30_000;
