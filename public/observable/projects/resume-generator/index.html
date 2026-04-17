@@ -7,9 +7,9 @@
 <base href="/observable/projects/resume-generator/">
 <title>Resume Generator | juliusm.com</title>
 
-<link rel="preload" as="style" href="../../_import/astro-bridge-theme.1f3a5004.css">
+<link rel="preload" as="style" href="../../_import/astro-bridge-theme.1d667312.css">
 <link rel="preload" as="style" href="../../_npm/katex@0.16.28/dist/katex.min.css">
-<link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.1f3a5004.css">
+<link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.1d667312.css">
 <link rel="stylesheet" type="text/css" href="../../_npm/katex@0.16.28/dist/katex.min.css">
 <script type="module">
 
@@ -43,7 +43,7 @@ tex`\LaTeX`
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <header id="observablehq-header">
-<div class="portfolio-header-row"><a class="portfolio-brand" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="./" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume Generator</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a><span id="portfolio-current-project-slot"></span></nav></div><script>(function(){
+<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="./" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume Generator</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav></div><script>(function(){
         const mount = window.location.pathname.startsWith('/observable') ? '/observable' : '';
         const path = window.location.pathname.replace(/^\/observable(?=\/|$)/,'').replace(/\/index\.html$/,'/');
         const normalized = path.endsWith('/') ? path : path + '/';
@@ -65,6 +65,14 @@ tex`\LaTeX`
           return link;
         }
 
+        function makeBreadcrumbSeparator(){
+          const sep = document.createElement('span');
+          sep.className = 'portfolio-breadcrumb-separator';
+          sep.setAttribute('aria-hidden', 'true');
+          sep.textContent = '›';
+          return sep;
+        }
+
         function makeProjectItem(label, target){
           const link = document.createElement('a');
           link.className = 'portfolio-project-item';
@@ -81,6 +89,7 @@ tex`\LaTeX`
           const projectMatch = normalized.match(/^\/projects\/([^/]+)\//);
           if (projectMatch) {
             const slug = projectMatch[1];
+            slot.appendChild(makeBreadcrumbSeparator());
             if (slug === 'llm-fundamentals') {
               const details = document.createElement('details');
               details.id = 'portfolio-current-project-menu';
@@ -106,7 +115,7 @@ tex`\LaTeX`
                 dropdown.appendChild(makeProjectItem(label, mount + target));
               }
               details.appendChild(dropdown);
-              slot.replaceWith(details);
+              slot.appendChild(details);
 
               document.addEventListener('click', function(event){
                 if (!details.hasAttribute('open')) return;
@@ -116,7 +125,7 @@ tex`\LaTeX`
                 if (event.key === 'Escape') details.removeAttribute('open');
               });
             } else if (slug === 'resume-generator') {
-              slot.replaceWith(makeNavLink('Resume Generator', mount + '/projects/resume-generator/'));
+              slot.appendChild(makeNavLink('Resume Generator', mount + '/projects/resume-generator/'));
             } else {
               const labels = {
                 'resume-generator': 'Resume Generator',
@@ -127,10 +136,8 @@ tex`\LaTeX`
                 .split('-')
                 .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
                 .join(' ');
-              slot.replaceWith(makeNavLink(labels[slug] || fallback, mount + '/projects/' + slug + '/'));
+              slot.appendChild(makeNavLink(labels[slug] || fallback, mount + '/projects/' + slug + '/'));
             }
-          } else {
-            slot.remove();
           }
         }
 
@@ -152,6 +159,7 @@ tex`\LaTeX`
 </nav>
 </aside>
 <main id="observablehq-main" class="observablehq">
+<h3 id="in-progress" tabindex="-1"><a class="observablehq-header-anchor" href="#in-progress"><em><strong>In Progress</strong></em></a></h3>
 <h1 id="resume-generator" tabindex="-1"><a class="observablehq-header-anchor" href="#resume-generator">Résumé Generator</a></h1>
 <p>Check it out here: <a href="https://juliusm.com/resume/" target="_self" rel="noopener noreferrer">Resume Generator</a></p>
 <h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
@@ -166,7 +174,15 @@ tex`\LaTeX`
 <p>For creating the Résumé Generator in the site, more is required.  Finding Chromium-sporting images for the PDF renderer, wiring up Cloudflare Turnstile and the API gateway, doing AI Native fullstack development to make the javascript component for the frontend, job description processing, storage and metadata setup, and of course, the main serverless instance which interfaces with these to call the LLM API.</p>
 <p>Crafting the LLM request (for Claude) was not especially difficult.  The prompts used locally had to be split out into system and user prompts, and a preprocessor was created to build the user prompt using the longform history (a versioned and stored input) and job description.</p>
 <h2 id="issues-and-opportunities" tabindex="-1"><a class="observablehq-header-anchor" href="#issues-and-opportunities">Issues and Opportunities</a></h2>
-<p>The main issue discovered was that LLMs <em>really like</em> keywords.  Why should a 4-trillion parameter Transformer decoder trained on the sum total of human knowledge (i.e. Reddit) fight its natural affinity with ATS systems?  Let's check out some outputs!</p>
+<p>The main issue discovered was that LLMs <em>really like</em>  technical keywords.  Why should a 4-trillion parameter MoE multimodal Transformer decoder trained on the preponderance of human knowledge fight its natural affinity with ATS systems?  Here are some examples:</p>
+<p>[insert jargon resume]</p>
+<p>Prompt-massaging only goes so far in this circumstance, somewhat surprisingly:</p>
+<p>[insert prompt excerpt]</p>
+<p>[insert result]</p>
+<p>The solution was to split the LLM flow into two stages, both with strong instructions guiding the LLMs towards human-oriented, i.e. meaning-oriented outputs:</p>
+<p>[insert sample prompt language]</p>
+<p>[insert result]</p>
+<p>The first phase acts as a résumé <em>strategist</em>, analyzing the job description for</p>
 </main>
 </div>
 </body>

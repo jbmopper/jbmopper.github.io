@@ -15,7 +15,7 @@
   },
   {
     "slug": "site-chatbot",
-    "title": "Site Design and Chatbot Integration",
+    "title": "Site Design and RAG Chatbot Integration",
     "description": "A review of the site creation process and the design and integration of a RAG-powered Generative AI Chatbot",
     "art": null,
     "status": "published"

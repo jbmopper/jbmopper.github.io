@@ -7,6 +7,19 @@ const projectCatalog = JSON.parse(
 ) as Array<{slug: string; title: string; status: string}>;
 const publishedProjects = projectCatalog.filter((project) => project.status === "published");
 
+function projectBySlug(slug: string) {
+  const project = publishedProjects.find((candidate) => candidate.slug === slug);
+  if (!project) {
+    throw new Error(`Expected published project with slug "${slug}" in src/data/projects.json`);
+  }
+  return project;
+}
+
+function projectRoutePattern(slug: string) {
+  const escaped = slug.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`/observable/projects/${escaped}/(?:index\\.html)?$`);
+}
+
 test("homepage project cards render from the shared catalog", async ({page}) => {
   await page.goto("/");
 
@@ -22,12 +35,14 @@ test("homepage project cards render from the shared catalog", async ({page}) => 
 
   await expect(projectsSection.getByRole("link", {name: "Deep Learning Fundamentals"})).toBeVisible();
   await expect(projectsSection.getByRole("link", {name: "Resume Generator"})).toBeVisible();
-  await expect(projectsSection.getByRole("link", {name: "Chatbot Integration"})).toBeVisible();
+  const chatbotProject = projectBySlug("site-chatbot");
+  await expect(projectsSection.getByRole("link", {name: chatbotProject.title})).toBeVisible();
   await expect(projectsSection.getByRole("link", {name: "Data Playground"})).toHaveCount(0);
 
-  await projectsSection.getByRole("link", {name: "Chatbot Integration"}).click();
-  await expect(page).toHaveURL(/\/observable\/projects\/rag-chatbot\/(?:index\.html)?$/);
-  await expect(page.getByRole("heading", {name: "Chatbot Integration"})).toBeVisible();
+  await projectsSection.getByRole("link", {name: chatbotProject.title}).click();
+  await expect(page).toHaveURL(projectRoutePattern(chatbotProject.slug));
+  // Heading text lives in the ns_obv notebook source, not the catalog, so it stays hardcoded.
+  await expect(page.getByRole("heading", {name: "Site Design and RAG Chatbot Integration"})).toBeVisible();
 });
 
 test("landing project link opens canonical notebook and navigation is available", async ({page}) => {
@@ -60,6 +75,45 @@ test("observable navigation uses same-tab Welcome and hides project-only control
   await expect(page.locator("#observablehq-sidebar-backdrop")).toHaveCount(0);
 });
 
+// Project pages render a `juliusm.com › <project>` breadcrumb in the header.
+// The slot lives in `.portfolio-header-left` and is populated by an inline script
+// on page load. Labels for non-LLM projects are hardcoded in the ns_obv header
+// script and may diverge from the catalog title (e.g. site-chatbot shows
+// "Site Design and Chatbot Integration" while the catalog uses
+// "Site Design and RAG Chatbot Integration"). LLM Fundamentals renders as a
+// dropdown menu with a shortened label rather than the catalog title.
+test("project pages render a breadcrumb after juliusm.com", async ({page}) => {
+  const linkExpectations = [
+    {slug: "site-chatbot", label: "Site Design and Chatbot Integration"},
+    {slug: "resume-generator", label: "Resume Generator"},
+  ];
+
+  for (const {slug, label} of linkExpectations) {
+    await page.goto(`/observable/projects/${slug}/`);
+
+    const breadcrumb = page.locator("#observablehq-header .portfolio-header-left #portfolio-current-project-slot");
+    await expect(breadcrumb).toBeVisible();
+    await expect(breadcrumb.locator(".portfolio-breadcrumb-separator")).toHaveText("›");
+
+    const currentEntry = breadcrumb.locator(`a.portfolio-nav-link[href$="/observable/projects/${slug}/"]`);
+    await expect(currentEntry).toBeVisible();
+    await expect(currentEntry).toHaveText(label);
+  }
+
+  await page.goto("/observable/projects/llm-fundamentals/");
+  const llmBreadcrumb = page.locator("#observablehq-header .portfolio-header-left #portfolio-current-project-slot");
+  await expect(llmBreadcrumb).toBeVisible();
+  await expect(llmBreadcrumb.locator(".portfolio-breadcrumb-separator")).toHaveText("›");
+  const llmMenu = llmBreadcrumb.locator("#portfolio-current-project-menu");
+  await expect(llmMenu).toBeVisible();
+  await expect(llmMenu.locator("summary")).toHaveText("LLM Fundamentals");
+
+  await page.goto("/observable/projects/llm-fundamentals/perf-empirical/");
+  const subpageMenu = page.locator("#observablehq-header .portfolio-header-left #portfolio-current-project-menu");
+  await expect(subpageMenu).toBeVisible();
+  await expect(subpageMenu.locator("summary")).toHaveText("LLM Fundamentals");
+});
+
 function observeObservableAssetFailures(page: import("@playwright/test").Page) {
   const failures = [] as string[];
   page.on("response", (response) => {
@@ -81,7 +135,7 @@ async function collectNotebookLinks(page: import("@playwright/test").Page) {
     const llmPattern = new RegExp(llmPatternSource);
     const links = new Set<string>();
 
-    for (const anchor of Array.from(document.querySelectorAll("a[href]"))) {
+    for (const anchor of Array.from(document.querySelectorAll<HTMLAnchorElement>("a[href]"))) {
       const href = anchor.getAttribute("href");
       if (!href || href.startsWith("#")) {
         continue;
