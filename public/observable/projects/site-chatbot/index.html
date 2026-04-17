@@ -16,8 +16,8 @@ import {registerFile} from "../../_observablehq/stdlib.a50b4fda.js";
 
 registerFile("./AI Native development.png", {"name":"./AI Native development.png","mimeType":"image/png","path":"../../_file/projects/site-chatbot/AI Native development.da274ef7.png","lastModified":1775265873351,"size":174341});
 
-define({id: "7a4bd9c7", inputs: ["FileAttachment"], outputs: ["AINative"], body: (FileAttachment) => {
-const AINative = FileAttachment("./AI Native development.png").image({alt: "Vagueprompting", style: "width: 60%; min-width: 600px;"});
+define({id: "2da3cbec", inputs: ["FileAttachment"], outputs: ["AINative"], body: (FileAttachment) => {
+const AINative = FileAttachment("./AI Native development.png").image({alt: "Vagueprompting", style: "width: 55%; min-width: 400px;"});
 return {AINative};
 }});
 
@@ -159,121 +159,28 @@ html`<div style="text-align: left;">${AINative}</div>`
 <h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
 <p>Software engineering tasks that used to take weeks can now take minutes.  As the value of raw coding decreases, other skills become more needed.  Coming from a background in requirements and integration, and having dealt with the needs of full-stack development for a customer-facing web portal, the shift to "AI-Native Fullstack Developer" as such has been fascinating and joyous, no cap.</p>
 <p>This is a space to discuss my observations on these new, marvelous tools, and explain my perspective on their use and potential pitfalls, in addition to documenting the site itself.  I'll start with a meme that found me on the internet:</p>
-<div class="observablehq observablehq--block"><!--:7a4bd9c7:--></div>
+<div class="observablehq observablehq--block"><!--:2da3cbec:--></div>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:c6ab1d37:--></div>
-<p>It's not that bad, assuming one gives the system clear requirements and limited scope.  And maybe we didn't think of adding fins to the car but once they're there we realize it's good.  Given the broad training of the coding assistants and strong increase in quality, allowing our suddenly-trusted advisors leeway to follow their bliss is, if nothing else, a valid form of research into architectural variations we may not have considered.</p>
-<!--
-
-# Chatbot Integration
-
-## Introduction
-
-This brief writeup is being created both to document interesting development issues for a very real-world kind of application, and also because these writeups (and other documents) comprise the retrieval-augmented generation (RAG) corpus used the ground the chatbot's responses.  Thus creating the writeup enables the chatbot to "know" about itself.  I've named it "Jay" and given it a Steller's Jay theme, in honor of the West Coast.
-
-The "Jay" chatbot is an off-the-shelf integration with Google Gemini via the Google Cloud Platform Vertex AI service.  Interestingly, even such integrations can display interesting issues that provide an opportunity for research and problem-solving.
-
-First, some background. Vertex AI is Google Cloud Platform's current AI brand, with a variety products and services under its umbrella.  This includes API access to models like Gemini 3.0 Flash (which powers the chatbot) with baked-in integration of GCP's basic RAG implementation, RAG Engine.  This is an easy-to-use system, simply ingesting documents from a bucket on GCP and offering basic options for chunk size and overlap, as well as chunk boundary detection system selection that includes an LLM parser option.
-
-After selecting between an English-oriented or multilingual embedding model, the vector store is selected, in this case the default RAG store, the enjoyably named "RagManaged Cloud Spanner", which was chosen for its simplicity and perfectly adequate functionality for the small corpus used for the site chatbot.  And then it just works. Beautiful.
-
-## API & Prompt Design
-
-While there are some differences with the frontend-middleware API, the middleware-model interface works with a routine and basic LLM-type API:
-```json
-{
-  "contents": [
-    {
-      "role": "user",
-      "parts": [{ "text": "Hi, who are you?" }]
-    },
-    {
-      "role": "model",
-      "parts": [{ "text": "I am a large language model, trained by Google." }]
-    },
-    {
-      "role": "user",
-      "parts": [{ "text": "What can you do?" }]
-    }
-  ],
-}
-```
-Here, however, we wish the model to know what the user is looking at, i.e. what page they're on, so we send multiple parts with the current `user` turn, the first of which contains the page title and path:
-```json
-{
-  "contents": [
-    {
-      "role": "user",
-      "parts": [{ "text": "Hi, who are you?" }]
-    },
-    {
-      "role": "model",
-      "parts": [{ "text": "I am a large language model, trained by Google." }]
-    },
-    {
-      "role": "user",
-      "parts": [
-        { "text": "[PageContext]\ntitle: juliusm.com\npath: /\n[/PageContext]" },
-        { "text": "What can you do?" }
-        ]
-    }
-  ],
-}
-```
-In practice, this JSON isn't sent, rather the actual communication is handled by the SDK which provides functions for generating the request content and directing RAG use.
-
-The initial implementation used the following system prompt:
-
-> You are Jay, a friendly AI assistant on Julius Mopper's portfolio site (juliusm.com).
-> You answer questions about Julius's projects, skills, and experience using the
-> grounding context retrieved from the site's content. Be concise, conversational,
-> and technically accurate. If the user is viewing a specific page, prioritize
-> information relevant to that page.
-> 
-> Some user turns may begin with a [PageContext] metadata block that contains the
-> current page title and path. Use that metadata only as navigation context for
-> relevance. Focus on answering the user's actual question, and do not mention the
-> metadata block unless it helps answer directly.
-
-This is a simple prompt, but combined with the RAG system delivers a good quality of output.  Sort of.
-
-## The Problem
-
-The problem that emerged was interesting and unforeseen. We would expect a normal conversation to go along the lines of 
-
-> `user`: Hello?  
-> `Jay`: Hello, I'm Jay, Julius' assistant.  On this site you can explore Julius' work on several advanced projects...  
-> `user`: Does Julius know Python?  
->`Jay`: Yes, Julius has extensive experience with Python, especially PyTorch, which he used...  
-
-Instead we see something along the lines of
-
-> `user`: Hello?  
-> `Jay`: Hello, I'm Jay, Julius' assistant.  On this site you can explore Julius' work on several advanced projects...  
-> `user`: Does Julius know Python?  
->`Jay`: This site features Julius' work, which includes implementing a Tranformer model from scratch...  
-> `user`: Is Julius an expert on enterprise systems integration?  
-> `Jay`: Julius has strong experience with Python, especially PyTorch...  
-> `user`: What about Agile software development?  
-> `Jay`: Julius' experience with enterprise systems integration...  
-
-Or possibly even worse.  We turn to our observability system to diagnose the issue:
-
-```js
-const problemImg = FileAttachment("mysterious_vertex_problem.png").image({alt: "Langfuse trace showing the broken responses", style: "width: 60%; min-width: 600px;"});
-```
-
-```js
-html`<div style="text-align: left;">${problemImg}</div>`
-```
-
-```js
-const causeImg = FileAttachment("mysterious_vertex_cause.png").image({alt: "Langfuse trace showing the inappropriate RAG query", style: "width: 60%; min-width: 600px;"});
-```
-
-```js
-html`<div style="text-align: left;">${causeImg}</div>`
-```
---></main>
+<p>It's not that bad, assuming one gives the system clear requirements and limited scope.  And maybe we didn't think of adding fins to the car but once they're there we realize it's good.  Given the broad training of the coding assistants and strong increase in quality recently, allowing our suddenly-trusted advisors leeway to follow their bliss is, if nothing else, a valid form of research into architectural variations we may not have considered.</p>
+<h2 id="ai-native-software-development-for-this-site-and-in-general" tabindex="-1"><a class="observablehq-header-anchor" href="#ai-native-software-development-for-this-site-and-in-general">AI Native Software Development for this Site (and in general)</a></h2>
+<p>The title "AI Native Software Developer" has been appearing in job listings recently.  We're going to take it to mean using AI assistants in a ground up fashion.  That's how this site was created.</p>
+<p>This probably doesn't need to be said at this point, but this isn't "prompt and pray" vibe coding.  Rather, I like to describe it as the <strong>RPT loop</strong>:</p>
+<ul>
+<li><strong>R</strong>esearch: identify the goals, scope, and requirements for the work</li>
+<li><strong>P</strong>rompt: craft a clear detailed prompt and run it</li>
+<li><strong>T</strong>est: review the result
+Of course there are nuances.  Agents may be spec'd and spun of for particular tasks like test and documentation writing, for example, and a few turns of "loading" the context with framing questions prior to setting the assistant loose helps maintain quality.  But this is the general iterative workflow I use.</li>
+</ul>
+<p>One practice I've found helpful in generating Python, which I wish to contribute to personally, is similar to the comic above.  Some first passes may overbuild the code, and create a profusion of fragmentary one-line functions.  Remediation requires researching what was done, trimming and reframing requirements to make the system more efficient, and providing guidance such as "use a functional, minimalist style," which seems something of a magic incantation for improving the readability of LLM-generated code.</p>
+<p>Despite these costs, the improvement in code robustness is welcome.  More than that, it feels as though we are on the cusp of escaping the release of half-baked MVPs that never get remediated.  The problem is no longer adding features, but controlling the complexity.</p>
+<p>Anyway, the main complexity of the site is that the project writeups are created in a different project and exported into the site.  This segregates messy changes and large artifacts from the main site repo.</p>
+<h2 id="rag-chatbot-integration" tabindex="-1"><a class="observablehq-header-anchor" href="#rag-chatbot-integration">RAG Chatbot Integration</a></h2>
+<p>The markdown files comprising the writeup sources (and some other documents) are also the core of the retrieval-augmented generation (RAG) corpus used the ground the chatbot's responses.  Thus creating the writeup enables the chatbot to "know" about itself.  I've named it "Jay" and given it a Steller's Jay theme, in honor of the West Coast.</p>
+<p>The "Jay" chatbot is an off-the-shelf integration with Google Gemini via the Google Cloud Platform Vertex AI service.  Interestingly, even such integrations can display interesting issues that provide an opportunity for research and problem-solving.</p>
+<p>First, some background. Vertex AI is Google Cloud Platform's current AI brand, with a variety products and services under its umbrella.  This includes API access to models like Gemini 3.0 Flash (which powers the chatbot) with baked-in integration of GCP's basic RAG implementation, RAG Engine.  This is an easy-to-use system, simply ingesting documents from a bucket on GCP and offering basic options for chunk size and overlap, as well as chunk boundary detection system selection that includes an LLM parser option.</p>
+<p>After selecting between an English-oriented or multilingual embedding model, the vector store is selected, in this case the default RAG store, the enjoyably named "RagManaged Cloud Spanner", which was chosen for its simplicity and perfectly adequate functionality for the small corpus used for the site chatbot.  And then it just works. Beautiful.</p>
+<p>As a side note, the initial implementation had a miss in that "thinking" must be enabled and the "though signature" must be threaded through the conversation history to enable coherent responses and proper RAG tool use.  A great example of the power of AI-enabled development was the ease with with langfuse instrumentation could be enhanced with information on the RAG query generated by Gemini.  Although this did lead to a dead end of trying to manage the issues with prompt design, facilitated by langfuse prompt versioning, the whole matter was dealt with relatively quickly.</p>
+</main>
 </div>
 </body>
 </html>

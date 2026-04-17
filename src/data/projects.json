@@ -1,8 +1,8 @@
 [
   {
     "slug": "llm-fundamentals",
-    "title": "Deep Learning Fundamentals",
-    "description": "Fundamentals of deep learning, including transformer implementation in Pytorch, training and inference, performance analysis, hyperparameter tuning, and architectural variations (ablations).",
+    "title": "Large Language Models and Deep Learning Fundamentals",
+    "description": "Fundamentals of large language models and deep learning, including transformer implementation in Pytorch, training and inference, performance analysis, hyperparameter tuning, and architectural variations (ablations).",
     "art": null,
     "status": "published"
   },

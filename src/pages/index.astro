@@ -9,13 +9,7 @@ const publishedProjects = projects.filter((project) => project.status === "publi
   <section class="hero">
     <p class="eyebrow">Portfolio Site</p>
     <h1>juliusm.com</h1>
-    <p class="intro">
-      Building AI systems that <i>scale</i>.
-      <!-- other options -->
-      <!-- "pivot, <i>pivot,</i> pivot" -->
-      <!-- "<i>Own</i> the control plane." -->
-      <!-- "" -->
-    </p>
+    <p class="intro" id="hero-tagline">Building AI systems that <i>scale</i>.</p>
     <div class="link-row">
       <a href="#welcome">Welcome</a>
       <a href="/observable/projects/">Projects</a>
@@ -34,12 +28,16 @@ const publishedProjects = projects.filter((project) => project.status === "publi
     <p>
       After a reduction in force at his last position, he has been beavering away learning all about the new era of deep learning.  Julius is sincerely excited about this amazing new technology, and believes we are on the cusp of a third industrial revolution.
     </p>
-    -->
+    
     <p>
       I'm a researcher and engineer who loves the entire lifecycle of an AI product—from building and training sequence models from scratch, to deploying them via serverless cloud architectures, to ensuring they drive real business value.
     </p>
     <p>
       Check out my project writeups to see how I break down complex deep learning topics, or if you have a role that might be a good fit, head over to the <a href="/resume">Resume Generator</a> with your job description and let my serverless pipeline build a custom resume for you!
+    </p>
+    -->
+    <p>
+      The problem is no longer adding features, but controlling the complexity. That is the work I like: understanding the model, building the system around it, and getting the result to survive contact with real users. These projects cover that work, from a transformer implemented from scratch to a resume generator with real backend, auth, and PDF plumbing to a RAG chatbot grounded on its own corpus. My background in analysis and enterprise integration turns out to be unusually useful here: ambiguous requirements, messy systems, and the human problem of figuring out what actually needs to be built.
     </p>
   </section>
 
@@ -53,6 +51,32 @@ const publishedProjects = projects.filter((project) => project.status === "publi
     ))}
   </section>
 </BaseLayout>
+
+<script is:inline>
+  (function () {
+    const taglines = [
+      "Building AI systems that <i>scale</i>.",
+      "Pivot, <i>pivot,</i> pivot...",
+      "<i>Own</i> the control plane."
+    ];
+    const el = document.getElementById("hero-tagline");
+    if (!el || taglines.length < 2) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const HOLD_MS = 4500;
+    const FADE_MS = 350;
+    let index = 0;
+
+    setInterval(function () {
+      el.classList.add("is-fading");
+      window.setTimeout(function () {
+        index = (index + 1) % taglines.length;
+        el.innerHTML = taglines[index];
+        el.classList.remove("is-fading");
+      }, FADE_MS);
+    }, HOLD_MS);
+  })();
+</script>
 
 <style>
   .hero {
@@ -83,6 +107,17 @@ const publishedProjects = projects.filter((project) => project.status === "publi
     margin: 0;
     color: var(--text-1);
     max-width: 65ch;
+    transition: opacity 350ms ease;
+  }
+
+  .intro.is-fading {
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .intro {
+      transition: none;
+    }
   }
 
   .link-row {

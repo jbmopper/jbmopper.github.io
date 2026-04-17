@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.4">
+<base href="/observable/projects/candidate-data.html">
+<title>Candidate Data | juliusm.com</title>
+
+<link rel="preload" as="style" href="../_import/astro-bridge-theme.1d667312.css">
+<link rel="stylesheet" type="text/css" href="../_import/astro-bridge-theme.1d667312.css">
+<script type="module">
+
+import "../_observablehq/client.b8f66ce7.js";
+
+</script>
+<script src="/observable/_import/jay-standalone.js" defer></script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="../">juliusm.com</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link"><a href="./">Projects</a></li>
+    <li class="observablehq-link"><a href="./llm-fundamentals/">LLM Fundamentals</a></li>
+    <li class="observablehq-link"><a href="./resume-generator/">Resume Generator</a></li>
+    <li class="observablehq-link"><a href="./data-playground/">Data Playground</a></li>
+    <li class="observablehq-link"><a href="./site-chatbot/">Site Design and Chatbot Integration</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<header id="observablehq-header">
+<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="./" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="./resume-generator/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume Generator</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav></div><script>(function(){
+        const mount = window.location.pathname.startsWith('/observable') ? '/observable' : '';
+        const path = window.location.pathname.replace(/^\/observable(?=\/|$)/,'').replace(/\/index\.html$/,'/');
+        const normalized = path.endsWith('/') ? path : path + '/';
+        const slot = document.getElementById('portfolio-current-project-slot');
+
+        function navigate(target){
+          window.location.assign(window.location.origin + target);
+        }
+
+        function makeNavLink(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-nav-link';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        function makeBreadcrumbSeparator(){
+          const sep = document.createElement('span');
+          sep.className = 'portfolio-breadcrumb-separator';
+          sep.setAttribute('aria-hidden', 'true');
+          sep.textContent = '›';
+          return sep;
+        }
+
+        function makeProjectItem(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-project-item';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        if (slot) {
+          const projectMatch = normalized.match(/^\/projects\/([^/]+)\//);
+          if (projectMatch) {
+            const slug = projectMatch[1];
+            slot.appendChild(makeBreadcrumbSeparator());
+            if (slug === 'llm-fundamentals') {
+              const details = document.createElement('details');
+              details.id = 'portfolio-current-project-menu';
+              details.className = 'portfolio-project-menu';
+
+              const summary = document.createElement('summary');
+              summary.className = 'portfolio-nav-link portfolio-project-toggle';
+              summary.textContent = 'LLM Fundamentals';
+              details.appendChild(summary);
+
+              const dropdown = document.createElement('div');
+              dropdown.className = 'portfolio-project-dropdown';
+              const items = [
+                ['Introduction', '/projects/llm-fundamentals/'],
+                ['Architecture and Expected Performance Analysis', '/projects/llm-fundamentals/perf-expected/'],
+                ['Benchmarks and Empirical Performance Analysis', '/projects/llm-fundamentals/perf-empirical/'],
+                ['Nvidia CUDA Nsys Trace Analysis', '/projects/llm-fundamentals/nsys/'],
+                ['Nsys GPU Trace Viewer', '/projects/llm-fundamentals/nsys-viewer/'],
+                ['Learning Parameter Sweeps', '/projects/llm-fundamentals/optimizer-sweep/'],
+                ['Architectural Variations (Ablations)', '/projects/llm-fundamentals/ablations/']
+              ];
+              for (const [label, target] of items) {
+                dropdown.appendChild(makeProjectItem(label, mount + target));
+              }
+              details.appendChild(dropdown);
+              slot.appendChild(details);
+
+              document.addEventListener('click', function(event){
+                if (!details.hasAttribute('open')) return;
+                if (!details.contains(event.target)) details.removeAttribute('open');
+              });
+              document.addEventListener('keydown', function(event){
+                if (event.key === 'Escape') details.removeAttribute('open');
+              });
+            } else if (slug === 'resume-generator') {
+              slot.appendChild(makeNavLink('Resume Generator', mount + '/projects/resume-generator/'));
+            } else {
+              const labels = {
+                'resume-generator': 'Resume Generator',
+                'data-playground': 'Data Playground',
+                'site-chatbot': 'Site Design and Chatbot Integration'
+              };
+              const fallback = slug
+                .split('-')
+                .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+                .join(' ');
+              slot.appendChild(makeNavLink(labels[slug] || fallback, mount + '/projects/' + slug + '/'));
+            }
+          }
+        }
+
+        for (const id of ['observablehq-sidebar-toggle', 'observablehq-sidebar-backdrop', 'observablehq-sidebar']) {
+          const node = document.getElementById(id);
+          if (node) node.remove();
+        }
+      })();</script>
+</header>
+<aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
+<nav>
+<div>Contents</div>
+<ol>
+<li class="observablehq-secondary-link"><a href="#experience">Experience</a></li>
+<li class="observablehq-secondary-link"><a href="#projects">Projects</a></li>
+<li class="observablehq-secondary-link"><a href="#education">Education</a></li>
+</ol>
+</nav>
+</aside>
+<main id="observablehq-main" class="observablehq">
+<h1 id="candidate-data" tabindex="-1"><a class="observablehq-header-anchor" href="#candidate-data">Candidate Data</a></h1>
+<h2 id="personal-info" tabindex="-1"><a class="observablehq-header-anchor" href="#personal-info">Personal Info</a></h2>
+<ul>
+<li><strong>Name:</strong> Julius Mopper</li>
+<li><strong>Phone:</strong> 503-347-5334</li>
+<li><strong>Email:</strong> jbmopper@gmail.com</li>
+<li><strong>Location:</strong> Lone Tree, CO</li>
+<li><strong>Linkedin:</strong> linkedin.com/in/jbmopper</li>
+<li><strong>Github:</strong> github.com/jbmopper</li>
+<li><strong>Portfolio:</strong> juliusm.com</li>
+</ul>
+<h2 id="experience" tabindex="-1"><a class="observablehq-header-anchor" href="#experience">Experience</a></h2>
+<h3 id="impute-job-title" tabindex="-1"><a class="observablehq-header-anchor" href="#impute-job-title">[impute job title]</a></h3>
+<p><strong>Company:</strong> <a href="https://juliusm.com" target="_blank" rel="noopener noreferrer">juliusm.com</a> · <strong>Location:</strong> Lone Tree, CO · <strong>Start Date:</strong> Oct 2025 · <strong>End Date:</strong> Present</p>
+<p><strong>Narrative</strong></p>
+<p>Functioned in any and all roles to create <a href="https://juliusm.com" target="_blank" rel="noopener noreferrer">juliusm.com</a>, Julius Mopper's portfolio site.  Guided assistants to implement a complex architecture, firstly consisting of a static site.  To host project write-ups, another project was created utilizing high-performance javascript-based notebooks are build using a notebook and graphing libraries then exported to the general portfolio site.  This included the creation of tests, CI tooling, and deployment scripts.</p>
+<p>The portfolio site was then expanded to provide a frontend for an LLM-based resume generation system.  That system was implemented as a serverless instance that ingests a job description, processes it and the candidate's data (this file!), and sends hand-edited and templated system and user prompts via an API request to a major LLM provider, which outputs a structured "power markdown" resume that is fed into a custom PDF generation pipeline.  To integrate this system, assistants were guided to create complex deployment scripts and an auth system that uses a Turnstile-based JWT auth scheme, which validates requests through an API gateway, which routes the request to the resume generation lambda.</p>
+<p>Also during this period, implemented a Transformer language model from scratch in PyTorch based on Stanford CS336 (Language Modeling from Scratch).  The implementation was a "blank sheet" exercise scaffolded by test adapters, which required implementing a full modern transformer architecture including tokenizer, attention layers, optimizer, training loop, and decoder, that did not use "batteries-included" PyTorch classes but instead subclassed only the base PyTorch classes needed to wire the implementations into the auto-differentiation and backpropagation system.</p>
+<p>This work was expanded by deep analysis of the architecture's theoretical performance, extensive benchmarks of actual performance across MPS (Apple Silicon) and CUDA targets, hyperparameter sweeps for tuning optimizer hyperparemeters and the creation and analysis of a novel metric for enhancing parameter search performance, and analysis of the impact architectural variations (ablations) on model training characteristics.</p>
+<p>In order to deploy the model for serverles inference, a KV cache was implemented and parts of the Transformer stack using tensor helper libraries were rewritten in plain PyTorch.  The trained models were then exported to a runtime format and wired to the frontend</p>
+<p>After this the resume generation lambda was enhanced with Langfuse observability; prompt versioning, LLM evals, and Langgraph state flows are being added to enable a multi-step, governed, flow that uses regression tests and experiments to deliver enhanced output.</p>
+<p>Most recently, the portfolio site was enhanced with a RAG chatbot backed by Google Cloud Vertex AI services.  For this, a clean corpus was prepared, a chunking strategy and embedding models were chosen, tool call for the LLM configured, prompt written, and a CloudRun service was created to integrate frontend with the generative AI service.</p>
+<p><strong>Technical</strong></p>
+<p>Used Observable.js and Echarts for the project writeups, migrating off Marimo which had difficulty with larger data.  The main site is in Astro and Svelte, with an export bridge from Observable to Astro which required iteration and re-scoping in order to maintain reliable export.  The site is hosted by Github Sites, with AWS providing WAF, API Gateway, and Lambdas for serverless backend.  Terraform scripts are used to manage infrastructure-as-code, and Cloudflare Turnstile provides the CAPTCHA service.</p>
+<p>The model is being exported to ONNX for deployment. Site tests are run in NPM/Vite and Playwright.</p>
+<h3 id="senior-business-analyst" tabindex="-1"><a class="observablehq-header-anchor" href="#senior-business-analyst">Senior Business Analyst</a></h3>
+<p><strong>Company:</strong> Charter Communications (Spectrum Enterprise) · <strong>Location:</strong> Greenwood Village, CO · <strong>Start Date:</strong> Oct 2022 · <strong>End Date:</strong> Oct 2025</p>
+<p><strong>Narrative</strong></p>
+<p>As the sole Business Analyst covering multiple Agile Scrum teams developing the SpectrumEnterprise.net client-facing web portal, I was the glue between business stakeholders, developers, testers, and other teams within Charter with whom we needed to integrate.  These integrations involved processing and serving customers data from complex and disparate source systems ranging from voice usage data provided via SOAP APIs through customer trouble tickets provided via REST through integrating billing data delivered via message streams and more.  My broad technical, engineering, and system design skills were used to translate business requirements into technical requirements, crafting requirement documents (Stories), refining the stories with the software delivery teams, experience designers, and business stakeholders, and supporting and guiding developers and testers from implementation through testing and release.  We maintained a strong track record of on-time delivery and increasing portal quality.</p>
+<p>Over the final half-year in this role, powerful AI tools became widely available, specifically Amazon Q Developer, a wrapper for the Claude Code CLI (terminal) service.  To leverage this tool effectively, I created agentic workflows which used a locally-run Atlassian MCP server to collect information Charter's on-premises Jira and Confluence instances to populate vector databases used for RAG.  The MCP and RAG tools were used in agentic workflows I created to automate organization-wide research and Jira issue creation, which substantially reduced the amount of time required for these tasks substantially.  I also successfully used AI tools to perform analysis on the front- and back-end codebases for the portal and automated the creation of documentation at an extremely detailed level, discovering quirks in the code that the current developers had lost awareness of. These successes are due to a talent for extremely high-quality prompt writing and iteration, a talent which I further applied to squashing bugs, identifying causes and suggesting solutions to issues in Java services which developers and architects were struggling to solve.</p>
+<p>My more normal duties included my own architectural contributions, as I collaborated with developers and architects from our teams and teams managing the broad swath of Charter's source systems to create performant customer-facing solutions using our AWS-hosted services.  This involved a lot of design work around caching architectures, but also included the broad middleware architecture work needed to run a customer-facing website serving large enterprise customers and relying on fetching, processing, and return data from disparate backend services.  This included integrating GraphQL services, Lambdas, caches, relational databases, GraphQL subscriptions, secure REST instances, and more.  This work culminated in the crafting of GraphQL APIs for frontend consumption and collaboration with the user experience designers and business stakeholders to coordinate the frontend integration with those APIs.</p>
+<p>This work also involved managing token flows via the organization's centralized OAuth provider and coordinating backend authorization/credentials, rate limits, and so on, between our systems and other source systems via the centralized secure routing group and cloud ops teams.  These integrations stretched from user login through such far-flung applications as payment processing and restarting customer premises equipment. I also actively assisted with PCI (payment security) audits, penetration testing remediation and other cybersecurity compliance efforts, and designed CPNI (telecommunications data) compliant APIs.</p>
+<p>Communication and support were core parts of my duties.  I functioned as a point person to interface with other departments across a 15k-employee company with operations in multiple timezones and offshore teams.  These interactions included onboarding to other backend systems and designing solutions for external teams.  I also supported testers with API validation and systems discovery.</p>
+<p>Additionally, I served as the point person for our group in outreach to other groups within Charter for integration and support, building many fruitful relationships with individuals from outside departments.  I also prepared architectural diagrams for the company-wide systems architecture catalog used by top leaders and presented those diagrams to the Enterprise Architecture cross-functional group.</p>
+<p><strong>Technical</strong></p>
+<p>Handled full SDLC from product/project scope through release in an Agile/Scrum context.  Participated in planning sessions for use of Disciplined Agile methodologies.  Helped forecast work completion via estimation and plan/scope work to fit in organizational planning brackets.  Wrote user stories including test-oriented acceptance criteria. Collected project information in Confluence pages; used Atlassian Jira and Confluence extensively.</p>
+<p>Tools used included Postman for API testing, LucidCharts for diagramming, including compiling UML sequence diagrams.  The frontend was in React and Typescript and the middleware was in Java.  Observability used custom dashboards as well as Splunk and DataDog.</p>
+<h3 id="integration-analyst-ii" tabindex="-1"><a class="observablehq-header-anchor" href="#integration-analyst-ii">Integration Analyst II</a></h3>
+<p><strong>Company:</strong> Charter Communications (Spectrum Enterprise) · <strong>Location:</strong> Greenwood Village, CO · <strong>Start Date:</strong> Jan 2022 · <strong>End Date:</strong> Oct 2022</p>
+<p><strong>Narrative</strong></p>
+<p>My work at Spectrum Enterprise began as a contract role supporting a full rewrite of the existing SpectrumEnterprise.net portal to an entirely new frontend and middleware implementation.  Due to my strong performance and capacity to produce high-quality deliverables in a fast-paced work environment, I was converted to an FTE role after 8 months, which required an exception from HR as 12 months as a contractor is generally required.</p>
+<p><strong>Technical</strong></p>
+<p>The old site was in Angular with REST middleware and migrated to React with GraphQL middleware.</p>
+<h3 id="product-development-specialist-machine-learning-product-analyst" tabindex="-1"><a class="observablehq-header-anchor" href="#product-development-specialist-machine-learning-product-analyst">Product Development Specialist (Machine Learning Product Analyst)</a></h3>
+<p><strong>Company:</strong> Wiland Inc. · <strong>Location:</strong> Niwot, CO · <strong>Start Date:</strong> Nov 2017 · <strong>End Date:</strong> May 2021</p>
+<p><strong>Narrative</strong></p>
+<p>Wiland is a database marketing firm specializing in high-end mail catalogs that was diversifying into data products (audiences) when I was there. Database marketing is a data science-centered business that involves the creation of audience segmentation models. Clients contribute their customer lists and transaction data to the database and are thereby allowed to receive lists of leads, selected by the segmentation models, from all database contributors.</p>
+<p>My primary role at Wiland was to serve as data scientist and product owner for the CLEAR modeling platform, a custom decision tree-based audience segmentation model that relies heavily on custom feature engineering of retail transaction data to produce superior results. The data development side involved analyzing new data streams and designing transformations to maximally utilize their value in the platform, as well as fine-tuning their use within the CLEAR system through proprietary techniques. The product ownership side involved writing requirements for implementing changes I designed, grooming and handing them off to developers, and validating the implementations.</p>
+<p>These responsibilities carried over to the development of new data products, including pre-made audiences that non-database-contributing clients could use on the Meta advertising platform and others.  These audience products targeted the entire US adult population, generating segmented audience lists covering approximately 60% of US adults after output cleaning. I supported many parts of this project, beginning by assessing the value of new data provided by Amex Advance which could be made available to non-database clients. This analysis became an internal white paper I wrote which educated the client services staff on the power of the new data.  I was further involved in designing and validating feature transforms and model ensembles to generate superior pre-built marketing audience lists for client purchase.</p>
+<p>A few things to note about this role. For one, I was working one layers down from the CEO and routinely presented results of my research and development to him and other senior leaders. Additionally, the regulatory environment is notable.  Voter data and client transaction data both carried requirements for how they were used, and these rules carried down to the most basic levels of selecting data for inclusion in modeling, making me responsible for correct application in product design.</p>
+<p><strong>Technical</strong></p>
+<p>Conducted extensive data analysis in Julia and Excel, with some work in SQL and Python.  Wrote requirements for data product algorithm implementation and tested/verified results through parallel implementation.  Wrote approximately 10k lines of Go/Golang to implement a concurrent data scraper for the internal app (since support resources were unavailable) and cleaning and processing logic for that data, which supported further analysis.</p>
+<h3 id="laboratory-assistant" tabindex="-1"><a class="observablehq-header-anchor" href="#laboratory-assistant">Laboratory Assistant</a></h3>
+<p><strong>Company:</strong> Diana Plant Sciences (formerly Exelixis) · <strong>Location:</strong> Portland, OR · <strong>Start Date:</strong> Apr 2009 · <strong>End Date:</strong> Oct 2010</p>
+<p><strong>Narrative</strong></p>
+<p>Key player at a 9-person early-stage biotech startup attempting to unlock the power of cultured plant cells to produce useful secondary metabolites.  Utilized a broad suite of modern molecular biology techniques in a fast-paced environment, including by designing and analyzing experiments, applying sequence analysis and other bioinformatics techniques.</p>
+<p><strong>Technical</strong></p>
+<p>Designed primers and constructs, performed northern &amp; western blots, PCR, qPCR/RT-PCR, and more.  Extensive experience in plant cell culture.</p>
+<h2 id="projects" tabindex="-1"><a class="observablehq-header-anchor" href="#projects">Projects</a></h2>
+<h3 id="resume-lambda" tabindex="-1"><a class="observablehq-header-anchor" href="#resume-lambda">Resume Lambda</a></h3>
+<p><strong>Year:</strong> 2026 · <strong>Status:</strong> In Beta</p>
+<p><strong>Narrative</strong></p>
+<p>Architected and built a system to automatically generate a polished, tailored PDF resume based on a submitted job description, integrated with juliusm.com.  The required architecting integrations between LLM APIs and the site.  LLMs were utilized at the API level and required writing programs which build the API requests from prompt templates, user input, and collateral documentation.  Complex prompts were tuned to ensure output of correctly formatted, structured Markdown+HTML responses which properly generate a PDF output in the conversion step.</p>
+<p>Integration with the site included many security features including using Cloudflare Turnstile to prevent abuse and by integrating it with a JWT token generator and validator that are used by the API gateway to prevent unauthorized traffic.  The system was integrated into a user-friendly interface on the site.</p>
+<p><strong>Technical</strong></p>
+<p>System uses a two-Lambda pipeline (Python orchestrator + Node.js PDF renderer) deployed via AWS SAM.  The Python orchestrator handles multi-format document extraction (txt, md, rtf, html, docx, odt, pdf), stores artifacts in S3, and calls the Anthropic Claude API for document generation.  The Node.js renderer uses Puppeteer with headless Chromium to produce PDFs from structured Markdown.</p>
+<p>The AWS Lambda was integrated securely into juliusm.com using Cloudflare Turnstile, AWS WAF and API Gateway with JWT session management, least-privilege IAM, S3 with SSE encryption and TLS-only policy, pre-commit secret scanning with gitleaks</p>
+<h3 id="large-language-models-and-deep-learning-fundamentals" tabindex="-1"><a class="observablehq-header-anchor" href="#large-language-models-and-deep-learning-fundamentals">Large Language Models and Deep Learning Fundamentals</a></h3>
+<p><strong>Year:</strong> 2025-2026 · <strong>Status:</strong> <a href="https://juliusm.com/observable/projects/llm-fundamentals/" target="_blank" rel="noopener noreferrer">Writeup available</a></p>
+<p><strong>Narrative</strong></p>
+<p>Implemented a Transformer language model (based on Stanford CS336: Language Models from Scratch assignment 1) end-to-end in PyTorch.  The assignment provided a basic architecture via testing hooks which validated the performance of from-scratch implementations with subclassed the most-basic-possible PyTorch classes in order to integrate with the auto-differentiation and backpropagation functions.  Additionally, an optimizer, learning rate scheduler, training loop, and nucleus-sampling decoder were implemented.</p>
+<p>The implementation included an efficient tokenizer with special token handling, embedding and unembedding layers, and transformer layers that included norms, the attention mechanism, rotary positional encoding and feed-forward networks.  This built knowledge of PyTorch, transformer and deep learning architectures, efficient encoder implementations, numerical stability, CUDA and MPS deep learning backends, and decoder design.</p>
+<p>Subsequently, the architecture was documented in detail and calculations of estimated performance were performed.  Benchmarks were conducted across a grid of settings to assess actual performance, which is significantly lower than theoretical.  More interestingly, this analysis illustrated the impact of the quadratic asymptotic complexity in sequence length of the attention mechanism and the impact of batch size on avoiding a performance penalty from kernel launches.</p>
+<p>Nvidia Nsys profiles were collected across various model settings and scenarios to gain familiarity with the Nsight tooling and observe the impact of, for example, model dimensions that break alignment with the CUDA warp dimensions.</p>
+<p>A two-stage hyperparameter sweep was conducted over optimizer parameters.  This work included integrating the training class with the wandb sweep API which provided a bayesian search algorithm and early-stopping.  A novel metric was created to elicit the desired early stopping behavior.  Specifically, that behavior was for the model to initially display increasing loss.  The metric created rewarded early increasing loss while preserving the overall prioritization of low evaluation loss, and was successful at eliciting the desired early stopping behavior.</p>
+<p>Architectural variations (ablations) were conducted to investigate the impact of various architectural variations.  The impact of these on training behavior were analyzed and these changes were found to negatively impact model convergence and best evaluation loss.</p>
+<p>The results of this extensive research were compiled and documented as a serries of analytic notebooks on the juliusm.com portfolio site.</p>
+<p>In order to make the model suitable for demonstration inference on juliusm.com, a KV cache was implemented, again from scratch, and the decoder was rewritten.  The model was then exported to a common runtime format to run inference inside a serverless backend instance and integrate with the site.</p>
+<p><strong>Technical</strong></p>
+<p>The tokenizer was a GPT-2-style byte-pair encoding tokenizer.  Standard scaled dot-product attention was used after the RoPE rotary positional encoder step.  The architecture featured an RMS pre-norm and SwiGLU FFN.  The optimizer was the AdamW optimizer, and a standard cross-entropy loss function was used.  The training was monitored by wandb integration, conducted deterministically by controlling random seed values, and standard checkpointing and S3 uploads were performed.  The einx package and jaxtyping hints were used to increase readability and ergonomics of the code.</p>
+<p>Estimated performance calculations used both fp32 on MPS and mixed-precision on CUDA.  Benchmarks were done on an Apple M4 with 10 GPU cores and 24GB unified memory and on CUDA via Docker using Nvidia profiling images.  The Torch benchmark Timer class and BlockedAutorange method was used to perform architecture sweeps on MPS and asses accuracy of performance estimations, while more standard timing-based benchmarks were used to compare MPS and CUDA.  Models were compiled for CUDA via the Torch inductor compiler and used automatic mixed precision, which was supported by the RTX 4090 (L4) systems used.</p>
+<p>Hyperparameter sweeps used the wandb sweep API with bayesian search and hyperband early stopping.  Ablations included switching from pre-norm to post-norm, removing the norm altogether, changing the FFN from SwiGLU to SILU, and removing the RoPE functionality.</p>
+<p>ONNX was used to export model snapshots for the web-based inference service.  While the einx package had been used to write readable, streamlined code, ONNX export required rewriting some sections in vanilla PyTorch (more reshaping and squeezing/unsqueezing).  This word was conducted alongside the KV cache implementation.</p>
+<h2 id="education" tabindex="-1"><a class="observablehq-header-anchor" href="#education">Education</a></h2>
+<h3 id="machine-learning-certificate" tabindex="-1"><a class="observablehq-header-anchor" href="#machine-learning-certificate">Machine Learning Certificate</a></h3>
+<p><strong>Institution:</strong> eCornell (Cornell University Online)</p>
+<p><strong>Narrative</strong></p>
+<p>A condensed version of Cornell's CS 5780 class provided via eCornell. The core was building from clustering and binary classifiers through perceptrons and multilayer perceptrons to full neural network architectures, including sections on implementing convolutional neural nets in NumPy.</p>
+<p>The course also covered broader machine learning topics such as unsupervised learning, decision trees and XGBoost, providing an excellent bridge from my econometrics background to broader machine learning topics. All topics were taught via Python implementations, primarily in NumPy, in addition to lectures and readings.</p>
+<h3 id="m-a-economics" tabindex="-1"><a class="observablehq-header-anchor" href="#m-a-economics">M.A. Economics</a></h3>
+<p><strong>Institution:</strong> Portland State University</p>
+<p><strong>Narrative</strong></p>
+<p>Extensive coursework in mathematics including graduate-level Real Analysis, Mathematical Statistics and Econometrics sequences, in addition to Game Theory, Algorithms, and the core Economics curriculum. Electives included Institutional Economics and Environmental Economics.</p>
+<h3 id="b-a-biology" tabindex="-1"><a class="observablehq-header-anchor" href="#b-a-biology">B.A. Biology</a></h3>
+<p><strong>Institution:</strong> Pomona College</p>
+<p><strong>Inclusion Note</strong></p>
+<p>Always include. Pomona College is a highly selective institution and the liberal arts foundation supports communication and critical thinking claims regardless of target role.</p>
+<p><strong>Narrative</strong></p>
+<p>Strong Liberal Arts education with an emphasis on critical thinking and written and verbal communication. Senior project on fungal biology.</p>
+<h3 id="m-s-molecular-biology" tabindex="-1"><a class="observablehq-header-anchor" href="#m-s-molecular-biology">M.S. Molecular Biology</a></h3>
+<p><strong>Institution:</strong> Oregon Health and Science University</p>
+<p><strong>Inclusion Note</strong></p>
+<p>Only include when the target role involves biology, biotech, life sciences, or computational biology. For all other roles, omit — it dilutes the narrative and may displace more relevant credentials.</p>
+<p><strong>Narrative</strong></p>
+<p>Coursework across molecular biology subjects.  Thesis on translational control via ribosomal stalling.</p>
+</main>
+</div>
+</body>
+</html>
