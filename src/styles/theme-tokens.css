@@ -7,11 +7,6 @@
  * Quick-edit guide: see docs/theme-knobs.md
  */
 :root {
-  /* Font smoothing — override Observable's default `antialiased` so both
-     Astro and Observable pages render with the same (browser-default) weight. */
-  -webkit-font-smoothing: auto;
-  -moz-osx-font-smoothing: auto;
-
   /* Core palette */
   --bg-0: #0c1118;
   --bg-1: #141b24;

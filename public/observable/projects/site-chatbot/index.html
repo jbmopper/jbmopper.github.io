@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.4">
+<base href="/observable/projects/site-chatbot/">
+<title>Site Design and Chatbot Integration | juliusm.com</title>
+
+<link rel="preload" as="style" href="../../_import/astro-bridge-theme.1f3a5004.css">
+<link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.1f3a5004.css">
+<script type="module">
+
+import {define} from "../../_observablehq/client.b8f66ce7.js";
+import {registerFile} from "../../_observablehq/stdlib.a50b4fda.js";
+
+registerFile("./AI Native development.png", {"name":"./AI Native development.png","mimeType":"image/png","path":"../../_file/projects/site-chatbot/AI Native development.da274ef7.png","lastModified":1775265873351,"size":174341});
+
+define({id: "7a4bd9c7", inputs: ["FileAttachment"], outputs: ["AINative"], body: (FileAttachment) => {
+const AINative = FileAttachment("./AI Native development.png").image({alt: "Vagueprompting", style: "width: 60%; min-width: 600px;"});
+return {AINative};
+}});
+
+define({id: "c6ab1d37", inputs: ["html","AINative","display"], body: async (html,AINative,display) => {
+display(await(
+html`<div style="text-align: left;">${AINative}</div>`
+))
+}});
+
+</script>
+<script src="/observable/_import/jay-standalone.js" defer></script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="../../">juliusm.com</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link"><a href="../">Projects</a></li>
+    <li class="observablehq-link"><a href="../llm-fundamentals/">LLM Fundamentals</a></li>
+    <li class="observablehq-link"><a href="../resume-generator/">Resume Generator</a></li>
+    <li class="observablehq-link"><a href="../data-playground/">Data Playground</a></li>
+    <li class="observablehq-link observablehq-link-active"><a href="./">Site Design and Chatbot Integration</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<header id="observablehq-header">
+<div class="portfolio-header-row"><a class="portfolio-brand" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="../resume-generator/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume Generator</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a><span id="portfolio-current-project-slot"></span></nav></div><script>(function(){
+        const mount = window.location.pathname.startsWith('/observable') ? '/observable' : '';
+        const path = window.location.pathname.replace(/^\/observable(?=\/|$)/,'').replace(/\/index\.html$/,'/');
+        const normalized = path.endsWith('/') ? path : path + '/';
+        const slot = document.getElementById('portfolio-current-project-slot');
+
+        function navigate(target){
+          window.location.assign(window.location.origin + target);
+        }
+
+        function makeNavLink(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-nav-link';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        function makeProjectItem(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-project-item';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        if (slot) {
+          const projectMatch = normalized.match(/^\/projects\/([^/]+)\//);
+          if (projectMatch) {
+            const slug = projectMatch[1];
+            if (slug === 'llm-fundamentals') {
+              const details = document.createElement('details');
+              details.id = 'portfolio-current-project-menu';
+              details.className = 'portfolio-project-menu';
+
+              const summary = document.createElement('summary');
+              summary.className = 'portfolio-nav-link portfolio-project-toggle';
+              summary.textContent = 'LLM Fundamentals';
+              details.appendChild(summary);
+
+              const dropdown = document.createElement('div');
+              dropdown.className = 'portfolio-project-dropdown';
+              const items = [
+                ['Introduction', '/projects/llm-fundamentals/'],
+                ['Architecture and Expected Performance Analysis', '/projects/llm-fundamentals/perf-expected/'],
+                ['Benchmarks and Empirical Performance Analysis', '/projects/llm-fundamentals/perf-empirical/'],
+                ['Nvidia CUDA Nsys Trace Analysis', '/projects/llm-fundamentals/nsys/'],
+                ['Nsys GPU Trace Viewer', '/projects/llm-fundamentals/nsys-viewer/'],
+                ['Learning Parameter Sweeps', '/projects/llm-fundamentals/optimizer-sweep/'],
+                ['Architectural Variations (Ablations)', '/projects/llm-fundamentals/ablations/']
+              ];
+              for (const [label, target] of items) {
+                dropdown.appendChild(makeProjectItem(label, mount + target));
+              }
+              details.appendChild(dropdown);
+              slot.replaceWith(details);
+
+              document.addEventListener('click', function(event){
+                if (!details.hasAttribute('open')) return;
+                if (!details.contains(event.target)) details.removeAttribute('open');
+              });
+              document.addEventListener('keydown', function(event){
+                if (event.key === 'Escape') details.removeAttribute('open');
+              });
+            } else if (slug === 'resume-generator') {
+              slot.replaceWith(makeNavLink('Resume Generator', mount + '/projects/resume-generator/'));
+            } else {
+              const labels = {
+                'resume-generator': 'Resume Generator',
+                'data-playground': 'Data Playground',
+                'site-chatbot': 'Site Design and Chatbot Integration'
+              };
+              const fallback = slug
+                .split('-')
+                .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+                .join(' ');
+              slot.replaceWith(makeNavLink(labels[slug] || fallback, mount + '/projects/' + slug + '/'));
+            }
+          } else {
+            slot.remove();
+          }
+        }
+
+        for (const id of ['observablehq-sidebar-toggle', 'observablehq-sidebar-backdrop', 'observablehq-sidebar']) {
+          const node = document.getElementById(id);
+          if (node) node.remove();
+        }
+      })();</script>
+</header>
+<main id="observablehq-main" class="observablehq">
+<h1 id="site-design-and-rag-chatbot-integration" tabindex="-1"><a class="observablehq-header-anchor" href="#site-design-and-rag-chatbot-integration">Site Design and RAG Chatbot Integration</a></h1>
+<p><em>Spoiler alert</em>: these pages are used as the RAG corpus for the chatbot, and this page in particular was created to provide self-referential grounding.</p>
+<h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
+<p>Software engineering tasks that used to take weeks can now take minutes.  As the value of raw coding decreases, other skills become more needed.  Coming from a background in requirements and integration, and having dealt with the needs of full-stack development for a customer-facing web portal, the shift to "AI-Native Fullstack Developer" as such has been fascinating and joyous, no cap.</p>
+<p>This is a space to discuss my observations on these new, marvelous tools, and explain my perspective on their use and potential pitfalls, in addition to documenting the site itself.  I'll start with a meme that found me on the internet:</p>
+<div class="observablehq observablehq--block"><!--:7a4bd9c7:--></div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:c6ab1d37:--></div>
+<p>It's not that bad, assuming one gives the system clear requirements and limited scope.  And maybe we didn't think of adding fins to the car but once they're there we realize it's good.  Given the broad training of the coding assistants and strong increase in quality, allowing our suddenly-trusted advisors leeway to follow their bliss is, if nothing else, a valid form of research into architectural variations we may not have considered.</p>
+<!--
+
+# Chatbot Integration
+
+## Introduction
+
+This brief writeup is being created both to document interesting development issues for a very real-world kind of application, and also because these writeups (and other documents) comprise the retrieval-augmented generation (RAG) corpus used the ground the chatbot's responses.  Thus creating the writeup enables the chatbot to "know" about itself.  I've named it "Jay" and given it a Steller's Jay theme, in honor of the West Coast.
+
+The "Jay" chatbot is an off-the-shelf integration with Google Gemini via the Google Cloud Platform Vertex AI service.  Interestingly, even such integrations can display interesting issues that provide an opportunity for research and problem-solving.
+
+First, some background. Vertex AI is Google Cloud Platform's current AI brand, with a variety products and services under its umbrella.  This includes API access to models like Gemini 3.0 Flash (which powers the chatbot) with baked-in integration of GCP's basic RAG implementation, RAG Engine.  This is an easy-to-use system, simply ingesting documents from a bucket on GCP and offering basic options for chunk size and overlap, as well as chunk boundary detection system selection that includes an LLM parser option.
+
+After selecting between an English-oriented or multilingual embedding model, the vector store is selected, in this case the default RAG store, the enjoyably named "RagManaged Cloud Spanner", which was chosen for its simplicity and perfectly adequate functionality for the small corpus used for the site chatbot.  And then it just works. Beautiful.
+
+## API & Prompt Design
+
+While there are some differences with the frontend-middleware API, the middleware-model interface works with a routine and basic LLM-type API:
+```json
+{
+  "contents": [
+    {
+      "role": "user",
+      "parts": [{ "text": "Hi, who are you?" }]
+    },
+    {
+      "role": "model",
+      "parts": [{ "text": "I am a large language model, trained by Google." }]
+    },
+    {
+      "role": "user",
+      "parts": [{ "text": "What can you do?" }]
+    }
+  ],
+}
+```
+Here, however, we wish the model to know what the user is looking at, i.e. what page they're on, so we send multiple parts with the current `user` turn, the first of which contains the page title and path:
+```json
+{
+  "contents": [
+    {
+      "role": "user",
+      "parts": [{ "text": "Hi, who are you?" }]
+    },
+    {
+      "role": "model",
+      "parts": [{ "text": "I am a large language model, trained by Google." }]
+    },
+    {
+      "role": "user",
+      "parts": [
+        { "text": "[PageContext]\ntitle: juliusm.com\npath: /\n[/PageContext]" },
+        { "text": "What can you do?" }
+        ]
+    }
+  ],
+}
+```
+In practice, this JSON isn't sent, rather the actual communication is handled by the SDK which provides functions for generating the request content and directing RAG use.
+
+The initial implementation used the following system prompt:
+
+> You are Jay, a friendly AI assistant on Julius Mopper's portfolio site (juliusm.com).
+> You answer questions about Julius's projects, skills, and experience using the
+> grounding context retrieved from the site's content. Be concise, conversational,
+> and technically accurate. If the user is viewing a specific page, prioritize
+> information relevant to that page.
+> 
+> Some user turns may begin with a [PageContext] metadata block that contains the
+> current page title and path. Use that metadata only as navigation context for
+> relevance. Focus on answering the user's actual question, and do not mention the
+> metadata block unless it helps answer directly.
+
+This is a simple prompt, but combined with the RAG system delivers a good quality of output.  Sort of.
+
+## The Problem
+
+The problem that emerged was interesting and unforeseen. We would expect a normal conversation to go along the lines of 
+
+> `user`: Hello?  
+> `Jay`: Hello, I'm Jay, Julius' assistant.  On this site you can explore Julius' work on several advanced projects...  
+> `user`: Does Julius know Python?  
+>`Jay`: Yes, Julius has extensive experience with Python, especially PyTorch, which he used...  
+
+Instead we see something along the lines of
+
+> `user`: Hello?  
+> `Jay`: Hello, I'm Jay, Julius' assistant.  On this site you can explore Julius' work on several advanced projects...  
+> `user`: Does Julius know Python?  
+>`Jay`: This site features Julius' work, which includes implementing a Tranformer model from scratch...  
+> `user`: Is Julius an expert on enterprise systems integration?  
+> `Jay`: Julius has strong experience with Python, especially PyTorch...  
+> `user`: What about Agile software development?  
+> `Jay`: Julius' experience with enterprise systems integration...  
+
+Or possibly even worse.  We turn to our observability system to diagnose the issue:
+
+```js
+const problemImg = FileAttachment("mysterious_vertex_problem.png").image({alt: "Langfuse trace showing the broken responses", style: "width: 60%; min-width: 600px;"});
+```
+
+```js
+html`<div style="text-align: left;">${problemImg}</div>`
+```
+
+```js
+const causeImg = FileAttachment("mysterious_vertex_cause.png").image({alt: "Langfuse trace showing the inappropriate RAG query", style: "width: 60%; min-width: 600px;"});
+```
+
+```js
+html`<div style="text-align: left;">${causeImg}</div>`
+```
+--></main>
+</div>
+</body>
+</html>

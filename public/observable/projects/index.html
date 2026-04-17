@@ -14,7 +14,7 @@
 import {define} from "../_observablehq/client.b8f66ce7.js";
 import {registerFile} from "../_observablehq/stdlib.a50b4fda.js";
 
-registerFile("../data/projects.json", {"name":"../data/projects.json","mimeType":"application/json","path":"../_file/data/projects.97db3957.json","lastModified":1776046920699,"size":1156});
+registerFile("../data/projects.json", {"name":"../data/projects.json","mimeType":"application/json","path":"../_file/data/projects.6eb8e837.json","lastModified":1776266371249,"size":1128});
 
 define({id: "f9f2e3a0", inputs: ["FileAttachment"], outputs: ["projects"], body: (FileAttachment) => {
 const projects = FileAttachment("../data/projects.json").json();
@@ -55,7 +55,7 @@ html`<div class="project-list">
     <li class="observablehq-link"><a href="./llm-fundamentals/">LLM Fundamentals</a></li>
     <li class="observablehq-link"><a href="./resume-generator/">Resume Generator</a></li>
     <li class="observablehq-link"><a href="./data-playground/">Data Playground</a></li>
-    <li class="observablehq-link"><a href="./rag-chatbot/">RAG Chatbot</a></li>
+    <li class="observablehq-link"><a href="./site-chatbot/">Site Design and Chatbot Integration</a></li>
   </ol>
 </nav>
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
@@ -139,7 +139,7 @@ html`<div class="project-list">
               const labels = {
                 'resume-generator': 'Resume Generator',
                 'data-playground': 'Data Playground',
-                'rag-chatbot': 'RAG Chatbot'
+                'site-chatbot': 'Site Design and Chatbot Integration'
               };
               const fallback = slug
                 .split('-')

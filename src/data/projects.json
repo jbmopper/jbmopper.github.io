@@ -14,9 +14,9 @@
     "status": "published"
   },
   {
-    "slug": "rag-chatbot",
-    "title": "Chatbot Integration",
-    "description": "An off-the-shelf integration with Google Gemini via Google Cloud Platform Vertex AI, exploring the practical challenges of RAG-based chatbot deployment.",
+    "slug": "site-chatbot",
+    "title": "Site Design and Chatbot Integration",
+    "description": "A review of the site creation process and the design and integration of a RAG-powered Generative AI Chatbot",
     "art": null,
     "status": "published"
   },
