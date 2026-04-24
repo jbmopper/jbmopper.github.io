@@ -7,8 +7,13 @@ interface Props {
   description?: string;
 }
 
-const {title = "juliusm.com | Portfolio Site", description = "Portfolio site"} = Astro.props;
+const {
+  title = "Julius Mopper | AI Systems Engineer",
+  description = "Portfolio for Julius Mopper, an AI systems engineer building model, data, and product systems."
+} = Astro.props;
 const year = new Date().getFullYear();
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? "https://juliusm.com").toString();
+const previewImage = new URL("/images/portfolio-hero-ai-systems.png", Astro.site ?? "https://juliusm.com").toString();
 ---
 
 <!doctype html>
@@ -17,16 +22,31 @@ const year = new Date().getFullYear();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#050507" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:site_name" content="juliusm.com" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={previewImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={previewImage} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet" />
     <title>{title}</title>
   </head>
   <body>
     <ClientRouter />
+    <a class="skip-link" href="#main-content">Skip to content</a>
     <header class="site-header">
       <a class="brand" href="/">juliusm.com</a>
-      <nav class="nav-links">
+      <nav class="nav-links" aria-label="Primary navigation">
         <a href="/#welcome">Welcome</a>
         <a href="/observable/projects/">Projects</a>
         <a href="/resume/">Resume Generator</a>
@@ -34,7 +54,7 @@ const year = new Date().getFullYear();
         <a href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a>
       </nav>
     </header>
-    <main>
+    <main id="main-content">
       <slot />
     </main>
     <footer>© {year} juliusm.com</footer>
@@ -57,12 +77,11 @@ const year = new Date().getFullYear();
     min-height: 100%;
     font-size: 16px;
     line-height: 1.5;
-    background:
-      radial-gradient(1200px 600px at 100% -10%, #1a3850 0%, transparent 60%),
-      radial-gradient(900px 500px at -10% 10%, #2a1f3e 0%, transparent 55%),
-      var(--bg-0);
+    background: var(--bg-0);
     color: var(--text-0);
     font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
@@ -70,72 +89,153 @@ const year = new Date().getFullYear();
     grid-template-rows: auto 1fr auto;
   }
 
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 10000;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--accent);
+    font-weight: 700;
+    text-decoration: none;
+    transform: translateY(-150%);
+    transition: var(--transition);
+    box-shadow: var(--shadow-elev);
+    border: 1px solid var(--stroke);
+  }
+
+  .skip-link:focus {
+    transform: translateY(0);
+    box-shadow: 0 0 0 3px var(--accent);
+  }
+
   .site-header {
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 50;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
     gap: 1rem;
-    padding: 1rem 1.25rem;
-    border-bottom: 1px solid var(--stroke);
-    background: color-mix(in srgb, var(--bg-0) 86%, transparent);
-    backdrop-filter: blur(8px);
+    padding: 1.25rem 2rem;
+    background: color-mix(in srgb, var(--bg-0) 92%, transparent);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid color-mix(in srgb, var(--stroke), transparent 40%);
+    box-shadow: var(--shadow-elev);
   }
 
   .brand {
+    flex: 0 0 auto;
     color: var(--text-0);
     text-decoration: none;
     font-weight: 700;
-    letter-spacing: 0.02em;
+    letter-spacing: -0.025em;
+    font-size: 1.25rem;
+    transition: var(--transition);
+  }
+
+  .brand:hover {
+    color: var(--accent);
+    text-shadow: var(--glow-accent);
   }
 
   .nav-links {
+    flex: 1 1 auto;
+    min-width: 0;
     display: flex;
-    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 2rem;
+    font-size: 0.95rem;
   }
 
   .nav-links a {
     color: var(--text-1);
     text-decoration: none;
-    font-size: 0.95rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: var(--transition);
+    position: relative;
   }
 
   .nav-links a:hover {
     color: var(--accent);
   }
-  
-  .panel a {
-    color: var(--accent);
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px;
+    left: 0;
+    background: var(--accent);
+    transition: var(--transition);
   }
 
-  .panel a:hover {
-    color: var(--text-0);
+  .nav-links a:hover::after {
+    width: 100%;
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
   }
 
   main {
-    width: min(1080px, 100% - 2rem);
-    margin: 2rem auto 3rem;
+    width: min(1080px, 100% - 3rem);
+    margin: 4rem auto 6rem;
   }
 
   footer {
     border-top: 1px solid var(--stroke);
     color: var(--text-1);
     text-align: center;
-    padding: 1rem;
-    font-size: 0.9rem;
+    padding: 3rem 1rem 2rem;
+    font-size: 0.875rem;
+    background: var(--bg-0);
+    position: relative;
+  }
+
+  footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--accent), transparent);
   }
 
   @media (max-width: 720px) {
     .site-header {
-      flex-direction: column;
+      padding: 1rem;
       align-items: flex-start;
+      gap: 1rem;
     }
 
     .nav-links {
       width: 100%;
-      justify-content: space-between;
+      justify-content: center;
+      gap: 1.25rem;
+      margin-top: 0.5rem;
+    }
+    
+    main {
+      width: min(100%, 100% - 2rem);
+      margin: 2rem auto 4rem;
+    }
+
+    .brand {
+      font-size: 1.1rem;
     }
   }
 </style>

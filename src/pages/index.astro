@@ -3,75 +3,164 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import projects from "../data/projects.json";
 
 const publishedProjects = projects.filter((project) => project.status === "published");
+
+const strengths = [
+  "From-scratch model implementation",
+  "GPU performance profiling",
+  "Serverless AI product surfaces",
+  "RAG systems with observability"
+];
+
+const heroProof = [
+  "PyTorch transformer",
+  "CUDA/MPS benchmarks",
+  "Public AI demos",
+  "Production-minded UX"
+];
 ---
 
-<BaseLayout title="juliusm.com | Portfolio Site" description="Julius M's Portfolio Site">
-  <section class="hero">
-    <p class="eyebrow">Portfolio Site</p>
-    <h1>juliusm.com</h1>
-    <p class="intro" id="hero-tagline">Building AI systems that <i>scale</i>.</p>
-    <div class="link-row">
-      <a href="#welcome">Welcome</a>
-      <a href="/observable/projects/">Projects</a>
-      <a href="/resume/">Resume Generator</a>
-      <a href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a>
-      <a href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a>
+<BaseLayout
+  title="Julius Mopper | AI Systems Engineer"
+  description="Portfolio for Julius Mopper, an AI systems engineer building from-scratch transformers, GPU performance analyses, RAG chatbots, and serverless AI products."
+>
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-copy">
+      <h1 id="hero-title">Julius Mopper</h1>
+      <p class="intro" id="hero-tagline">
+        I build AI systems from first principles to production: models, tooling, interfaces, and the glue that keeps them reliable.
+      </p>
+      <div class="link-row" aria-label="Primary links">
+        <a class="primary-link" href="#projects">Explore the work</a>
+        <a href="/resume/">Try resume generator</a>
+      </div>
+    </div>
+    
+    <div class="hero-sidebar">
+      <div class="role-badge">AI Systems Engineer</div>
+      
+      <div class="hero-visual">
+        <img 
+          src="/images/portfolio-hero-ai-systems.png" 
+          alt="Visualization of complex AI systems, neural networks, and computational flows" 
+          class="hero-image" 
+          width="320"
+          height="240"
+        />
+      </div>
+
+      <dl class="hero-proof" aria-label="Portfolio highlights">
+        {heroProof.map((item, index) => (
+          <div class="proof-item">
+            <dt>{String(index + 1).padStart(2, "0")}</dt>
+            <dd>{item}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
   </section>
 
-  <section id="welcome" class="panel">
-    <h2>Welcome</h2>
-    <!--
-    <p>
-      This is the portfolio site for Julius Mopper, a talented up-and-coming AI engineer.  Julius has a strong background in machine learning and backend web portal design, having spent over three years in roles specializing in each.
-    </p>
-    <p>
-      After a reduction in force at his last position, he has been beavering away learning all about the new era of deep learning.  Julius is sincerely excited about this amazing new technology, and believes we are on the cusp of a third industrial revolution.
-    </p>
-    
-    <p>
-      I'm a researcher and engineer who loves the entire lifecycle of an AI product—from building and training sequence models from scratch, to deploying them via serverless cloud architectures, to ensuring they drive real business value.
-    </p>
-    <p>
-      Check out my project writeups to see how I break down complex deep learning topics, or if you have a role that might be a good fit, head over to the <a href="/resume">Resume Generator</a> with your job description and let my serverless pipeline build a custom resume for you!
-    </p>
-    -->
-    <p>
-      The problem is no longer adding features, but controlling the complexity. That is the work I like: understanding the model, building the system around it, and getting the result to survive contact with real users. These projects cover that work, from a transformer implemented from scratch to a resume generator with real backend, auth, and PDF plumbing to a RAG chatbot grounded on its own corpus. My background in analysis and enterprise integration turns out to be unusually useful here: ambiguous requirements, messy systems, and the human problem of figuring out what actually needs to be built.
-    </p>
+  <section id="welcome" class="section-block intro-section" aria-labelledby="welcome-title">
+    <div class="section-header">
+      <h2 id="welcome-title">Systems thinking for AI work that has to survive reality.</h2>
+    </div>
+    <div class="section-copy">
+      <p class="lead">
+        My strongest work sits at the intersection of model understanding, product engineering, and ambiguous real-world requirements. 
+      </p>
+      <p>
+        This portfolio shows that range: a transformer implemented from scratch, notebooks that explain performance and training behavior, a RAG chatbot grounded in its own site corpus, and a serverless resume workflow with public-facing controls.
+      </p>
+      <p>
+        I am interested in roles where deep learning is not just a library call. I like understanding how the model behaves, building the system around it, instrumenting the rough edges, and communicating the tradeoffs clearly enough for other people to use the work.
+      </p>
+    </div>
   </section>
 
-  <section id="projects" class="panel">
-    <h2>Projects</h2>
-    {publishedProjects.map((project) => (
-      <article class="project-card">
-        <h3><a href={`/observable/projects/${project.slug}/`}>{project.title}</a></h3>
-        <p>{project.description}</p>
-      </article>
-    ))}
+  <section class="strength-strip" aria-label="Core strengths">
+    <div class="strength-container">
+      {strengths.map((strength) => (
+        <div class="strength-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span>{strength}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section id="projects" class="section-block" aria-labelledby="projects-title">
+    <div class="section-header">
+      <h2 id="projects-title">Selected Work</h2>
+      <p class="subtitle">
+        Each project is written up as a working artifact, not just a screenshot. The best path through the site is to start with the LLM fundamentals work, then try the live product surfaces.
+      </p>
+    </div>
+
+    <div class="project-grid">
+      {publishedProjects.map((project) => (
+        <article class="project-card">
+          <div class="project-content">
+            <div class="project-card-header">
+              <span class="project-role">{project.role}</span>
+              <h3><a href={`/observable/projects/${project.slug}/`}>{project.title}</a></h3>
+            </div>
+            <p class="project-desc">{project.description}</p>
+            <ul class="proof-list">
+              {project.proof.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+          <div class="project-footer">
+            <div class="stack-list" aria-label={`${project.title} stack`}>
+              {project.stack.map((item) => (
+                <span>{item}</span>
+              ))}
+            </div>
+            <a class="project-link" href={`/observable/projects/${project.slug}/`} aria-label={`Read more about ${project.title}`}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section-block close-section" aria-labelledby="close-title">
+    <div class="section-header">
+      <h2 id="close-title">Ready to build.</h2>
+    </div>
+    <div class="section-copy">
+      <p class="lead">
+        The throughline is practical depth: learning the fundamentals hands-on, validating performance instead of guessing, and turning working prototypes into deployable experiences.
+      </p>
+      <div class="link-row compact" aria-label="Contact links">
+        <a class="primary-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">Connect on LinkedIn</a>
+        <a href="/observable/projects/">Browse all projects</a>
+      </div>
+    </div>
   </section>
 </BaseLayout>
 
 <script is:inline>
   (function () {
     const taglines = [
-      "Building AI systems that <i>scale</i>.",
-      "Pivot, <i>pivot,</i> pivot...",
-      "<i>Own</i> the control plane."
+      "I build AI systems from first principles to production: models, tooling, interfaces, and the glue that keeps them reliable.",
+      "I care about the hard middle: model behavior, system boundaries, evaluation, and user-facing reliability.",
+      "I turn ambiguous AI ideas into inspected, instrumented, working software."
     ];
     const el = document.getElementById("hero-tagline");
     if (!el || taglines.length < 2) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const HOLD_MS = 4500;
-    const FADE_MS = 350;
+    const HOLD_MS = 6000;
+    const FADE_MS = 400;
     let index = 0;
 
     setInterval(function () {
       el.classList.add("is-fading");
       window.setTimeout(function () {
         index = (index + 1) % taglines.length;
-        el.innerHTML = taglines[index];
+        el.textContent = taglines[index];
         el.classList.remove("is-fading");
       }, FADE_MS);
     }, HOLD_MS);
@@ -79,99 +168,468 @@ const publishedProjects = projects.filter((project) => project.status === "publi
 </script>
 
 <style>
-  .hero {
-    display: grid;
-    gap: 1rem;
-    padding: 1.5rem;
-    border: 1px solid var(--stroke);
-    border-radius: 14px;
-    background:
-      linear-gradient(130deg, rgba(12, 17, 24, 0.75), rgba(20, 27, 36, 0.65)),
-      url('/src/content/hero_bg.png') center / cover no-repeat;
+  /* Base Typography for the Page */
+  h1, h2, h3 {
+    font-family: var(--font-serif);
+    color: var(--text-0);
+    line-height: var(--heading-leading);
+    letter-spacing: -0.02em;
+    margin: 0;
   }
 
-  .eyebrow {
-    margin: 0;
-    color: var(--accent);
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+  /* Hero Section */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 4rem;
+    align-items: center;
+    min-height: 70vh;
+    padding: 6rem 0;
+    border-bottom: 1px solid var(--stroke);
+  }
+
+  .hero-copy {
+    max-width: 800px;
   }
 
   h1 {
-    margin: 0;
-    font-size: clamp(1.9rem, 4vw, 2.9rem);
+    font-size: clamp(3.5rem, 8vw, 6.5rem);
+    font-weight: 500;
+    margin-bottom: 2rem;
+    letter-spacing: -0.04em;
   }
 
   .intro {
-    margin: 0;
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
     color: var(--text-1);
-    max-width: 65ch;
-    transition: opacity 350ms ease;
+    line-height: 1.5;
+    max-width: 32ch;
+    margin-bottom: 3rem;
+    min-height: 5.4rem;
+    transition: opacity 400ms ease;
   }
 
   .intro.is-fading {
     opacity: 0;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .intro {
-      transition: none;
-    }
-  }
-
-  .link-row {
+  .hero-sidebar {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
+    flex-direction: column;
+    gap: 2.5rem;
   }
 
-  .link-row a {
-    padding: 0.5rem 0.9rem;
+  .role-badge {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding: 0.5rem 0;
+    border-top: 2px solid var(--accent);
+    display: inline-block;
+    align-self: flex-start;
+  }
+
+  /* Hero Visual - AI Systems Image */
+  .hero-visual {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-elev);
+  }
+
+  .hero-image {
+    width: 100%;
+    max-width: 340px;
+    height: auto;
+    display: block;
+    border-radius: var(--radius-lg);
     border: 1px solid var(--stroke);
-    border-radius: 999px;
-    text-decoration: none;
-    color: var(--text-0);
+    transition: var(--transition);
+    filter: contrast(1.1) saturate(1.05);
   }
 
-  .link-row a:hover {
+  .hero-image:hover {
+    transform: scale(1.03) rotate(1deg);
+    box-shadow: var(--glow-accent), var(--shadow-elev);
     border-color: var(--accent);
   }
 
-  .panel {
-    margin-top: 1.25rem;
-    padding: 1.25rem;
-    border: 1px solid var(--stroke);
-    border-radius: 12px;
-    background: color-mix(in srgb, var(--surface) 80%, transparent);
+  .hero-proof {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin: 0;
   }
 
-  .panel h2 {
-    margin: 0 0 0.75rem;
+  .proof-item {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
   }
 
-  .panel p a {
-    color: var(--accent);
+  .proof-item dt {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-1);
+    opacity: 0.6;
   }
 
-  .panel p a:hover {
+  .proof-item dd {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 1.05rem;
+    font-weight: 500;
     color: var(--text-0);
   }
 
-  .project-card h3 {
-    margin: 0 0 0.5rem;
+  /* Links & Buttons - Modern CTA styling */
+  .link-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
 
-  .project-card + .project-card {
-    margin-top: 1rem;
+  .link-row a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.85rem 1.75rem;
+    border-radius: var(--radius-lg);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
   }
 
-  .project-card a {
+  .link-row a:not(.primary-link) {
+    background: transparent;
+    color: var(--text-1);
+    border: 1.5px solid var(--stroke);
+  }
+
+  .link-row a:not(.primary-link):hover {
+    border-color: var(--accent);
+    color: var(--text-0);
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    box-shadow: var(--glow-accent);
+  }
+
+  .primary-link {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #050507;
+    border: none;
+    font-weight: 700;
+    box-shadow: var(--shadow-elev);
+  }
+
+  .primary-link:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--glow-accent), var(--shadow-elev);
+    color: #050507;
+  }
+
+  .primary-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(white, transparent);
+    opacity: 0.15;
+    transition: var(--transition);
+  }
+
+  .primary-link:hover::after {
+    opacity: 0.25;
+  }
+
+  /* Shared Section Blocks */
+  .section-block {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 4rem;
+    padding: 6rem 0;
+    border-bottom: 1px solid var(--stroke);
+  }
+
+  .close-section {
+    border-bottom: none;
+  }
+
+  .section-header h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 500;
+    max-width: 14ch;
+  }
+
+  .subtitle {
+    font-family: var(--font-sans);
+    font-size: 1.1rem;
+    color: var(--text-1);
+    line-height: 1.6;
+    margin-top: 1.5rem;
+    max-width: 30ch;
+  }
+
+  .section-copy p {
+    font-family: var(--font-sans);
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: var(--text-1);
+    margin: 0 0 1.5rem 0;
+    max-width: 65ch;
+  }
+
+  .section-copy p.lead {
+    font-size: 1.4rem;
+    color: var(--text-0);
+    line-height: 1.5;
+    margin-bottom: 2rem;
+  }
+
+  /* Strengths Strip */
+  .strength-strip {
+    padding: 3rem 0;
+    border-bottom: 1px solid var(--stroke);
+    background: var(--surface-2);
+  }
+
+  .strength-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  .strength-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--text-0);
+  }
+
+  .strength-item svg {
     color: var(--accent);
   }
 
-  .project-card p {
-    margin: 0;
+  /* Projects Grid */
+  .project-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: var(--surface);
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius-md);
+    padding: 2.5rem;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--accent), var(--accent-2));
+    opacity: 0;
+    transition: var(--transition);
+  }
+
+  .project-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-elev), var(--glow-accent);
+    border-color: var(--accent);
+  }
+
+  .project-card:hover::before {
+    opacity: 1;
+  }
+
+  .project-card-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .project-role {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
     color: var(--text-1);
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+
+  .project-card h3 {
+    font-size: 2rem;
+    font-weight: 500;
+  }
+
+  .project-card h3 a {
+    color: var(--text-0);
+    text-decoration: none;
+  }
+
+  .project-card h3 a:hover {
+    color: var(--accent);
+  }
+
+  .project-desc {
+    font-family: var(--font-sans);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-1);
+    margin-bottom: 2rem;
+  }
+
+  .proof-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .proof-list li {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: var(--text-0);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .proof-list li::before {
+    content: "•";
+    color: var(--accent);
+    font-size: 1.2rem;
+  }
+
+  .project-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: auto;
+    padding-top: 2rem;
+    border-top: 1px solid var(--stroke);
+  }
+
+  .stack-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .stack-list span {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.35rem 0.85rem;
+    background: var(--surface-2);
+    color: var(--text-1);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--stroke);
+    transition: var(--transition);
+  }
+
+  .stack-list span:hover {
+    background: color-mix(in srgb, var(--accent) 15%, var(--surface-2));
+    color: var(--accent);
+    border-color: var(--accent);
+    box-shadow: var(--glow-accent);
+  }
+
+  .project-link {
+    color: var(--text-0);
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+  }
+
+  .project-card:hover .project-link {
+    color: var(--accent);
+    transform: translateX(6px);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .hero, .section-block {
+      grid-template-columns: 1fr;
+      gap: 4rem;
+      padding: 5rem 0;
+    }
+
+    .hero-sidebar {
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    .hero-visual {
+      max-width: 280px;
+      align-self: center;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      min-height: auto;
+      padding: 4rem 0 3rem;
+    }
+
+    .project-card {
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: clamp(2.75rem, 10vw, 4rem);
+    }
+
+    .intro {
+      font-size: 1.25rem;
+      min-height: auto;
+    }
+
+    .strength-container {
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+
+    .strength-strip {
+      padding: 2.5rem 0;
+    }
+
+    .project-footer {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+    }
+
+    .project-link {
+      align-self: flex-end;
+    }
+
+    .hero-image {
+      max-width: 260px;
+    }
   }
 </style>

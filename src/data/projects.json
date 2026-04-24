@@ -2,21 +2,42 @@
   {
     "slug": "llm-fundamentals",
     "title": "Large Language Models and Deep Learning Fundamentals",
-    "description": "Fundamentals of large language models and deep learning, including transformer implementation in Pytorch, training and inference, performance analysis, hyperparameter tuning, and architectural variations (ablations).",
+    "description": "A from-scratch PyTorch transformer project with tokenizer, training loop, inference, CUDA/MPS benchmarks, Nsys trace analysis, hyperparameter sweeps, and ablation studies.",
+    "role": "Model implementation, performance analysis, and deployment",
+    "stack": ["PyTorch", "CUDA", "Nsys", "W&B", "ONNX", "Observable"],
+    "proof": [
+      "Implemented core transformer components from base PyTorch primitives",
+      "Compared training behavior across Apple Silicon/MPS and RTX 4090 CUDA runs",
+      "Published interactive notebooks for performance, sweeps, traces, and ablations"
+    ],
     "art": null,
     "status": "published"
   },
   {
     "slug": "resume-generator",
     "title": "Resume Generator",
-    "description": "A serverless resume generator utilizing the Anthropic messages API to create a structured markdown/html output that is rendered into a polished PDF resume, tailored to the input job description.",
+    "description": "A production-style AI resume workflow that analyzes a job description, generates structured resume content, renders a polished PDF, and protects the public endpoint with verification.",
+    "role": "Full-stack/serverless AI product design",
+    "stack": ["Svelte", "AWS Lambda", "API Gateway", "Cloudflare Turnstile", "Chromium PDF"],
+    "proof": [
+      "Built text and file upload flows with polling, error states, and PDF delivery",
+      "Wired a serverless backend with session verification and public API controls",
+      "Designed prompt and rendering layers around human-readable resume output"
+    ],
     "art": null,
     "status": "published"
   },
   {
     "slug": "site-chatbot",
     "title": "Site Design and RAG Chatbot Integration",
-    "description": "A review of the site creation process and the design and integration of a RAG-powered Generative AI Chatbot",
+    "description": "A site-integrated RAG chatbot grounded in the portfolio corpus, with persistent chat state, verification, production navigation, and instrumentation-oriented architecture.",
+    "role": "AI-native full-stack integration",
+    "stack": ["Svelte", "Vertex AI", "RAG", "Langfuse", "Astro", "Observable"],
+    "proof": [
+      "Integrated the chatbot across Astro and exported Observable pages",
+      "Added persistent conversation state, verification, and accessible chat controls",
+      "Documented the agent workflow and retrieval architecture behind the site"
+    ],
     "art": null,
     "status": "published"
   },
@@ -24,6 +45,9 @@
     "slug": "data-playground",
     "title": "Data Playground",
     "description": "Interactive data exploration and visualization sandbox.",
+    "role": "Interactive data exploration",
+    "stack": [],
+    "proof": [],
     "art": null,
     "status": "draft"
   }
