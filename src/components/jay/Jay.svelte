@@ -598,6 +598,21 @@
   }
 
   @media (max-width: 420px) {
+    .jay-root {
+      right: 0.85rem;
+      bottom: calc(env(safe-area-inset-bottom) + 0.85rem);
+    }
+
+    .fab {
+      width: 54px;
+      height: 54px;
+    }
+
+    .fab-portrait {
+      width: 48px;
+      height: 48px;
+    }
+
     .panel {
       width: calc(100vw - 2rem);
       right: -0.5rem;

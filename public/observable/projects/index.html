@@ -14,7 +14,7 @@
 import {define} from "../_observablehq/client.b8f66ce7.js";
 import {registerFile} from "../_observablehq/stdlib.a50b4fda.js";
 
-registerFile("../data/projects.json", {"name":"../data/projects.json","mimeType":"application/json","path":"../_file/data/projects.59bbd725.json","lastModified":1776401261331,"size":1184});
+registerFile("../data/projects.json", {"name":"../data/projects.json","mimeType":"application/json","path":"../_file/data/projects.59bbd725.json","lastModified":1776401261331,"size":3763});
 
 define({id: "f9f2e3a0", inputs: ["FileAttachment"], outputs: ["projects"], body: (FileAttachment) => {
 const projects = FileAttachment("../data/projects.json").json();
@@ -30,10 +30,24 @@ define({id: "6ac6eef8", inputs: ["html","published","display"], body: async (htm
 display(await(
 html`<div class="project-list">
   ${published.map((p) => html`
-    <a class="project-card" href="./${p.slug}/">
-      <h3>${p.title}</h3>
-      <p>${p.description}</p>
-    </a>
+    <article class="project-card">
+      <a class="project-card-main" href="./${p.slug}/">
+        <span class="project-kicker">${p.category || "Project"}</span>
+        <h3>${p.title}</h3>
+        <p>${p.impact || p.description}</p>
+      </a>
+      <ul class="project-proof">
+        ${(p.proof || []).map((item) => html`<li>${item}</li>`)}
+      </ul>
+      <div class="project-meta">
+        <div class="project-stack">
+          ${(p.stack || []).map((item) => html`<span>${item}</span>`)}
+        </div>
+        <div class="project-links">
+          ${(p.evidenceLinks || []).map((item) => html`<a href="${item.href}">${item.label}</a>`)}
+        </div>
+      </div>
+    </article>
   `)}
 </div>`
 ))
@@ -196,20 +210,29 @@ Info: the page that hosts the resume generator widget that interfaces with the s
 <style>
 .project-list {
   display: grid;
-  gap: 1rem;
   margin-top: 1rem;
+  border-top: 1px solid var(--theme-foreground-faintest);
 }
 .project-card {
-  display: block;
-  padding: 1rem 1.25rem;
-  border: 1px solid var(--theme-foreground-faintest);
-  border-radius: 8px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(16rem, 0.9fr) minmax(12rem, 0.6fr);
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--theme-foreground-faintest);
+}
+.project-card-main {
   text-decoration: none;
   color: inherit;
-  transition: border-color 0.15s;
 }
-.project-card:hover {
-  border-color: var(--theme-foreground-focus);
+.project-card-main:hover h3 {
+  color: var(--theme-foreground-focus);
+}
+.project-kicker,
+.project-stack span {
+  color: var(--theme-foreground-focus);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 .project-card h3 {
   margin: 0 0 0.4rem;
@@ -218,6 +241,43 @@ Info: the page that hosts the resume generator widget that interfaces with the s
   margin: 0;
   color: var(--theme-foreground-muted);
   font-size: 0.9rem;
+}
+.project-proof {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--theme-foreground-muted);
+}
+.project-proof li + li {
+  margin-top: 0.35rem;
+}
+.project-meta {
+  display: grid;
+  align-content: start;
+  gap: 0.65rem;
+}
+.project-stack,
+.project-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+.project-stack span,
+.project-links a {
+  padding: 0.3rem 0.45rem;
+  border: 1px solid var(--theme-foreground-faintest);
+}
+.project-links a {
+  color: var(--theme-foreground-focus);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+.project-links a:hover {
+  border-color: var(--theme-foreground-focus);
+}
+@media (max-width: 900px) {
+  .project-card {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </main>

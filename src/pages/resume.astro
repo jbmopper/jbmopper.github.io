@@ -1,8 +1,170 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ResumeGenerator from "../components/resume/ResumeGenerator.svelte";
+
+const strengths = [
+  "Model internals and GPU profiling",
+  "Serverless API design and authorization",
+  "RAG/product interfaces with production-shaped UX",
+  "Evidence-first technical communication"
+];
+
+const evidence = [
+  {label: "Transformer lab", detail: "Training, inference, ablations, optimizer sweeps, and Nsys trace analysis."},
+  {label: "Resume system", detail: "Turnstile verification, signed sessions, async jobs, polling, and PDF handoff."},
+  {label: "Site assistant", detail: "Persistent chat across Astro and Observable pages with grounded project context."}
+];
 ---
 
-<BaseLayout title="Resume Generator | juliusm.com" description="AI-generated tailored resume from a job description">
-  <ResumeGenerator client:load />
+<BaseLayout title="Resume Generator | Julius Mopper" description="AI-generated tailored resume from a job description">
+  <section class="resume-page">
+    <header class="resume-proof">
+      <p class="eyebrow">Tailored Resume Generator</p>
+      <h1>Paste a role. Get the proof lined up.</h1>
+      <p class="intro">
+        This page is both a utility and a live artifact: the generator is backed by a challenge-gated, session-authorized, async resume workflow, and the surrounding evidence explains what the resume is drawing from.
+      </p>
+      <div class="proof-grid">
+        <section>
+          <h2>Target Roles</h2>
+          <p>AI systems engineer, full-stack AI product engineer, ML platform-adjacent backend engineer, and technical generalist roles that need model literacy plus shipping discipline.</p>
+        </section>
+        <section>
+          <h2>Operating Strengths</h2>
+          <ul>
+            {strengths.map((item) => <li>{item}</li>)}
+          </ul>
+        </section>
+      </div>
+    </header>
+
+    <section class="evidence-panel" aria-labelledby="selected-evidence">
+      <div>
+        <p class="eyebrow">Selected Evidence</p>
+        <h2 id="selected-evidence">What the generator can emphasize</h2>
+      </div>
+      <div class="evidence-list">
+        {evidence.map((item) => (
+          <article>
+            <h3>{item.label}</h3>
+            <p>{item.detail}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="generator-panel" aria-label="Resume generator">
+      <ResumeGenerator client:load />
+    </section>
+  </section>
 </BaseLayout>
+
+<style>
+  .resume-page {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .resume-proof,
+  .evidence-panel {
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--surface) 78%, transparent);
+  }
+
+  .resume-proof {
+    padding: 1.35rem;
+  }
+
+  .eyebrow {
+    margin: 0 0 0.45rem;
+    color: var(--accent);
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    max-width: 12ch;
+    font-size: clamp(2rem, 4vw, 3.75rem);
+    line-height: 1.05;
+  }
+
+  .intro {
+    max-width: 68ch;
+    margin: 1rem 0 0;
+    color: var(--text-1);
+  }
+
+  .proof-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+
+  .proof-grid section {
+    min-width: 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--stroke);
+  }
+
+  .proof-grid h2,
+  .evidence-panel h2,
+  .evidence-list h3 {
+    margin: 0;
+  }
+
+  .proof-grid p,
+  .proof-grid ul,
+  .evidence-list p {
+    margin: 0.55rem 0 0;
+    color: var(--text-1);
+  }
+
+  .proof-grid ul {
+    padding-left: 1.1rem;
+  }
+
+  .proof-grid li + li {
+    margin-top: 0.25rem;
+  }
+
+  .evidence-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+    gap: 1rem;
+    padding: 1.25rem;
+  }
+
+  .evidence-list {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .evidence-list article {
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid var(--stroke);
+  }
+
+  .evidence-list article:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  .generator-panel {
+    padding-top: 0.25rem;
+  }
+
+  @media (max-width: 760px) {
+    .proof-grid,
+    .evidence-panel {
+      grid-template-columns: 1fr;
+    }
+
+    h1 {
+      max-width: 100%;
+    }
+  }
+</style>
