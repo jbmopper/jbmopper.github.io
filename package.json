@@ -17,10 +17,10 @@
     "test:ci": "npm run verify:observable && npm run build && npm run test:e2e"
   },
   "dependencies": {
-    "@astrojs/svelte": "^7.2.5",
-    "astro": "^5.18.0",
-    "marked": "^18.0.0",
-    "svelte": "^5.0.0"
+    "@astrojs/svelte": "^8.1.0",
+    "astro": "^6.2.2",
+    "marked": "^18.0.3",
+    "svelte": "^5.55.5"
   },
   "devDependencies": {
     "@playwright/test": "^1.51.1",
