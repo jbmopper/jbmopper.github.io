@@ -1,6 +1,6 @@
 <script lang="ts">
   import type {ChatMessage} from "./types.js";
-  import {Marked} from "marked";
+  import {Marked, Renderer} from "marked";
 
   interface Props {
     message: ChatMessage;
@@ -9,7 +9,47 @@
   let {message}: Props = $props();
   const isModel = $derived(message.role === "model");
 
-  const md = new Marked({gfm: true, breaks: true});
+  function escapeHtml(value: string): string {
+    return value
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
+  function isSafeUrl(value: string): boolean {
+    const trimmed = value.trim();
+    if (trimmed.startsWith("#") || trimmed.startsWith("/") || trimmed.startsWith("./") || trimmed.startsWith("../")) {
+      return true;
+    }
+
+    try {
+      const url = new URL(trimmed);
+      return ["http:", "https:", "mailto:"].includes(url.protocol);
+    } catch {
+      return false;
+    }
+  }
+
+  const renderer = new Renderer();
+  renderer.html = ({text}: {text: string}) => escapeHtml(text);
+  renderer.link = function (this: any, {href, title, tokens}: any) {
+    const label = this.parser.parseInline(tokens);
+    if (!isSafeUrl(href)) return label;
+
+    const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
+    return `<a href="${escapeHtml(href)}"${titleAttr} target="_blank" rel="noreferrer">${label}</a>`;
+  };
+  renderer.image = function (this: any, {href, title, text, tokens}: any) {
+    const altText = tokens ? this.parser.parseInline(tokens, this.parser.textRenderer) : text;
+    if (!isSafeUrl(href)) return escapeHtml(altText);
+
+    const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
+    return `<img src="${escapeHtml(href)}" alt="${escapeHtml(altText)}"${titleAttr}>`;
+  };
+
+  const md = new Marked({gfm: true, breaks: true, renderer});
 
   const html = $derived(
     isModel ? (md.parse(message.text) as string) : "",

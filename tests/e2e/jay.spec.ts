@@ -123,4 +123,29 @@ test.describe("Jay chatbot", () => {
     await expect(page.locator(".jay-root .msg")).toHaveCount(2, {timeout: 5000});
     await expect(newChatBtn).toBeEnabled();
   });
+
+  test("model markdown escapes unsafe html and links", async ({page}) => {
+    await page.addInitScript(() => {
+      sessionStorage.setItem("jay-ui-state", JSON.stringify({isOpen: true, draftText: ""}));
+      sessionStorage.setItem(
+        "jay-messages",
+        JSON.stringify([
+          {
+            id: "unsafe-model-message",
+            role: "model",
+            text: '<img src=x onerror="window.__jayXss = true"> [bad](javascript:alert(1))',
+            timestamp: Date.now(),
+          },
+        ]),
+      );
+    });
+
+    await page.goto("/");
+    const bubble = page.locator(".jay-root .bubble.markdown").first();
+    await expect(bubble).toBeVisible();
+    await expect(bubble).toContainText("<img src=x");
+    await expect(bubble.locator("img")).toHaveCount(0);
+    await expect(bubble.getByRole("link", {name: "bad"})).toHaveCount(0);
+    expect(await page.evaluate(() => (window as any).__jayXss)).toBeUndefined();
+  });
 });
