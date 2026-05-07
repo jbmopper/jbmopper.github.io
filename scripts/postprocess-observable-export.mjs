@@ -1,4 +1,4 @@
-import {readdir, readFile, writeFile, access} from "node:fs/promises";
+import {readdir, readFile, writeFile, access, rm} from "node:fs/promises";
 import path from "node:path";
 import {fileURLToPath} from "node:url";
 
@@ -8,6 +8,16 @@ const OBSERVABLE_ROOT = path.join(PROJECT_ROOT, "public/observable");
 const JAY_BUNDLE = path.join(OBSERVABLE_ROOT, "_import/jay-standalone.js");
 const INFERENCE_BUNDLE = path.join(OBSERVABLE_ROOT, "_import/inference-standalone.js");
 const INFERENCE_MOUNT_CLASS = "jm-inference-mount";
+const SENSITIVE_JSON_KEYS = new Set(["source_root", "source", "source_file"]);
+const SENSITIVE_SOURCE_REPOS = new Set(["Notebooks"]);
+const MACOS_METADATA_NAMES = new Set([".DS_Store", "__MACOSX"]);
+const LOCAL_PATH_PREFIXES = [
+  "/Users/juliusmopper",
+  "/Users/juliusmopper/Dev/Notebooks",
+  "/Users/juliusmopper/Dev/stanford-cs336",
+  "/Users/juliusmopper/Dev/jbmopper.github.io",
+];
+const LOCAL_PATH_PATTERN = /\/Users\/juliusmopper\/[^\s"'<>),}\]]+/g;
 
 const PROJECT_ROOT_PATH_CHECK = /^\/projects(?:\/index\.html)?\/?$/;
 const LEGACY_PROJECT_ROOT_PATH_CHECK = /^\/projects\/?$/;
@@ -22,6 +32,11 @@ async function walkDirectory(directory) {
 
   for (const entry of entries) {
     const fullPath = path.join(directory, entry.name);
+    if (MACOS_METADATA_NAMES.has(entry.name) || entry.name.startsWith("._")) {
+      files.push(fullPath);
+      continue;
+    }
+
     if (entry.isDirectory()) {
       files.push(...(await walkDirectory(fullPath)));
       continue;
@@ -31,6 +46,58 @@ async function walkDirectory(directory) {
   }
 
   return files;
+}
+
+function isMacosMetadataPath(filePath) {
+  return filePath
+    .split(path.sep)
+    .some((segment) => MACOS_METADATA_NAMES.has(segment) || segment.startsWith("._"));
+}
+
+function isLocalPath(value) {
+  return LOCAL_PATH_PREFIXES.some((prefix) => value.startsWith(prefix));
+}
+
+function sanitizeLocalPathString(value) {
+  if (!isLocalPath(value)) {
+    return value;
+  }
+
+  return path.posix.basename(value);
+}
+
+function sanitizeJsonValue(value) {
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizeJsonValue(item));
+  }
+
+  if (!value || typeof value !== "object") {
+    return typeof value === "string" ? sanitizeLocalPathString(value) : value;
+  }
+
+  const sanitized = {};
+  for (const [key, childValue] of Object.entries(value)) {
+    if (SENSITIVE_JSON_KEYS.has(key)) {
+      if (typeof childValue === "string" && isLocalPath(childValue)) {
+        continue;
+      }
+      if (typeof childValue === "string") {
+        continue;
+      }
+    }
+
+    if (key === "source_repo" && typeof childValue === "string" && SENSITIVE_SOURCE_REPOS.has(childValue)) {
+      continue;
+    }
+
+    sanitized[key] = sanitizeJsonValue(childValue);
+  }
+
+  return sanitized;
+}
+
+function sanitizeHtmlText(html) {
+  return html.replace(LOCAL_PATH_PATTERN, (match) => path.posix.basename(match));
 }
 
 function getCanonicalBaseHref(relativeHtmlPath) {
@@ -188,6 +255,7 @@ async function processHtmlFile(fullPath, injectJay, injectInference) {
   const relativePath = path.relative(OBSERVABLE_ROOT, fullPath).split(path.sep).join("/");
   let html = await readFile(fullPath, "utf8");
 
+  html = sanitizeHtmlText(html);
   html = upsertBaseHref(html, getCanonicalBaseHref(relativePath));
   html = normalizeProjectRootMatcher(html);
   html = normalizeHeaderHomeLink(html);
@@ -200,19 +268,46 @@ async function processHtmlFile(fullPath, injectJay, injectInference) {
   await writeFile(fullPath, html, "utf8");
 }
 
+async function processJsonFile(fullPath) {
+  const rawJson = await readFile(fullPath, "utf8");
+  const parsed = JSON.parse(rawJson);
+  const sanitized = sanitizeJsonValue(parsed);
+  if (JSON.stringify(sanitized) === JSON.stringify(parsed)) {
+    return;
+  }
+  await writeFile(fullPath, `${JSON.stringify(sanitized, null, 2)}\n`, "utf8");
+}
+
+async function removeMetadataFile(fullPath) {
+  await rm(fullPath, {force: true, recursive: true});
+}
+
 async function main() {
   const allFiles = await walkDirectory(OBSERVABLE_ROOT);
-  const htmlFiles = allFiles.filter((filePath) => filePath.endsWith(".html"));
+  const metadataFiles = allFiles.filter((filePath) => isMacosMetadataPath(filePath));
+  const publicFiles = allFiles.filter((filePath) => !isMacosMetadataPath(filePath));
+  const htmlFiles = publicFiles.filter((filePath) => filePath.endsWith(".html"));
+  const jsonFiles = publicFiles.filter((filePath) => filePath.endsWith(".json"));
   const injectJay = await jayBundleExists();
   const injectInference = await inferenceBundleExists();
+
+  for (const metadataFile of metadataFiles) {
+    await removeMetadataFile(metadataFile);
+  }
 
   for (const htmlFile of htmlFiles) {
     await processHtmlFile(htmlFile, injectJay, injectInference);
   }
 
+  for (const jsonFile of jsonFiles) {
+    await processJsonFile(jsonFile);
+  }
+
   const notes = [];
   if (injectJay) notes.push("Jay injection");
   if (injectInference) notes.push("inline inference injection");
+  if (jsonFiles.length > 0) notes.push(`JSON sanitization for ${jsonFiles.length} files`);
+  if (metadataFiles.length > 0) notes.push(`removed ${metadataFiles.length} macOS metadata artifact(s)`);
   const suffix = notes.length > 0 ? ` (with ${notes.join(" + ")})` : "";
   console.log(`Post-processed Observable export HTML (${htmlFiles.length} files)${suffix}.`);
 }
