@@ -3,6 +3,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import projects from "../data/projects.json";
 
 const publishedProjects = projects.filter((project) => project.status === "published");
+const toSiteHref = (href?: string) => {
+  const safeHref = href ?? "#";
+  return safeHref.startsWith("/projects/") ? `/observable${safeHref}` : safeHref;
+};
 const proofStats = [
   {value: "01", label: "Transformer lab", detail: "model internals, training, inference, and GPU traces"},
   {value: "02", label: "Serverless workflows", detail: "challenge-gated APIs, async jobs, and PDF delivery"},
@@ -81,7 +85,7 @@ const proofStats = [
           </div>
           <div class="evidence-list" aria-label={`${project.title} evidence links`}>
             {project.evidenceLinks?.map((item) => (
-              <a href={item.href}>{item.label}</a>
+              <a href={toSiteHref(item.href)}>{item.label}</a>
             ))}
           </div>
         </div>

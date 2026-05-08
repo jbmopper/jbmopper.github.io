@@ -13,9 +13,9 @@
     ],
     "stack": ["PyTorch", "CUDA/Nsys", "Observable", "ECharts"],
     "evidenceLinks": [
-      {"label": "Read", "href": "/observable/projects/llm-fundamentals/"},
-      {"label": "Trace Viewer", "href": "/observable/projects/llm-fundamentals/nsys-viewer/"},
-      {"label": "Ablations", "href": "/observable/projects/llm-fundamentals/ablations/"}
+      {"label": "Read", "href": "/projects/llm-fundamentals/"},
+      {"label": "Trace Viewer", "href": "/projects/llm-fundamentals/nsys-viewer/"},
+      {"label": "Ablations", "href": "/projects/llm-fundamentals/ablations/"}
     ],
     "art": null,
     "status": "published"
@@ -35,7 +35,7 @@
     "stack": ["Astro", "Svelte", "AWS API Gateway", "Lambda", "Turnstile"],
     "evidenceLinks": [
       {"label": "Demo", "href": "/resume/"},
-      {"label": "Read", "href": "/observable/projects/resume-generator/"}
+      {"label": "Read", "href": "/projects/resume-generator/"}
     ],
     "art": null,
     "status": "published"
@@ -54,7 +54,7 @@
     ],
     "stack": ["Svelte", "Vertex AI RAG", "API Gateway", "Astro"],
     "evidenceLinks": [
-      {"label": "Read", "href": "/observable/projects/site-chatbot/"},
+      {"label": "Read", "href": "/projects/site-chatbot/"},
       {"label": "Live Site", "href": "/"}
     ],
     "art": null,
@@ -70,7 +70,7 @@
     "proof": [],
     "stack": ["Observable", "ECharts"],
     "evidenceLinks": [
-      {"label": "Draft", "href": "/observable/projects/data-playground/"}
+      {"label": "Draft", "href": "/projects/data-playground/"}
     ],
     "art": null,
     "status": "draft"
