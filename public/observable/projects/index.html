@@ -7,75 +7,33 @@
 <base href="/observable/projects/">
 <title>Projects | juliusm.com</title>
 
-<link rel="preload" as="style" href="../_import/astro-bridge-theme.b2fb8494.css">
-<link rel="stylesheet" type="text/css" href="../_import/astro-bridge-theme.b2fb8494.css">
+<link rel="preload" as="style" href="../_import/astro-bridge-theme.1d667312.css">
+<link rel="stylesheet" type="text/css" href="../_import/astro-bridge-theme.1d667312.css">
 <script type="module">
 
 import {define} from "../_observablehq/client.b8f66ce7.js";
 import {registerFile} from "../_observablehq/stdlib.a50b4fda.js";
 
-registerFile("../data/projects.json", {"name":"../data/projects.json","mimeType":"application/json","path":"../_file/data/projects.31f876be.json","lastModified":1778283185197,"size":3697});
+registerFile("../data/projects.json", {"name":"../data/projects.json","mimeType":"application/json","path":"../_file/data/projects.59bbd725.json","lastModified":1776401261331,"size":1184});
 
 define({id: "f9f2e3a0", inputs: ["FileAttachment"], outputs: ["projects"], body: (FileAttachment) => {
 const projects = FileAttachment("../data/projects.json").json();
 return {projects};
 }});
 
-define({id: "6b3d7712", inputs: ["projects"], outputs: ["published"], body: (projects) => {
-const published = projects
-  .filter((p) => p.status === "published")
-  .map((p) => ({
-    ...p,
-    proof: Array.isArray(p.proof) ? p.proof : [],
-    stack: Array.isArray(p.stack) ? p.stack : [],
-    evidenceLinks: Array.isArray(p.evidenceLinks) ? p.evidenceLinks : []
-  }));
+define({id: "b7f2fceb", inputs: ["projects"], outputs: ["published"], body: (projects) => {
+const published = projects.filter((p) => p.status === "published");
 return {published};
 }});
 
-define({id: "5941d68f", inputs: ["globalThis"], outputs: ["deployedHref"], body: (globalThis) => {
-function deployedHref(href) {
-  if (typeof href !== "string" || href.length === 0) return "#";
-  if (href.startsWith("/projects/")) {
-    const mount = globalThis.location?.pathname?.startsWith("/observable/") ? "/observable" : "";
-    return `${mount}${href}`;
-  }
-  return href;
-}
-return {deployedHref};
-}});
-
-define({id: "0a315782", inputs: ["html","published","deployedHref","display"], body: async (html,published,deployedHref,display) => {
+define({id: "6ac6eef8", inputs: ["html","published","display"], body: async (html,published,display) => {
 display(await(
 html`<div class="project-list">
-  ${published.map((p, index) => html`
-    <article class="project-card">
-      <a class="project-main" href="./${p.slug}/">
-        <span class="project-index">${String(index + 1).padStart(2, "0")}</span>
-        <span>
-          <span class="project-kicker">${p.category ?? "Project"} / ${p.role ?? "Builder"}</span>
-          <strong>${p.title}</strong>
-          <span class="project-impact">${p.impact ?? p.description}</span>
-        </span>
-      </a>
-      ${p.proof.length ? html`
-        <ul class="proof-list">
-          ${p.proof.map((item) => html`<li>${item}</li>`)}
-        </ul>
-      ` : ""}
-      <div class="project-meta">
-        ${p.stack.length ? html`
-          <div class="stack-list" aria-label="${p.title} stack">
-            ${p.stack.map((item) => html`<span>${item}</span>`)}
-          </div>
-        ` : ""}
-        ${p.evidenceLinks.length ? html`
-          <div class="evidence-list" aria-label="${p.title} evidence links">
-            ${p.evidenceLinks.map((link) => html`<a href="${deployedHref(link.href)}">${link.label}</a>`)}
-          </div>
-        ` : ""}
-      </div>
-    </article>
+  ${published.map((p) => html`
+    <a class="project-card" href="./${p.slug}/">
+      <h3>${p.title}</h3>
+      <p>${p.description}</p>
+    </a>
   `)}
 </div>`
 ))
@@ -210,123 +168,56 @@ html`<div class="project-list">
 <main id="observablehq-main" class="observablehq">
 <h1 id="projects" tabindex="-1"><a class="observablehq-header-anchor" href="#projects">Projects</a></h1>
 <div class="observablehq observablehq--block"><!--:f9f2e3a0:--></div>
-<div class="observablehq observablehq--block"><!--:6b3d7712:--></div>
-<div class="observablehq observablehq--block"><!--:5941d68f:--></div>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:0a315782:--></div>
+<div class="observablehq observablehq--block"><!--:b7f2fceb:--></div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:6ac6eef8:--></div>
 <!--
 
 # Site overview for Jay chatbot context
 
-This comment is where the overview of the site can be found. These files are part of the project writeup notebook repo that gets exported to the main site. The main site lacks clean markdown files so the list of main site paths and the information about those pages is added here in order to get that information into the site.
+This comment is where the overview of the site can be found.  These files are part of the project writeup notebook repo that gets exported to the main site.  The main site lacks clean markdown files so the list of main site paths and the information about those pages is added here in order to get that information into the site.
 
 ## Site paths, pages, and descriptions
 
 Title: juliusm.com
 Path: /
-Info: the main page. Contains a tagline, welcome text, proof-oriented project summaries, and links to GitHub and LinkedIn.
+Info: the main page.  Contains a tagline, some welcome text, links to projects, as well as links to github and linkedin.
 
 Title: Projects
 Path: /observable/projects/
-Info: the projects page, exported from the Observable notebooks project. Contains project links, compact descriptions, proof points, implementation stacks, and evidence links.
+Info: the projects page, exported from the Observable notebooks project.  Contains links to projects, brief descriptions, and will have clipart "soon"
 
 Title: Resume Generator
 Path: /resume/
 Info: the page that hosts the resume generator widget that interfaces with the service.
 
+
+
 -->
 <style>
 .project-list {
   display: grid;
-  border-top: 1px solid var(--theme-foreground-faintest);
-}
-
-.project-card {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(16rem, 0.85fr) minmax(12rem, 0.6fr);
   gap: 1rem;
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--theme-foreground-faintest);
+  margin-top: 1rem;
 }
-
-.project-main {
-  display: grid;
-  grid-template-columns: 2rem minmax(0, 1fr);
-  gap: 0.8rem;
-  color: inherit;
-  text-decoration: none;
-}
-
-.project-index,
-.project-kicker,
-.stack-list span {
-  color: var(--theme-foreground-focus);
-  font-size: 0.74rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.project-main strong {
+.project-card {
   display: block;
-  margin: 0.25rem 0;
-  color: var(--theme-foreground);
-  font-size: 1.05rem;
-}
-
-.project-main:hover strong {
-  color: var(--theme-foreground-focus);
-}
-
-.project-impact {
-  display: block;
-  color: var(--theme-foreground-muted);
-}
-
-.proof-list {
-  margin: 0;
-  padding-left: 1.1rem;
-  color: var(--theme-foreground-muted);
-}
-
-.proof-list li + li {
-  margin-top: 0.35rem;
-}
-
-.project-meta {
-  display: grid;
-  align-content: start;
-  gap: 0.65rem;
-}
-
-.stack-list,
-.evidence-list {
-  display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
-  gap: 0.45rem;
-}
-
-.stack-list span,
-.evidence-list a {
-  padding: 0.3rem 0.45rem;
+  padding: 1rem 1.25rem;
   border: 1px solid var(--theme-foreground-faintest);
-  color: var(--theme-foreground-muted);
-}
-
-.evidence-list a {
-  color: var(--theme-foreground-focus);
-  font-size: 0.85rem;
+  border-radius: 8px;
   text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s;
 }
-
-.evidence-list a:hover {
+.project-card:hover {
   border-color: var(--theme-foreground-focus);
-  color: var(--theme-foreground);
 }
-
-@media (max-width: 900px) {
-  .project-card {
-    grid-template-columns: 1fr;
-  }
+.project-card h3 {
+  margin: 0 0 0.4rem;
+}
+.project-card p {
+  margin: 0;
+  color: var(--theme-foreground-muted);
+  font-size: 0.9rem;
 }
 </style>
 </main>
