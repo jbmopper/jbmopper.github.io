@@ -174,6 +174,63 @@ class TurnstileBrokerTests(unittest.TestCase):
         self.assertGreater(claims["exp"], claims["iat"])
         self.assertEqual(body["expiresAt"], claims["exp"])
 
+    def test_preflight_options_returns_cors_headers_without_body_validation(self):
+        event = dict(self.base_event)
+        event["httpMethod"] = "OPTIONS"
+
+        with patch.dict(
+            os.environ,
+            {
+                "ALLOWED_ORIGINS": "https://juliusm.com,https://www.juliusm.com",
+            },
+            clear=False,
+        ):
+            response = self.module.handler(event, None)
+
+        self.assertEqual(response["statusCode"], 204)
+        self.assertEqual(response["headers"]["Access-Control-Allow-Origin"], "https://juliusm.com")
+        self.assertIn("POST", response["headers"]["Access-Control-Allow-Methods"])
+
+    def test_cors_fallback_origin_preserves_allowed_origin_order(self):
+        event = dict(self.base_event)
+        event["headers"] = {"user-agent": "unit-test-agent"}
+
+        with patch.dict(
+            os.environ,
+            {
+                "ALLOWED_ORIGINS": "https://first.example,https://second.example",
+            },
+            clear=False,
+        ):
+            origin = self.module._cors_origin(event)
+
+        self.assertEqual(origin, "https://first.example")
+
+    def test_disallowed_origin_does_not_emit_allow_origin_header(self):
+        event = dict(self.base_event)
+        event["headers"] = {
+            "origin": "https://evil.example",
+            "user-agent": "unit-test-agent",
+        }
+
+        with patch.dict(
+            os.environ,
+            {
+                "ALLOWED_ORIGINS": "https://juliusm.com",
+            },
+            clear=False,
+        ):
+            response = self.module.handler(
+                {
+                    **event,
+                    "body": json.dumps({"action": "chat", "clientNonce": "nonce"}),
+                },
+                None,
+            )
+
+        self.assertEqual(response["statusCode"], 400)
+        self.assertNotIn("Access-Control-Allow-Origin", response["headers"])
+
 
 if __name__ == "__main__":
     unittest.main()

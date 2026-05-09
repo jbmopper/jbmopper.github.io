@@ -4,6 +4,7 @@ node_modules/
 .astro/
 playwright-report/
 test-results/
+.review-screens/
 .serena
 .terraform/
 **/.terraform/

@@ -34,6 +34,16 @@ const expectedBaseHrefByPage = new Map([
   ["public/observable/projects/index.html", "/observable/projects/"],
   ["public/observable/projects/llm-fundamentals/perf-expected/index.html", "/observable/projects/llm-fundamentals/perf-expected/"]
 ]);
+const forbiddenPublicArtifactPatterns = [
+  "/Users/juliusmopper",
+  "/Users/juliusmopper/Dev/Notebooks",
+  "/Users/juliusmopper/Dev/stanford-cs336",
+  "/Users/juliusmopper/Dev/jbmopper.github.io",
+  '"source_root"',
+  '"source_file"',
+  '"source_repo": "Notebooks"',
+];
+const forbiddenMetadataNames = new Set([".DS_Store", "__MACOSX"]);
 
 async function pathExists(relativePath) {
   const absolutePath = path.join(PROJECT_ROOT, relativePath);
@@ -212,6 +222,43 @@ async function assertInferenceMountsAreWired() {
   }
 }
 
+function isMacosMetadataPath(filePath) {
+  return filePath
+    .split(path.sep)
+    .some((segment) => forbiddenMetadataNames.has(segment) || segment.startsWith("._"));
+}
+
+async function assertPublicArtifactsAreSanitized() {
+  const observableRoot = path.join(PROJECT_ROOT, "public/observable");
+  const files = await walkDirectory(observableRoot);
+  const failures = [];
+
+  for (const absolutePath of files) {
+    const relativePath = path.relative(PROJECT_ROOT, absolutePath);
+    if (isMacosMetadataPath(absolutePath)) {
+      failures.push(`${relativePath}: macOS metadata artifact must not be published`);
+      continue;
+    }
+
+    const contents = await readFile(absolutePath, "utf8").catch(() => "");
+    for (const pattern of forbiddenPublicArtifactPatterns) {
+      if (contents.includes(pattern)) {
+        failures.push(`${relativePath}: contains forbidden local path prefix ${pattern}`);
+      }
+    }
+  }
+
+  if (failures.length > 0) {
+    throw new Error(
+      [
+        "Observable public artifact sanitization check failed.",
+        ...failures.map((failure) => `  - ${failure}`),
+        "Run scripts/postprocess-observable-export.mjs and re-export generated artifacts if needed."
+      ].join("\n")
+    );
+  }
+}
+
 async function main() {
   for (const item of requiredSharedArtifacts) {
     await assertExists(item);
@@ -222,6 +269,7 @@ async function main() {
   await assertKatexAssets();
   await assertEchartsRuntimeAsset();
   await assertInferenceMountsAreWired();
+  await assertPublicArtifactsAreSanitized();
   console.log("[verify:observable] PASS: Observable artifact check passed (canonical project routes found).");
 }
 

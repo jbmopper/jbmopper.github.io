@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://juliusm.com/</loc></url>
+  <url><loc>https://juliusm.com/resume/</loc></url>
+  <url><loc>https://juliusm.com/observable/projects/</loc></url>
+  <url><loc>https://juliusm.com/observable/projects/llm-fundamentals/</loc></url>
+  <url><loc>https://juliusm.com/observable/projects/llm-fundamentals/ablations/</loc></url>
+  <url><loc>https://juliusm.com/observable/projects/llm-fundamentals/deployment/</loc></url>
+  <url><loc>https://juliusm.com/observable/projects/llm-fundamentals/nsys/</loc></url>
+  <url><loc>https://juliusm.com/observable/projects/llm-fundamentals/nsys-viewer/</loc></url>
+  <url><loc>https://juliusm.com/observable/projects/llm-fundamentals/optimizer-sweep/</loc></url>
+  <url><loc>https://juliusm.com/observable/projects/llm-fundamentals/perf-empirical/</loc></url>
+  <url><loc>https://juliusm.com/observable/projects/llm-fundamentals/perf-expected/</loc></url>
+  <url><loc>https://juliusm.com/observable/projects/resume-generator/</loc></url>
+  <url><loc>https://juliusm.com/observable/projects/site-chatbot/</loc></url>
+</urlset>

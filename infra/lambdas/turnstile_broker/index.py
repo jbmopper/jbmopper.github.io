@@ -7,7 +7,7 @@ import time
 import urllib.parse
 import urllib.request
 import uuid
-from typing import Any, Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, List, Optional
 
 import boto3
 
@@ -85,37 +85,58 @@ def _get_header(headers: Optional[Dict[str, str]], key: str) -> str:
     return ""
 
 
-def _allowed_origins() -> set[str]:
+def _allowed_origins() -> List[str]:
     raw = os.getenv("ALLOWED_ORIGINS", "")
-    return {item.strip() for item in raw.split(",") if item.strip()}
+    return [item.strip() for item in raw.split(",") if item.strip()]
 
 
-def _cors_origin(event: Dict[str, Any]) -> str:
+def _cors_origin(event: Dict[str, Any]) -> Optional[str]:
     origin = _get_header(event.get("headers") or {}, "origin")
     allowed = _allowed_origins()
 
     if origin and origin in allowed:
         return origin
 
+    if origin:
+        return None
+
     if allowed:
-        return next(iter(allowed))
+        return allowed[0]
 
     return "*"
 
 
-def _response(status_code: int, event: Dict[str, Any], body: Dict[str, Any]) -> Dict[str, Any]:
+def _cors_headers(event: Dict[str, Any]) -> Dict[str, str]:
+    headers = {
+        "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Requested-With",
+        "Access-Control-Allow-Methods": "OPTIONS,POST",
+        "Access-Control-Max-Age": "300",
+        "Vary": "Origin",
+    }
+    origin = _cors_origin(event)
+    if origin:
+        headers["Access-Control-Allow-Origin"] = origin
+    return headers
+
+
+def _response(status_code: int, event: Dict[str, Any], body: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    headers = {
+        "Content-Type": "application/json",
+        **_cors_headers(event),
+    }
     return {
         "statusCode": status_code,
-        "headers": {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": _cors_origin(event),
-            "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Requested-With",
-            "Access-Control-Allow-Methods": "OPTIONS,POST",
-            "Access-Control-Max-Age": "300",
-            "Vary": "Origin",
-        },
-        "body": json.dumps(body),
+        "headers": headers,
+        "body": json.dumps(body or {}),
     }
+
+
+def _http_method(event: Dict[str, Any]) -> str:
+    return (
+        event.get("httpMethod")
+        or (((event.get("requestContext") or {}).get("http") or {}).get("method"))
+        or ""
+    ).upper()
 
 
 def _verify_turnstile(token: str, remote_ip: str, action: str, secret: str) -> Dict[str, Any]:
@@ -197,6 +218,9 @@ def _mint_session_token(
 
 
 def handler(event: Dict[str, Any], _context: Any) -> Dict[str, Any]:
+    if _http_method(event) == "OPTIONS":
+        return _response(204, event)
+
     try:
         raw_body = event.get("body") or "{}"
         body = json.loads(raw_body)

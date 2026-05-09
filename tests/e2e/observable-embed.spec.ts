@@ -65,7 +65,7 @@ test("observable navigation uses same-tab Welcome and hides project-only control
   await expect(welcomeNavLink).not.toHaveAttribute("target", "_blank");
   await welcomeNavLink.click();
   await expect(page).toHaveURL(/\/(?:#welcome)?$/);
-  await expect(page.getByRole("heading", {name: "juliusm.com"})).toBeVisible();
+  await expect(page.getByRole("heading", {name: "Julius Mopper"})).toBeVisible();
 
   await page.goto("/observable/projects/");
   await expect(page.getByRole("heading", {name: "Projects"})).toBeVisible();
