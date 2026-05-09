@@ -124,32 +124,34 @@ const proofStats = [
 <style>
   .hero {
     display: grid;
-    gap: 1.15rem;
-    padding: 1.5rem;
-    border: 1px solid var(--stroke);
-    border-radius: 14px;
+    gap: var(--space-5);
+    padding: var(--space-6) var(--space-6);
+    border: var(--rule-w) solid var(--rule);
+    border-radius: var(--radius-md);
     background:
-      linear-gradient(130deg, rgba(12, 17, 24, 0.75), rgba(20, 27, 36, 0.65)),
+      linear-gradient(130deg, color-mix(in srgb, var(--bg) 80%, transparent), color-mix(in srgb, var(--bg-alt) 65%, transparent)),
       url('/src/content/hero_bg.png') center / cover no-repeat;
   }
 
   .eyebrow {
     margin: 0;
     color: var(--accent);
-    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: var(--track-label);
   }
 
   h1 {
     margin: 0;
-    font-size: clamp(2.25rem, 5vw, 4.5rem);
-    line-height: 1.05;
+    font-size: var(--fs-display);
+    line-height: var(--lh-display);
+    letter-spacing: var(--track-display);
   }
 
   .intro {
     margin: 0;
-    color: var(--text-1);
+    color: var(--fg-muted);
     max-width: 54ch;
     min-height: 1.5em;
     font-size: clamp(1rem, 1.5vw, 1.2rem);
@@ -169,37 +171,63 @@ const proofStats = [
   .link-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
   }
 
+  /*
+   * Anchor-as-button — the primary nav of the hero. Uses the shared press
+   * tokens so the feel matches the ThemeSwitcher and any other button.
+   */
   .link-row a {
-    padding: 0.5rem 0.9rem;
-    border: 1px solid var(--stroke);
-    border-radius: 999px;
+    padding: var(--inset-control);
+    border: var(--rule-w) solid var(--rule);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--bg) 70%, transparent);
     text-decoration: none;
-    color: var(--text-0);
+    color: var(--fg);
+    font-size: 0.95rem;
+    transition: var(--transition-press);
   }
 
   .link-row a:hover {
     border-color: var(--accent);
+    color: var(--accent);
+    background: var(--hover-bg);
+  }
+
+  .link-row a:active {
+    transform: translateY(var(--press-shift));
+    box-shadow: var(--press-shadow);
+    background: var(--hover-bg-strong);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .link-row a,
+    .link-row a:active {
+      transition: none;
+      transform: none;
+    }
   }
 
   .proof-strip {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0;
-    margin-top: 0.35rem;
-    border: 1px solid var(--stroke);
-    background: color-mix(in srgb, var(--bg-0) 72%, transparent);
+    margin-top: var(--space-3);
+    border: var(--rule-w) solid var(--rule);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: color-mix(in srgb, var(--bg) 72%, transparent);
   }
 
   .proof-stat {
     min-width: 0;
-    padding: 0.85rem;
+    padding: var(--space-4) var(--space-5);
   }
 
   .proof-stat + .proof-stat {
-    border-left: 1px solid var(--stroke);
+    border-left: var(--rule-w) solid var(--rule-soft);
   }
 
   .proof-stat span,
@@ -231,23 +259,23 @@ const proofStats = [
   }
 
   .panel {
-    margin-top: 1.25rem;
-    padding: 1.25rem;
-    border: 1px solid var(--stroke);
-    border-radius: 12px;
-    background: color-mix(in srgb, var(--surface) 80%, transparent);
+    margin-top: var(--gap-section);
+    padding: var(--space-6) var(--space-6);
+    border: var(--rule-w) solid var(--rule);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--bg-alt) 72%, transparent);
   }
 
   .panel h2 {
-    margin: 0 0 0.75rem;
+    margin: 0 0 var(--space-3);
   }
 
   .section-label {
-    margin: 0 0 0.35rem;
+    margin: 0 0 var(--space-2);
   }
 
   .section-heading {
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-5);
   }
 
   .panel p a {
@@ -260,29 +288,35 @@ const proofStats = [
 
   .project-list {
     display: grid;
-    border-top: 1px solid var(--stroke);
+    border-top: var(--rule-w) solid var(--rule);
+    margin-top: var(--space-2);
   }
 
   .project-row {
     display: grid;
     grid-template-columns: minmax(0, 1.15fr) minmax(16rem, 0.9fr) minmax(12rem, 0.6fr);
-    gap: 1rem;
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--stroke);
+    gap: var(--space-5);
+    padding: var(--space-5) 0;
+    border-bottom: var(--rule-w) solid var(--rule-soft);
+    transition: background-color 90ms ease;
+  }
+
+  .project-row:hover {
+    background: color-mix(in srgb, var(--accent) 4%, transparent);
   }
 
   .project-main {
     display: grid;
     grid-template-columns: 2rem minmax(0, 1fr);
-    gap: 0.8rem;
-    color: var(--text-0);
+    gap: var(--space-3);
+    color: var(--fg);
     text-decoration: none;
   }
 
   .project-main strong {
     display: block;
-    margin: 0.25rem 0;
-    color: var(--text-0);
+    margin: var(--space-1) 0;
+    color: var(--fg);
     font-size: 1.05rem;
   }
 
@@ -290,57 +324,80 @@ const proofStats = [
     color: var(--accent);
   }
 
+  .project-main:active strong {
+    transform: translateY(var(--press-shift));
+    display: inline-block;
+  }
+
   .project-impact {
     display: block;
-    color: var(--text-1);
+    color: var(--fg-muted);
   }
 
   .proof-list {
     margin: 0;
     padding-left: 1.1rem;
-    color: var(--text-1);
+    color: var(--fg-muted);
   }
 
   .proof-list li + li {
-    margin-top: 0.35rem;
+    margin-top: var(--space-1);
   }
 
   .project-meta {
     display: grid;
     align-content: start;
-    gap: 0.65rem;
+    gap: var(--space-3);
   }
 
   .stack-list {
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
-    gap: 0.45rem;
+    gap: var(--space-2);
   }
 
   .stack-list span,
   .evidence-list a {
-    padding: 0.3rem 0.45rem;
-    border: 1px solid var(--stroke);
-    color: var(--text-1);
+    padding: 0.3rem 0.55rem;
+    border: var(--rule-w) solid var(--rule);
+    border-radius: var(--radius);
+    color: var(--fg-muted);
   }
 
   .evidence-list {
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
-    gap: 0.45rem;
+    gap: var(--space-2);
   }
 
   .evidence-list a {
     color: var(--accent);
     text-decoration: none;
     font-size: 0.85rem;
+    transition: var(--transition-press);
   }
 
   .evidence-list a:hover {
     border-color: var(--accent);
-    color: var(--text-0);
+    color: var(--fg);
+    background: var(--hover-bg);
+  }
+
+  .evidence-list a:active {
+    transform: translateY(var(--press-shift));
+    box-shadow: var(--press-shadow);
+    background: var(--hover-bg-strong);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .evidence-list a,
+    .evidence-list a:active,
+    .project-row {
+      transition: none;
+      transform: none;
+    }
   }
 
   @media (max-width: 900px) {

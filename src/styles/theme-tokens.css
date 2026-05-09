@@ -17,6 +17,15 @@
  * Themes shipped: paper (light-default), terminal (dark-default),
  *                 blueprint (dark-default), riso (light-default).
  *
+ * v2 — loosen + soften pass:
+ *   - Wider section rhythm (--space-8/9, --gap-section*) for more breathing room.
+ *   - Small corner radii (--radius 4px, --radius-md 6px) replace the strict 0
+ *     brutalist baseline; rules and density stay editorial but feel less packed.
+ *   - --rule-soft and --rule-w-strong let components opt into lighter dividers
+ *     or heavier borders without redefining the palette.
+ *   - --press-* + --transition-press provide a shared, subtle :active feel
+ *     (1px translateY + inset shade) that any button-like control can adopt.
+ *
  * See redesign-plan.md (sections 4 and 5) in jbmopper.github.io for full rationale.
  */
 
@@ -51,22 +60,44 @@
 
   /* -------------------------------------------------------------------------
    * Space scale
+   * (--space-1..7 unchanged for component-level back-compat; the loosening
+   *  happens at the section-rhythm tokens below — components reach for
+   *  --gap-section* and --inset-* rather than redefining their own scale.)
    * --------------------------------------------------------------------- */
-  --space-1: 0.25rem;  /*  4px */
-  --space-2: 0.5rem;   /*  8px */
-  --space-3: 0.75rem;  /* 12px */
-  --space-4: 1rem;     /* 16px */
-  --space-5: 1.5rem;   /* 24px */
-  --space-6: 2.5rem;   /* 40px */
-  --space-7: 4rem;     /* 64px */
+  --space-1: 0.25rem;  /*   4px */
+  --space-2: 0.5rem;   /*   8px */
+  --space-3: 0.75rem;  /*  12px */
+  --space-4: 1rem;     /*  16px */
+  --space-5: 1.5rem;   /*  24px */
+  --space-6: 3rem;     /*  48px — bumped from 40 for more page rhythm */
+  --space-7: 4.5rem;   /*  72px — bumped from 64 */
+  --space-8: 6rem;     /*  96px — between major sections */
+  --space-9: 8rem;     /* 128px — hero / major section break */
+
+  /* -------------------------------------------------------------------------
+   * Section rhythm + insets
+   * Use these in section/card/row CSS instead of raw --space-* numbers so
+   * a single edit here can re-tune the whole site's density.
+   * --------------------------------------------------------------------- */
+  --gap-stack:       var(--space-3);  /* tight stack inside a single component */
+  --gap-block:       var(--space-5);  /* between paragraphs / form rows */
+  --gap-section:     var(--space-7);  /* between minor sections */
+  --gap-section-lg:  var(--space-8);  /* between major sections / hero ↔ work */
+  --gap-page:        var(--space-9);  /* outer page top/bottom breathing */
+
+  --inset-row:       var(--space-4) var(--space-5);   /* row padding (y, x) */
+  --inset-card:      var(--space-5) var(--space-6);   /* card padding */
+  --inset-control:   var(--space-2) var(--space-4);   /* button/input padding */
 
   /* -------------------------------------------------------------------------
    * Layout, rules, prose rhythm
    * --------------------------------------------------------------------- */
   --maxw:           72rem;
+  --maxw-narrow:    56rem;        /* prose-heavy sections (welcome, resume) */
   --rule-w:         1px;
-  --radius:         0;
-  --radius-md:      0;       /* deprecation: was 12px; pinned to 0 for brutalist */
+  --rule-w-strong:  2px;          /* heavier border for cards/buttons that need weight */
+  --radius:         4px;          /* loosened from 0 — subtle softening */
+  --radius-md:      6px;          /* cards, buttons, inputs */
 
   --prose-max:      64ch;
   --prose-max-wide: 80ch;
@@ -93,6 +124,30 @@
   --series-2: var(--fg);
   --series-3: var(--fg-muted);
   --series-4: color-mix(in srgb, var(--fg-muted) 55%, var(--bg));
+
+  /* -------------------------------------------------------------------------
+   * Rule helpers — derived from --rule so they shift with theme.
+   * --rule-soft is a lightened divider; use for in-section row separators.
+   * --rule keeps full strength for section boundaries and active states.
+   * --------------------------------------------------------------------- */
+  --rule-soft: color-mix(in srgb, var(--rule) 35%, var(--bg));
+  --rule-faint: color-mix(in srgb, var(--rule) 15%, var(--bg));
+
+  /* -------------------------------------------------------------------------
+   * Hover + press feedback — shared tokens so every button-like control
+   * (anchor-pills, ResumeGenerator submit, ThemeSwitcher swatches, Jay
+   * launcher) feels consistent.
+   *
+   * Subtle press: at rest a 1px border + small radius; on :hover, a faint
+   * accent-tinted background; on :active, a 1px translateY plus an inset
+   * shade so the surface looks pushed in. No drop shadow at rest.
+   * --------------------------------------------------------------------- */
+  --press-shift:        1px;
+  --press-shadow:       inset 0 1px 0 0 color-mix(in srgb, var(--fg) 18%, transparent);
+  --hover-bg:           color-mix(in srgb, var(--accent) 10%, var(--bg));
+  --hover-bg-strong:    color-mix(in srgb, var(--accent) 20%, var(--bg));
+  --transition-press:   transform 70ms ease, background-color 90ms ease, border-color 90ms ease, box-shadow 70ms ease;
+  --focus-ring:         0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
 
   /* -------------------------------------------------------------------------
    * Legacy palette aliases — kept so the existing astro-bridge-theme.css and

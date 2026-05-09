@@ -81,11 +81,12 @@
     width: 34px;
     height: 34px;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-md, 6px);
     background: var(--accent, #65d9c6);
-    color: var(--bg-0, #0c1118);
+    color: var(--accent-fg, var(--bg-0, #0c1118));
     cursor: pointer;
     flex-shrink: 0;
+    transition: var(--transition-press, filter 0.1s ease);
   }
 
   button:disabled {
@@ -95,5 +96,22 @@
 
   button:not(:disabled):hover {
     filter: brightness(1.1);
+    background: var(--hover-bg-strong, var(--accent, #65d9c6));
+  }
+
+  button:not(:disabled):active {
+    transform: translateY(var(--press-shift, 1px));
+    box-shadow: var(--press-shadow, inset 0 1px 0 0 rgba(0,0,0,0.18));
+    filter: brightness(0.95);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    button {
+      transition: none;
+    }
+
+    button:not(:disabled):active {
+      transform: none;
+    }
   }
 </style>
