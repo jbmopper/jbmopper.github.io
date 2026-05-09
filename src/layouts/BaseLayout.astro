@@ -110,14 +110,10 @@ const previewImage = new URL("/images/jay_cropped.png", Astro.site ?? "https://j
     color: var(--accent);
     font-weight: 700;
     text-decoration: none;
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(calc(-100% - 1rem));
+    transform: translateY(-150%);
   }
 
-  .skip-link:focus-visible {
-    opacity: 1;
-    pointer-events: auto;
+  .skip-link:focus {
     transform: translateY(0);
   }
 

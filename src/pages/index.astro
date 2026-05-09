@@ -3,16 +3,22 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import projects from "../data/projects.json";
 
 const publishedProjects = projects.filter((project) => project.status === "published");
+const toSiteHref = (href?: string) => {
+  const safeHref = href ?? "#";
+  return safeHref.startsWith("/projects/") ? `/observable${safeHref}` : safeHref;
+};
+const proofStats = [
+  {value: "01", label: "Transformer lab", detail: "model internals, training, inference, and GPU traces"},
+  {value: "02", label: "Serverless workflows", detail: "challenge-gated APIs, async jobs, and PDF delivery"},
+  {value: "03", label: "Grounded assistants", detail: "RAG-backed chat across Astro and Observable pages"}
+];
 ---
 
-<BaseLayout
-  title="Julius Mopper | AI Systems Engineer"
-  description="Portfolio for Julius Mopper, an AI systems engineer building model, data, and product systems."
->
+<BaseLayout title="juliusm.com | Portfolio Site" description="Julius M's Portfolio Site">
   <section class="hero">
     <p class="eyebrow">AI Systems Portfolio</p>
     <h1>Julius Mopper</h1>
-    <p class="intro" id="hero-tagline">Building AI systems that <i>scale</i>.</p>
+    <p class="intro" id="hero-tagline">Building AI systems that <i>survive contact</i> with real users.</p>
     <div class="link-row">
       <a href="#welcome">Welcome</a>
       <a href="/observable/projects/">Projects</a>
@@ -20,10 +26,20 @@ const publishedProjects = projects.filter((project) => project.status === "publi
       <a href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a>
       <a href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a>
     </div>
+    <div class="proof-strip" aria-label="Portfolio proof points">
+      {proofStats.map((item) => (
+        <article class="proof-stat">
+          <span>{item.value}</span>
+          <strong>{item.label}</strong>
+          <p>{item.detail}</p>
+        </article>
+      ))}
+    </div>
   </section>
 
   <section id="welcome" class="panel">
-    <h2>Welcome</h2>
+    <p class="section-label">01 / Welcome</p>
+    <h2>Systems work, with receipts.</h2>
     <!--
     <p>
       This is the portfolio site for Julius Mopper, a talented up-and-coming AI engineer.  Julius has a strong background in machine learning and backend web portal design, having spent over three years in roles specializing in each.
@@ -40,27 +56,51 @@ const publishedProjects = projects.filter((project) => project.status === "publi
     </p>
     -->
     <p>
-      The problem is no longer adding features, but controlling the complexity. That is the work I like: understanding the model, building the system around it, and getting the result to survive contact with real users. These projects cover that work, from a transformer implemented from scratch to a resume generator with real backend, auth, and PDF plumbing to a RAG chatbot grounded on its own corpus. My background in analysis and enterprise integration turns out to be unusually useful here: ambiguous requirements, messy systems, and the human problem of figuring out what actually needs to be built.
+      The problem is no longer adding features, but controlling complexity. That is the work I like: understanding the model, building the system around it, and getting the result to survive contact with real users. These projects show that range in public: a transformer implemented from scratch, a resume generator with real backend/auth/PDF plumbing, and a RAG chatbot grounded on the site's own corpus.
     </p>
   </section>
 
   <section id="projects" class="panel">
-    <h2>Projects</h2>
-    {publishedProjects.map((project) => (
-      <article class="project-card">
-        <h3><a href={`/observable/projects/${project.slug}/`}>{project.title}</a></h3>
-        <p>{project.description}</p>
+    <div class="section-heading">
+      <p class="section-label">02 / Selected Work</p>
+      <h2>Denser proof, less hand-waving.</h2>
+    </div>
+    <div class="project-list">
+      {publishedProjects.map((project, index) => (
+      <article class="project-card project-row">
+        <a class="project-main" href={`/observable/projects/${project.slug}/`} aria-label={project.title}>
+          <span class="project-index">{String(index + 1).padStart(2, "0")}</span>
+          <span>
+            <span class="project-kicker">{project.category}</span>
+            <strong>{project.title}</strong>
+            <span class="project-impact">{project.impact}</span>
+          </span>
+        </a>
+        <ul class="proof-list">
+          {project.proof?.map((item) => <li>{item}</li>)}
+        </ul>
+        <div class="project-meta">
+          <div class="stack-list" aria-label={`${project.title} stack`}>
+            {project.stack?.map((item) => <span>{item}</span>)}
+          </div>
+          <div class="evidence-list" aria-label={`${project.title} evidence links`}>
+            {project.evidenceLinks?.map((item) => (
+              <a href={toSiteHref(item.href)}>{item.label}</a>
+            ))}
+          </div>
+        </div>
       </article>
-    ))}
+      ))}
+    </div>
   </section>
 </BaseLayout>
 
 <script is:inline>
   (function () {
     const taglines = [
-      "Building AI systems that <i>scale</i>.",
-      "Pivot, <i>pivot,</i> pivot...",
-      "<i>Own</i> the control plane."
+      "Building AI systems that <i>survive contact</i> with real users.",
+      "From model internals to <i>control planes</i>.",
+      "Ambiguous problem, messy system, <i>shippable</i> answer."
     ];
     const el = document.getElementById("hero-tagline");
     if (!el || taglines.length < 2) return;
@@ -84,7 +124,7 @@ const publishedProjects = projects.filter((project) => project.status === "publi
 <style>
   .hero {
     display: grid;
-    gap: 1rem;
+    gap: 1.15rem;
     padding: 1.5rem;
     border: 1px solid var(--stroke);
     border-radius: 14px;
@@ -103,13 +143,16 @@ const publishedProjects = projects.filter((project) => project.status === "publi
 
   h1 {
     margin: 0;
-    font-size: clamp(1.9rem, 4vw, 2.9rem);
+    font-size: clamp(2.25rem, 5vw, 4.5rem);
+    line-height: 1.05;
   }
 
   .intro {
     margin: 0;
     color: var(--text-1);
-    max-width: 65ch;
+    max-width: 54ch;
+    min-height: 1.5em;
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
     transition: opacity 350ms ease;
   }
 
@@ -141,6 +184,52 @@ const publishedProjects = projects.filter((project) => project.status === "publi
     border-color: var(--accent);
   }
 
+  .proof-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    margin-top: 0.35rem;
+    border: 1px solid var(--stroke);
+    background: color-mix(in srgb, var(--bg-0) 72%, transparent);
+  }
+
+  .proof-stat {
+    min-width: 0;
+    padding: 0.85rem;
+  }
+
+  .proof-stat + .proof-stat {
+    border-left: 1px solid var(--stroke);
+  }
+
+  .proof-stat span,
+  .project-index,
+  .project-kicker,
+  .section-label,
+  .stack-list span {
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .proof-stat span,
+  .project-index,
+  .project-kicker,
+  .section-label {
+    color: var(--accent);
+  }
+
+  .proof-stat strong {
+    display: block;
+    margin-top: 0.35rem;
+  }
+
+  .proof-stat p {
+    margin: 0.25rem 0 0;
+    color: var(--text-1);
+    font-size: 0.92rem;
+  }
+
   .panel {
     margin-top: 1.25rem;
     padding: 1.25rem;
@@ -153,6 +242,14 @@ const publishedProjects = projects.filter((project) => project.status === "publi
     margin: 0 0 0.75rem;
   }
 
+  .section-label {
+    margin: 0 0 0.35rem;
+  }
+
+  .section-heading {
+    margin-bottom: 1rem;
+  }
+
   .panel p a {
     color: var(--accent);
   }
@@ -161,20 +258,105 @@ const publishedProjects = projects.filter((project) => project.status === "publi
     color: var(--text-0);
   }
 
-  .project-card h3 {
-    margin: 0 0 0.5rem;
+  .project-list {
+    display: grid;
+    border-top: 1px solid var(--stroke);
   }
 
-  .project-card + .project-card {
-    margin-top: 1rem;
+  .project-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(16rem, 0.9fr) minmax(12rem, 0.6fr);
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--stroke);
   }
 
-  .project-card a {
+  .project-main {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    gap: 0.8rem;
+    color: var(--text-0);
+    text-decoration: none;
+  }
+
+  .project-main strong {
+    display: block;
+    margin: 0.25rem 0;
+    color: var(--text-0);
+    font-size: 1.05rem;
+  }
+
+  .project-main:hover strong {
     color: var(--accent);
   }
 
-  .project-card p {
-    margin: 0;
+  .project-impact {
+    display: block;
     color: var(--text-1);
+  }
+
+  .proof-list {
+    margin: 0;
+    padding-left: 1.1rem;
+    color: var(--text-1);
+  }
+
+  .proof-list li + li {
+    margin-top: 0.35rem;
+  }
+
+  .project-meta {
+    display: grid;
+    align-content: start;
+    gap: 0.65rem;
+  }
+
+  .stack-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 0.45rem;
+  }
+
+  .stack-list span,
+  .evidence-list a {
+    padding: 0.3rem 0.45rem;
+    border: 1px solid var(--stroke);
+    color: var(--text-1);
+  }
+
+  .evidence-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 0.45rem;
+  }
+
+  .evidence-list a {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.85rem;
+  }
+
+  .evidence-list a:hover {
+    border-color: var(--accent);
+    color: var(--text-0);
+  }
+
+  @media (max-width: 900px) {
+    .project-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .proof-strip {
+      grid-template-columns: 1fr;
+    }
+
+    .proof-stat + .proof-stat {
+      border-top: 1px solid var(--stroke);
+      border-left: 0;
+    }
   }
 </style>
