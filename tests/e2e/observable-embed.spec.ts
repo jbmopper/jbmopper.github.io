@@ -34,15 +34,14 @@ test("homepage project cards render from the shared catalog", async ({page}) => 
   }
 
   await expect(projectsSection.getByRole("link", {name: "Deep Learning Fundamentals"})).toBeVisible();
-  await expect(projectsSection.getByRole("link", {name: "Resume Generator"})).toBeVisible();
-  const chatbotProject = projectBySlug("site-chatbot");
-  await expect(projectsSection.getByRole("link", {name: chatbotProject.title})).toBeVisible();
+  const miscProject = projectBySlug("miscellaneous-grounding");
+  await expect(projectsSection.getByRole("link", {name: miscProject.title})).toBeVisible();
+  await expect(projectsSection.getByRole("link", {name: "Resume Generator"})).toHaveCount(0);
   await expect(projectsSection.getByRole("link", {name: "Data Playground"})).toHaveCount(0);
 
-  await projectsSection.getByRole("link", {name: chatbotProject.title}).click();
-  await expect(page).toHaveURL(projectRoutePattern(chatbotProject.slug));
-  // Heading text lives in the ns_obv notebook source, not the catalog, so it stays hardcoded.
-  await expect(page.getByRole("heading", {name: "Site Design and RAG Chatbot Integration"})).toBeVisible();
+  await projectsSection.getByRole("link", {name: miscProject.title}).click();
+  await expect(page).toHaveURL(projectRoutePattern(miscProject.slug));
+  await expect(page.getByRole("heading", {name: miscProject.title})).toBeVisible();
 });
 
 test("landing project link opens canonical notebook and navigation is available", async ({page}) => {
@@ -76,28 +75,22 @@ test("observable navigation uses same-tab Welcome and hides project-only control
 });
 
 // Project pages render a `juliusm.com › <project>` breadcrumb in the header.
-// The slot lives in `.portfolio-header-left` and is populated by an inline script
-// on page load. Labels for non-LLM projects are hardcoded in the ns_obv header
-// script and may diverge from the catalog title (e.g. site-chatbot shows
-// "Site Design and Chatbot Integration" while the catalog uses
-// "Site Design and RAG Chatbot Integration"). LLM Fundamentals renders as a
-// dropdown menu with a shortened label rather than the catalog title.
+// LLM Fundamentals renders as a dropdown menu with a shortened label; simpler
+// published project pages should render a direct breadcrumb link matching the
+// shared catalog title.
 test("project pages render a breadcrumb after juliusm.com", async ({page}) => {
-  const linkExpectations = [
-    {slug: "site-chatbot", label: "Site Design and Chatbot Integration"},
-    {slug: "resume-generator", label: "Resume Generator"},
-  ];
+  const linkExpectations = publishedProjects.filter((project) => project.slug !== "llm-fundamentals");
 
-  for (const {slug, label} of linkExpectations) {
-    await page.goto(`/observable/projects/${slug}/`);
+  for (const project of linkExpectations) {
+    await page.goto(`/observable/projects/${project.slug}/`);
 
     const breadcrumb = page.locator("#observablehq-header .portfolio-header-left #portfolio-current-project-slot");
     await expect(breadcrumb).toBeVisible();
     await expect(breadcrumb.locator(".portfolio-breadcrumb-separator")).toHaveText("›");
 
-    const currentEntry = breadcrumb.locator(`a.portfolio-nav-link[href$="/observable/projects/${slug}/"]`);
+    const currentEntry = breadcrumb.locator(`a.portfolio-nav-link[href$="/observable/projects/${project.slug}/"]`);
     await expect(currentEntry).toBeVisible();
-    await expect(currentEntry).toHaveText(label);
+    await expect(currentEntry).toHaveText(project.title);
   }
 
   await page.goto("/observable/projects/llm-fundamentals/");
