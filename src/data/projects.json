@@ -21,40 +21,21 @@
     "status": "published"
   },
   {
-    "slug": "resume-generator",
-    "title": "Resume Generator",
-    "category": "Serverless AI Product",
-    "role": "Product and backend engineer",
-    "description": "A serverless resume generator utilizing the Anthropic messages API to create a structured markdown/html output that is rendered into a polished PDF resume, tailored to the input job description.",
-    "impact": "A real gated workflow with challenge verification, session authorization, async generation, polling, and PDF delivery.",
+    "slug": "miscellaneous-grounding",
+    "title": "Miscellaneous Grounding",
+    "category": "Applied AI Infrastructure",
+    "role": "Full-stack AI systems engineer",
+    "description": "A combined project covering the portfolio site, resume-generation Lambda, and RAG chatbot work that grounds generated behavior in durable source material and production workflows.",
+    "impact": "A connected AI product surface spanning static site export, serverless resume generation, gated APIs, PDF delivery, and corpus-grounded chat.",
     "proof": [
-      "Built a Turnstile-backed session flow for protected generation endpoints",
-      "Modeled async job submission, status polling, and expiring PDF download URLs",
-      "Kept a mock mode so the UI remains testable without deployed secrets"
+      "Built the Observable-to-Astro export bridge and shared project catalog",
+      "Implemented a Turnstile-gated async resume generation flow with PDF delivery",
+      "Integrated a Vertex AI RAG chatbot grounded in the site's project corpus"
     ],
-    "stack": ["Astro", "Svelte", "AWS API Gateway", "Lambda", "Turnstile"],
+    "stack": ["Astro", "Svelte", "Observable", "AWS Lambda", "API Gateway", "Turnstile", "Vertex AI RAG"],
     "evidenceLinks": [
-      {"label": "Demo", "href": "/resume/"},
-      {"label": "Read", "href": "/projects/resume-generator/"}
-    ],
-    "art": null,
-    "status": "published"
-  },
-  {
-    "slug": "site-chatbot",
-    "title": "Site Design and RAG Chatbot Integration",
-    "category": "RAG Interface",
-    "role": "Full-stack AI interface engineer",
-    "description": "A review of the site creation process and the design and integration of a RAG-powered Generative AI Chatbot",
-    "impact": "A persistent assistant that follows users across Astro and Observable pages while staying grounded in the site's project corpus.",
-    "proof": [
-      "Persisted conversation identity across mixed static and exported pages",
-      "Routed chat through session-gated API calls with graceful mock behavior",
-      "Documented the site-generation and assistant-integration architecture"
-    ],
-    "stack": ["Svelte", "Vertex AI RAG", "API Gateway", "Astro"],
-    "evidenceLinks": [
-      {"label": "Read", "href": "/projects/site-chatbot/"},
+      {"label": "Read", "href": "/projects/miscellaneous-grounding/"},
+      {"label": "Resume Demo", "href": "https://juliusm.com/resume/"},
       {"label": "Live Site", "href": "/"}
     ],
     "art": null,

@@ -8,9 +8,9 @@
 <base href="/observable/projects/llm-fundamentals/perf-expected/">
 <title>Architecture and Expected Performance | juliusm.com</title>
 
-<link rel="preload" as="style" href="../../../_import/astro-bridge-theme.b2fb8494.css">
+<link rel="preload" as="style" href="../../../_import/astro-bridge-theme.171a10c2.css">
 <link rel="preload" as="style" href="../../../_npm/katex@0.16.28/dist/katex.min.css">
-<link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.b2fb8494.css">
+<link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.171a10c2.css">
 <link rel="stylesheet" type="text/css" href="../../../_npm/katex@0.16.28/dist/katex.min.css">
 <script type="module">
 
@@ -255,15 +255,14 @@ await renderPerfExpected()
   <ol>
     <li class="observablehq-link"><a href="../../">Projects</a></li>
     <li class="observablehq-link"><a href="../">LLM Fundamentals</a></li>
-    <li class="observablehq-link"><a href="../../resume-generator/">Resume Generator</a></li>
+    <li class="observablehq-link"><a href="../../miscellaneous-grounding/">Miscellaneous Grounding</a></li>
     <li class="observablehq-link"><a href="../../data-playground/">Data Playground</a></li>
-    <li class="observablehq-link"><a href="../../site-chatbot/">Site Design and Chatbot Integration</a></li>
   </ol>
 </nav>
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <header id="observablehq-header">
-<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="../../resume-generator/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume Generator</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav></div><script>(function(){
+<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="https://juliusm.com/resume/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');" target="_blank" rel="noopener noreferrer">Resume Generator</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav></div><script>(function(){
         const mount = window.location.pathname.startsWith('/observable') ? '/observable' : '';
         const path = window.location.pathname.replace(/^\/observable(?=\/|$)/,'').replace(/\/index\.html$/,'/');
         const normalized = path.endsWith('/') ? path : path + '/';
@@ -344,13 +343,10 @@ await renderPerfExpected()
               document.addEventListener('keydown', function(event){
                 if (event.key === 'Escape') details.removeAttribute('open');
               });
-            } else if (slug === 'resume-generator') {
-              slot.appendChild(makeNavLink('Resume Generator', mount + '/projects/resume-generator/'));
             } else {
               const labels = {
-                'resume-generator': 'Resume Generator',
                 'data-playground': 'Data Playground',
-                'site-chatbot': 'Site Design and Chatbot Integration'
+                'miscellaneous-grounding': 'Miscellaneous Grounding'
               };
               const fallback = slug
                 .split('-')
