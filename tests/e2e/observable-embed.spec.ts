@@ -33,15 +33,16 @@ test("homepage project cards render from the shared catalog", async ({page}) => 
     await expect(link).toHaveAttribute("href", `/observable/projects/${project.slug}/`);
   }
 
-  await expect(projectsSection.getByRole("link", {name: "Deep Learning Fundamentals"})).toBeVisible();
-  const miscProject = projectBySlug("miscellaneous-grounding");
-  await expect(projectsSection.getByRole("link", {name: miscProject.title})).toBeVisible();
-  await expect(projectsSection.getByRole("link", {name: "Resume Generator"})).toHaveCount(0);
+  const llmProject = projectBySlug("llm-fundamentals");
+  await expect(projectsSection.getByRole("link", {name: llmProject.title})).toBeVisible();
+  const chatbotProject = projectBySlug("site-chatbot");
+  await expect(projectsSection.getByRole("link", {name: chatbotProject.title})).toBeVisible();
+  await expect(projectsSection.getByRole("link", {name: "Resume Generator"})).toBeVisible();
   await expect(projectsSection.getByRole("link", {name: "Data Playground"})).toHaveCount(0);
 
-  await projectsSection.getByRole("link", {name: miscProject.title}).click();
-  await expect(page).toHaveURL(projectRoutePattern(miscProject.slug));
-  await expect(page.getByRole("heading", {name: miscProject.title})).toBeVisible();
+  await projectsSection.getByRole("link", {name: chatbotProject.title}).click();
+  await expect(page).toHaveURL(projectRoutePattern(chatbotProject.slug));
+  await expect(page.getByRole("heading", {name: chatbotProject.title})).toBeVisible();
 });
 
 test("landing project link opens canonical notebook and navigation is available", async ({page}) => {
