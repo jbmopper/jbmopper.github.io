@@ -483,25 +483,20 @@
     align-items: center;
     justify-content: center;
     padding: 0.6rem 1.4rem;
-    border: var(--rule-w, 1px) solid var(--accent, #65d9c6);
-    border-radius: var(--radius-md, 6px);
+    border: 1px solid var(--accent, #65d9c6);
+    border-radius: 999px;
     background: transparent;
     color: var(--accent, #65d9c6);
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
     text-decoration: none;
-    transition: var(--transition-press, background 0.15s, color 0.15s);
+    transition: background 0.15s, color 0.15s;
   }
 
   .btn-primary:hover:not(:disabled) {
     background: var(--accent, #65d9c6);
-    color: var(--accent-fg, var(--bg-0, #0c1118));
-  }
-
-  .btn-primary:active:not(:disabled) {
-    transform: translateY(var(--press-shift, 1px));
-    box-shadow: var(--press-shadow, inset 0 1px 0 0 rgba(0, 0, 0, 0.18));
+    color: var(--bg-0, #0c1118);
   }
 
   .btn-primary:disabled {
@@ -514,36 +509,19 @@
     align-items: center;
     justify-content: center;
     padding: 0.6rem 1.4rem;
-    border: var(--rule-w, 1px) solid var(--rule, var(--stroke, #2d3e50));
-    border-radius: var(--radius-md, 6px);
+    border: 1px solid var(--stroke, #2d3e50);
+    border-radius: 999px;
     background: transparent;
-    color: var(--fg-muted, var(--text-1, #b7c2d0));
+    color: var(--text-1, #b7c2d0);
     font-size: 0.95rem;
     cursor: pointer;
     text-decoration: none;
-    transition: var(--transition-press, border-color 0.15s, color 0.15s);
+    transition: border-color 0.15s, color 0.15s;
   }
 
   .btn-secondary:hover {
-    border-color: var(--accent, var(--text-1, #b7c2d0));
-    color: var(--fg, var(--text-0, #edf2f7));
-    background: var(--hover-bg, transparent);
-  }
-
-  .btn-secondary:active {
-    transform: translateY(var(--press-shift, 1px));
-    box-shadow: var(--press-shadow, inset 0 1px 0 0 rgba(0, 0, 0, 0.18));
-    background: var(--hover-bg-strong, transparent);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .btn-primary,
-    .btn-primary:active,
-    .btn-secondary,
-    .btn-secondary:active {
-      transition: none;
-      transform: none;
-    }
+    border-color: var(--text-1, #b7c2d0);
+    color: var(--text-0, #edf2f7);
   }
 
   .btn-link {

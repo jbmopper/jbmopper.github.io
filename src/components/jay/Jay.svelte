@@ -418,20 +418,14 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    transition: var(--transition-press, transform 0.15s ease, box-shadow 0.15s ease);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
     padding: 0;
     overflow: hidden;
   }
 
   .fab:hover {
-    transform: scale(1.06);
+    transform: scale(1.08);
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
-    background: var(--hover-bg-strong, var(--surface, #1a2330));
-  }
-
-  .fab:active {
-    transform: scale(0.97) translateY(var(--press-shift, 1px));
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), var(--press-shadow, inset 0 1px 0 0 rgba(0,0,0,0.18));
   }
 
   .fab-portrait {
@@ -471,20 +465,14 @@
     color: var(--text-1, #b7c2d0);
     cursor: pointer;
     padding: 0.25rem;
-    border-radius: var(--radius, 4px);
+    border-radius: 4px;
     display: flex;
     align-items: center;
-    transition: var(--transition-press, color 0.1s ease, background-color 0.1s ease);
   }
 
   .header-btn:hover:not(:disabled) {
     color: var(--text-0, #edf2f7);
-    background: var(--hover-bg, var(--surface-2, #202c3b));
-  }
-
-  .header-btn:active:not(:disabled) {
-    transform: translateY(var(--press-shift, 1px));
-    background: var(--hover-bg-strong, var(--surface-2, #202c3b));
+    background: var(--surface-2, #202c3b);
   }
 
   .header-btn:disabled {
@@ -597,23 +585,16 @@
   .retry-btn {
     background: var(--surface-2, #202c3b);
     color: var(--text-0, #edf2f7);
-    border: var(--rule-w, 1px) solid var(--rule, var(--stroke, #2d3e50));
-    border-radius: var(--radius-md, 6px);
+    border: 1px solid var(--stroke, #2d3e50);
+    border-radius: 6px;
     padding: 0.35rem 0.75rem;
     font-size: 0.8rem;
     cursor: pointer;
-    transition: var(--transition-press, background-color 0.1s ease, border-color 0.1s ease);
   }
 
   .retry-btn:hover {
-    background: var(--hover-bg, var(--surface, #1a2330));
+    background: var(--surface, #1a2330);
     border-color: var(--accent, #65d9c6);
-  }
-
-  .retry-btn:active {
-    transform: translateY(var(--press-shift, 1px));
-    box-shadow: var(--press-shadow, inset 0 1px 0 0 rgba(0,0,0,0.18));
-    background: var(--hover-bg-strong, var(--surface, #1a2330));
   }
 
   @media (max-width: 420px) {
@@ -635,19 +616,6 @@
     .panel {
       width: calc(100vw - 2rem);
       right: -0.5rem;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .fab,
-    .fab:hover,
-    .fab:active,
-    .header-btn,
-    .header-btn:active,
-    .retry-btn,
-    .retry-btn:active {
-      transition: none;
-      transform: none;
     }
   }
 </style>
