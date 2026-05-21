@@ -1,260 +1,70 @@
 /*
  * Canonical theme tokens for both Observable + Astro.
+ * - Observable consumes this file directly via astro-bridge-theme.css.
+ * - Astro consumes the synced copy at jbmopper.github.io/src/styles/theme-tokens.css
+ *   after running `npm run export:astro`.
  *
- * Source of truth lives in ns_obv. Exported by ns_obv/scripts/export-to-astro.mjs
- * into jbmopper.github.io/src/styles/theme-tokens.css. Astro and Observable both
- * consume these names — do not reference hex codes directly in component CSS.
- *
- * Token model:
- *   - Theme-independent base (type, space, leading, scale) lives at :root.
- *   - Palette values are scoped via [data-theme="<name>"][data-mode="<light|dark>"].
- *   - :root carries the default palette (paper / light) so the page renders sanely
- *     without any data-* attributes set (FOUC fallback, JS-disabled fallback).
- *   - Bridge aliases (--bridge-*) and Observable framework tokens (--theme-*) are
- *     mapped at :root from the new semantic tokens; their values resolve at use
- *     site against whichever theme/mode is active.
- *
- * Themes shipped: paper (light-default), terminal (dark-default),
- *                 blueprint (dark-default), riso (light-default).
- *
- * See redesign-plan.md (sections 4 and 5) in jbmopper.github.io for full rationale.
+ * Quick-edit guide: see docs/theme-knobs.md
  */
-
 :root {
-  /* -------------------------------------------------------------------------
-   * Type families
-   * --------------------------------------------------------------------- */
-  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  /* Deprecation alias: legacy callers asking for serif now resolve to sans.
-     A follow-up sweep removes references; keeping this prevents notebook
-     prose from breaking during the transition. */
-  --font-serif: var(--font-sans);
+  /* Core palette */
+  --bg-0: #0c1118;
+  --bg-1: #141b24;
+  --surface: #1a2330;
+  --surface-2: #202c3b;
+  --text-0: #edf2f7;
+  --text-1: #b7c2d0;
+  --accent: #65d9c6;
+  --stroke: #2d3e50;
 
-  /* -------------------------------------------------------------------------
-   * Type scale (fluid via clamp)
-   * --------------------------------------------------------------------- */
-  --fs-display: clamp(2.75rem, 4vw + 1rem, 5rem);
-  --fs-h1:      clamp(2rem, 2vw + 1rem, 3rem);
-  --fs-h2:      clamp(1.5rem, 1vw + 1rem, 2rem);
-  --fs-h3:      1.25rem;
-  --fs-body:    1rem;
-  --fs-small:   0.875rem;
-  --fs-label:   0.75rem;
+  /* Typography */
+  --font-sans: "Manrope", "Segoe UI", sans-serif;
+  --font-serif: "Source Serif 4", "Iowan Old Style", "Apple Garamond", "Palatino Linotype", "Times New Roman", serif;
 
-  --lh-display:  1.05;
-  --lh-heading:  1.2;
-  --lh-body:     1.6;
+  /* Space scale */
+  --space-1: 0.35rem;
+  --space-2: 0.6rem;
+  --space-3: 0.9rem;
+  --space-4: 1.2rem;
+  --space-5: 1.8rem;
+  --space-6: 2.4rem;
 
-  --track-label:    0.08em;
-  --track-display: -0.02em;
+  /* Content rhythm */
+  --prose-max: 74ch;
+  --prose-max-wide: 88ch;
+  --prose-leading: 1.7;
+  --heading-leading: 1.2;
+  --list-indent: clamp(1.2rem, 2vw, 1.65rem);
+  --radius-md: 12px;
 
-  /* -------------------------------------------------------------------------
-   * Space scale
-   * --------------------------------------------------------------------- */
-  --space-1: 0.25rem;  /*  4px */
-  --space-2: 0.5rem;   /*  8px */
-  --space-3: 0.75rem;  /* 12px */
-  --space-4: 1rem;     /* 16px */
-  --space-5: 1.5rem;   /* 24px */
-  --space-6: 2.5rem;   /* 40px */
-  --space-7: 4rem;     /* 64px */
-
-  /* -------------------------------------------------------------------------
-   * Layout, rules, prose rhythm
-   * --------------------------------------------------------------------- */
-  --maxw:           72rem;
-  --rule-w:         1px;
-  --radius:         0;
-  --radius-md:      0;       /* deprecation: was 12px; pinned to 0 for brutalist */
-
-  --prose-max:      64ch;
-  --prose-max-wide: 80ch;
-  --prose-leading:  var(--lh-body);
-  --heading-leading: var(--lh-heading);
-  --list-indent:    1.5rem;
-
-  /* -------------------------------------------------------------------------
-   * Default palette = paper / light
-   * Explicit [data-theme][data-mode] blocks below override these; this set is
-   * the fallback for pages with no data-* attributes set.
-   * --------------------------------------------------------------------- */
-  --bg:        #F5F1E8;
-  --bg-alt:    #ECE7D8;
-  --fg:        #111111;
-  --fg-muted:  #555049;
-  --rule:      #111111;
-  --accent:    #C8302C;
-  --accent-fg: #F5F1E8;
-
-  /* Chart series: 1 = accent, 2-4 = mono ramp.
-     Defined once at :root referencing theme tokens; resolves dynamically. */
-  --series-1: var(--accent);
-  --series-2: var(--fg);
-  --series-3: var(--fg-muted);
-  --series-4: color-mix(in srgb, var(--fg-muted) 55%, var(--bg));
-
-  /* -------------------------------------------------------------------------
-   * Legacy palette aliases — kept so the existing astro-bridge-theme.css and
-   * any notebook CSS that references the old names keeps rendering between
-   * step 1 (this file) and step 6 (bridge rewrite). Dropped after the bridge
-   * rewrite lands.
-   * --------------------------------------------------------------------- */
-  --bg-0:      var(--bg);
-  --bg-1:      var(--bg-alt);
-  --surface:   var(--bg-alt);
-  --surface-2: var(--bg-alt);
-  --text-0:    var(--fg);
-  --text-1:    var(--fg-muted);
-  --stroke:    var(--rule);
-
-  /* -------------------------------------------------------------------------
-   * Bridge aliases (consumed by astro-bridge-theme.css and standalone widgets).
-   * Resolve dynamically at use site, so they pick up the active theme.
-   * --------------------------------------------------------------------- */
-  --bridge-bg-0:           var(--bg);
-  --bridge-surface-0:      var(--bg-alt);
-  --bridge-text-0:         var(--fg);
-  --bridge-text-1:         var(--fg-muted);
-  --bridge-accent:         var(--accent);
-  --bridge-stroke:         var(--rule);
-  --bridge-space-1:        var(--space-1);
-  --bridge-space-2:        var(--space-2);
-  --bridge-space-3:        var(--space-3);
-  --bridge-space-4:        var(--space-4);
-  --bridge-space-5:        var(--space-5);
-  --bridge-space-6:        var(--space-6);
-  --bridge-list-indent:    var(--list-indent);
-  --bridge-prose-max:      var(--prose-max);
+  /* Observable bridge aliases */
+  --bridge-bg-0: var(--bg-0);
+  --bridge-surface-0: var(--surface);
+  --bridge-text-0: var(--text-0);
+  --bridge-text-1: var(--text-1);
+  --bridge-accent: var(--accent);
+  --bridge-stroke: var(--stroke);
+  --bridge-space-1: var(--space-1);
+  --bridge-space-2: var(--space-2);
+  --bridge-space-3: var(--space-3);
+  --bridge-space-4: var(--space-4);
+  --bridge-space-5: var(--space-5);
+  --bridge-space-6: var(--space-6);
+  --bridge-list-indent: var(--list-indent);
+  --bridge-prose-max: var(--prose-max);
   --bridge-prose-max-wide: var(--prose-max-wide);
-  --bridge-leading:        var(--prose-leading);
+  --bridge-leading: var(--prose-leading);
   --bridge-heading-leading: var(--heading-leading);
-  --bridge-radius:         var(--radius);
+  --bridge-radius: var(--radius-md);
 
-  /* -------------------------------------------------------------------------
-   * Observable framework token mapping. The framework reads these names; we
-   * keep the mapping shape but source values from the new semantic tokens.
-   * --------------------------------------------------------------------- */
-  --theme-background:          var(--bg);
-  --theme-background-alt:      var(--bg-alt);
-  --theme-foreground:          var(--fg);
-  --theme-foreground-alt:      var(--fg);
-  --theme-foreground-muted:    var(--fg-muted);
-  --theme-foreground-faint:    var(--rule);
-  --theme-foreground-fainter:  var(--rule);
-  --theme-foreground-faintest: var(--rule);
-  --theme-foreground-focus:    var(--accent);
-}
-
-/* =============================================================================
- * Theme: paper
- * Editorial newspaper. Off-white paper, ink type, signal red accent.
- * Light-default.
- * ========================================================================= */
-[data-theme="paper"][data-mode="light"] {
-  --bg:        #F5F1E8;
-  --bg-alt:    #ECE7D8;
-  --fg:        #111111;
-  --fg-muted:  #555049;
-  --rule:      #111111;
-  --accent:    #C8302C;
-  --accent-fg: #F5F1E8;
-}
-
-[data-theme="paper"][data-mode="dark"] {
-  --bg:        #131313;
-  --bg-alt:    #1C1C1B;
-  --fg:        #EFE9DC;
-  --fg-muted:  #9A958A;
-  --rule:      #EFE9DC;
-  --accent:    #DD3B36;
-  --accent-fg: #131313;
-}
-
-/* =============================================================================
- * Theme: terminal
- * CRT phosphor. Near-black void, acid-green accent, off-white text.
- * Dark-default.
- * ========================================================================= */
-[data-theme="terminal"][data-mode="dark"] {
-  --bg:        #060606;
-  --bg-alt:    #0F0F0F;
-  --fg:        #E8E8E0;
-  --fg-muted:  #8A8A82;
-  --rule:      #2A2A28;
-  --accent:    #C9F25E;
-  --accent-fg: #060606;
-}
-
-[data-theme="terminal"][data-mode="light"] {
-  --bg:        #FAF9F4;
-  --bg-alt:    #F0EFE9;
-  --fg:        #0A0A0A;
-  --fg-muted:  #5A5A52;
-  --rule:      #0A0A0A;
-  --accent:    #4A7A0F; /* darkened from #5A8E14 to clear AA on cream */
-  --accent-fg: #FAF9F4;
-}
-
-/* =============================================================================
- * Theme: blueprint
- * Architectural drawing. Deep navy + cyan + paper text.
- * Dark-default.
- * ========================================================================= */
-[data-theme="blueprint"][data-mode="dark"] {
-  --bg:        #0E1A2B;
-  --bg-alt:    #142235;
-  --fg:        #E6EEF6;
-  --fg-muted:  #8FA1B6;
-  --rule:      #29405C;
-  --accent:    #4FD1F0;
-  --accent-fg: #0E1A2B;
-}
-
-[data-theme="blueprint"][data-mode="light"] {
-  --bg:        #ECEEF1;
-  --bg-alt:    #DDE2E8;
-  --fg:        #0E1A2B;
-  --fg-muted:  #4A5C72;
-  --rule:      #0E1A2B;
-  --accent:    #15799C; /* darkened from #1F8FB5 to clear AA on linen */
-  --accent-fg: #ECEEF1;
-}
-
-/* =============================================================================
- * Theme: riso
- * Risograph print shop. Cream paper, deep indigo type, magenta accent.
- * Light-default.
- * ========================================================================= */
-[data-theme="riso"][data-mode="light"] {
-  --bg:        #F8E8C8;
-  --bg-alt:    #F1DDB2;
-  --fg:        #2B2466;
-  --fg-muted:  #5C5694;
-  --rule:      #2B2466;
-  --accent:    #C81C5A; /* darkened from #FF3366 to clear AA on cream */
-  --accent-fg: #F8E8C8;
-}
-
-[data-theme="riso"][data-mode="dark"] {
-  --bg:        #0F0B1F;
-  --bg-alt:    #1A1530;
-  --fg:        #F8E8C8;
-  --fg-muted:  #B6AC92;
-  --rule:      #F8E8C8;
-  --accent:    #FF5588;
-  --accent-fg: #0F0B1F;
-}
-
-/* =============================================================================
- * Reduced-motion safety: disable transitions over 80ms when the user prefers
- * reduced motion. Component CSS should respect this; the global rule here is
- * a backstop for anything that slipped through.
- * ========================================================================= */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-  }
+  /* Observable framework token mapping */
+  --theme-background: var(--bridge-bg-0);
+  --theme-background-alt: var(--bridge-surface-0);
+  --theme-foreground: var(--bridge-text-0);
+  --theme-foreground-alt: var(--bridge-text-0);
+  --theme-foreground-muted: var(--bridge-text-1);
+  --theme-foreground-faint: var(--bridge-stroke);
+  --theme-foreground-fainter: var(--bridge-stroke);
+  --theme-foreground-faintest: var(--bridge-stroke);
+  --theme-foreground-focus: var(--bridge-accent);
 }

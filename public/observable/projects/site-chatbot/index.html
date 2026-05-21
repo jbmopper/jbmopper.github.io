@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="generator" content="Observable Framework v1.13.4">
-<base href="/observable/projects/data-playground/">
-<title>Data Playground | juliusm.com</title>
+<base href="/observable/projects/site-chatbot/">
+<title>Site Design and Chatbot Integration | juliusm.com</title>
 
 <link rel="preload" as="style" href="../../_import/astro-bridge-theme.1d667312.css">
 <link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.1d667312.css">
@@ -14,38 +14,16 @@
 import {define} from "../../_observablehq/client.b8f66ce7.js";
 import {registerFile} from "../../_observablehq/stdlib.a50b4fda.js";
 
-registerFile("../../data/manifest.json", {"name":"../../data/manifest.json","mimeType":"application/json","path":"../../_file/data/manifest.d04279d7.json","lastModified":1771874136886,"size":13400});
-registerFile("../../data/raw/benchmarks/ablations_history.parquet", {"name":"../../data/raw/benchmarks/ablations_history.parquet","path":"../../_file/data/raw/benchmarks/ablations_history.c15e6588.parquet","lastModified":1771874136910,"size":2777049});
-registerFile("../../data/raw/benchmarks/ablations_main.parquet", {"name":"../../data/raw/benchmarks/ablations_main.parquet","path":"../../_file/data/raw/benchmarks/ablations_main.912ec8a5.parquet","lastModified":1771874136911,"size":26405});
-registerFile("../../data/raw/benchmarks/gpu_comp_history.parquet", {"name":"../../data/raw/benchmarks/gpu_comp_history.parquet","path":"../../_file/data/raw/benchmarks/gpu_comp_history.e18efbee.parquet","lastModified":1771874136917,"size":1389327});
-registerFile("../../data/raw/benchmarks/gpu_comp_main.parquet", {"name":"../../data/raw/benchmarks/gpu_comp_main.parquet","path":"../../_file/data/raw/benchmarks/gpu_comp_main.d82fa693.parquet","lastModified":1771874136918,"size":21863});
-registerFile("../../data/raw/benchmarks/lr_sweeps_history.parquet", {"name":"../../data/raw/benchmarks/lr_sweeps_history.parquet","path":"../../_file/data/raw/benchmarks/lr_sweeps_history.4f809053.parquet","lastModified":1771874136930,"size":3312658});
-registerFile("../../data/raw/benchmarks/lr_sweeps_main.parquet", {"name":"../../data/raw/benchmarks/lr_sweeps_main.parquet","path":"../../_file/data/raw/benchmarks/lr_sweeps_main.98e6db0c.parquet","lastModified":1771874136930,"size":15015});
-registerFile("../../data/raw/benchmarks/micro_benchmarks_20260126_130256.json", {"name":"../../data/raw/benchmarks/micro_benchmarks_20260126_130256.json","mimeType":"application/json","path":"../../_file/data/raw/benchmarks/micro_benchmarks_20260126_130256.0003d6fe.json","lastModified":1771465633680,"size":2403});
-registerFile("../../data/raw/benchmarks/mps_comp_history.parquet", {"name":"../../data/raw/benchmarks/mps_comp_history.parquet","path":"../../_file/data/raw/benchmarks/mps_comp_history.8ee202e9.parquet","lastModified":1771874136937,"size":1535334});
-registerFile("../../data/raw/benchmarks/mps_comp_main.parquet", {"name":"../../data/raw/benchmarks/mps_comp_main.parquet","path":"../../_file/data/raw/benchmarks/mps_comp_main.f7579557.parquet","lastModified":1771874136937,"size":21062});
-registerFile("../../data/raw/benchmarks/train_benchmark_20260127_092323.json", {"name":"../../data/raw/benchmarks/train_benchmark_20260127_092323.json","mimeType":"application/json","path":"../../_file/data/raw/benchmarks/train_benchmark_20260127_092323.e80aa474.json","lastModified":1771465633684,"size":1945563});
-registerFile("../../data/raw/traces/bad_head_size_nsys.parquet", {"name":"../../data/raw/traces/bad_head_size_nsys.parquet","path":"../../_file/data/raw/traces/bad_head_size_nsys.0e5fcf94.parquet","lastModified":1771465633642,"size":699507});
-registerFile("../../data/raw/traces/bandwidth_bound_nsys.parquet", {"name":"../../data/raw/traces/bandwidth_bound_nsys.parquet","path":"../../_file/data/raw/traces/bandwidth_bound_nsys.0570a4e8.parquet","lastModified":1771465633645,"size":526034});
-registerFile("../../data/raw/traces/compute_bound_nsys.parquet", {"name":"../../data/raw/traces/compute_bound_nsys.parquet","path":"../../_file/data/raw/traces/compute_bound_nsys.9be21553.parquet","lastModified":1771465633647,"size":1020491});
-registerFile("../../data/raw/traces/deep_sequential_nsys.parquet", {"name":"../../data/raw/traces/deep_sequential_nsys.parquet","path":"../../_file/data/raw/traces/deep_sequential_nsys.4ed702eb.parquet","lastModified":1771465633653,"size":3186034});
-registerFile("../../data/raw/traces/latency_bound_nsys.parquet", {"name":"../../data/raw/traces/latency_bound_nsys.parquet","path":"../../_file/data/raw/traces/latency_bound_nsys.5b9c4edd.parquet","lastModified":1771465633657,"size":1104236});
-registerFile("../../data/raw/traces/misaligned_dims_nsys.parquet", {"name":"../../data/raw/traces/misaligned_dims_nsys.parquet","path":"../../_file/data/raw/traces/misaligned_dims_nsys.accc5b6e.parquet","lastModified":1771874136944,"size":669386});
-registerFile("../../data/raw/traces/model_a_nsys.parquet", {"name":"../../data/raw/traces/model_a_nsys.parquet","path":"../../_file/data/raw/traces/model_a_nsys.7c95f1f4.parquet","lastModified":1771465633660,"size":294932});
-registerFile("../../data/raw/traces/model_b_nsys.parquet", {"name":"../../data/raw/traces/model_b_nsys.parquet","path":"../../_file/data/raw/traces/model_b_nsys.d909797c.parquet","lastModified":1771465633662,"size":1231233});
-registerFile("../../data/raw/traces/nsys_sqlite_table_inventory.md", {"name":"../../data/raw/traces/nsys_sqlite_table_inventory.md","mimeType":"text/markdown","path":"../../_file/data/raw/traces/nsys_sqlite_table_inventory.8a62282f.md","lastModified":1771465633668,"size":25493});
-registerFile("../../data/raw/traces/vocab_bottleneck_nsys.parquet", {"name":"../../data/raw/traces/vocab_bottleneck_nsys.parquet","path":"../../_file/data/raw/traces/vocab_bottleneck_nsys.c6e0b393.parquet","lastModified":1771465633665,"size":509294});
-registerFile("../../data/raw/traces/wide_ffn_nsys.parquet", {"name":"../../data/raw/traces/wide_ffn_nsys.parquet","path":"../../_file/data/raw/traces/wide_ffn_nsys.e3df5806.parquet","lastModified":1771465633667,"size":715444});
+registerFile("./AI Native development.png", {"name":"./AI Native development.png","mimeType":"image/png","path":"../../_file/projects/site-chatbot/AI Native development.da274ef7.png","lastModified":1775265873351,"size":174341});
 
-define({id: "56bc7f43", outputs: ["renderDataPlayground"], body: async () => {
-const {renderDataPlayground} = await import("../../_import/embed/data-playground.41ee6a2f.js");
-
-return {renderDataPlayground};
+define({id: "2da3cbec", inputs: ["FileAttachment"], outputs: ["AINative"], body: (FileAttachment) => {
+const AINative = FileAttachment("./AI Native development.png").image({alt: "Vagueprompting", style: "width: 55%; min-width: 400px;"});
+return {AINative};
 }});
 
-define({id: "7f0eccc5", inputs: ["renderDataPlayground","display"], body: async (renderDataPlayground,display) => {
+define({id: "c6ab1d37", inputs: ["html","AINative","display"], body: async (html,AINative,display) => {
 display(await(
-await renderDataPlayground()
+html`<div style="text-align: left;">${AINative}</div>`
 ))
 }});
 
@@ -64,8 +42,8 @@ await renderDataPlayground()
     <li class="observablehq-link"><a href="../">Projects</a></li>
     <li class="observablehq-link"><a href="../llm-fundamentals/">LLM Fundamentals</a></li>
     <li class="observablehq-link"><a href="../resume-generator/">Resume Generator</a></li>
-    <li class="observablehq-link observablehq-link-active"><a href="./">Data Playground</a></li>
-    <li class="observablehq-link"><a href="../site-chatbot/">Site Design and Chatbot Integration</a></li>
+    <li class="observablehq-link"><a href="../data-playground/">Data Playground</a></li>
+    <li class="observablehq-link observablehq-link-active"><a href="./">Site Design and Chatbot Integration</a></li>
   </ol>
 </nav>
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
@@ -176,9 +154,27 @@ await renderDataPlayground()
       })();</script>
 </header>
 <main id="observablehq-main" class="observablehq">
-<h1 id="data-playground" tabindex="-1"><a class="observablehq-header-anchor" href="#data-playground">Data Playground</a></h1>
-<div class="observablehq observablehq--block"><!--:56bc7f43:--></div>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:7f0eccc5:--></div>
+<h1 id="site-design-and-rag-chatbot-integration" tabindex="-1"><a class="observablehq-header-anchor" href="#site-design-and-rag-chatbot-integration">Site Design and RAG Chatbot Integration</a></h1>
+<p><em>Spoiler alert</em>: these pages are used as the RAG corpus for the chatbot, and this page in particular was created to provide self-referential grounding.</p>
+<h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
+<p>Software engineering tasks that used to take weeks can now take minutes.  As the value of raw coding decreases, other skills become more needed.  Coming from a background in requirements and integration, and having dealt with the needs of full-stack development for a customer-facing web portal, the shift to "AI-Native Fullstack Developer" as such has been fascinating.</p>
+<p>This is a space to discuss my observations on these new tools, and explain my perspective on their use and potential pitfalls, in addition to documenting the site itself.  I'll start with a meme that found me on the internet:</p>
+<div class="observablehq observablehq--block"><!--:2da3cbec:--></div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:c6ab1d37:--></div>
+<p>It's not that bad, assuming one gives the system clear requirements and limited scope.  And maybe we didn't think of adding fins to the car but once they're there we realize it's good.  Given the broad training of the coding assistants and strong increase in quality recently, allowing our suddenly-trusted advisors leeway to follow their bliss is, if nothing else, a valid form of research into architectural variations we may not have considered.</p>
+<h2 id="ai-native-software-development-for-this-site-and-in-general" tabindex="-1"><a class="observablehq-header-anchor" href="#ai-native-software-development-for-this-site-and-in-general">AI Native Software Development for this Site (and in general)</a></h2>
+<p>The title "AI Native Software Developer" has been appearing in job listings recently.  We're going to take it to mean using AI assistants in a ground-up fashion.  That's how this site was created.  While letting agents run with a vague idea can be interesting, this site was created with a more standard, research-requirements-implementation-testing cycle.</p>
+<p>Of course there are nuances.  Agents may be spec'd and spun off for particular tasks like test and documentation writing, for example, and a few turns of "loading" the context with framing questions prior to setting the assistant loose helps maintain quality.  But this is the general iterative workflow I use.</p>
+<p>One practice I've found helpful in generating Python, and one I'd like to share, is similar to the comic above.  Some first passes may overbuild the code, and create a profusion of fragmentary one-line functions.  Remediation requires researching what was done, trimming and reframing requirements to make the system more efficient, and providing guidance such as "use a functional, minimalist style," which seems something of a magic incantation for improving the readability of LLM-generated code.</p>
+<p>Despite these costs, the improvement in code robustness is welcome, and it's likely the increase in power will cut down on the release of half-baked MVPs that never get remediated.  The problem is no longer adding features, but controlling the complexity.</p>
+<p>Anyway, the main complexity of the site is that the project writeups are created in a different project and exported into the site.  This segregates messy changes and large artifacts from the main site repo.</p>
+<h2 id="rag-chatbot-integration" tabindex="-1"><a class="observablehq-header-anchor" href="#rag-chatbot-integration">RAG Chatbot Integration</a></h2>
+<p>The markdown files comprising the writeup sources (and some other documents) are also the core of the retrieval-augmented generation (RAG) corpus used to ground the chatbot's responses.  Thus creating the writeup enables the chatbot to "know" about itself.  I've named it "Jay" and given it a Steller's Jay theme, in honor of the West Coast.</p>
+<p>The "Jay" chatbot is an off-the-shelf integration with Google Gemini via the Google Cloud Platform Vertex AI service.  Even such integrations can surface interesting issues that provide an opportunity for research and problem-solving.</p>
+<p>First, some background. Vertex AI is Google Cloud Platform's current AI brand, with a variety of products and services under its umbrella.  This includes API access to models like Gemini 3.0 Flash (which powers the chatbot) with baked-in integration of GCP's basic RAG implementation, RAG Engine.  This is an easy-to-use system, simply ingesting documents from a bucket on GCP and offering basic options for chunk size and overlap, as well as chunk boundary detection system selection that includes an LLM parser option.</p>
+<p>After selecting between an English-oriented or multilingual embedding model, the vector store is selected, in this case the default RAG store, the enjoyably named "RagManaged Cloud Spanner", which was chosen for its simplicity and perfectly adequate functionality for the small corpus used for the site chatbot.  And then it just works. Beautiful.</p>
+<p>Almost. The initial implementation had a miss in that "thinking" must be enabled and the "thought signature" must be threaded through the conversation history to enable coherent responses and proper RAG tool use.</p>
+<p>A great example of the power of AI-enabled development was the ease with which Langfuse instrumentation could be enhanced with information on the RAG query generated by Gemini, which isn't a normal part of the metadata.  Although this visibility did lead to a dead end of trying to manage the issues with prompt design, facilitated by Langfuse prompt versioning, the whole matter was dealt with relatively quickly through another round of research, which revealed the crucial thinking signature functionality of the Gemini API.</p>
 </main>
 </div>
 </body>
