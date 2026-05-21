@@ -162,34 +162,6 @@ function injectJayScript(html) {
   return html;
 }
 
-/*
- * Cross-frame theme parity: the Astro shell sets data-theme + data-mode on
- * <html> from localStorage on first paint (see BaseLayout.astro). Observable
- * export pages live on the same origin so they read the same localStorage,
- * but their default <head> doesn't run the init. Inject the same synchronous
- * snippet here so palette/mode are applied BEFORE the theme stylesheet so
- * there's no flash when navigating from /#welcome -> /observable/projects/.
- *
- * Marked with id="jm-theme-init" so verify scripts can grep for it.
- */
-const THEME_INIT_TAG_ID = "jm-theme-init";
-const THEME_INIT_TAG =
-  `<script id="${THEME_INIT_TAG_ID}">(function(){try{var d=document.documentElement;var ls=window.localStorage;var t=ls&&ls.getItem("jm:theme");var m=ls&&ls.getItem("jm:mode");if(!t)t="paper";if(!m)m=(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light";d.dataset.theme=t;d.dataset.mode=m;}catch(e){document.documentElement.dataset.theme="paper";document.documentElement.dataset.mode="light";}})();<\/script>`;
-
-function injectThemeInitScript(html) {
-  // Idempotent: skip if a previous run already inserted the tag.
-  if (html.includes(`id="${THEME_INIT_TAG_ID}"`)) return html;
-  // Place as early in <head> as possible — before any <link rel="stylesheet">
-  // so the [data-theme][data-mode] selectors match on first paint.
-  if (html.includes("<head>\n")) {
-    return html.replace("<head>\n", `<head>\n${THEME_INIT_TAG}\n`);
-  }
-  if (html.includes("<head>")) {
-    return html.replace("<head>", `<head>${THEME_INIT_TAG}`);
-  }
-  return html;
-}
-
 function escapeHtmlAttribute(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -290,7 +262,6 @@ async function processHtmlFile(fullPath, injectJay, injectInference) {
   html = stripModulePreloads(html);
   html = normalizeInferenceMountPaths(html);
   html = ensureConfiguredInferenceMounts(html, relativePath);
-  html = injectThemeInitScript(html);
   if (injectJay) html = injectJayScript(html);
   if (injectInference && hasInlineInferenceMount(html)) html = injectInferenceScript(html);
 
@@ -332,7 +303,7 @@ async function main() {
     await processJsonFile(jsonFile);
   }
 
-  const notes = ["theme init injection"];
+  const notes = [];
   if (injectJay) notes.push("Jay injection");
   if (injectInference) notes.push("inline inference injection");
   if (jsonFiles.length > 0) notes.push(`JSON sanitization for ${jsonFiles.length} files`);

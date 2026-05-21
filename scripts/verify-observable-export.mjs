@@ -222,38 +222,6 @@ async function assertInferenceMountsAreWired() {
   }
 }
 
-/*
- * Cross-frame theme parity: every Observable HTML page must carry the
- * inline theme-init script (id="jm-theme-init") that the Astro postprocess
- * step injects. Without it, navigating /#welcome -> /observable/<slug>/
- * would render with the :root default palette rather than the user's
- * persisted choice. The check is permissive — it only verifies presence,
- * not the exact body, so the script can evolve without flipping verify red.
- */
-async function assertThemeInitInjected() {
-  const observableRoot = path.join(PROJECT_ROOT, "public/observable");
-  const files = await walkDirectory(observableRoot);
-  const htmlFiles = files.filter((filePath) => filePath.endsWith(".html"));
-
-  const failures = [];
-  for (const absoluteHtmlPath of htmlFiles) {
-    const html = await readFile(absoluteHtmlPath, "utf8");
-    if (!html.includes('id="jm-theme-init"')) {
-      failures.push(path.relative(PROJECT_ROOT, absoluteHtmlPath));
-    }
-  }
-
-  if (failures.length > 0) {
-    throw new Error(
-      [
-        "Observable export is missing the cross-frame theme-init script.",
-        ...failures.map((failure) => `  - ${failure}`),
-        "Run npm run postprocess:observable to re-inject."
-      ].join("\n")
-    );
-  }
-}
-
 function isMacosMetadataPath(filePath) {
   return filePath
     .split(path.sep)
@@ -301,7 +269,6 @@ async function main() {
   await assertKatexAssets();
   await assertEchartsRuntimeAsset();
   await assertInferenceMountsAreWired();
-  await assertThemeInitInjected();
   await assertPublicArtifactsAreSanitized();
   console.log("[verify:observable] PASS: Observable artifact check passed (canonical project routes found).");
 }
