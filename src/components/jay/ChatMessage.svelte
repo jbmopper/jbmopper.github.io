@@ -56,7 +56,8 @@
   );
 </script>
 
-<div class="msg" class:bot={isModel} class:user={!isModel}>
+<div class="msg" class:bot={isModel} class:user={!isModel} aria-label={isModel ? "Jay said" : "You said"}>
+  <div class="speaker">{isModel ? "Jay" : "You"}</div>
   {#if isModel}
     <div class="bubble markdown">{@html html}</div>
   {:else}
@@ -67,19 +68,35 @@
 <style>
   .msg {
     display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
     margin-bottom: 0.5rem;
   }
 
   .msg.user {
-    justify-content: flex-end;
+    align-items: flex-end;
   }
 
   .msg.bot {
-    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+  .speaker {
+    padding: 0 0.18rem;
+    color: var(--text-2, #8091a0);
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .user .speaker {
+    color: color-mix(in srgb, var(--accent, #65d9c6) 78%, var(--text-0, #edf2f7));
   }
 
   .bubble {
-    max-width: 80%;
+    max-width: min(82%, 28rem);
     padding: 0.5rem 0.75rem;
     border-radius: 12px;
     font-size: 0.85rem;

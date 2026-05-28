@@ -5,6 +5,7 @@ test.describe("Jay chatbot", () => {
     await page.goto("/");
     const fab = page.getByLabel("Open Jay");
     await expect(fab).toBeVisible();
+    await expect(fab.locator("img")).toHaveAttribute("src", "/images/jay-mark.svg");
   });
 
   test("opens and closes chat panel", async ({page}) => {
@@ -30,6 +31,30 @@ test.describe("Jay chatbot", () => {
     const messages = page.locator(".jay-root .msg");
     await expect(messages.first()).toBeVisible();
     await expect(messages).toHaveCount(2, {timeout: 5000});
+    await expect(page.locator(".jay-root .msg.user .speaker")).toHaveText("You");
+    await expect(page.locator(".jay-root .msg.bot .speaker")).toHaveText("Jay");
+  });
+
+  test("composer keeps the input usable across panel width", async ({page}) => {
+    await page.setViewportSize({width: 390, height: 720});
+    await page.goto("/");
+    await page.getByLabel("Open Jay").click();
+
+    const layout = await page.locator(".jay-root .input-row").evaluate((row) => {
+      const input = row.querySelector("input");
+      const button = row.querySelector("button");
+      const rowBox = row.getBoundingClientRect();
+      const inputBox = input?.getBoundingClientRect();
+      const buttonBox = button?.getBoundingClientRect();
+      return {
+        rowWidth: rowBox.width,
+        inputWidth: inputBox?.width ?? 0,
+        buttonWidth: buttonBox?.width ?? 0,
+      };
+    });
+
+    expect(layout.inputWidth).toBeGreaterThan(layout.rowWidth * 0.68);
+    expect(layout.buttonWidth).toBeGreaterThanOrEqual(36);
   });
 
   test("closes with Escape key", async ({page}) => {

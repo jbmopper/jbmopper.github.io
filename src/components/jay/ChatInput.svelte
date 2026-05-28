@@ -26,7 +26,7 @@
   }
 </script>
 
-<div class="input-row">
+<div class="input-row" role="form" aria-label="Send a message to Jay">
   <input
     bind:this={inputEl}
     type="text"
@@ -47,14 +47,21 @@
 
 <style>
   .input-row {
-    display: flex;
-    gap: 0.4rem;
-    padding: 0.5rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 2.4rem;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.55rem;
     border-top: 1px solid var(--stroke, #2d3e50);
+    background: var(--bg-1, #141b24);
+    box-sizing: border-box;
   }
 
   input {
-    flex: 1;
+    width: 100%;
+    min-width: 0;
+    height: 2.35rem;
     background: var(--bg-0, #0c1118);
     color: var(--text-0, #edf2f7);
     border: 1px solid var(--stroke, #2d3e50);
@@ -63,6 +70,7 @@
     font-size: 0.85rem;
     font-family: var(--font-sans, sans-serif);
     outline: none;
+    box-sizing: border-box;
   }
 
   input:focus {
@@ -78,14 +86,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 34px;
-    height: 34px;
+    width: 2.4rem;
+    height: 2.4rem;
     border: none;
     border-radius: 8px;
     background: var(--accent, #65d9c6);
     color: var(--bg-0, #0c1118);
     cursor: pointer;
-    flex-shrink: 0;
+    box-sizing: border-box;
   }
 
   button:disabled {

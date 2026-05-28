@@ -27,7 +27,7 @@
       path: window.location.pathname,
     };
   }
-  const jayPortraitSrc = "/images/jay_cropped.png";
+  const jayPortraitSrc = "/images/jay-mark.svg";
 
   const SITE_KEY: string | undefined =
     typeof import.meta !== "undefined"
@@ -373,6 +373,7 @@
           {/each}
           {#if isSending}
             <div class="msg bot">
+              <div class="speaker">Jay</div>
               <div class="bubble typing">
                 <span class="dot"></span>
                 <span class="dot"></span>
@@ -407,11 +408,16 @@
     font-family: var(--font-sans, "Manrope", "Segoe UI", sans-serif);
   }
 
+  .jay-root,
+  .jay-root * {
+    box-sizing: border-box;
+  }
+
   .fab {
     width: 64px;
     height: 64px;
     border-radius: 10px;
-    border: 1px solid var(--accent, #65d9c6);
+    border: 1px solid color-mix(in srgb, var(--accent, #65d9c6) 78%, var(--stroke, #2d3e50));
     background: var(--surface, #1a2330);
     cursor: pointer;
     display: flex;
@@ -429,8 +435,9 @@
   }
 
   .fab-portrait {
-    border-radius: 8px;
-    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     pointer-events: none;
   }
 
@@ -438,7 +445,7 @@
     position: absolute;
     bottom: 76px;
     right: 0;
-    width: 340px;
+    width: min(380px, calc(100vw - 2rem));
     max-height: 480px;
     border-radius: 14px;
     border: 1px solid var(--stroke, #2d3e50);
@@ -488,8 +495,70 @@
     max-height: 340px;
   }
 
+  .jay-root :global(.input-row) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 2.4rem;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.55rem;
+    border-top: 1px solid var(--stroke, #2d3e50);
+    background: var(--bg-1, #141b24);
+    box-sizing: border-box;
+  }
+
+  .jay-root :global(.input-row input) {
+    width: 100%;
+    min-width: 0;
+    height: 2.35rem;
+    background: var(--bg-0, #0c1118);
+    color: var(--text-0, #edf2f7);
+    border: 1px solid var(--stroke, #2d3e50);
+    border-radius: 8px;
+    padding: 0.45rem 0.65rem;
+    font-size: 0.85rem;
+    font-family: var(--font-sans, sans-serif);
+    outline: none;
+    box-sizing: border-box;
+  }
+
+  .jay-root :global(.input-row input:focus) {
+    border-color: var(--accent, #65d9c6);
+  }
+
+  .jay-root :global(.input-row input::placeholder) {
+    color: var(--text-1, #b7c2d0);
+    opacity: 0.6;
+  }
+
+  .jay-root :global(.input-row button) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent, #65d9c6);
+    color: var(--bg-0, #0c1118);
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+
+  .jay-root :global(.input-row button:disabled) {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .jay-root :global(.input-row button:not(:disabled):hover) {
+    filter: brightness(1.1);
+  }
+
   .msg {
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
     margin-bottom: 0.5rem;
   }
 
@@ -498,7 +567,7 @@
   }
 
   .bubble {
-    max-width: 80%;
+    max-width: min(82%, 28rem);
     padding: 0.5rem 0.75rem;
     border-radius: 12px;
     font-size: 0.85rem;
@@ -511,6 +580,113 @@
     gap: 0.3em;
     padding: 0.65rem 0.85rem;
     border-bottom-left-radius: 4px;
+  }
+
+  .speaker {
+    padding: 0 0.18rem;
+    color: var(--text-2, #8091a0);
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .jay-root :global(.msg) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .jay-root :global(.msg.user) {
+    align-items: flex-end;
+  }
+
+  .jay-root :global(.msg.bot) {
+    align-items: flex-start;
+  }
+
+  .jay-root :global(.speaker) {
+    padding: 0 0.18rem;
+    color: var(--text-2, #8091a0);
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .jay-root :global(.user .speaker) {
+    color: color-mix(in srgb, var(--accent, #65d9c6) 78%, var(--text-0, #edf2f7));
+  }
+
+  .jay-root :global(.bubble) {
+    max-width: min(82%, 28rem);
+    padding: 0.5rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    line-height: 1.45;
+    word-break: break-word;
+  }
+
+  .jay-root :global(.user .bubble) {
+    background: var(--accent, #65d9c6);
+    color: var(--bg-0, #0c1118);
+    border-bottom-right-radius: 4px;
+  }
+
+  .jay-root :global(.bot .bubble) {
+    background: var(--surface-2, #202c3b);
+    color: var(--text-0, #edf2f7);
+    border-bottom-left-radius: 4px;
+  }
+
+  .jay-root :global(.markdown p) {
+    margin: 0 0 0.4em;
+  }
+
+  .jay-root :global(.markdown p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .jay-root :global(.markdown ul),
+  .jay-root :global(.markdown ol) {
+    margin: 0.2em 0 0.4em;
+    padding-left: 1.3em;
+  }
+
+  .jay-root :global(.markdown li) {
+    margin-bottom: 0.15em;
+  }
+
+  .jay-root :global(.markdown code) {
+    font-size: 0.8em;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0.1em 0.3em;
+    border-radius: 3px;
+  }
+
+  .jay-root :global(.markdown pre) {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.5em 0.6em;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 0.3em 0;
+  }
+
+  .jay-root :global(.markdown pre code) {
+    background: none;
+    padding: 0;
+  }
+
+  .jay-root :global(.markdown strong) {
+    font-weight: 600;
+  }
+
+  .jay-root :global(.markdown a) {
+    color: var(--accent, #65d9c6);
+    text-decoration: underline;
   }
 
   .dot {
