@@ -46,12 +46,24 @@ const publishedProjects = projects.filter((project) => project.status === "publi
 
   <section id="projects" class="panel">
     <h2>Projects</h2>
-    {publishedProjects.map((project) => (
-      <article class="project-card">
-        <h3><a href={`/observable/projects/${project.slug}/`}>{project.title}</a></h3>
-        <p>{project.description}</p>
-      </article>
-    ))}
+    <div class="project-grid">
+      {publishedProjects.map((project) => {
+        const href = `/observable/projects/${project.slug}/`;
+        return (
+          <article class:list={["project-card", project.art && "project-card--with-art"]}>
+            {project.art && (
+              <div class="project-card__art">
+                <img src={project.art.src} alt={project.art.alt} loading="lazy" decoding="async" />
+              </div>
+            )}
+            <div class="project-card__body">
+              <h3><a href={href}>{project.title}</a></h3>
+              <p>{project.description}</p>
+            </div>
+          </article>
+        );
+      })}
+    </div>
   </section>
 </BaseLayout>
 
@@ -84,18 +96,22 @@ const publishedProjects = projects.filter((project) => project.status === "publi
 <style>
   .hero {
     display: grid;
-    gap: 1rem;
-    padding: 1.5rem;
+    gap: var(--space-4);
+    min-height: clamp(15rem, 28vw, 20rem);
+    align-content: end;
+    padding: clamp(1.35rem, 4vw, 2.4rem);
     border: 1px solid var(--stroke);
-    border-radius: 14px;
+    border-radius: var(--radius-md);
     background:
-      linear-gradient(130deg, rgba(12, 17, 24, 0.75), rgba(20, 27, 36, 0.65)),
+      linear-gradient(130deg, var(--hero-overlay-start), var(--hero-overlay-end)),
       url('/src/content/hero_bg.png') center / cover no-repeat;
+    box-shadow: var(--shadow-soft);
+    color: #f6f9fc;
   }
 
   .eyebrow {
     margin: 0;
-    color: var(--accent);
+    color: #25f4df;
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -108,7 +124,7 @@ const publishedProjects = projects.filter((project) => project.status === "publi
 
   .intro {
     margin: 0;
-    color: var(--text-1);
+    color: rgba(246, 249, 252, 0.86);
     max-width: 65ch;
     transition: opacity 350ms ease;
   }
@@ -131,26 +147,35 @@ const publishedProjects = projects.filter((project) => project.status === "publi
 
   .link-row a {
     padding: 0.5rem 0.9rem;
-    border: 1px solid var(--stroke);
-    border-radius: 999px;
+    border: 1px solid rgba(236, 248, 255, 0.28);
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, #07121c 68%, transparent);
     text-decoration: none;
-    color: var(--text-0);
+    color: #f6f9fc;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 
   .link-row a:hover {
-    border-color: var(--accent);
+    border-color: #25f4df;
+    color: #ffffff;
   }
 
   .panel {
-    margin-top: 1.25rem;
-    padding: 1.25rem;
+    margin-top: var(--space-5);
+    padding: clamp(1.15rem, 3vw, 1.8rem);
     border: 1px solid var(--stroke);
-    border-radius: 12px;
-    background: color-mix(in srgb, var(--surface) 80%, transparent);
+    border-radius: var(--radius-md);
+    background: var(--surface-glass);
+    box-shadow: var(--shadow-card);
   }
 
   .panel h2 {
-    margin: 0 0 0.75rem;
+    margin: 0 0 var(--space-3);
+    line-height: var(--heading-leading);
+  }
+
+  .panel p {
+    line-height: var(--prose-leading);
   }
 
   .panel p a {
@@ -161,12 +186,61 @@ const publishedProjects = projects.filter((project) => project.status === "publi
     color: var(--text-0);
   }
 
-  .project-card h3 {
-    margin: 0 0 0.5rem;
+  .project-grid {
+    display: grid;
+    gap: var(--space-4);
   }
 
-  .project-card + .project-card {
-    margin-top: 1rem;
+  .project-card {
+    display: grid;
+    grid-template-columns: minmax(13rem, 0.72fr) minmax(0, 1.28fr);
+    min-height: 11rem;
+    overflow: hidden;
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius-md);
+    background:
+      linear-gradient(120deg, color-mix(in srgb, var(--surface-2) 74%, transparent), var(--surface-glass));
+  }
+
+  .project-card:not(.project-card--with-art) {
+    display: block;
+    min-height: 0;
+    padding: var(--space-4);
+  }
+
+  .project-card:hover {
+    border-color: color-mix(in srgb, var(--accent) 72%, var(--stroke));
+    box-shadow: var(--shadow-card);
+  }
+
+  .project-card__art {
+    display: block;
+    min-width: 0;
+    min-height: 100%;
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, transparent), transparent),
+      var(--surface-2);
+  }
+
+  .project-card__art img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    filter: var(--image-filter);
+  }
+
+  .project-card__body {
+    display: grid;
+    align-content: center;
+    gap: var(--space-2);
+    padding: clamp(1rem, 2.6vw, 1.45rem);
+  }
+
+  .project-card h3 {
+    margin: 0;
+    line-height: var(--heading-leading);
   }
 
   .project-card a {
@@ -176,5 +250,16 @@ const publishedProjects = projects.filter((project) => project.status === "publi
   .project-card p {
     margin: 0;
     color: var(--text-1);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 760px) {
+    .project-card {
+      grid-template-columns: 1fr;
+    }
+
+    .project-card__art img {
+      aspect-ratio: 16 / 9;
+    }
   }
 </style>

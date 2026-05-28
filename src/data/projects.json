@@ -3,21 +3,30 @@
     "slug": "llm-fundamentals",
     "title": "Large Language Models and Deep Learning Fundamentals",
     "description": "Fundamentals of large language models and deep learning, including transformer implementation in Pytorch, training and inference, performance analysis, hyperparameter tuning, and architectural variations (ablations).",
-    "art": null,
+    "art": {
+      "src": "/images/projects/llm-fundamentals.jpg",
+      "alt": "Abstract transformer architecture rendered as concrete slabs, luminous matrix grids, and connected attention paths."
+    },
     "status": "published"
   },
   {
     "slug": "resume-generator",
     "title": "Resume Generator",
     "description": "A serverless resume generator utilizing the Anthropic messages API to create a structured markdown/html output that is rendered into a polished PDF resume, tailored to the input job description.",
-    "art": null,
+    "art": {
+      "src": "/images/projects/resume-generator.jpg",
+      "alt": "Structured document pipeline transforming translucent inputs into a polished generated resume artifact."
+    },
     "status": "published"
   },
   {
     "slug": "site-chatbot",
     "title": "Site Design and RAG Chatbot Integration",
     "description": "A review of the site creation process and the design and integration of a RAG-powered Generative AI Chatbot",
-    "art": null,
+    "art": {
+      "src": "/images/projects/site-chatbot.jpg",
+      "alt": "Brutalist website and retrieval architecture connected by luminous vector-search and chatbot signal paths."
+    },
     "status": "published"
   },
   {

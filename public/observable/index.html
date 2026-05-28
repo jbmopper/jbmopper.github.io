@@ -7,8 +7,8 @@
 <base href="/observable/">
 <title>Project Writeups | juliusm.com</title>
 
-<link rel="preload" as="style" href="./_import/astro-bridge-theme.1d667312.css">
-<link rel="stylesheet" type="text/css" href="./_import/astro-bridge-theme.1d667312.css">
+<link rel="preload" as="style" href="./_import/astro-bridge-theme.155dd00f.css">
+<link rel="stylesheet" type="text/css" href="./_import/astro-bridge-theme.155dd00f.css">
 <script type="module">
 
 import {define} from "./_observablehq/client.b8f66ce7.js";
@@ -41,11 +41,82 @@ html`<p>Add additional project pages under <code>/src</code> and link them here 
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <header id="observablehq-header">
-<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="./" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="./" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="./projects/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="./projects/resume-generator/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume Generator</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav></div><script>(function(){
+<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="./" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><div class="portfolio-header-actions"><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="./" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="./projects/" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="./projects/resume-generator/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume Generator</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav><button class="portfolio-theme-control" type="button" data-theme-control="" data-theme-preference="system"><span class="portfolio-theme-control__icon" aria-hidden="true"></span><span data-theme-label="">System</span></button></div></div><script>(function(){
+        const storageKey = 'juliusm-theme';
+        const modes = ['system', 'dark', 'light'];
+        const labels = {system: 'System', dark: 'Dark', light: 'Light'};
+        const metaColors = {dark: '#0b1017', light: '#f5f7f3'};
+        const media = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
         const mount = window.location.pathname.startsWith('/observable') ? '/observable' : '';
         const path = window.location.pathname.replace(/^\/observable(?=\/|$)/,'').replace(/\/index\.html$/,'/');
         const normalized = path.endsWith('/') ? path : path + '/';
         const slot = document.getElementById('portfolio-current-project-slot');
+
+        function readThemePreference(){
+          try {
+            const stored = window.localStorage.getItem(storageKey);
+            if (modes.includes(stored)) return stored;
+          } catch {
+            return 'system';
+          }
+          return 'system';
+        }
+
+        function resolveThemePreference(preference){
+          if (preference === 'light' || (preference === 'system' && media && media.matches)) return 'light';
+          return 'dark';
+        }
+
+        function nextThemePreference(preference){
+          return modes[(modes.indexOf(preference) + 1) % modes.length] || 'system';
+        }
+
+        function updateThemeControls(preference, resolved){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            const next = nextThemePreference(preference);
+            control.dataset.themePreference = preference;
+            control.dataset.themeResolved = resolved;
+            control.setAttribute('aria-label', 'Theme: ' + labels[preference] + '. Switch to ' + labels[next] + '.');
+            control.setAttribute('title', 'Theme: ' + labels[preference]);
+            const label = control.querySelector('[data-theme-label]');
+            if (label) label.textContent = labels[preference];
+          });
+        }
+
+        function applyThemePreference(preference, persist){
+          const normalizedPreference = modes.includes(preference) ? preference : 'system';
+          const resolved = resolveThemePreference(normalizedPreference);
+          document.documentElement.dataset.theme = normalizedPreference;
+          document.documentElement.dataset.themeResolved = resolved;
+          const meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', metaColors[resolved]);
+          if (persist) {
+            try {
+              window.localStorage.setItem(storageKey, normalizedPreference);
+            } catch {}
+          }
+          updateThemeControls(normalizedPreference, resolved);
+        }
+
+        function bindThemeControls(){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            if (control.dataset.themeBound === 'true') return;
+            control.dataset.themeBound = 'true';
+            control.addEventListener('click', function(){
+              applyThemePreference(nextThemePreference(readThemePreference()), true);
+            });
+          });
+          applyThemePreference(readThemePreference(), false);
+        }
+
+        applyThemePreference(readThemePreference(), false);
+        bindThemeControls();
+        if (media) media.addEventListener('change', function(){
+          if (readThemePreference() === 'system') applyThemePreference('system', false);
+        });
+        window.addEventListener('storage', function(event){
+          if (event.key === storageKey) applyThemePreference(readThemePreference(), false);
+        });
 
         function navigate(target){
           window.location.assign(window.location.origin + target);

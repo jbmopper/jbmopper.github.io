@@ -7,15 +7,29 @@
  * Quick-edit guide: see docs/theme-knobs.md
  */
 :root {
+  color-scheme: dark;
+
   /* Core palette */
-  --bg-0: #0c1118;
-  --bg-1: #141b24;
-  --surface: #1a2330;
-  --surface-2: #202c3b;
-  --text-0: #edf2f7;
-  --text-1: #b7c2d0;
-  --accent: #65d9c6;
-  --stroke: #2d3e50;
+  --bg-0: #0b1017;
+  --bg-1: #111923;
+  --surface: #17212c;
+  --surface-2: #1f2c3a;
+  --surface-glass: color-mix(in srgb, var(--surface) 82%, transparent);
+  --text-0: #eef4f8;
+  --text-1: #b7c4cf;
+  --text-2: #8091a0;
+  --accent: #5eead4;
+  --accent-2: #a78bfa;
+  --accent-3: #f4c95d;
+  --stroke: #2d3e4e;
+  --stroke-strong: #496174;
+  --shadow-soft: 0 22px 70px rgba(0, 0, 0, 0.28);
+  --shadow-card: 0 16px 42px rgba(0, 0, 0, 0.2);
+  --bg-ambient-1: #15384d;
+  --bg-ambient-2: #342452;
+  --hero-overlay-start: rgba(9, 13, 19, 0.78);
+  --hero-overlay-end: rgba(14, 21, 30, 0.66);
+  --image-filter: saturate(1.02) contrast(1.02);
 
   /* Typography */
   --font-sans: "Manrope", "Segoe UI", sans-serif;
@@ -25,9 +39,10 @@
   --space-1: 0.35rem;
   --space-2: 0.6rem;
   --space-3: 0.9rem;
-  --space-4: 1.2rem;
-  --space-5: 1.8rem;
-  --space-6: 2.4rem;
+  --space-4: 1.25rem;
+  --space-5: 1.9rem;
+  --space-6: 2.65rem;
+  --space-7: 3.5rem;
 
   /* Content rhythm */
   --prose-max: 74ch;
@@ -35,6 +50,7 @@
   --prose-leading: 1.7;
   --heading-leading: 1.2;
   --list-indent: clamp(1.2rem, 2vw, 1.65rem);
+  --radius-sm: 8px;
   --radius-md: 12px;
 
   /* Observable bridge aliases */
@@ -43,13 +59,17 @@
   --bridge-text-0: var(--text-0);
   --bridge-text-1: var(--text-1);
   --bridge-accent: var(--accent);
+  --bridge-accent-2: var(--accent-2);
+  --bridge-accent-3: var(--accent-3);
   --bridge-stroke: var(--stroke);
+  --bridge-stroke-strong: var(--stroke-strong);
   --bridge-space-1: var(--space-1);
   --bridge-space-2: var(--space-2);
   --bridge-space-3: var(--space-3);
   --bridge-space-4: var(--space-4);
   --bridge-space-5: var(--space-5);
   --bridge-space-6: var(--space-6);
+  --bridge-space-7: var(--space-7);
   --bridge-list-indent: var(--list-indent);
   --bridge-prose-max: var(--prose-max);
   --bridge-prose-max-wide: var(--prose-max-wide);
@@ -67,4 +87,57 @@
   --theme-foreground-fainter: var(--bridge-stroke);
   --theme-foreground-faintest: var(--bridge-stroke);
   --theme-foreground-focus: var(--bridge-accent);
+  --theme-accent: var(--bridge-accent);
+  --theme-accent-2: var(--bridge-accent-2);
+  --theme-accent-3: var(--bridge-accent-3);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --bg-0: #f5f7f3;
+    --bg-1: #e9eee9;
+    --surface: #ffffff;
+    --surface-2: #edf2ef;
+    --surface-glass: color-mix(in srgb, var(--surface) 88%, transparent);
+    --text-0: #111820;
+    --text-1: #41505d;
+    --text-2: #687985;
+    --accent: #007c71;
+    --accent-2: #6847c7;
+    --accent-3: #a56400;
+    --stroke: #cbd6dc;
+    --stroke-strong: #91a3af;
+    --shadow-soft: 0 22px 70px rgba(29, 42, 52, 0.14);
+    --shadow-card: 0 14px 36px rgba(29, 42, 52, 0.12);
+    --bg-ambient-1: #bfe8e2;
+    --bg-ambient-2: #d9d0ff;
+    --hero-overlay-start: rgba(10, 16, 22, 0.64);
+    --hero-overlay-end: rgba(16, 22, 30, 0.48);
+    --image-filter: saturate(0.96) contrast(1.01);
+  }
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg-0: #f5f7f3;
+  --bg-1: #e9eee9;
+  --surface: #ffffff;
+  --surface-2: #edf2ef;
+  --surface-glass: color-mix(in srgb, var(--surface) 88%, transparent);
+  --text-0: #111820;
+  --text-1: #41505d;
+  --text-2: #687985;
+  --accent: #007c71;
+  --accent-2: #6847c7;
+  --accent-3: #a56400;
+  --stroke: #cbd6dc;
+  --stroke-strong: #91a3af;
+  --shadow-soft: 0 22px 70px rgba(29, 42, 52, 0.14);
+  --shadow-card: 0 14px 36px rgba(29, 42, 52, 0.12);
+  --bg-ambient-1: #bfe8e2;
+  --bg-ambient-2: #d9d0ff;
+  --hero-overlay-start: rgba(10, 16, 22, 0.64);
+  --hero-overlay-end: rgba(16, 22, 30, 0.48);
+  --image-filter: saturate(0.96) contrast(1.01);
 }

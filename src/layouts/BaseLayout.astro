@@ -24,8 +24,8 @@ const previewImage = new URL("/images/jay_cropped.png", Astro.site ?? "https://j
     <meta name="description" content={description} />
     <meta name="robots" content="index, follow" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
-    <meta name="theme-color" content="#0c1118" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0b1017" />
+    <meta name="color-scheme" content="dark light" />
     <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta property="og:site_name" content="juliusm.com" />
@@ -42,19 +42,102 @@ const previewImage = new URL("/images/jay_cropped.png", Astro.site ?? "https://j
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&display=swap" rel="stylesheet" />
     <title>{title}</title>
+    <script is:inline>
+      (function () {
+        const storageKey = "juliusm-theme";
+        const modes = ["system", "dark", "light"];
+        const labels = {system: "System", dark: "Dark", light: "Light"};
+        const metaColors = {dark: "#0b1017", light: "#f5f7f3"};
+        const media = window.matchMedia ? window.matchMedia("(prefers-color-scheme: light)") : null;
+
+        function readPreference() {
+          try {
+            const stored = window.localStorage.getItem(storageKey);
+            if (modes.includes(stored)) return stored;
+          } catch {
+            return "system";
+          }
+          return "system";
+        }
+
+        function resolvePreference(preference) {
+          if (preference === "light" || (preference === "system" && media?.matches)) return "light";
+          return "dark";
+        }
+
+        function nextPreference(preference) {
+          return modes[(modes.indexOf(preference) + 1) % modes.length] || "system";
+        }
+
+        function updateControls(preference, resolved) {
+          document.querySelectorAll("[data-theme-control]").forEach((control) => {
+            const next = nextPreference(preference);
+            control.dataset.themePreference = preference;
+            control.dataset.themeResolved = resolved;
+            control.setAttribute("aria-label", `Theme: ${labels[preference]}. Switch to ${labels[next]}.`);
+            control.setAttribute("title", `Theme: ${labels[preference]}`);
+            const label = control.querySelector("[data-theme-label]");
+            if (label) label.textContent = labels[preference];
+          });
+        }
+
+        function applyPreference(preference, persist) {
+          const normalized = modes.includes(preference) ? preference : "system";
+          const resolved = resolvePreference(normalized);
+          document.documentElement.dataset.theme = normalized;
+          document.documentElement.dataset.themeResolved = resolved;
+          document.querySelector('meta[name="theme-color"]')?.setAttribute("content", metaColors[resolved]);
+          if (persist) {
+            try {
+              window.localStorage.setItem(storageKey, normalized);
+            } catch {
+              /* localStorage may be unavailable in private or embedded contexts. */
+            }
+          }
+          updateControls(normalized, resolved);
+        }
+
+        function bindControls() {
+          document.querySelectorAll("[data-theme-control]").forEach((control) => {
+            if (control.dataset.themeBound === "true") return;
+            control.dataset.themeBound = "true";
+            control.addEventListener("click", () => {
+              applyPreference(nextPreference(readPreference()), true);
+            });
+          });
+          applyPreference(readPreference(), false);
+        }
+
+        applyPreference(readPreference(), false);
+        document.addEventListener("DOMContentLoaded", bindControls);
+        document.addEventListener("astro:page-load", bindControls);
+        media?.addEventListener("change", () => {
+          if (readPreference() === "system") applyPreference("system", false);
+        });
+        window.addEventListener("storage", (event) => {
+          if (event.key === storageKey) applyPreference(readPreference(), false);
+        });
+      })();
+    </script>
   </head>
   <body>
     <ClientRouter />
     <a class="skip-link" href="#main-content">Skip to content</a>
     <header class="site-header">
       <a class="brand" href="/">juliusm.com</a>
-      <nav class="nav-links" aria-label="Primary navigation">
-        <a href="/#welcome">Welcome</a>
-        <a href="/observable/projects/">Projects</a>
-        <a href="/resume/">Resume Generator</a>
-        <a href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a>
-        <a href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a>
-      </nav>
+      <div class="header-actions">
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a href="/#welcome">Welcome</a>
+          <a href="/observable/projects/">Projects</a>
+          <a href="/resume/">Resume Generator</a>
+          <a href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a>
+          <a href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a>
+        </nav>
+        <button class="theme-control" type="button" data-theme-control data-theme-preference="system">
+          <span class="theme-control__icon" aria-hidden="true"></span>
+          <span data-theme-label>System</span>
+        </button>
+      </div>
     </header>
     <main id="main-content">
       <slot />
@@ -82,8 +165,9 @@ const previewImage = new URL("/images/jay_cropped.png", Astro.site ?? "https://j
     font-size: 16px;
     line-height: 1.5;
     background:
-      radial-gradient(1200px 600px at 100% -10%, #1a3850 0%, transparent 60%),
-      radial-gradient(900px 500px at -10% 10%, #2a1f3e 0%, transparent 55%),
+      linear-gradient(135deg, color-mix(in srgb, var(--bg-ambient-1) 32%, transparent) 0%, transparent 38%),
+      linear-gradient(225deg, color-mix(in srgb, var(--bg-ambient-2) 28%, transparent) 0%, transparent 42%),
+      linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%),
       var(--bg-0);
     color: var(--text-0);
     font-family: var(--font-sans);
@@ -129,10 +213,11 @@ const previewImage = new URL("/images/jay_cropped.png", Astro.site ?? "https://j
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
-    padding: 1rem 1.25rem;
+    padding: 0.95rem clamp(1rem, 3vw, 1.6rem);
     border-bottom: 1px solid var(--stroke);
-    background: color-mix(in srgb, var(--bg-0) 86%, transparent);
-    backdrop-filter: blur(8px);
+    background: color-mix(in srgb, var(--bg-0) 88%, transparent);
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--stroke) 70%, transparent);
+    backdrop-filter: blur(12px);
   }
 
   .brand {
@@ -158,6 +243,58 @@ const previewImage = new URL("/images/jay_cropped.png", Astro.site ?? "https://j
     color: var(--accent);
   }
 
+  .header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.85rem;
+    min-width: 0;
+  }
+
+  .theme-control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    min-height: 2.1rem;
+    padding: 0.35rem 0.6rem;
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius-sm);
+    background: var(--surface-glass);
+    color: var(--text-0);
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--stroke) 55%, transparent);
+    font: inherit;
+    font-size: 0.84rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .theme-control:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .theme-control__icon {
+    position: relative;
+    width: 0.86rem;
+    height: 0.86rem;
+    flex: 0 0 auto;
+    border: 1.5px solid currentColor;
+    border-radius: 50%;
+    background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+  }
+
+  .theme-control[data-theme-preference="light"] .theme-control__icon {
+    background: currentColor;
+    box-shadow: inset 0 0 0 3px var(--surface);
+  }
+
+  .theme-control[data-theme-preference="dark"] .theme-control__icon {
+    background: transparent;
+    box-shadow: inset -0.28rem 0 0 currentColor;
+  }
+
   a:focus-visible,
   button:focus-visible,
   input:focus-visible,
@@ -176,8 +313,8 @@ const previewImage = new URL("/images/jay_cropped.png", Astro.site ?? "https://j
   }
 
   main {
-    width: min(1080px, calc(100% - 2rem));
-    margin: 2rem auto 3rem;
+    width: min(1120px, calc(100% - clamp(2rem, 5vw, 4rem)));
+    margin: var(--space-6) auto var(--space-7);
   }
 
   footer {
@@ -192,6 +329,14 @@ const previewImage = new URL("/images/jay_cropped.png", Astro.site ?? "https://j
     .site-header {
       flex-direction: column;
       align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .header-actions {
+      width: 100%;
+      justify-content: flex-start;
+      align-items: flex-start;
+      flex-wrap: wrap;
     }
 
     .nav-links {
@@ -201,7 +346,8 @@ const previewImage = new URL("/images/jay_cropped.png", Astro.site ?? "https://j
     }
 
     main {
-      width: min(1080px, calc(100% - 2rem));
+      width: min(1080px, calc(100% - 1.5rem));
+      margin-top: var(--space-5);
       padding-bottom: 4.5rem;
     }
   }
