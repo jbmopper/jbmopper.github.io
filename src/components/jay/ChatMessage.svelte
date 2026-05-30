@@ -56,8 +56,8 @@
   );
 </script>
 
-<div class="msg" class:bot={isModel} class:user={!isModel} aria-label={isModel ? "Jay said" : "You said"}>
-  <div class="speaker">{isModel ? "Jay" : "You"}</div>
+<div class="msg" class:bot={isModel} class:user={!isModel} aria-label={isModel ? "AI helper said" : "You said"}>
+  <div class="speaker">{isModel ? "AI helper" : "You"}</div>
   {#if isModel}
     <div class="bubble markdown">{@html html}</div>
   {:else}

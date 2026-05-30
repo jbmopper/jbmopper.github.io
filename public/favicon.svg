@@ -1,16 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
-  <title>Jay favicon</title>
+  <title>Julius Mopper favicon</title>
   <defs>
-    <linearGradient id="jay-stroke" x1="22" x2="45" y1="13" y2="54" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#7dd3fc"/>
-      <stop offset="0.55" stop-color="#3b82f6"/>
-      <stop offset="1" stop-color="#4f46e5"/>
+    <linearGradient id="mark-stroke" x1="17" x2="51" y1="14" y2="54" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#60a5fa"/>
+      <stop offset="1" stop-color="#8b5cf6"/>
     </linearGradient>
   </defs>
   <rect x="4" y="4" width="56" height="56" rx="13" fill="#0b1017"/>
   <rect x="5" y="5" width="54" height="54" rx="12" fill="none" stroke="#28415c" stroke-width="2"/>
-  <path d="M24 24 19 10l13 10 9-6-1 13c-5-3-11-4-16-3z" fill="#111827"/>
-  <path d="M42 16v26c0 9-6 14-16 14h-7" fill="none" stroke="url(#jay-stroke)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M42 16v26c0 9-6 14-16 14h-7" fill="none" stroke="#eef4f8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M43 23 56 20 46 29z" fill="#0f172a"/>
+  <path d="M21 15v25c0 9-5 14-14 14" fill="none" stroke="url(#mark-stroke)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M31 53V15l11 19 11-19v38" fill="none" stroke="#eef4f8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M31 53V15l11 19 11-19v38" fill="none" stroke="url(#mark-stroke)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.88"/>
 </svg>

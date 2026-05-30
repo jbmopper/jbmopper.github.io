@@ -27,7 +27,7 @@
       path: window.location.pathname,
     };
   }
-  const jayPortraitSrc = "/images/jay-mark.svg";
+  const assistantPortraitSrc = "/images/ai-helper-mark.svg";
 
   const SITE_KEY: string | undefined =
     typeof import.meta !== "undefined"
@@ -334,7 +334,7 @@
       class="panel"
       bind:this={panelEl}
       role="dialog"
-      aria-label="Jay chat"
+      aria-label="AI helper chat"
       tabindex="-1"
       onkeydown={(e) => { handlePanelKeydown(e); trapFocus(e); }}
     >
@@ -366,14 +366,14 @@
       {:else}
         <div class="messages" bind:this={messagesEl} role="log" aria-live="polite" aria-relevant="additions">
           {#if messages.length === 0}
-            <p class="empty-hint">Ask me about Julius's projects!</p>
+            <p class="empty-hint">Ask an AI helper about Julius's projects.</p>
           {/if}
           {#each messages as msg (msg.id)}
             <ChatMessage message={msg} />
           {/each}
           {#if isSending}
             <div class="msg bot">
-              <div class="speaker">Jay</div>
+              <div class="speaker">AI helper</div>
               <div class="bubble typing">
                 <span class="dot"></span>
                 <span class="dot"></span>
@@ -394,8 +394,8 @@
     </div>
   {/if}
 
-  <button class="fab" bind:this={fabEl} onclick={toggle} aria-label={isOpen ? "Close Jay" : "Open Jay"}>
-    <img src={jayPortraitSrc} alt="Jay" class="fab-portrait" width="56" height="56" />
+  <button class="fab" bind:this={fabEl} onclick={toggle} aria-label={isOpen ? "Close AI helper" : "Open AI helper"}>
+    <img src={assistantPortraitSrc} alt="AI helper" class="fab-portrait" width="56" height="56" />
   </button>
 </div>
 

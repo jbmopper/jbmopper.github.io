@@ -6,12 +6,12 @@ const API_BASE: string | undefined =
 const MAX_HISTORY_MESSAGES = 40;
 
 const MOCK_REPLIES = [
-  "Hey! I'm Jay, Julius's AI assistant. Ask me about his projects!",
+  "This AI helper is grounded on Julius's project notes and can summarize the work on this site.",
   "Julius built a full transformer from scratch in PyTorch — training, inference, profiling, the works.",
   "Want to know about the performance analysis pipeline? It includes Nsys GPU traces and custom ablation studies.",
   "The deep learning fundamentals project covers everything from attention mechanisms to learning rate sweeps.",
-  "I can tell you all about Julius's work — he's great at making AI systems that actually scale.",
-  "I'm backed by Vertex AI RAG, so I can pull up specific details from the site's content. Try me!",
+  "Julius's work focuses on applied AI, integration, and systems that hold up under real usage.",
+  "The live version is backed by Vertex AI RAG, so it can pull up specific details from the site's content.",
 ];
 
 function pickMockReply(): string {

@@ -8,12 +8,12 @@ interface Props {
 }
 
 const {
-  title = "Julius Mopper | AI Systems Engineer",
-  description = "Portfolio for Julius Mopper, an AI systems engineer building model, data, and product systems."
+  title = "Julius Mopper | Applied AI & Integration",
+  description = "Portfolio for Julius Mopper, focused on applied AI, software integration, and product delivery."
 } = Astro.props;
 const year = new Date().getFullYear();
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? "https://juliusm.com").toString();
-const previewImage = new URL("/images/jay_cropped.png", Astro.site ?? "https://juliusm.com").toString();
+const previewImage = new URL("/images/projects/site-chatbot.jpg", Astro.site ?? "https://juliusm.com").toString();
 ---
 
 <!doctype html>

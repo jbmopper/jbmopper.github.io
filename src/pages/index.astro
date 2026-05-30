@@ -6,13 +6,13 @@ const publishedProjects = projects.filter((project) => project.status === "publi
 ---
 
 <BaseLayout
-  title="Julius Mopper | AI Systems Engineer"
-  description="Portfolio for Julius Mopper, an AI systems engineer building model, data, and product systems."
+  title="Julius Mopper | Applied AI & Integration"
+  description="Portfolio for Julius Mopper, focused on applied AI, software integration, and product delivery."
 >
   <section class="hero">
-    <p class="eyebrow">AI Systems Portfolio</p>
+    <p class="eyebrow">Applied AI · Integration · Product Delivery</p>
     <h1>Julius Mopper</h1>
-    <p class="intro" id="hero-tagline">Building AI systems that <i>scale</i>.</p>
+    <p class="intro" id="hero-tagline">Turning ambiguity into working systems.</p>
     <div class="link-row">
       <a href="#welcome">Welcome</a>
       <a href="/observable/projects/">Projects</a>
@@ -38,9 +38,12 @@ const publishedProjects = projects.filter((project) => project.status === "publi
     <p>
       Check out my project writeups to see how I break down complex deep learning topics, or if you have a role that might be a good fit, head over to the <a href="/resume">Resume Generator</a> with your job description and let my serverless pipeline build a custom resume for you!
     </p>
-    -->
     <p>
       The problem is no longer adding features, but controlling the complexity. That is the work I like: understanding the model, building the system around it, and getting the result to survive contact with real users. These projects cover that work, from a transformer implemented from scratch to a resume generator with real backend, auth, and PDF plumbing to a RAG chatbot grounded on its own corpus. My background in analysis and enterprise integration turns out to be unusually useful here: ambiguous requirements, messy systems, and the human problem of figuring out what actually needs to be built.
+    </p>
+    -->
+    <p>
+      Welcome! I'm Julius, and this is my portfolio and business site. I'm a software integration professional with deep expertise in enterprise architecture, product analysis, project management, and generative AI.  I love tackling the challenges of our ever-evolving business technology landscape: ambiguous requirements, messy systems, and the human problem of figuring out what actually needs to be built.  With deep expertise, strong experience, and a gift for bringing folks together to create outstanding systems that solve hard business problems, I'm eager to learn how I can help you and your organization become even better.  Check out my projects, which include implementing a large language model from scratch, and a discussion of the design and features on my intake page, or just head over there directly and let me know you're interested!
     </p>
   </section>
 
@@ -70,9 +73,10 @@ const publishedProjects = projects.filter((project) => project.status === "publi
 <script is:inline>
   (function () {
     const taglines = [
-      "Building AI systems that <i>scale</i>.",
-      "Pivot, <i>pivot,</i> pivot...",
-      "<i>Own</i> the control plane."
+      "Turning ambiguity into working systems.",
+      "Applied AI, integration, and product delivery.",
+      "Useful models. Durable workflows.",
+      "From messy requirements to shipped software."
     ];
     const el = document.getElementById("hero-tagline");
     if (!el || taglines.length < 2) return;
@@ -103,15 +107,17 @@ const publishedProjects = projects.filter((project) => project.status === "publi
     border: 1px solid var(--stroke);
     border-radius: var(--radius-md);
     background:
-      linear-gradient(130deg, var(--hero-overlay-start), var(--hero-overlay-end)),
+      linear-gradient(135deg, rgba(6, 10, 17, 0.86), rgba(17, 18, 31, 0.72) 52%, rgba(42, 30, 34, 0.74)),
+      linear-gradient(55deg, rgba(96, 165, 250, 0.14), rgba(139, 92, 246, 0.18) 48%, rgba(244, 201, 93, 0.14)),
       url('/src/content/hero_bg.png') center / cover no-repeat;
+    background-blend-mode: normal, color, normal;
     box-shadow: var(--shadow-soft);
     color: #f6f9fc;
   }
 
   .eyebrow {
     margin: 0;
-    color: #25f4df;
+    color: color-mix(in srgb, var(--accent-3) 72%, var(--text-0));
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -130,7 +136,7 @@ const publishedProjects = projects.filter((project) => project.status === "publi
   }
 
   .intro.is-fading {
-    opacity: 0;
+    opacity: 0.28;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -156,7 +162,7 @@ const publishedProjects = projects.filter((project) => project.status === "publi
   }
 
   .link-row a:hover {
-    border-color: #25f4df;
+    border-color: var(--accent);
     color: #ffffff;
   }
 

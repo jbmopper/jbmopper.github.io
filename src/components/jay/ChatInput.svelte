@@ -26,11 +26,11 @@
   }
 </script>
 
-<div class="input-row" role="form" aria-label="Send a message to Jay">
+<div class="input-row" role="form" aria-label="Send a message to the AI helper">
   <input
     bind:this={inputEl}
     type="text"
-    placeholder="Ask Jay..."
+    placeholder="Ask the site AI..."
     {disabled}
     bind:value
     oninput={() => oninput?.(value)}
