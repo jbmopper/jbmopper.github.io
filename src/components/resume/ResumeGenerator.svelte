@@ -352,7 +352,7 @@
   }
 
   .feature-list li::marker {
-    color: var(--accent, #65d9c6);
+    color: var(--accent, #60a5fa);
   }
 
   /* Tabs */
@@ -380,8 +380,8 @@
   }
 
   .tab.active {
-    color: var(--accent, #65d9c6);
-    border-bottom-color: var(--accent, #65d9c6);
+    color: var(--accent, #60a5fa);
+    border-bottom-color: var(--accent, #60a5fa);
   }
 
   /* Text input */
@@ -401,7 +401,7 @@
 
   .jd-textarea:focus {
     outline: none;
-    border-color: var(--accent, #65d9c6);
+    border-color: var(--accent, #60a5fa);
   }
 
   .jd-textarea::placeholder {
@@ -424,7 +424,7 @@
   }
 
   .file-upload:hover {
-    border-color: var(--accent, #65d9c6);
+    border-color: var(--accent, #60a5fa);
   }
 
   .file-upload input[type="file"] {
@@ -441,7 +441,7 @@
   }
 
   .file-name {
-    color: var(--accent, #65d9c6);
+    color: var(--accent, #60a5fa);
     font-size: 0.9rem;
     font-weight: 600;
   }
@@ -461,7 +461,7 @@
 
   .title-input:focus {
     outline: none;
-    border-color: var(--accent, #65d9c6);
+    border-color: var(--accent, #60a5fa);
   }
 
   .title-input::placeholder {
@@ -483,10 +483,10 @@
     align-items: center;
     justify-content: center;
     padding: 0.6rem 1.4rem;
-    border: 1px solid var(--accent, #65d9c6);
+    border: 1px solid var(--accent, #60a5fa);
     border-radius: 999px;
     background: transparent;
-    color: var(--accent, #65d9c6);
+    color: var(--accent, #60a5fa);
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
@@ -495,7 +495,7 @@
   }
 
   .btn-primary:hover:not(:disabled) {
-    background: var(--accent, #65d9c6);
+    background: var(--accent, #60a5fa);
     color: var(--bg-0, #0c1118);
   }
 
@@ -536,7 +536,7 @@
   }
 
   .btn-link:hover {
-    color: var(--accent, #65d9c6);
+    color: var(--accent, #60a5fa);
   }
 
   /* Turnstile */
@@ -552,7 +552,7 @@
     width: 40px;
     height: 40px;
     border: 3px solid var(--stroke, #2d3e50);
-    border-top-color: var(--accent, #65d9c6);
+    border-top-color: var(--accent, #60a5fa);
     border-radius: 50%;
     margin: 0 auto 1rem;
     animation: spin 0.8s linear infinite;
@@ -575,8 +575,8 @@
     height: 48px;
     margin: 0 auto 0.75rem;
     border-radius: 50%;
-    border: 2px solid var(--accent, #65d9c6);
-    color: var(--accent, #65d9c6);
+    border: 2px solid var(--accent, #60a5fa);
+    color: var(--accent, #60a5fa);
     font-size: 1.6rem;
     line-height: 44px;
     text-align: center;

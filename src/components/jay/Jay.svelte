@@ -417,7 +417,7 @@
     width: 64px;
     height: 64px;
     border-radius: 10px;
-    border: 1px solid color-mix(in srgb, var(--accent, #65d9c6) 78%, var(--stroke, #2d3e50));
+    border: 1px solid color-mix(in srgb, var(--accent, #60a5fa) 78%, var(--stroke, #2d3e50));
     background: var(--surface, #1a2330);
     cursor: pointer;
     display: flex;
@@ -523,7 +523,7 @@
   }
 
   .jay-root :global(.input-row input:focus) {
-    border-color: var(--accent, #65d9c6);
+    border-color: var(--accent, #60a5fa);
   }
 
   .jay-root :global(.input-row input::placeholder) {
@@ -539,7 +539,7 @@
     height: 2.4rem;
     border: none;
     border-radius: 8px;
-    background: var(--accent, #65d9c6);
+    background: var(--accent, #60a5fa);
     color: var(--bg-0, #0c1118);
     cursor: pointer;
     box-sizing: border-box;
@@ -618,7 +618,7 @@
   }
 
   .jay-root :global(.user .speaker) {
-    color: color-mix(in srgb, var(--accent, #65d9c6) 78%, var(--text-0, #edf2f7));
+    color: color-mix(in srgb, var(--accent, #60a5fa) 78%, var(--text-0, #edf2f7));
   }
 
   .jay-root :global(.bubble) {
@@ -631,7 +631,7 @@
   }
 
   .jay-root :global(.user .bubble) {
-    background: var(--accent, #65d9c6);
+    background: var(--accent, #60a5fa);
     color: var(--bg-0, #0c1118);
     border-bottom-right-radius: 4px;
   }
@@ -685,7 +685,7 @@
   }
 
   .jay-root :global(.markdown a) {
-    color: var(--accent, #65d9c6);
+    color: var(--accent, #60a5fa);
     text-decoration: underline;
   }
 
@@ -770,7 +770,7 @@
 
   .retry-btn:hover {
     background: var(--surface, #1a2330);
-    border-color: var(--accent, #65d9c6);
+    border-color: var(--accent, #60a5fa);
   }
 
   @media (max-width: 420px) {

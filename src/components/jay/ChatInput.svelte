@@ -74,7 +74,7 @@
   }
 
   input:focus {
-    border-color: var(--accent, #65d9c6);
+    border-color: var(--accent, #60a5fa);
   }
 
   input::placeholder {
@@ -90,7 +90,7 @@
     height: 2.4rem;
     border: none;
     border-radius: 8px;
-    background: var(--accent, #65d9c6);
+    background: var(--accent, #60a5fa);
     color: var(--bg-0, #0c1118);
     cursor: pointer;
     box-sizing: border-box;

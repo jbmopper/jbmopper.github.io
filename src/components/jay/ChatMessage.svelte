@@ -92,7 +92,7 @@
   }
 
   .user .speaker {
-    color: color-mix(in srgb, var(--accent, #65d9c6) 78%, var(--text-0, #edf2f7));
+    color: color-mix(in srgb, var(--accent, #60a5fa) 78%, var(--text-0, #edf2f7));
   }
 
   .bubble {
@@ -105,7 +105,7 @@
   }
 
   .user .bubble {
-    background: var(--accent, #65d9c6);
+    background: var(--accent, #60a5fa);
     color: var(--bg-0, #0c1118);
     border-bottom-right-radius: 4px;
   }
@@ -159,7 +159,7 @@
   }
 
   .markdown :global(a) {
-    color: var(--accent, #65d9c6);
+    color: var(--accent, #60a5fa);
     text-decoration: underline;
   }
 </style>
