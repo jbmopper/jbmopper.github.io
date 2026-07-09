@@ -234,8 +234,8 @@ def handler(event: Dict[str, Any], _context: Any) -> Dict[str, Any]:
     if not token:
         return _response(400, event, {"code": "missing_turnstile_token", "message": "turnstileToken is required."})
 
-    if action not in {"resume", "chat", "infer"}:
-        return _response(400, event, {"code": "invalid_action", "message": "action must be one of: resume, chat, infer."})
+    if action not in {"resume", "chat", "infer", "intake"}:
+        return _response(400, event, {"code": "invalid_action", "message": "action must be one of: resume, chat, infer, intake."})
 
     headers = event.get("headers") or {}
     source_ip = (

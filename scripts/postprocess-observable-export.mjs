@@ -141,6 +141,15 @@ function normalizeHeaderHomeLink(html) {
   );
 }
 
+function normalizeConsultingAndResumeLinks(html) {
+  const consultingLink = `<a class="portfolio-nav-link" href="/consulting/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/consulting/');">Consulting</a>`;
+  const resumeLink = `<a class="portfolio-nav-link" href="/resume/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume</a>`;
+  return html.replace(
+    /<a class="portfolio-nav-link"[^>]*onclick="event\.preventDefault\(\); window\.location\.assign\(window\.location\.origin \+ '\/resume\/'\);"[^>]*>(?:Resume Generator|Consulting|Consulting Intake|Intake)<\/a>/g,
+    `${consultingLink}${resumeLink}`
+  );
+}
+
 function stripModulePreloads(html) {
   return html.replace(/^\s*<link rel="modulepreload"[^>]*>\n?/gm, "");
 }
@@ -259,6 +268,7 @@ async function processHtmlFile(fullPath, injectJay, injectInference) {
   html = upsertBaseHref(html, getCanonicalBaseHref(relativePath));
   html = normalizeProjectRootMatcher(html);
   html = normalizeHeaderHomeLink(html);
+  html = normalizeConsultingAndResumeLinks(html);
   html = stripModulePreloads(html);
   html = normalizeInferenceMountPaths(html);
   html = ensureConfiguredInferenceMounts(html, relativePath);

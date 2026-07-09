@@ -8,6 +8,10 @@ resume_lambda_arn = "arn:aws:lambda:us-east-1:123456789012:function:resume-gener
 chat_endpoint_url = "https://jay-chatbot-406609817311.us-west1.run.app"
 chat_api_key      = "REPLACE_WITH_JAY_API_KEY"
 
+# Optional: consulting intake email notification route (requires verified SES sender)
+# intake_sender_email    = "verified-sender@example.com"
+# intake_recipient_email = "recipient@example.com"
+
 # Optional: existing inference Lambda (set to enable /generate and /warmup)
 # infer_lambda_arn = "arn:aws:lambda:us-east-1:123456789012:function:onnx-inference"
 

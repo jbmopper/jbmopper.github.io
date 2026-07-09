@@ -74,6 +74,18 @@ variable "resume_lambda_arn" {
   default     = ""
 }
 
+variable "intake_sender_email" {
+  description = "Verified SES sender email for consulting intake notifications. Leave empty to skip intake route wiring."
+  type        = string
+  default     = ""
+}
+
+variable "intake_recipient_email" {
+  description = "Email recipient for consulting intake notifications. Leave empty to skip intake route wiring."
+  type        = string
+  default     = ""
+}
+
 variable "chat_endpoint_url" {
   description = "Cloud Run URL for the Jay chatbot backend."
   type        = string

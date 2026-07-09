@@ -1,4 +1,4 @@
-import * as echarts from "../../_npm/echarts@5.6.0/dist/echarts.esm.min.js.43ee27f9.js";
+import * as echarts from "../../_npm/echarts@5.6.0/dist/echarts.esm.min.js.18b62dce.js";
 import {registerTheme} from "./echart-theme.ac72768d.js";
 
 registerTheme(echarts);

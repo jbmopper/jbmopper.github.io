@@ -8,7 +8,6 @@ async function continueToInput(page: Page) {
   await expect(continueBtn).toBeVisible();
   await continueBtn.click();
 
-  // The resume widget hydrates on client load; a very early click can be ignored.
   if (!(await inputHeading.isVisible())) {
     await page.waitForTimeout(300);
     if (await continueBtn.isVisible()) {
@@ -28,8 +27,9 @@ test.describe("Resume Generator page", () => {
 
   test("nav link is present in header", async ({page}) => {
     await page.goto("/resume/");
-    const navLink = page.locator(".nav-links a", {hasText: "Resume Generator"});
+    const navLink = page.locator(".nav-links a", {hasText: "Resume"});
     await expect(navLink).toBeVisible();
+    await expect(navLink).toHaveAttribute("href", "/resume/");
   });
 
   test("continue skips turnstile in mock mode and shows input", async ({page}) => {

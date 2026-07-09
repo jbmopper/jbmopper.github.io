@@ -1,0 +1,7 @@
+/**
+ * Bundled by jsDelivr using Rollup v4.62.2 and esbuild v0.28.1.
+ * Original file: /npm/zrender@5.6.1/lib/core/LRU.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var a=(function(){function e(t){this.value=t}return e})(),u=(function(){function e(){this._len=0}return e.prototype.insert=function(t){var i=new a(t);return this.insertEntry(i),i},e.prototype.insertEntry=function(t){this.head?(this.tail.next=t,t.prev=this.tail,t.next=null,this.tail=t):this.head=this.tail=t,this._len++},e.prototype.remove=function(t){var i=t.prev,n=t.next;i?i.next=n:this.head=n,n?n.prev=i:this.tail=i,t.next=t.prev=null,this._len--},e.prototype.len=function(){return this._len},e.prototype.clear=function(){this.head=this.tail=null,this._len=0},e})(),p=(function(){function e(t){this._list=new u,this._maxSize=10,this._map={},this._maxSize=t}return e.prototype.put=function(t,i){var n=this._list,l=this._map,o=null;if(l[t]==null){var h=n.len(),r=this._lastRemovedEntry;if(h>=this._maxSize&&h>0){var s=n.head;n.remove(s),delete l[s.key],o=s.value,this._lastRemovedEntry=s}r?r.value=i:r=new a(i),r.key=t,n.insertEntry(r),l[t]=r}return o},e.prototype.get=function(t){var i=this._map[t],n=this._list;if(i!=null)return i!==n.tail&&(n.remove(i),n.insertEntry(i)),i.value},e.prototype.clear=function(){this._list.clear(),this._map={}},e.prototype.len=function(){return this._list.len()},e})();export{a as Entry,u as LinkedList,p as default};

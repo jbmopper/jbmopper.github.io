@@ -27,7 +27,7 @@
       path: window.location.pathname,
     };
   }
-  const assistantPortraitSrc = "/images/ai-helper-mark.svg";
+  const assistantPortraitSrc = "/images/ai-helper-mark.png";
 
   const SITE_KEY: string | undefined =
     typeof import.meta !== "undefined"
@@ -373,7 +373,6 @@
           {/each}
           {#if isSending}
             <div class="msg bot">
-              <div class="speaker">AI helper</div>
               <div class="bubble typing">
                 <span class="dot"></span>
                 <span class="dot"></span>
@@ -582,16 +581,6 @@
     border-bottom-left-radius: 4px;
   }
 
-  .speaker {
-    padding: 0 0.18rem;
-    color: var(--text-2, #8091a0);
-    font-size: 0.65rem;
-    font-weight: 800;
-    letter-spacing: 0;
-    line-height: 1;
-    text-transform: uppercase;
-  }
-
   .jay-root :global(.msg) {
     display: flex;
     flex-direction: column;
@@ -605,20 +594,6 @@
 
   .jay-root :global(.msg.bot) {
     align-items: flex-start;
-  }
-
-  .jay-root :global(.speaker) {
-    padding: 0 0.18rem;
-    color: var(--text-2, #8091a0);
-    font-size: 0.65rem;
-    font-weight: 800;
-    letter-spacing: 0;
-    line-height: 1;
-    text-transform: uppercase;
-  }
-
-  .jay-root :global(.user .speaker) {
-    color: color-mix(in srgb, var(--accent, #60a5fa) 78%, var(--text-0, #edf2f7));
   }
 
   .jay-root :global(.bubble) {

@@ -1,4 +1,4 @@
-import {FileAttachment} from "../../_observablehq/stdlib.a50b4fda.js";
+import {FileAttachment} from "../../_observablehq/stdlib.cf315cf5.js";
 import {
   calculateForwardFlops,
   calculateMemoryAccounting,

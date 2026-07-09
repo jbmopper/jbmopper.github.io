@@ -11,8 +11,8 @@
 <link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.87b41aae.css">
 <script type="module">
 
-import {define} from "../../_observablehq/client.b8f66ce7.js";
-import {registerFile} from "../../_observablehq/stdlib.a50b4fda.js";
+import {define} from "../../_observablehq/client.812bb03c.js";
+import {registerFile} from "../../_observablehq/stdlib.cf315cf5.js";
 
 registerFile("../../data/manifest.json", {"name":"../../data/manifest.json","mimeType":"application/json","path":"../../_file/data/manifest.d04279d7.json","lastModified":1771874136886,"size":13400});
 registerFile("../../data/raw/benchmarks/ablations_history.parquet", {"name":"../../data/raw/benchmarks/ablations_history.parquet","path":"../../_file/data/raw/benchmarks/ablations_history.c15e6588.parquet","lastModified":1771874136910,"size":2777049});
@@ -38,7 +38,7 @@ registerFile("../../data/raw/traces/vocab_bottleneck_nsys.parquet", {"name":"../
 registerFile("../../data/raw/traces/wide_ffn_nsys.parquet", {"name":"../../data/raw/traces/wide_ffn_nsys.parquet","path":"../../_file/data/raw/traces/wide_ffn_nsys.e3df5806.parquet","lastModified":1771465633667,"size":715444});
 
 define({id: "56bc7f43", outputs: ["renderDataPlayground"], body: async () => {
-const {renderDataPlayground} = await import("../../_import/embed/data-playground.41ee6a2f.js");
+const {renderDataPlayground} = await import("../../_import/embed/data-playground.cc4c6e21.js");
 
 return {renderDataPlayground};
 }});
@@ -71,7 +71,7 @@ await renderDataPlayground()
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <header id="observablehq-header">
-<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><div class="portfolio-header-actions"><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="../resume-generator/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume Generator</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav><button class="portfolio-theme-control" type="button" data-theme-control="" data-theme-preference="system"><span class="portfolio-theme-control__icon" aria-hidden="true"></span><span data-theme-label="">System</span></button></div></div><script>(function(){
+<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><div class="portfolio-header-actions"><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="/consulting/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/consulting/');">Consulting</a><a class="portfolio-nav-link" href="/resume/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav><button class="portfolio-theme-control" type="button" data-theme-control="" data-theme-preference="system"><span class="portfolio-theme-control__icon" aria-hidden="true"></span><span data-theme-label="">System</span></button></div></div><script>(function(){
         const storageKey = 'juliusm-theme';
         const modes = ['system', 'dark', 'light'];
         const labels = {system: 'System', dark: 'Dark', light: 'Light'};

@@ -30,7 +30,7 @@
   <input
     bind:this={inputEl}
     type="text"
-    placeholder="Ask the site AI..."
+    placeholder="Your question here..."
     {disabled}
     bind:value
     oninput={() => oninput?.(value)}

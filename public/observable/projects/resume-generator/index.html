@@ -8,16 +8,77 @@
 <title>Resume Generator | juliusm.com</title>
 
 <link rel="preload" as="style" href="../../_import/astro-bridge-theme.87b41aae.css">
-<link rel="preload" as="style" href="../../_npm/katex@0.16.28/dist/katex.min.css">
+<link rel="preload" as="style" href="../../_observablehq/stdlib/inputs.f7bf0e12.css">
+<link rel="preload" as="style" href="../../_npm/katex@0.17.0/dist/katex.min.css">
 <link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.87b41aae.css">
-<link rel="stylesheet" type="text/css" href="../../_npm/katex@0.16.28/dist/katex.min.css">
+<link rel="stylesheet" type="text/css" href="../../_observablehq/stdlib/inputs.f7bf0e12.css">
+<link rel="stylesheet" type="text/css" href="../../_npm/katex@0.17.0/dist/katex.min.css">
 <script type="module">
 
-import {define} from "../../_observablehq/client.b8f66ce7.js";
+import {define} from "../../_observablehq/client.812bb03c.js";
+import {registerFile} from "../../_observablehq/stdlib.cf315cf5.js";
+
+registerFile("./eval-data.json", {"name":"./eval-data.json","mimeType":"application/json","path":"../../_file/projects/resume-generator/eval-data.74e5db98.json","lastModified":1783352386805,"size":371016});
 
 define({id: "88fad98c", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
 display(await(
 tex`\LaTeX`
+))
+}});
+
+define({id: "fed41c74", inputs: ["FileAttachment"], outputs: ["evalData"], body: (FileAttachment) => {
+const evalData = FileAttachment("./eval-data.json").json();
+return {evalData};
+}});
+
+define({id: "c51f39c0", inputs: ["evalData"], outputs: ["caseOrder","allJudges"], body: (evalData) => {
+const caseOrder = ["clean-ref","near-clean","lean","voice-defect","bold-spam","skills-spam","irrelevant-cred","long-clean","down-level","truncated"];
+const allJudges = evalData.map((d) => d.judge).filter((v, i, a) => a.indexOf(v) === i);
+return {caseOrder,allJudges};
+}});
+
+define({id: "735673a2", inputs: ["view","Inputs"], outputs: ["dimension"], body: (view,Inputs) => {
+const dimension = view(Inputs.select(
+  ["overall","writing","grounding","argument","pitch","basics","keywords","layout","ats"],
+  {value: "overall", label: "Dimension"}
+));
+return {dimension};
+}});
+
+define({id: "372c045a", inputs: ["view","Inputs","allJudges"], outputs: ["chosen"], body: (view,Inputs,allJudges) => {
+const chosen = view(Inputs.checkbox(allJudges, {value: allJudges, label: "Judges"}));
+return {chosen};
+}});
+
+define({id: "ad0b2616", inputs: ["evalData","dimension","chosen"], outputs: ["filtered"], body: (evalData,dimension,chosen) => {
+const filtered = evalData.filter((d) => d.dimension === dimension && chosen.includes(d.judge));
+return {filtered};
+}});
+
+define({id: "1dc1bc7f", inputs: ["display","resize","Plot","chosen","caseOrder","filtered"], body: (display,resize,Plot,chosen,caseOrder,filtered) => {
+display(resize((width) => Plot.plot({
+  width,
+  marginLeft: 175,
+  marginBottom: 80,
+  height: 32 * chosen.length + 96,
+  x: {domain: caseOrder, label: null, tickRotate: -32},
+  y: {domain: chosen, label: null},
+  color: {scheme: "RdYlGn", domain: [0, 4], legend: true, label: "judgment (0–4)", unknown: "#3a3a3a"},
+  marks: [
+    Plot.cell(filtered, {x: "case", y: "judge", fill: "score", inset: 1}),
+    Plot.text(filtered, {x: "case", y: "judge", text: (d) => d.score ?? "·", fill: "#111", fontSize: 11})
+  ]
+})))
+}});
+
+define({id: "8cb88a50", inputs: ["Inputs","filtered","display"], body: async (Inputs,filtered,display) => {
+display(await(
+Inputs.table(filtered, {
+  columns: ["judge", "model", "effort", "case", "score"],
+  header: {judge: "Judge", model: "Model", effort: "Effort", case: "Case", score: "Score (0–4)"},
+  sort: "judge",
+  rows: 18
+})
 ))
 }});
 
@@ -43,7 +104,7 @@ tex`\LaTeX`
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <header id="observablehq-header">
-<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><div class="portfolio-header-actions"><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="./" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume Generator</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav><button class="portfolio-theme-control" type="button" data-theme-control="" data-theme-preference="system"><span class="portfolio-theme-control__icon" aria-hidden="true"></span><span data-theme-label="">System</span></button></div></div><script>(function(){
+<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><div class="portfolio-header-actions"><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="/consulting/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/consulting/');">Consulting</a><a class="portfolio-nav-link" href="/resume/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav><button class="portfolio-theme-control" type="button" data-theme-control="" data-theme-preference="system"><span class="portfolio-theme-control__icon" aria-hidden="true"></span><span data-theme-label="">System</span></button></div></div><script>(function(){
         const storageKey = 'juliusm-theme';
         const modes = ['system', 'dark', 'light'];
         const labels = {system: 'System', dark: 'Dark', light: 'Light'};
@@ -226,16 +287,26 @@ tex`\LaTeX`
 <li class="observablehq-secondary-link"><a href="#initial-development">Initial development</a></li>
 <li class="observablehq-secondary-link"><a href="#operationalization">Operationalization</a></li>
 <li class="observablehq-secondary-link"><a href="#issues-and-opportunities">Issues and Opportunities</a></li>
+<li class="observablehq-secondary-link"><a href="#evaluating-the-evaluator">Evaluating the Evaluator</a></li>
+<li class="observablehq-secondary-link"><a href="#appendix-the-full-data">Appendix: the full data</a></li>
+<li class="observablehq-secondary-link"><a href="#comparing-generators">Comparing generators</a></li>
 </ol>
 </nav>
 </aside>
 <main id="observablehq-main" class="observablehq">
-<h3 id="in-progress" tabindex="-1"><a class="observablehq-header-anchor" href="#in-progress"><em><strong>In Progress</strong></em></a></h3>
 <h1 id="resume-generator" tabindex="-1"><a class="observablehq-header-anchor" href="#resume-generator">Résumé Generator</a></h1>
 <p>Check it out here: <a href="https://juliusm.com/resume/" target="_self" rel="noopener noreferrer">Resume Generator</a></p>
 <h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
 <p>This project is an extension of a substantial amount of work done to automate one of life's occasional necessities, drafting resumes.  Rather than spam a stock resume or embrace the time consumption of drafting tailored resumes, the modern era of writing machines enables a third way: LLM resume generation.</p>
-<p>Truly, is there a better role for these wondrous tools?  Maybe, but the order of the day is sending out résumés.</p>
+<p>The basic idea is simple: provide the LLM with a document describing the candidate's background, the job description, and instructions for writing the resume, and let it follow its bliss.</p>
+<p>It began as an exercise in wiring an LLM into a Lambda, but it evolved into an assessment of different generation <em>graphs</em>, which in turn pushed the focus toward evaluation: writing the judges and building the harnesses that let one architecture be compared honestly against another.</p>
+<p>This is not without risks, however.  Problems observed include the following:</p>
+<ul>
+<li>Inaccuracy: ungrounded or "hallucinated" statements, such as combining jobs</li>
+<li>Mis-structured outputs: including code fences, botching HTML</li>
+<li>Cost: needing complex instructions in turn requires large models to follow them well</li>
+<li>LLM writing dysfunctions: spamming technical buzzwords and some punctuation marks — like the em-dash</li>
+</ul>
 <h2 id="initial-development" tabindex="-1"><a class="observablehq-header-anchor" href="#initial-development">Initial development</a></h2>
 <p>Initially it was apparent that what is needed is a general discussion of the user's work history, education, and so on.  This can be fed to the LLM along with the job description, and a résumé comes out the other end.</p>
 <p>If you're into markdown.  And nowadays, are we not all down with markdown?  And yet, it's not the standard, "approved", proprietary compressed XML format systems expect; nor the readable, immutable PDF; nor even plain text.  Instead it uses readable-ish punctuation sigils and hopes the user will put it through a formatter.</p>
@@ -245,15 +316,284 @@ tex`\LaTeX`
 <p>For creating the Résumé Generator in the site, more is required.  Finding Chromium-sporting images for the PDF renderer, wiring up Cloudflare Turnstile and the API gateway, doing AI Native fullstack development to make the JavaScript component for the frontend, job description processing, storage and metadata setup, and of course, the main serverless instance which interfaces with these to call the LLM API.</p>
 <p>Crafting the LLM request (for Claude) was not especially difficult.  The prompts used locally had to be split out into system and user prompts, and a preprocessor was created to build the user prompt using the longform history (a versioned and stored input) and job description.</p>
 <h2 id="issues-and-opportunities" tabindex="-1"><a class="observablehq-header-anchor" href="#issues-and-opportunities">Issues and Opportunities</a></h2>
-<p>The main issue discovered was that LLMs <em>really like</em> technical keywords.  Why should a 4-trillion parameter Transformer decoder trained on the sum total of human knowledge (i.e. Reddit) fight its natural affinity with ATS systems?  Here are some examples:</p>
-<p>[insert jargon resume]</p>
-<p>Prompt-massaging only goes so far in this circumstance, somewhat surprisingly:</p>
-<p>[insert prompt excerpt]</p>
-<p>[insert result]</p>
-<p>The solution was to split the LLM flow into two stages, both with strong instructions guiding the LLMs towards human-oriented, i.e. meaning-oriented outputs:</p>
-<p>[insert sample prompt language]</p>
-<p>[insert result]</p>
-<p>The first phase acts as a résumé <em>strategist</em>, analyzing the job description for</p>
+<p>The main issue discovered was that LLMs <em>really like</em> technical keywords.  Why should a 4-trillion parameter Transformer decoder trained on the sum total of human knowledge (i.e. Reddit) fight its natural affinity with ATS systems?  Prompt-massaging only goes so far in this circumstance, somewhat surprisingly.</p>
+<p>The solution was to split the generation flow into two stages, both with strong instructions steering the models toward human-oriented, meaning-first output.  The first phase acts as a résumé <em>strategist</em>: it reads the job description and the candidate's history and returns a brief, deciding what to emphasize and which evidence supports it.  The second phase is a <em>composer</em> that writes the résumé from that brief, so the model doing the prose is never left to free-associate over raw inputs.</p>
+<p>That split raised an immediate question, though: how do you know a given pipeline, or a given model, actually produces a <em>better</em> résumé than another?  Which is where the evaluator comes in.</p>
+<h2 id="evaluating-the-evaluator" tabindex="-1"><a class="observablehq-header-anchor" href="#evaluating-the-evaluator">Evaluating the Evaluator</a></h2>
+<p>Comparing graphs and models sounds straightforward until you ask the obvious question: compared how, and judged by whom? The judge, inevitably, is another LLM with its own tastes and blind spots. So before trusting any leaderboard of prompts and pipelines, we had to turn the lens around and evaluate the evaluator.</p>
+<p>The tool for that is a calibration set: a small, deliberately varied collection of résumé and job-description pairs, each one a probe for a specific judgment. A couple are clean references, the picture of what "good" should look like. One is an outright failure the deterministic linter is meant to catch, a résumé that trails off with no work history at all. One pairs a strong candidate with a role beneath them, to check that the judge separates "is this a good résumé?" from "is this person a fit?", which are emphatically not the same question. And the revealing ones are deliberately <em>salted</em> with flaws no linter can catch, each one planted to test a single judgment. A couple were hand-edited into otherwise clean outputs; the rest were kept from an earlier, blunter prototype, precisely because it made the mistakes the current pipeline is built to avoid:</p>
+<ul>
+<li>a summary rewritten into a bossy, job-posting register ("Design and deploy…") in place of the candidate's own voice, to test the judge's ear</li>
+<li>a planted, unsupported skills section, to test whether it catches an ungrounded claim</li>
+<li>an off-target credential left in against the brief, to test whether it flags the irrelevant</li>
+<li>inline keyword spam</li>
+</ul>
+<p>These are decoys, in other words: known-bad specimens whose only job is to reveal what a given judge does and does not notice. Each runs through the evaluator while we swap the judge across the three big model families and climb each provider's full reasoning-effort ladder, up to <code>max</code> for Claude and Gemini and up to <code>xhigh</code> for GPT-5.4 (OpenAI rejects <code>max</code> outright).</p>
+<p>The anchors behaved, which was the first relief: truncation floored to zero, clean résumés scored high, and the down-leveled candidate kept a high mark, fit and quality held properly apart. The harness measures what it claims to.</p>
+<p>The sharp result concerns that bossy-voice summary. Whether a judge notices it turns out to be a trait of the model, not of how hard it thinks, and climbing the whole effort ladder made that vivid. Here is the <code>writing</code> score on the voice case at each rung, where 3 means the defect was caught and 4 means it sailed straight through:</p>
+<table>
+<thead>
+<tr>
+<th>Judge</th>
+<th style="text-align:center">low</th>
+<th style="text-align:center">medium</th>
+<th style="text-align:center">high</th>
+<th style="text-align:center">top rung</th>
+<th>Reads as</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Opus 4.6</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">3</td>
+<td>catches at every rung</td>
+</tr>
+<tr>
+<td><strong>Opus 4.7</strong></td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">4</td>
+<td>catches only at <code>low</code></td>
+</tr>
+<tr>
+<td>Opus 4.8</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">4</td>
+<td>never catches</td>
+</tr>
+<tr>
+<td>GPT-5.4</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">3</td>
+<td>catches at every rung</td>
+</tr>
+<tr>
+<td><strong>GPT-5.4-mini</strong></td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">4</td>
+<td>loses it at <code>xhigh</code></td>
+</tr>
+</tbody>
+</table>
+<p>(Top rung is <code>max</code> for the Opus models and <code>xhigh</code> for the GPT models. Sonnet 4.6, run only at <code>high</code> and <code>max</code>, also catches it; all three Gemini judges, on adaptive thinking, miss it outright.)</p>
+<p>The result is stranger than "thinking doesn't help." For two of the judges, thinking actively <em>hurts</em>: Opus 4.7 sees the defect at <code>low</code> and goes blind the instant it deliberates harder, and GPT-5.4-mini holds on all the way up before dropping it at the very top. Only Opus 4.6 and full GPT-5.4 stay right the whole climb; Opus 4.8 and every Gemini stay wrong. So more reasoning can make a judge <em>more</em> forgiving, not less, and none of it teaches a blind judge to see.</p>
+<p>Thinking does earn its keep in one narrower way: it sharpens the judges that already see, trimming the lazy ties in the middle of the scale. Full GPT-5.4's flat 0.75 verdicts thin out as it thinks harder:</p>
+<table>
+<thead>
+<tr>
+<th>GPT-5.4 reasoning effort</th>
+<th style="text-align:center">low</th>
+<th style="text-align:center">medium</th>
+<th style="text-align:center">high</th>
+<th style="text-align:center">xhigh</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cases scored a flat 0.75 overall (of 10)</td>
+<td style="text-align:center">9</td>
+<td style="text-align:center">9</td>
+<td style="text-align:center">6</td>
+<td style="text-align:center">5</td>
+</tr>
+</tbody>
+</table>
+<p>The lesson is unglamorous and useful: pick a judge for whether it can actually <em>see</em> the failure you care about, and treat reasoning effort as a dial that can sharpen a clear judge or blunt a shaky one, but never rescue a blind one.</p>
+<h3 id="the-rest-of-the-board" tabindex="-1"><a class="observablehq-header-anchor" href="#the-rest-of-the-board">The rest of the board</a></h3>
+<p>The voice case is the extreme, but the other decoys sort the judges into a rough gradient of perceptiveness. The one flaw most judges catch is the fabricated skills section, the kind of ungrounded claim the whole pipeline exists to prevent. An off-target credential slips past far more often, and keyword stuffing and the bossy voice sail through almost untouched (counts are across all twenty-five judge runs):</p>
+<table>
+<thead>
+<tr>
+<th>Planted flaw</th>
+<th>Dimension it should dent</th>
+<th style="text-align:center">Judges that flagged it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>fabricated skills section</td>
+<td>grounding</td>
+<td style="text-align:center"><strong>10 / 25</strong></td>
+</tr>
+<tr>
+<td>off-target credential</td>
+<td>grounding</td>
+<td style="text-align:center">4 / 25</td>
+</tr>
+<tr>
+<td>keyword spam</td>
+<td>keywords</td>
+<td style="text-align:center">1 / 25</td>
+</tr>
+<tr>
+<td>bossy summary voice</td>
+<td>writing</td>
+<td style="text-align:center"><strong>0 / 25</strong></td>
+</tr>
+</tbody>
+</table>
+<p>So the judges are decent grounding cops and poor stylists: ungrounded <em>content</em> draws at least some scrutiny, ungrounded <em>tone</em> draws none. But no judge is a clear champion, and that turns out to be the real finding. The single flag on the keyword spam came from Opus 4.6 at <em>medium</em> effort, and from nobody else at any setting. The off-target credential was caught by a scattered four (a couple of Opus 4.7 runs, GPT-5.4 at low). The steadiest hand is full GPT-5.4, which dings the fabricated skills at every effort level, yet even it misses the subtler cases like everyone else. When the "sharpest" judge changes depending on the rung, you are looking less at skill than at scatter.</p>
+<p>The control cases, meanwhile, behaved as hoped, which is what earns the rest of the numbers their credibility:</p>
+<table>
+<thead>
+<tr>
+<th>Control</th>
+<th>What it checks</th>
+<th style="text-align:center">Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>truncated résumé</td>
+<td>a hard failure floors the score</td>
+<td style="text-align:center">0 from 22 / 25</td>
+</tr>
+<tr>
+<td>too-junior role</td>
+<td>fit is not quality</td>
+<td style="text-align:center">stayed high, 24 / 25</td>
+</tr>
+<tr>
+<td>over-long but clean</td>
+<td>length is not punished</td>
+<td style="text-align:center">median <code>overall</code> 4</td>
+</tr>
+<tr>
+<td>clean references (×2)</td>
+<td>the baseline for "good"</td>
+<td style="text-align:center">median <code>overall</code> 3</td>
+</tr>
+</tbody>
+</table>
+<p>One methodological wrinkle is worth stating plainly. The two PDF-based dimensions, <code>layout</code> and <code>ats</code>, are close to noise. On the <em>clean reference</em> résumé, the one with nothing wrong with it, layout scores ranged across the entire scale, from 1 to 4, depending only on which model happened to be looking. A single judge's layout verdict is barely better than a coin flip, so those dimensions are best read as mood, not measurement, and the interactive table below lets you see that scatter for yourself.</p>
+<p>And how much of any of this survives a second look? Less than the decimals imply. The same judge, at the same effort, run a second time by a different operator on identical inputs, agrees with itself on the <code>overall</code> score for as few as five of the ten cases, with the average gap running about half a rubric point. The catch-or-miss verdicts are stable, which is why they carry the argument; the fine gradations drift from run to run. It is why the honest unit here is "did it see the defect," not "0.75 versus 1.0," and why an apparent standout judge dissolves the moment you add more runs.</p>
+<p>There was also a comeuppance for enthusiasm. One thinking model kept truncating its own verdicts: handed an explicit budget for deliberation, it would ponder right up to the edge of its output allowance and then run out of room mid-object, leaving a beautifully reasoned, syntactically broken half-answer. The fix was to reserve headroom for the answer on top of the budget for the thinking. A small thing, but a tidy reminder that thinking and speaking draw from the same well. With the fix in place, the full ladder ran clean: across all twenty-five judge runs, not one truncated verdict.</p>
+<h2 id="appendix-the-full-data" tabindex="-1"><a class="observablehq-header-anchor" href="#appendix-the-full-data">Appendix: the full data</a></h2>
+<p>Every judge on the full effort ladder, every case, every dimension, across the ten-résumé calibration set: twenty-five model-and-effort combinations in all (the two OpenAI <code>max</code> runs are omitted, since the API rejects that setting). Scores are the evaluator's raw rubric judgment, from 0 (fail) to 4 (excellent). Pick a dimension and toggle judges to explore.</p>
+<div class="observablehq observablehq--block"><!--:fed41c74:--></div>
+<div class="observablehq observablehq--block"><!--:c51f39c0:--></div>
+<div class="observablehq observablehq--block"><!--:735673a2:--></div>
+<div class="observablehq observablehq--block"><!--:372c045a:--></div>
+<div class="observablehq observablehq--block"><!--:ad0b2616:--></div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:1dc1bc7f:--></div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:8cb88a50:--></div>
+<h2 id="comparing-generators" tabindex="-1"><a class="observablehq-header-anchor" href="#comparing-generators">Comparing generators</a></h2>
+<p>With a judge we can at least partly trust, the point of all this scaffolding comes into view: comparing generators head to head. Two sweeps are in flight.</p>
+<p>The first is a <strong>model sweep</strong> over the two-stage pipeline. Holding the architecture fixed, it varies the strategist and composer models (a small, fast model for strategy against a larger one; several choices for the composer) to find where quality per dollar actually lives.</p>
+<p>The second is an <strong>architecture sweep</strong>. Holding the models roughly fixed, it compares topologies: a single prompt, a generator-with-critic loop, a cyclic revise-until-good chain, and a parallel fan-out of evidence collectors and critics, to see whether the more elaborate graphs earn their extra calls.</p>
+<p>Both are scored on the same calibration-checked evaluator described above, with cost and latency tracked alongside quality, since a graph that spends a dozen model calls to win by a hair is not obviously a win.</p>
+<h3 id="model-sweep-smoke-results" tabindex="-1"><a class="observablehq-header-anchor" href="#model-sweep-smoke-results">Model sweep smoke results</a></h3>
+<p>The first live pass was deliberately small: one shared job-description input, eight model combinations, local HTML/PDF artifacts, and the post-hoc evaluator attached to every successful generation. Before running it, the harness needed two pieces of plumbing fixed.</p>
+<p>First, evaluator requests now carry the same experiment identifiers as the generation requests: experiment, variation, input label, generation graph, and generation trace IDs. That matters because otherwise the evaluation span can look detached from the exact generation it judged. Second, GPT-5-family calls no longer receive <code>temperature</code>; the provider rejects it for these reasoning-style modes. The GPT composer variants also needed more output headroom: <code>medium</code> reasoning worked at 8192 completion tokens, while <code>high</code> reasoning returned empty content until raised to 16384.</p>
+<p>On this first input, the evaluator gave every successful generator the same <code>overall</code> score, so the early signal is not "winner by score" so much as "which settings are viable, cheap, and worth human review." The table below uses the locally recorded provider cost where available; the evaluator cost was not fully priced in the local map, so the dollar column is best read as a lower-bound run cost.</p>
+<table>
+<thead>
+<tr>
+<th>Variation</th>
+<th>Strategy model</th>
+<th>Composer model</th>
+<th>Composer effort / budget</th>
+<th style="text-align:right">Overall</th>
+<th style="text-align:right">Writing</th>
+<th style="text-align:right">Grounding</th>
+<th style="text-align:right">Known cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mini_sonnet_high</code></td>
+<td>GPT-5.4 mini</td>
+<td>Sonnet 4.6</td>
+<td>default / 8192</td>
+<td style="text-align:right">0.75</td>
+<td style="text-align:right">0.75</td>
+<td style="text-align:right">1.00</td>
+<td style="text-align:right">$0.105</td>
+</tr>
+<tr>
+<td><code>mini_opus_low</code></td>
+<td>GPT-5.4 mini</td>
+<td>Opus 4.8</td>
+<td>low / 8192</td>
+<td style="text-align:right">0.75</td>
+<td style="text-align:right">0.75</td>
+<td style="text-align:right">1.00</td>
+<td style="text-align:right">$0.175</td>
+</tr>
+<tr>
+<td><code>mini_54_medium</code></td>
+<td>GPT-5.4 mini</td>
+<td>GPT-5.4</td>
+<td>medium / 8192</td>
+<td style="text-align:right">0.75</td>
+<td style="text-align:right">0.75</td>
+<td style="text-align:right">0.75</td>
+<td style="text-align:right">$0.142</td>
+</tr>
+<tr>
+<td><code>mini_54_high</code></td>
+<td>GPT-5.4 mini</td>
+<td>GPT-5.4</td>
+<td>high / 16384</td>
+<td style="text-align:right">0.75</td>
+<td style="text-align:right">0.75</td>
+<td style="text-align:right">1.00</td>
+<td style="text-align:right">$0.214</td>
+</tr>
+<tr>
+<td><code>full_54_sonnet_high</code></td>
+<td>GPT-5.4</td>
+<td>Sonnet 4.6</td>
+<td>default / 8192</td>
+<td style="text-align:right">0.75</td>
+<td style="text-align:right">1.00</td>
+<td style="text-align:right">0.75</td>
+<td style="text-align:right">$0.145</td>
+</tr>
+<tr>
+<td><code>full_54_opus_low</code></td>
+<td>GPT-5.4</td>
+<td>Opus 4.8</td>
+<td>low / 8192</td>
+<td style="text-align:right">0.75</td>
+<td style="text-align:right">0.75</td>
+<td style="text-align:right">0.75</td>
+<td style="text-align:right">$0.235</td>
+</tr>
+<tr>
+<td><code>full_54_medium</code></td>
+<td>GPT-5.4</td>
+<td>GPT-5.4</td>
+<td>medium / 8192</td>
+<td style="text-align:right">0.75</td>
+<td style="text-align:right">0.75</td>
+<td style="text-align:right">0.75</td>
+<td style="text-align:right">$0.163</td>
+</tr>
+<tr>
+<td><code>full_54_high</code></td>
+<td>GPT-5.4</td>
+<td>GPT-5.4</td>
+<td>high / 16384</td>
+<td style="text-align:right">0.75</td>
+<td style="text-align:right">0.75</td>
+<td style="text-align:right">1.00</td>
+<td style="text-align:right">$0.297</td>
+</tr>
+</tbody>
+</table>
+<p>The main result is practical rather than dramatic. The cheaper two-stage baseline remains competitive on this case, and larger strategy/composer models did not buy an obvious evaluator-score jump. The next pass should therefore compare the saved PDFs and markdown by hand before expanding the matrix across more inputs. If the human review also shows a tie, the smaller strategy model plus Sonnet composer is the sensible default until a harder case proves otherwise.</p>
+<p>The architecture sweep remains the larger open question. The model sweep says a two-stage graph is viable and relatively cheap; it does not yet answer whether critic loops or parallel evidence collection earn their extra calls.</p>
 </main>
 </div>
 </body>

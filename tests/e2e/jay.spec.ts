@@ -5,7 +5,7 @@ test.describe("AI helper chatbot", () => {
     await page.goto("/");
     const fab = page.getByLabel("Open AI helper");
     await expect(fab).toBeVisible();
-    await expect(fab.locator("img")).toHaveAttribute("src", "/images/ai-helper-mark.svg");
+    await expect(fab.locator("img")).toHaveAttribute("src", "/images/ai-helper-mark.png");
   });
 
   test("opens and closes chat panel", async ({page}) => {
@@ -13,7 +13,7 @@ test.describe("AI helper chatbot", () => {
     const fab = page.getByLabel("Open AI helper");
     await fab.click();
     await expect(page.getByRole("dialog", {name: "AI helper chat"})).toBeVisible();
-    await expect(page.getByPlaceholder("Ask the site AI...")).toBeVisible();
+    await expect(page.getByPlaceholder("Your question here...")).toBeVisible();
 
     const closeBtn = page.getByLabel("Close chat");
     await closeBtn.click();
@@ -23,7 +23,7 @@ test.describe("AI helper chatbot", () => {
   test("sends a message and receives a mock reply", async ({page}) => {
     await page.goto("/");
     await page.getByLabel("Open AI helper").click();
-    const input = page.getByPlaceholder("Ask the site AI...");
+    const input = page.getByPlaceholder("Your question here...");
     await input.fill("Tell me about the projects");
     await page.getByLabel("Send message").click();
 
@@ -31,8 +31,7 @@ test.describe("AI helper chatbot", () => {
     const messages = page.locator(".jay-root .msg");
     await expect(messages.first()).toBeVisible();
     await expect(messages).toHaveCount(2, {timeout: 5000});
-    await expect(page.locator(".jay-root .msg.user .speaker")).toHaveText("You");
-    await expect(page.locator(".jay-root .msg.bot .speaker")).toHaveText("AI helper");
+    await expect(page.locator(".jay-root .speaker")).toHaveCount(0);
   });
 
   test("composer keeps the input usable across panel width", async ({page}) => {
@@ -74,7 +73,7 @@ test.describe("AI helper chatbot", () => {
   test("new chat button clears messages", async ({page}) => {
     await page.goto("/");
     await page.getByLabel("Open AI helper").click();
-    const input = page.getByPlaceholder("Ask the site AI...");
+    const input = page.getByPlaceholder("Your question here...");
     await input.fill("Hello");
     await page.getByLabel("Send message").click();
     await expect(page.locator(".jay-root .msg")).toHaveCount(2, {timeout: 5000});
@@ -139,7 +138,7 @@ test.describe("AI helper chatbot", () => {
   test("new chat button is disabled while sending", async ({page}) => {
     await page.goto("/");
     await page.getByLabel("Open AI helper").click();
-    const input = page.getByPlaceholder("Ask the site AI...");
+    const input = page.getByPlaceholder("Your question here...");
     await input.fill("Hello");
     await page.getByLabel("Send message").click();
 

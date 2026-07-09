@@ -15,6 +15,7 @@ locals {
   )
 
   resume_route_enabled = trimspace(var.resume_lambda_arn) != ""
+  intake_route_enabled = trimspace(var.intake_sender_email) != "" && trimspace(var.intake_recipient_email) != ""
   chat_route_enabled   = trimspace(var.chat_endpoint_url) != ""
   infer_route_enabled  = trimspace(var.infer_lambda_arn) != ""
   waf_enabled          = var.enable_waf != null ? var.enable_waf : var.environment == "prod"

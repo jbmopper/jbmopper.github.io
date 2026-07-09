@@ -174,6 +174,40 @@ class TurnstileBrokerTests(unittest.TestCase):
         self.assertGreater(claims["exp"], claims["iat"])
         self.assertEqual(body["expiresAt"], claims["exp"])
 
+    def test_success_allows_intake_action(self):
+        with patch.dict(
+            os.environ,
+            {
+                "ALLOWED_ORIGINS": "https://juliusm.com",
+                "TURNSTILE_SECRET_ARN": "arn:turnstile",
+                "SESSION_SIGNING_SECRET_ARN": "arn:session",
+                "TOKEN_TTL_SECONDS": "600",
+            },
+            clear=False,
+        ), patch.object(self.module, "_get_secret", side_effect=["turn-secret", "signing-secret"]), patch.object(
+            self.module,
+            "_verify_turnstile",
+            return_value={"ok": True, "details": []},
+        ):
+            response = self.module.handler(
+                self._event_with_body(
+                    {
+                        "turnstileToken": "token",
+                        "action": "intake",
+                        "clientNonce": "nonce-456",
+                    }
+                ),
+                None,
+            )
+
+        body = json.loads(response["body"])
+        self.assertEqual(response["statusCode"], 200)
+        self.assertEqual(body["allowedActions"], ["intake"])
+
+        claims = _decode_claims(body["sessionToken"])
+        self.assertEqual(claims["action"], "intake")
+        self.assertEqual(claims["nonce"], "nonce-456")
+
     def test_preflight_options_returns_cors_headers_without_body_validation(self):
         event = dict(self.base_event)
         event["httpMethod"] = "OPTIONS"

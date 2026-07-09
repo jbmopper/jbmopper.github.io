@@ -7,6 +7,7 @@ This directory provisions a protected API layer in AWS for backend Lambda worklo
 - API Gateway REST API with optional routes:
   - `POST /v1/session/turnstile-verify` (always created)
   - `POST /v1/resume/generate` (if `resume_lambda_arn` is set)
+  - `POST /v1/intake/submit` (if intake SES sender and recipient emails are set)
   - `POST /v1/chat/respond` (if `chat_endpoint_url` is set)
   - `POST /v1/infer/generate` (if `infer_lambda_arn` is set)
   - `POST /v1/infer/warmup` (if `infer_lambda_arn` is set)
@@ -46,6 +47,7 @@ cp infra/examples/prod.tfvars.example infra/prod.tfvars
 Populate:
 
 - existing Lambda ARNs for resume (and optionally infer)
+- optional consulting intake SES sender and recipient emails
 - Cloud Run URL and API key for Jay chatbot backend (`chat_endpoint_url`, `chat_api_key`)
 - optional existing secret ARNs
 - custom domain/certificate if desired
@@ -75,6 +77,17 @@ JSON example:
 ```json
 {"session_signing_key":"<long-random-hmac-secret>"}
 ```
+
+## Consulting intake email
+
+The intake route uses SES `SendEmail` and is enabled only when both values are set:
+
+```hcl
+intake_sender_email    = "verified-sender@example.com"
+intake_recipient_email = "recipient@example.com"
+```
+
+Verify the sender identity in SES before applying the production stack. The handler sends a plain-text notification only; it does not store leads.
 
 ## Apply locally
 

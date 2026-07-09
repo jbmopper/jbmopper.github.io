@@ -1,6 +1,6 @@
 resource "aws_api_gateway_rest_api" "main" {
   name        = "${local.name_prefix}-api"
-  description = "Protected API for resume/chat/inference endpoints"
+  description = "Protected API for resume/intake/chat/inference endpoints"
 
   endpoint_configuration {
     types = ["REGIONAL"]
@@ -44,6 +44,22 @@ resource "aws_api_gateway_resource" "resume_generate" {
   rest_api_id = aws_api_gateway_rest_api.main.id
   parent_id   = aws_api_gateway_resource.resume.id
   path_part   = "generate"
+}
+
+resource "aws_api_gateway_resource" "intake" {
+  count = local.intake_route_enabled ? 1 : 0
+
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  parent_id   = aws_api_gateway_resource.v1.id
+  path_part   = "intake"
+}
+
+resource "aws_api_gateway_resource" "intake_submit" {
+  count = local.intake_route_enabled ? 1 : 0
+
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  parent_id   = aws_api_gateway_resource.intake[0].id
+  path_part   = "submit"
 }
 
 resource "aws_api_gateway_resource" "chat" {
@@ -117,6 +133,27 @@ resource "aws_api_gateway_integration" "resume_post" {
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${var.resume_lambda_arn}/invocations"
+}
+
+resource "aws_api_gateway_method" "intake_post" {
+  count = local.intake_route_enabled ? 1 : 0
+
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.intake_submit[0].id
+  http_method   = "POST"
+  authorization = "CUSTOM"
+  authorizer_id = aws_api_gateway_authorizer.session.id
+}
+
+resource "aws_api_gateway_integration" "intake_post" {
+  count = local.intake_route_enabled ? 1 : 0
+
+  rest_api_id             = aws_api_gateway_rest_api.main.id
+  resource_id             = aws_api_gateway_resource.intake_submit[0].id
+  http_method             = aws_api_gateway_method.intake_post[0].http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.intake_handler[0].invoke_arn
 }
 
 # --- Resume job status polling route: GET /v1/resume/job/{jobId} ---
@@ -410,6 +447,60 @@ resource "aws_api_gateway_integration_response" "options_resume_200" {
   }
 }
 
+resource "aws_api_gateway_method" "options_intake" {
+  count = local.intake_route_enabled ? 1 : 0
+
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.intake_submit[0].id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "options_intake" {
+  count = local.intake_route_enabled ? 1 : 0
+
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.intake_submit[0].id
+  http_method = aws_api_gateway_method.options_intake[0].http_method
+  type        = "MOCK"
+
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+resource "aws_api_gateway_method_response" "options_intake_200" {
+  count = local.intake_route_enabled ? 1 : 0
+
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.intake_submit[0].id
+  http_method = aws_api_gateway_method.options_intake[0].http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Max-Age"       = true
+  }
+}
+
+resource "aws_api_gateway_integration_response" "options_intake_200" {
+  count = local.intake_route_enabled ? 1 : 0
+
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.intake_submit[0].id
+  http_method = aws_api_gateway_method.options_intake[0].http_method
+  status_code = aws_api_gateway_method_response.options_intake_200[0].status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Methods" = "'${local.cors_allowed_methods}'"
+    "method.response.header.Access-Control-Allow-Headers" = "'${local.cors_allowed_headers}'"
+    "method.response.header.Access-Control-Max-Age"       = "'${local.cors_max_age}'"
+  }
+}
+
 resource "aws_api_gateway_method" "options_chat" {
   count = local.chat_route_enabled ? 1 : 0
 
@@ -601,6 +692,13 @@ resource "aws_api_gateway_deployment" "main" {
           try(aws_api_gateway_integration.resume_job_get[0].id, ""),
           try(aws_api_gateway_integration.options_resume_job[0].id, ""),
           try(aws_api_gateway_integration_response.options_resume_job_200[0].id, ""),
+          try(aws_api_gateway_resource.intake[0].id, ""),
+          try(aws_api_gateway_resource.intake_submit[0].id, ""),
+          try(aws_api_gateway_method.intake_post[0].id, ""),
+          try(aws_api_gateway_method.options_intake[0].id, ""),
+          try(aws_api_gateway_integration.intake_post[0].id, ""),
+          try(aws_api_gateway_integration.options_intake[0].id, ""),
+          try(aws_api_gateway_integration_response.options_intake_200[0].id, ""),
           aws_api_gateway_resource.chat.id,
           aws_api_gateway_resource.chat_respond.id,
           try(aws_api_gateway_method.chat_post[0].id, ""),
@@ -659,6 +757,9 @@ resource "aws_api_gateway_deployment" "main" {
     aws_api_gateway_integration.resume_job_get,
     aws_api_gateway_integration.options_resume_job,
     aws_api_gateway_integration_response.options_resume_job_200,
+    aws_api_gateway_integration.intake_post,
+    aws_api_gateway_integration.options_intake,
+    aws_api_gateway_integration_response.options_intake_200,
     aws_api_gateway_integration.chat_post,
     aws_api_gateway_integration_response.chat_post_200,
     aws_api_gateway_integration.options_chat,
@@ -734,6 +835,16 @@ resource "aws_lambda_permission" "allow_resume_job_status" {
   function_name = var.resume_lambda_arn
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/GET/v1/resume/job/*"
+}
+
+resource "aws_lambda_permission" "allow_intake" {
+  count = var.manage_lambda_permissions && local.intake_route_enabled ? 1 : 0
+
+  statement_id  = "AllowExecutionFromAPIGatewayIntake"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.intake_handler[0].function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.main.execution_arn}/*/POST/v1/intake/submit"
 }
 
 
