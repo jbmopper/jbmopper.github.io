@@ -1,132 +1,143 @@
-# AWS API Security Stack (API Gateway + WAF + Turnstile)
+# Production edge and API infrastructure
 
-This directory provisions a protected API layer in AWS for backend Lambda workloads used by the site.
+This stack manages the existing AWS API security layer, the public Meristem MCP
+edge through Cloudflare Tunnel, and SES validation for
+`no-reply@juliusm.com`. The deployed AWS stack and SES identity live in
+`us-west-2`.
 
-## What this stack creates
+## Meristem provider edge
 
-- API Gateway REST API with optional routes:
-  - `POST /v1/session/turnstile-verify` (always created)
-  - `POST /v1/resume/generate` (if `resume_lambda_arn` is set)
-  - `POST /v1/intake/submit` (if intake SES sender and recipient emails are set)
-  - `POST /v1/chat/respond` (if `chat_endpoint_url` is set)
-  - `POST /v1/infer/generate` (if `infer_lambda_arn` is set)
-  - `POST /v1/infer/warmup` (if `infer_lambda_arn` is set)
-- Optional AWS WAFv2 Web ACL attached to the API stage
-- Turnstile broker Lambda (verifies token and mints short-lived session token)
-- Secrets Manager placeholders for required secrets (unless existing ARNs are supplied)
+With `enable_cloudflare_tunnel = true`, Terraform owns:
 
-## Authentication and deploy model
+- a remotely configured Cloudflare Tunnel;
+- proxied DNS for `mcp.juliusm.com`;
+- only the documented public routes:
+  - `GET /.well-known/oauth-protected-resource/mcp`
+  - `GET /.well-known/oauth-authorization-server`
+  - `POST /oauth/register`
+  - `GET /oauth/authorize`
+  - `POST /oauth/token`
+  - `GET` and `POST /mcp`
+  - `GET /readyz`
+- a hostname catch-all and final tunnel catch-all that return 404;
+- an optional native Cloudflare three-rule ruleset, disabled on the current
+  Free plan because that plan cannot express the required method-aware rules.
 
-- Local infrastructure operations: **AWS CLI SSO**
-- CI infrastructure operations: **GitHub OIDC role assumption** (no static AWS keys)
+No Cloudflare Access application is attached. Provider connectors reach plain
+public HTTPS and Meristem performs OAuth-compatible authentication itself.
+Cloudflare forwards the allowed paths to a loopback-only nginx edge on
+`127.0.0.1:8081`; Meristem itself stays on `127.0.0.1:8080`. The edge strictly
+paces the three per-client OAuth routes at 5/30/60 requests per minute with
+bursts disabled, using `CF-Connecting-IP`, which is trusted only because both
+cloudflared and nginx are confined to loopback on the same single-owner host.
+It does not limit `/mcp`, readiness, or discovery routes.
+Proxy buffering and request buffering are disabled for MCP Streamable HTTP and
+SSE, long read/send timeouts are used, and upstream retry is disabled. Neither
+Cloudflare nor nginx may retry or replay OAuth token request bodies: Meristem
+revokes the whole grant if an old refresh token is replayed.
 
-## Prerequisites
+The tunnel credential is intentionally absent from Terraform. After the tunnel
+exists, an operator retrieves its connector token directly from the Cloudflare
+API and writes only that value to the `meristem` Doppler project. The Arch node
+materializes it as a root-owned file and runs `cloudflared` with `--token-file`.
+Do not use the Terraform tunnel-token data source or output the token.
 
-- Terraform >= 1.6
-- AWS CLI v2 with SSO configured
-- AWS IAM role permissions for API Gateway, Lambda, WAFv2, IAM, CloudWatch Logs, Secrets Manager
+`cloudflare_additional_tunnel_routes` remains empty. Do not publish
+`media.juliusm.com` until a service exists and its authentication contract is
+known; an experimental media service should normally get a separate tunnel and
+security boundary.
 
-## Local SSO workflow
+## SES validation
 
-```bash
-aws configure sso --profile juliusm-prod
-aws sso login --profile juliusm-prod
+`enable_ses_domain_identity = true` creates the `juliusm.com` SES v2 identity
+and publishes three DNS-only Easy DKIM CNAMEs in Cloudflare. This validates
+`no-reply@juliusm.com` without requiring that address to receive mail.
 
-# Optional helper script
-./scripts/infra-sso-login.sh juliusm-prod
-```
+SES is currently sandboxed in west-2. `jbmopper@gmail.com` is already verified
+there and can receive test mail. Request SES production access before using an
+unverified recipient. The west-2 account already contains a failed
+`juliusm.com` identity; the configuration imports that identity into
+`aws_sesv2_email_identity.domain[0]` and publishes its Easy DKIM records rather
+than attempting a duplicate create.
 
-## Configure variables
+Custom MAIL FROM, SPF, and DMARC policy are intentionally outside this change;
+they are not required for domain validation. The intake Lambda may call only
+`ses:SendEmail` against the managed identity ARN.
 
-Start from the example tfvars:
+## Remote state migration
 
-```bash
-cp infra/examples/prod.tfvars.example infra/prod.tfvars
-```
-
-Populate:
-
-- existing Lambda ARNs for resume (and optionally infer)
-- optional consulting intake SES sender and recipient emails
-- Cloud Run URL and API key for Jay chatbot backend (`chat_endpoint_url`, `chat_api_key`)
-- optional existing secret ARNs
-- custom domain/certificate if desired
-- optional `enable_waf` override (defaults to enabled only when `environment = "prod"`)
-
-Current inference integration note:
-
-- this stack exposes the unchanged inference Lambda's native `POST /generate` and `POST /warmup` routes
-- frontend/component changes are deferred to a later pass, so callers must currently send the Lambda's native request shape
-
-## Secrets payload formats
-
-The Lambdas accept either raw strings or JSON payloads in Secrets Manager.
-
-### Turnstile secret
-
-JSON example:
-
-```json
-{"turnstile_secret":"<cloudflare-turnstile-secret>"}
-```
-
-### Session signing key
-
-JSON example:
-
-```json
-{"session_signing_key":"<long-random-hmac-secret>"}
-```
-
-## Consulting intake email
-
-The intake route uses SES `SendEmail` and is enabled only when both values are set:
-
-```hcl
-intake_sender_email    = "verified-sender@example.com"
-intake_recipient_email = "recipient@example.com"
-```
-
-Verify the sender identity in SES before applying the production stack. The handler sends a plain-text notification only; it does not store leads.
-
-## Apply locally
+The main stack uses the S3 backend in `backend.tf`, with native S3 lockfiles.
+Terraform 1.10 or newer is required. Bootstrap the bucket from
+`state-bootstrap/` first, then freeze applies and run:
 
 ```bash
-terraform -chdir=infra init
+terraform -chdir=infra init -migrate-state
+```
+
+Review a production plan for zero destroys or replacements before any apply.
+Keep the local-state backup until the remote object and its S3 versions are
+verified. Backend credentials come from the AWS credential chain only.
+
+## Variables and secrets
+
+Use `examples/prod.tfvars.example` only as a names-only reference for the
+`TF_VAR_*` keys in Doppler. Production plan/apply does not load a repo-local
+tfvars file; this avoids mixing legacy local credentials with authoritative
+configuration. Required secret scopes are separate:
+
+- `juliusm-infra/prd`: Cloudflare provider API token and Terraform secret
+  inputs used only by trusted apply hosts/CI;
+- `meristem/prd`: Cloudflare connector run token and Meristem runtime values
+  materialized only on the Arch node.
+
+The Cloudflare provider reads `CLOUDFLARE_API_TOKEN`; sensitive Terraform
+variables use `TF_VAR_*`. No token belongs in a committed tfvars file, command
+line, Terraform output, or state.
+
+Restrict the provider token to the Juliusm Cloudflare account and
+`juliusm.com` zone with only Tunnel read/write and DNS write. Ruleset edit
+permission is needed only if a future paid-plan migration enables and imports
+the native Cloudflare ruleset. The token is for the trusted Terraform host/CI
+only and must never be copied to the Arch node.
+
+The externally deployed production stack retains the historical Terraform
+label `environment=dev`; changing it now would rename and replace existing
+resources. `stage_name=prod` remains the API stage. A separate migration must
+normalize the label later. The production workflow also requires the existing
+resume, inference, and chat route inputs to be non-empty. WAF remains explicitly
+disabled to preserve the live stack; enabling it is a separate additive scope.
+These gates prevent an omitted Doppler key from silently removing a deployed
+route or introducing unrelated resources.
+
+`cloudflare_additional_tunnel_routes` is pinned to the JSON value `{}` in
+Doppler and by a Terraform precondition. Publishing another hostname requires
+an explicit reviewed code change; an injected variable cannot expose a new
+service during this rollout.
+
+## Safe local workflow
+
+```bash
 terraform -chdir=infra fmt -recursive
+terraform -chdir=infra init
 terraform -chdir=infra validate
-terraform -chdir=infra plan -var-file=prod.tfvars
-terraform -chdir=infra apply -var-file=prod.tfvars
+doppler run --project juliusm-infra --config prd -- \
+  terraform -chdir=infra plan
 ```
 
-## Lambda unit tests
-
-Run unit tests for infra Lambda handlers:
+Reject a production plan containing destroys or replacements. Apply only from
+the reviewed plan: the plan workflow records its commit and canonical JSON
+SHA-256 without uploading the sensitive plan artifact, and the separately
+dispatched apply workflow regenerates the plan and requires both values to
+match before applying. Run Lambda tests with:
 
 ```bash
 ./scripts/test-infra-lambdas.sh
 ```
 
-Direct invocation:
+## Existing API stack
 
-```bash
-python3 -m unittest discover -s infra/lambdas/tests -p 'test_*.py' -v
-```
-
-## Outputs and DNS
-
-After apply:
-
-- `api_invoke_url` gives direct execute-api stage URL
-- If custom domain is enabled, use:
-  - `custom_domain_target`
-  - `custom_domain_hosted_zone_id`
-
-Create a Cloudflare CNAME for `api.juliusm.com` to the `custom_domain_target`.
-
-## Security notes
-
-- When enabled, WAF protection in this stack covers API Gateway traffic.
-- The default WAF policy is intentionally minimal: Amazon IP reputation plus a global per-IP rate limit.
-- If traffic goes directly from browser to external providers, WAF does not protect it.
-- The Jay chatbot Cloud Run service validates a shared `x-api-key` header. API Gateway injects this via `request_parameters` on the HTTP_PROXY integration. The key is a sensitive Terraform variable (`chat_api_key`) — never commit it to git. Pass it via tfvars or `TF_VAR_chat_api_key` env var.
+The stack also manages API Gateway, optional WAF, the Turnstile broker and
+authorizer Lambdas, Secrets Manager placeholders, and optional resume, intake,
+chat, inference, and custom-domain routes. The intake route is enabled only
+when sender and recipient values are set and the managed SES domain identity is
+enabled.

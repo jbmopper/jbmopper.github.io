@@ -42,3 +42,28 @@ output "custom_domain_hosted_zone_id" {
   description = "Hosted zone ID for API Gateway regional domain target."
   value       = try(aws_api_gateway_domain_name.main[0].regional_zone_id, null)
 }
+
+output "cloudflare_tunnel_id" {
+  description = "Non-secret tunnel UUID used to retrieve the connector token directly into Doppler."
+  value       = try(cloudflare_zero_trust_tunnel_cloudflared.arch_ingress[0].id, null)
+}
+
+output "cloudflare_tunnel_target" {
+  description = "Non-secret CNAME target for the Cloudflare Tunnel."
+  value       = try("${cloudflare_zero_trust_tunnel_cloudflared.arch_ingress[0].id}.cfargotunnel.com", null)
+}
+
+output "cloudflare_tunnel_hostnames" {
+  description = "Public hostnames attached to the tunnel."
+  value       = sort(keys(cloudflare_dns_record.tunnel))
+}
+
+output "ses_identity_arn" {
+  description = "SES domain identity ARN, or null when SES is disabled."
+  value       = try(aws_sesv2_email_identity.domain[0].arn, null)
+}
+
+output "ses_dkim_tokens" {
+  description = "SES easy-DKIM tokens published as Cloudflare CNAMEs."
+  value       = try(aws_sesv2_email_identity.domain[0].dkim_signing_attributes[0].tokens, null)
+}

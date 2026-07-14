@@ -101,10 +101,9 @@ resource "aws_iam_role_policy" "intake_handler_ses" {
       {
         Effect = "Allow"
         Action = [
-          "ses:SendEmail",
-          "ses:SendRawEmail"
+          "ses:SendEmail"
         ]
-        Resource = "*"
+        Resource = aws_sesv2_email_identity.domain[0].arn
       }
     ]
   })

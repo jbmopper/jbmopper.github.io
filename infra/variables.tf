@@ -13,7 +13,7 @@ variable "environment" {
 variable "aws_region" {
   description = "AWS region for API and Lambda resources."
   type        = string
-  default     = "us-east-1"
+  default     = "us-west-2"
 }
 
 variable "stage_name" {
@@ -77,7 +77,7 @@ variable "resume_lambda_arn" {
 variable "intake_sender_email" {
   description = "Verified SES sender email for consulting intake notifications. Leave empty to skip intake route wiring."
   type        = string
-  default     = ""
+  default     = "no-reply@juliusm.com"
 }
 
 variable "intake_recipient_email" {
@@ -174,6 +174,85 @@ variable "api_certificate_arn" {
     condition     = var.enable_custom_domain == false || trimspace(var.api_certificate_arn) != ""
     error_message = "api_certificate_arn must be set when enable_custom_domain is true."
   }
+}
+
+variable "cloudflare_zone_id" {
+  description = "Cloudflare zone ID for the site domain. Required when tunnel or SES management is enabled."
+  type        = string
+  default     = ""
+}
+
+variable "cloudflare_zone_name" {
+  description = "Domain managed in the Cloudflare zone; also used as the SES domain identity."
+  type        = string
+  default     = "juliusm.com"
+}
+
+variable "cloudflare_account_id" {
+  description = "Cloudflare account ID that owns the remotely managed tunnel."
+  type        = string
+  default     = ""
+}
+
+variable "enable_cloudflare_tunnel" {
+  description = "Whether Terraform should create the remote-managed Cloudflare Tunnel, ingress policy, and DNS."
+  type        = bool
+  default     = false
+}
+
+variable "cloudflare_tunnel_name" {
+  description = "Name of the remotely managed tunnel used by the Arch ingress node."
+  type        = string
+  default     = "meristem-arch-ingress"
+}
+
+variable "mcp_public_hostname" {
+  description = "Public hostname for the Meristem MCP provider edge."
+  type        = string
+  default     = "mcp.juliusm.com"
+}
+
+variable "mcp_origin_url" {
+  description = "Loopback HTTP origin served by the streaming-safe Meristem edge limiter on the Arch ingress node."
+  type        = string
+  default     = "http://127.0.0.1:8081"
+
+  validation {
+    condition     = can(regex("^http://(127\\.0\\.0\\.1|localhost|\\[::1\\])(:[0-9]+)?$", var.mcp_origin_url))
+    error_message = "mcp_origin_url must be a loopback HTTP origin without a path."
+  }
+}
+
+variable "cloudflare_additional_tunnel_routes" {
+  description = "Additional hostname-to-loopback-origin routes. Keep empty until a service and its security contract exist."
+  type        = map(string)
+  default     = {}
+
+  validation {
+    condition = alltrue([
+      for service in values(var.cloudflare_additional_tunnel_routes) :
+      can(regex("^http://(127\\.0\\.0\\.1|localhost|\\[::1\\])(:[0-9]+)?$", service))
+    ])
+    error_message = "Every additional tunnel route must target a loopback HTTP origin without a path."
+  }
+}
+
+variable "enable_cloudflare_rate_limits" {
+  description = "Whether to own the zone http_ratelimit ruleset for the MCP OAuth endpoints. Import an existing phase ruleset before enabling."
+  type        = bool
+  default     = false
+}
+
+variable "enable_ses_domain_identity" {
+  description = "Whether to create the SES domain identity and publish its Easy DKIM records in Cloudflare."
+  type        = bool
+  default     = false
+}
+
+variable "ses_domain" {
+  description = "Domain to validate with SES."
+  type        = string
+  default     = "juliusm.com"
 }
 
 variable "tags" {

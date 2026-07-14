@@ -51,32 +51,29 @@ The workflow needs these GitHub Actions **variables** (Settings > Secrets and va
 
 | Variable | Description |
 |---|---|
-| `PUBLIC_AWS_SERVERLESS_API` | Shared API Gateway base URL for Turnstile, resume, and inference (e.g. `https://xyz.execute-api.us-east-1.amazonaws.com/prod`) |
+| `PUBLIC_AWS_SERVERLESS_API` | Shared API Gateway base URL for Turnstile, resume, and inference (e.g. `https://xyz.execute-api.us-west-2.amazonaws.com/prod`) |
 | `PUBLIC_TURNSTILE_SITE_KEY` | Cloudflare Turnstile site key (public) |
 
 These are baked into the static JS at build time via Astro's `import.meta.env`.
 
 ### Infrastructure (Terraform)
 
-The `infra/` directory contains Terraform for the API Gateway, WAF, Turnstile broker, session authorizer, and route wiring. See [infra/README.md](infra/README.md) for full details.
+The `infra/` directory contains Terraform for the API Gateway, WAF, Turnstile broker, session authorizer, and route wiring. See [the infrastructure README](../README.md) for full details.
 
 Quick start:
 
 ```bash
-# Authenticate
-aws sso login --profile juliusm-prod
-
-# Configure
-cp infra/examples/prod.tfvars.example infra/prod.tfvars
-# Edit prod.tfvars with your Lambda ARNs and secret ARNs
-
-# Apply
+# Authenticate through the configured AWS credential chain, then use the
+# reviewed Doppler production config. No repo-local tfvars file is loaded.
 terraform -chdir=infra init
-terraform -chdir=infra plan -var-file=prod.tfvars
-terraform -chdir=infra apply -var-file=prod.tfvars
+doppler run --project juliusm-infra --config prd -- terraform -chdir=infra plan
 ```
 
-CI workflows: `infra-plan.yml` runs on PRs, `infra-apply.yml` runs on merge to `main`.
+CI runs credential-free validation on PRs. Production plan/apply are manual,
+environment-gated, Doppler-backed workflows that reject destructive plans.
+The live production state keeps its historical Terraform `environment=dev`
+resource label while using `stage_name=prod`; renaming that label requires a
+separate state/resource migration.
 
 ### Resume Lambda (separate repo)
 
@@ -106,7 +103,8 @@ Distributed tracing is exported over **OTLP** to a configurable collector endpoi
 
 ## Secrets
 
-All secrets live in AWS Secrets Manager or are passed as SAM parameters. Never commit secrets to git.
+Cloud runtime secrets live in cloud-native managers; trusted Terraform inputs
+and the Cloudflare provider token live in Doppler. Never commit secrets to git.
 
 | Secret | Used by | Managed in | Format |
 |---|---|---|---|
@@ -116,7 +114,7 @@ All secrets live in AWS Secrets Manager or are passed as SAM parameters. Never c
 | GCP Postgres password | Resume Lambda (orchestrator) | SAM parameter (`GcpPostgresDbPassword`) | Plain string |
 | GCP ADC / WIF credentials | Resume Lambda (orchestrator) | Lambda execution role + GCP WIF config | IAM-based, no stored secret |
 | OTLP collector headers | Resume Lambda (both) | SAM parameter (`ResumeOtelCollectorHeaders`) | `key=value,key2=value2` |
-| Jay API key | API Gateway → Cloud Run chat route | Terraform sensitive variable (`chat_api_key`) | Plain string (sent as `x-api-key` header) |
+| Jay API key | API Gateway → Cloud Run chat route | Doppler `TF_VAR_chat_api_key` (Terraform sensitive variable) | Plain string (sent as `x-api-key` header) |
 
 ## Project structure
 

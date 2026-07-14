@@ -1,39 +1,68 @@
 project_name = "juliusm-site"
-environment  = "prod"
-aws_region   = "us-east-1"
+# The live production stack has historically used "dev" in resource names.
+# Preserve that state identity until a separately reviewed migration renames it.
+environment = "dev"
+aws_region   = "us-west-2"
 stage_name   = "prod"
 
-# Existing Lambda integrations (set ARN values to enable routes)
-resume_lambda_arn = "arn:aws:lambda:us-east-1:123456789012:function:resume-generator"
+# Existing Lambda integrations (set ARN values to enable routes).
+resume_lambda_arn = "arn:aws:lambda:us-west-2:287998774376:function:resume-generator"
 chat_endpoint_url = "https://jay-chatbot-406609817311.us-west1.run.app"
-chat_api_key      = "REPLACE_WITH_JAY_API_KEY"
 
-# Optional: consulting intake email notification route (requires verified SES sender)
-# intake_sender_email    = "verified-sender@example.com"
-# intake_recipient_email = "recipient@example.com"
+# chat_api_key is a secret. Supply TF_VAR_chat_api_key from Doppler; never put
+# it in this file.
 
-# Optional: existing inference Lambda (set to enable /generate and /warmup)
-# infer_lambda_arn = "arn:aws:lambda:us-east-1:123456789012:function:onnx-inference"
+# Consulting intake: the sender is covered by the domain identity. Gmail is
+# already verified in west-2 for sandbox testing; production access is still
+# required before SES can send to arbitrary recipients.
+intake_sender_email        = "no-reply@juliusm.com"
+intake_recipient_email     = "jbmopper@gmail.com"
+enable_ses_domain_identity = true
+ses_domain                 = "juliusm.com"
 
-# Optional: pass existing secrets (if omitted, Terraform creates placeholders)
-# turnstile_secret_arn        = "arn:aws:secretsmanager:us-east-1:123456789012:secret:turnstile"
-# session_signing_secret_arn  = "arn:aws:secretsmanager:us-east-1:123456789012:secret:session-signing"
+# Non-secret Cloudflare identifiers. The API token is supplied only through
+# CLOUDFLARE_API_TOKEN from Doppler at plan/apply time.
+cloudflare_account_id = "REPLACE_WITH_CLOUDFLARE_ACCOUNT_ID"
+cloudflare_zone_id    = "REPLACE_WITH_CLOUDFLARE_ZONE_ID"
+cloudflare_zone_name  = "juliusm.com"
+
+enable_cloudflare_tunnel = true
+cloudflare_tunnel_name    = "meristem-arch-ingress"
+mcp_public_hostname      = "mcp.juliusm.com"
+mcp_origin_url            = "http://127.0.0.1:8081"
+
+# The zone is on the free Cloudflare plan (one rate-limit rule, 10s windows,
+# path-only expressions), which cannot express the three OAuth rules. Keep
+# this false: OAuth rate limiting runs in the loopback limiter on the Arch
+# node (work item 2d086f93). Flip only after a plan upgrade plus an import of
+# any existing http_ratelimit phase ruleset.
+enable_cloudflare_rate_limits = false
+
+# Deliberately empty until an actual media service and access policy exist.
+cloudflare_additional_tunnel_routes = {}
+
+# Existing inference route. Keep its deployed ARN explicit in Doppler.
+infer_lambda_arn = "arn:aws:lambda:us-west-2:287998774376:function:onnx-inference"
+
+# Existing secrets may be referenced by ARN. Secret values stay in Doppler or
+# Secrets Manager and never belong in tfvars.
+# turnstile_secret_arn       = "arn:aws:secretsmanager:us-west-2:287998774376:secret:turnstile"
+# session_signing_secret_arn = "arn:aws:secretsmanager:us-west-2:287998774376:secret:session-signing"
 
 allowed_origins = [
   "https://juliusm.com",
-  "https://www.juliusm.com"
+  "https://www.juliusm.com",
 ]
 
-enable_waf            = true
+# Preserve the live no-WAF posture; enabling it is a separate reviewed change.
+enable_waf            = false
 waf_global_rate_limit = 1000
 
 manage_lambda_permissions = true
 
-enable_custom_domain   = true
-api_custom_domain_name = "api.juliusm.com"
-api_certificate_arn    = "arn:aws:acm:us-east-1:123456789012:certificate/00000000-0000-0000-0000-000000000000"
+# Keep disabled until the certificate and existing DNS are ready to import.
+enable_custom_domain = false
 
-# optional extra tags
 tags = {
   Owner = "julius"
 }
