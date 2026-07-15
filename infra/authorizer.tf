@@ -97,6 +97,9 @@ resource "aws_lambda_permission" "allow_authorizer" {
 resource "aws_api_gateway_gateway_response" "unauthorized" {
   rest_api_id   = aws_api_gateway_rest_api.main.id
   response_type = "UNAUTHORIZED"
+  # AWS reports the type's default status code back; declaring it keeps the
+  # plan from flapping between "403"/"401" and null on every refresh.
+  status_code = "401"
 
   response_parameters = {
     "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"
@@ -112,6 +115,7 @@ resource "aws_api_gateway_gateway_response" "unauthorized" {
 resource "aws_api_gateway_gateway_response" "access_denied" {
   rest_api_id   = aws_api_gateway_rest_api.main.id
   response_type = "ACCESS_DENIED"
+  status_code   = "403"
 
   response_parameters = {
     "gatewayresponse.header.Access-Control-Allow-Origin"  = "'*'"

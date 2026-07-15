@@ -704,6 +704,9 @@ resource "aws_api_gateway_deployment" "main" {
           try(aws_api_gateway_method.chat_post[0].id, ""),
           try(aws_api_gateway_method.options_chat[0].id, ""),
           try(aws_api_gateway_integration.chat_post[0].id, ""),
+          # The integration id does not change when its request_parameters do,
+          # so a chat-key rotation must force redeployment via the key digest.
+          sha256(var.chat_api_key),
           try(aws_api_gateway_integration_response.chat_post_200[0].id, ""),
           try(aws_api_gateway_integration.options_chat[0].id, ""),
           try(aws_api_gateway_integration_response.options_chat_200[0].id, ""),
