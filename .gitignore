@@ -7,17 +7,3 @@ test-results/
 .review-screens/
 .serena
 .worktrees/
-.terraform/
-**/.terraform/
-*.tfstate
-*.tfstate.*
-*.tfplan
-crash.log
-infra/*.zip
-infra/*.tfvars
-infra/*.tfvars.json
-infra/*.auto.tfvars
-infra/*.auto.tfvars.json
-infra/*.tfbackend
-**/__pycache__/
-*.pyc

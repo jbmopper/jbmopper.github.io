@@ -10,8 +10,11 @@ The resume lambda is a **separate SAM project** (`resume_lambda/`), not part of 
 ## What lives HERE (jbmopper.github.io)
 
 - **Frontend:** `src/components/resume/ResumeGenerator.svelte` and `src/components/resume/resume-api.ts` — the browser-side UI and API client.
-- **Terraform:** `infra/` — wires the resume lambda ARN into API Gateway via `resume_lambda_arn`. Does not manage the lambda itself.
 - **E2E tests:** `tests/e2e/resume.spec.ts` — Playwright tests against the static site's mock flow.
+
+The API Gateway Terraform formerly at `infra/` moved to the private
+`jbmopper/juliusm-infra` repo (2026-07-15). It wires the resume lambda ARN
+into API Gateway via `resume_lambda_arn`; it does not manage the lambda.
 
 ## What lives in the RESUME LAMBDA repo
 
@@ -24,12 +27,12 @@ The resume lambda is a **separate SAM project** (`resume_lambda/`), not part of 
 
 The two repos connect at these points:
 
-1. **Terraform → Lambda ARN:** This repo's Terraform takes `resume_lambda_arn` and grants API Gateway invoke permission.
+1. **Terraform → Lambda ARN:** the private `juliusm-infra` repo's Terraform takes `resume_lambda_arn` and grants API Gateway invoke permission.
 2. **API contract:** The frontend calls `POST /v1/resume/generate` and `GET /v1/resume/job/{id}`. Response shapes (`SubmitResumeResponse`, `JobStatusResponse`) are defined in `resume-api.ts`.
 3. **No shared config:** GCP Postgres, OTLP, and `JOB_METADATA_BACKEND` are SAM parameters in the resume lambda repo. This repo does not need those values.
 
 ## When making changes
 
 - **API response shape changes** in the resume lambda require matching updates to `resume-api.ts` and potentially `ResumeGenerator.svelte`.
-- **New API routes** require Terraform changes in `infra/api_gateway.tf` and `infra/lambda.tf`.
+- **New API routes** require Terraform changes in the private `juliusm-infra` repo (`infra/api_gateway.tf`, `infra/lambda.tf`).
 - **Backend-only changes** (metadata backend, tracing, rendering) are fully contained in the resume lambda repo and need no changes here.
