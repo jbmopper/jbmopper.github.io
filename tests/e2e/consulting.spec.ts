@@ -80,7 +80,8 @@ test.describe("Consulting intake page", () => {
     const primary = page.locator(".offer-row--primary");
     await expect(primary).toContainText("$3,500");
     await expect(primary).toContainText("two weeks");
-    await expect(primary).toContainText("synthetic or redacted data");
+    await expect(primary).toContainText("working, evaluated prototype");
+    await expect(primary).toContainText("clear next-step decision");
     await expect(primary.locator(".offer-includes li")).toHaveCount(6);
   });
 
