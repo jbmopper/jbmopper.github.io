@@ -195,7 +195,7 @@
     </div>
     <ul class="focus-list">
       <li>Internal knowledge assistants and document workflows</li>
-      <li>Requirements, Jira, research, and support automation</li>
+      <li>Intake, research, review, and support automation</li>
       <li>RAG over internal sources with quality and cost checks</li>
       <li>Evaluation plans, rollout notes, and production-readiness reviews</li>
     </ul>
@@ -214,17 +214,18 @@
             <span>flat &middot; two weeks &middot; fixed scope</span>
           </p>
           <p>
-            Turn one well-defined workflow into a working, evaluated prototype in two weeks. We
-            will agree on the right source material, success criteria, and review points during
-            scoping, so the result supports a clear next-step decision.
+            Turn one well-defined workflow into a working, evaluated prototype in two weeks.
+            Built on <strong>synthetic or redacted material</strong>, so no sensitive data leaves
+            your systems during the pilot. We agree on source material, success criteria, and
+            review points during scoping, so the result supports a clear next-step decision.
           </p>
           <ul class="offer-includes">
             <li>One workflow discovery session</li>
-            <li>Working prototype for the selected workflow</li>
-            <li>Evaluation set with scored results</li>
+            <li>Working prototype on synthetic or redacted material</li>
+            <li>Evaluation set with scored results &mdash; how often it is right, and how it fails</li>
             <li>Documented information flow and human-review checkpoints</li>
-            <li>Lightweight audit trail</li>
-            <li>Production-readiness recommendations</li>
+            <li>Lightweight audit trail of what the system did</li>
+            <li>Production-readiness report: what it takes to run this for real</li>
           </ul>
           <p class="offer-note">
             Founding-client rate for the first three engagements, in exchange for a reference.
@@ -236,9 +237,9 @@
         <div>
           <h3>Evaluation &amp; Readiness Review</h3>
           <p>
-            For teams with an existing AI demo that needs more rigorous validation. I review the
-            system for groundedness, failure modes, security, cost, latency, and rollout
-            readiness, then identify the most important improvements.
+            A second opinion on an AI tool you are already using or considering. I review it for
+            groundedness, failure modes, security, cost, latency, and rollout readiness, then
+            report what to fix before it touches real work.
           </p>
         </div>
       </article>
