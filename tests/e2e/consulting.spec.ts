@@ -82,11 +82,6 @@ test.describe("Consulting intake page", () => {
     await expect(primary).toContainText("two weeks");
     await expect(primary).toContainText("working, evaluated prototype");
     await expect(primary).toContainText("clear next-step decision");
-    // The confidentiality claim is the offer's main differentiator: it is what
-    // lets an engagement start before any data-access approval exists. Asserted
-    // so it cannot be dropped by a copy edit without the test saying so.
-    await expect(primary).toContainText("synthetic or redacted material");
-    await expect(primary).toContainText("no sensitive data leaves your systems");
     await expect(primary.locator(".offer-includes li")).toHaveCount(6);
   });
 

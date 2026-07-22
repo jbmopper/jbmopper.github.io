@@ -214,14 +214,13 @@
             <span>flat &middot; two weeks &middot; fixed scope</span>
           </p>
           <p>
-            Turn one well-defined workflow into a working, evaluated prototype in two weeks.
-            Built on <strong>synthetic or redacted material</strong>, so no sensitive data leaves
-            your systems during the pilot. We agree on source material, success criteria, and
-            review points during scoping, so the result supports a clear next-step decision.
+            Turn one well-defined workflow into a working, evaluated prototype in two weeks. We
+            agree on source material, success criteria, and review points during scoping, so the
+            result supports a clear next-step decision.
           </p>
           <ul class="offer-includes">
             <li>One workflow discovery session</li>
-            <li>Working prototype on synthetic or redacted material</li>
+            <li>Working prototype, using synthetic or redacted data when access is restricted</li>
             <li>Evaluation set with scored results &mdash; how often it is right, and how it fails</li>
             <li>Documented information flow and human-review checkpoints</li>
             <li>Lightweight audit trail of what the system did</li>
