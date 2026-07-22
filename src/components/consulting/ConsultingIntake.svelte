@@ -1,4 +1,5 @@
 <script lang="ts">
+  import {tick} from "svelte";
   import {loadTurnstileScript, renderTurnstile} from "../../lib/turnstile.js";
   import {
     isLiveMode,
@@ -16,16 +17,18 @@
       ? (import.meta as Record<string, any>).env?.PUBLIC_TURNSTILE_SITE_KEY
       : undefined;
 
+  // Must stay one-for-one with the offer cards below. The intake lambda still
+  // accepts the retired workflow-diagnostic and implementation-support slugs so
+  // any request already in flight keeps validating.
   const offerOptions: Array<{value: OfferInterest; label: string}> = [
-    {value: "workflow-diagnostic", label: "AI Workflow Diagnostic"},
-    {value: "pilot-sprint", label: "RAG / LLM Pilot Sprint"},
-    {value: "readiness-review", label: "Evaluation & Production Readiness"},
-    {value: "implementation-support", label: "Technical Product / Implementation Support"},
+    {value: "pilot-sprint", label: "AI Pilot Sprint"},
+    {value: "readiness-review", label: "Evaluation & Readiness Review"},
     {value: "not-sure", label: "Not sure yet"},
   ];
 
   let step: IntakeStep = $state("form");
   let turnstileEl: HTMLDivElement | undefined = $state();
+  let alertEl: HTMLDivElement | undefined = $state();
   let pendingSubmission: IntakeSubmission | null = $state(null);
   let submissionResult: IntakeSubmitResponse | null = $state(null);
   let errorMessage = $state("");
@@ -34,24 +37,10 @@
   let name = $state("");
   let email = $state("");
   let company = $state("");
-  let role = $state("");
-  let website = $state("");
-  let offerInterest: OfferInterest = $state("workflow-diagnostic");
-  let workflowArea = $state("");
+  let offerInterest: OfferInterest = $state("pilot-sprint");
   let problemSummary = $state("");
-  let dataSources = $state("");
-  let timeline = $state("");
-  let budgetRange = $state("");
-  let constraints = $state("");
   let consentToContact = $state(false);
   let websiteUrl = $state("");
-
-  let canSubmit = $derived(
-    name.trim().length >= 2 &&
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) &&
-      problemSummary.trim().length >= 30 &&
-      consentToContact,
-  );
 
   $effect(() => {
     if (step === "turnstile" && turnstileEl) {
@@ -69,15 +58,8 @@
       name: name.trim(),
       email: email.trim(),
       company: clean(company),
-      role: clean(role),
-      website: clean(website),
       offerInterest,
-      workflowArea: clean(workflowArea),
       problemSummary: problemSummary.trim(),
-      dataSources: clean(dataSources),
-      timeline: clean(timeline),
-      budgetRange: clean(budgetRange),
-      constraints: clean(constraints),
       consentToContact,
       websiteUrl: clean(websiteUrl),
     };
@@ -93,7 +75,10 @@
       errors.push("A valid email is required.");
     }
     if (submission.problemSummary.length < 30) {
-      errors.push("Describe the workflow or problem in at least 30 characters.");
+      const short = submission.problemSummary.length;
+      errors.push(
+        `Describe the workflow in at least 30 characters (currently ${short}).`,
+      );
     }
     if (!submission.consentToContact) {
       errors.push("Please confirm Julius may contact you about this request.");
@@ -111,6 +96,11 @@
     errorMessage = "";
 
     if (errors.length > 0) {
+      // The submit button is deliberately never disabled, so the alert is the
+      // only feedback the visitor gets. Make sure it is where they are looking.
+      await tick();
+      alertEl?.scrollIntoView({behavior: "smooth", block: "center"});
+      alertEl?.focus();
       return;
     }
 
@@ -175,15 +165,8 @@
     name = "";
     email = "";
     company = "";
-    role = "";
-    website = "";
-    offerInterest = "workflow-diagnostic";
-    workflowArea = "";
+    offerInterest = "pilot-sprint";
     problemSummary = "";
-    dataSources = "";
-    timeline = "";
-    budgetRange = "";
-    constraints = "";
     consentToContact = false;
     websiteUrl = "";
   }
@@ -225,30 +208,37 @@
         <div class="offer-marker" aria-hidden="true">1</div>
         <div>
           <span class="offer-meta">Primary offer</span>
-          <h3>AI Workflow Diagnostic</h3>
+          <h3>AI Pilot Sprint</h3>
+          <p class="offer-price">
+            <strong>$3,500</strong>
+            <span>flat &middot; two weeks &middot; fixed scope</span>
+          </p>
           <p>
-            A 1-2 week engagement that maps the workflow, scores AI use cases, reviews source
-            readiness, and produces a concrete pilot plan.
+            A working prototype built on <strong>synthetic or redacted data</strong>, so we start
+            this week instead of waiting on data-access approvals. For teams that have not built
+            anything yet.
+          </p>
+          <ul class="offer-includes">
+            <li>One workflow interview</li>
+            <li>Working prototype on synthetic or redacted data</li>
+            <li>Evaluation set with scored results</li>
+            <li>Documented data flow and human-review checkpoints</li>
+            <li>Basic audit trail</li>
+            <li>Production-gap report: what it takes to run this for real</li>
+          </ul>
+          <p class="offer-note">
+            Founding-client rate for the first three engagements, in exchange for a reference.
           </p>
         </div>
       </article>
       <article class="offer-row">
         <div class="offer-marker" aria-hidden="true">2</div>
         <div>
-          <h3>RAG / LLM Pilot Sprint</h3>
+          <h3>Evaluation &amp; Readiness Review</h3>
           <p>
-            A focused prototype with corpus prep, prompt design, evals, source-grounded answers,
-            and a production-gap report.
-          </p>
-        </div>
-      </article>
-      <article class="offer-row">
-        <div class="offer-marker" aria-hidden="true">3</div>
-        <div>
-          <h3>Evaluation & Readiness Review</h3>
-          <p>
-            A review of an existing AI demo for groundedness, failure modes, security, cost,
-            latency, and rollout readiness.
+            For teams that already built a demo nobody trusts yet. A review of an existing AI
+            system for groundedness, failure modes, security, cost, latency, and rollout
+            readiness.
           </p>
         </div>
       </article>
@@ -270,13 +260,13 @@
         <div class="form-header">
           <h2 id="intake-title">Tell me about the workflow.</h2>
           <p>
-            Share enough context to decide whether a diagnostic, pilot sprint, or readiness
-            review is the right next step.
+            Five questions. Enough to decide whether a pilot sprint or a readiness review is the
+            right next step &mdash; the rest we can cover on a call.
           </p>
         </div>
 
         {#if validationErrors.length > 0}
-          <div class="form-alert" role="alert">
+          <div class="form-alert" role="alert" tabindex="-1" bind:this={alertEl}>
             <strong>Check these fields:</strong>
             <ul>
               {#each validationErrors as item}
@@ -300,14 +290,6 @@
             <input type="text" autocomplete="organization" bind:value={company} />
           </label>
           <label>
-            <span>Role</span>
-            <input type="text" autocomplete="organization-title" bind:value={role} />
-          </label>
-          <label class="wide">
-            <span>Website</span>
-            <input type="url" autocomplete="url" bind:value={website} />
-          </label>
-          <label class="wide">
             <span>Offer interest</span>
             <select bind:value={offerInterest}>
               {#each offerOptions as option}
@@ -316,58 +298,13 @@
             </select>
           </label>
           <label class="wide">
-            <span>Workflow area</span>
-            <input
-              type="text"
-              bind:value={workflowArea}
-              placeholder="Internal knowledge, support docs, requirements, research, document generation..."
-            />
-          </label>
-          <label class="wide">
             <span>Problem summary</span>
             <textarea
               bind:value={problemSummary}
               rows="6"
               minlength="30"
               required
-              placeholder="What workflow is slow, messy, risky, or hard to scale today?"
-            ></textarea>
-          </label>
-          <label class="wide">
-            <span>Data sources or systems</span>
-            <textarea
-              bind:value={dataSources}
-              rows="3"
-              placeholder="Docs, tickets, CRM, APIs, shared drives, databases, internal tools..."
-            ></textarea>
-          </label>
-          <label>
-            <span>Timeline</span>
-            <select bind:value={timeline}>
-              <option value="">Choose one</option>
-              <option value="this-month">This month</option>
-              <option value="next-1-2-months">Next 1-2 months</option>
-              <option value="this-quarter">This quarter</option>
-              <option value="exploring">Exploring</option>
-            </select>
-          </label>
-          <label>
-            <span>Budget range</span>
-            <select bind:value={budgetRange}>
-              <option value="">Choose one</option>
-              <option value="under-5k">Under $5K</option>
-              <option value="5k-10k">$5K-$10K</option>
-              <option value="10k-25k">$10K-$25K</option>
-              <option value="25k-plus">$25K+</option>
-              <option value="unknown">Not sure</option>
-            </select>
-          </label>
-          <label class="wide">
-            <span>Security, privacy, or rollout constraints</span>
-            <textarea
-              bind:value={constraints}
-              rows="3"
-              placeholder="Sensitive data, regulated content, internal-only systems, approval needs..."
+              placeholder="What workflow is slow, messy, risky, or hard to scale today? Rough is fine."
             ></textarea>
           </label>
         </div>
@@ -383,7 +320,7 @@
         </label>
 
         <div class="form-actions">
-          <button class="btn-primary" type="submit" disabled={!canSubmit}>Submit Intake</button>
+          <button class="btn-primary" type="submit">Submit Intake</button>
         </div>
       </form>
     {:else if step === "turnstile"}
@@ -572,6 +509,45 @@
     color: var(--text-2);
     font-size: 0.82rem;
     font-weight: 700;
+  }
+
+  .offer-price {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem 0.6rem;
+    align-items: baseline;
+    margin-bottom: var(--space-2);
+  }
+
+  .offer-price strong {
+    color: var(--accent);
+    font-size: 1.5rem;
+    line-height: 1.1;
+  }
+
+  .offer-price span {
+    color: var(--text-2);
+    font-size: 0.88rem;
+  }
+
+  .offer-includes {
+    display: grid;
+    gap: 0.35rem;
+    margin: 0 0 var(--space-2);
+    padding-left: var(--list-indent);
+    color: var(--text-1);
+    font-size: 0.94rem;
+    line-height: 1.5;
+  }
+
+  .offer-includes li::marker {
+    color: var(--accent);
+  }
+
+  .offer-note {
+    margin-bottom: 0;
+    color: var(--text-2);
+    font-size: 0.88rem;
   }
 
   .proof-links a {

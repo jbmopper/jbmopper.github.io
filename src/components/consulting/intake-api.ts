@@ -14,6 +14,10 @@ function readPublicEnv(name: string): string | undefined {
 
 const API_BASE = readPublicEnv("PUBLIC_AWS_SERVERLESS_API");
 
+// The intake lambda's allowlist is unchanged and still accepts the retired
+// workflow-diagnostic and implementation-support slugs, so a submission that was
+// already in flight when the form changed keeps validating. The form only
+// offers the three below.
 export type OfferInterest =
   | "workflow-diagnostic"
   | "pilot-sprint"
@@ -25,16 +29,10 @@ export interface IntakeSubmission {
   name: string;
   email: string;
   company?: string;
-  role?: string;
-  website?: string;
   offerInterest: OfferInterest;
-  workflowArea?: string;
   problemSummary: string;
-  dataSources?: string;
-  timeline?: string;
-  budgetRange?: string;
-  constraints?: string;
   consentToContact: boolean;
+  /** Honeypot. Any value makes the lambda accept-and-discard the submission. */
   websiteUrl?: string;
 }
 
