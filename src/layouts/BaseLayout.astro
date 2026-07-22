@@ -150,15 +150,18 @@ const previewImage = new URL("/images/projects/site-chatbot.jpg", Astro.site ?? 
 
 <style is:global>
   @import "../styles/theme-tokens.css";
-</style>
 
-<style>
+  /* Must be global: an Astro-scoped `*` selector only matches this layout's own
+     markup, so component-rendered form controls kept the content-box default and
+     overflowed their grid cells by their padding plus borders. */
   *,
   *::before,
   *::after {
     box-sizing: border-box;
   }
+</style>
 
+<style>
   html,
   body {
     margin: 0;
