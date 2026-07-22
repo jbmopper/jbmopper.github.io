@@ -214,17 +214,17 @@
             <span>flat &middot; two weeks &middot; fixed scope</span>
           </p>
           <p>
-            A working prototype built on <strong>synthetic or redacted data</strong>, so we start
-            this week instead of waiting on data-access approvals. For teams that have not built
-            anything yet.
+            Turn one well-defined workflow into a working, evaluated prototype in two weeks. We
+            will agree on the right source material, success criteria, and review points during
+            scoping, so the result supports a clear next-step decision.
           </p>
           <ul class="offer-includes">
-            <li>One workflow interview</li>
-            <li>Working prototype on synthetic or redacted data</li>
+            <li>One workflow discovery session</li>
+            <li>Working prototype for the selected workflow</li>
             <li>Evaluation set with scored results</li>
-            <li>Documented data flow and human-review checkpoints</li>
-            <li>Basic audit trail</li>
-            <li>Production-gap report: what it takes to run this for real</li>
+            <li>Documented information flow and human-review checkpoints</li>
+            <li>Lightweight audit trail</li>
+            <li>Production-readiness recommendations</li>
           </ul>
           <p class="offer-note">
             Founding-client rate for the first three engagements, in exchange for a reference.
@@ -236,9 +236,9 @@
         <div>
           <h3>Evaluation &amp; Readiness Review</h3>
           <p>
-            For teams that already built a demo nobody trusts yet. A review of an existing AI
+            For teams with an existing AI demo that needs more rigorous validation. I review the
             system for groundedness, failure modes, security, cost, latency, and rollout
-            readiness.
+            readiness, then identify the most important improvements.
           </p>
         </div>
       </article>
