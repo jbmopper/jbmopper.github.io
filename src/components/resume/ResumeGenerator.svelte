@@ -196,7 +196,7 @@
       <ul class="feature-list">
         <li>Paste text or upload a job description file</li>
         <li>Supports .txt, .pdf, .docx, .rtf, .md, .html, .odt</li>
-        <li>AI-tailored resume generated in under a minute</li>
+        <li>AI-tailored to the job description you provide</li>
         <li>Download as PDF</li>
       </ul>
       <button class="btn-primary" onclick={goToTurnstile}>Continue</button>
