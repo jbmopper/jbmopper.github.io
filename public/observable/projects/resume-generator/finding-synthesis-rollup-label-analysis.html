@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.4">
+<base href="/observable/projects/resume-generator/finding-synthesis-rollup-label-analysis.html">
+<title>Do the Evaluator Roll-ups Match the Human Labels? | juliusm.com</title>
+
+<link rel="preload" as="style" href="../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="preload" as="style" href="../../_observablehq/stdlib/inputs.f7bf0e12.css">
+<link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="stylesheet" type="text/css" href="../../_observablehq/stdlib/inputs.f7bf0e12.css">
+<script type="module">
+
+import {define} from "../../_observablehq/client.5d43dcff.js";
+import {registerFile} from "../../_observablehq/stdlib.a50b4fda.js";
+
+registerFile("./finding-synthesis-rollup-label-analysis-data.json", {"name":"./finding-synthesis-rollup-label-analysis-data.json","mimeType":"application/json","path":"../../_file/projects/resume-generator/finding-synthesis-rollup-label-analysis-data.ab949c57.json","lastModified":1786598248117,"size":1311822});
+
+define({id: "c09b97c1", inputs: ["FileAttachment"], outputs: ["labelAnalysis","pct","profileNames","sourceNames","promptNames","caseNames"], body: (FileAttachment) => {
+const labelAnalysis = FileAttachment("./finding-synthesis-rollup-label-analysis-data.json").json();
+const pct = (value) => value == null ? "—" : `${(100 * value).toFixed(1)}%`;
+const profileNames = new Map([
+  ["haiku", "Haiku 4.5 — manual 2K thinking"],
+  ["flashlite", "Gemini 3.5 Flash-Lite — low"]
+]);
+const sourceNames = new Map([
+  ["gpt-5.4-high", "GPT-5.4 high"],
+  ["anthropic-claude-opus-4-6-adaptive-medium", "Opus 4.6 adaptive medium"],
+  ["gemini-gemini-3.1-pro-preview-high", "Gemini 3.1 Pro high"]
+]);
+const promptNames = new Map([
+  ["anchored", "Control"],
+  ["anchored-mechanism", "Human-reading"],
+  ["anchored-pressure", "Bias-priming"],
+  ["anchored-mixed", "Mixed-neutral"],
+  ["anchored-negging", "Mixed-harsh"]
+]);
+const caseNames = new Map([
+  ["mistargeted", "Mistargeted"],
+  ["skills-spam-trap", "Skills-spam trap"],
+  ["credential-trap", "Credential trap"],
+  ["long-and-spammy", "Long and spammy"],
+  ["hollow-history", "Hollow history"],
+  ["truncated", "Truncated (floor check)"],
+  ["voice-clean", "Voice · clean"],
+  ["voice-imperative", "Voice · imperative"],
+  ["bolding-clean", "Bolding · clean"],
+  ["bolding-spam", "Bolding · spam"],
+  ["salience-lead-first", "Salience · lead first"],
+  ["salience-buried-lead", "Salience · buried lead"],
+  ["grounding-clean", "Grounding · clean"],
+  ["pitch-calibrated", "Pitch · calibrated"],
+  ["pitch-inflated", "Pitch · inflated"]
+]);
+return {labelAnalysis,pct,profileNames,sourceNames,promptNames,caseNames};
+}});
+
+define({id: "bdef4970", inputs: ["labelAnalysis","sourceNames","pct","Inputs"], outputs: ["sourceJudgeRows"], body: (labelAnalysis,sourceNames,pct,Inputs) => {
+const sourceJudgeRows = labelAnalysis.by_source_model
+  .filter((row) => row.profile === "flashlite")
+  .filter((row) => row.source_model_key !== "gemini-gemini-3.1-pro-preview-high")
+  .map((row) => ({
+    judge: sourceNames.get(row.source_model_key),
+    label_class: row.category,
+    matched: `${row.source_yes}/${row.opportunities}`,
+    match_rate: pct(row.source_yes_rate)
+  }));
+
+Inputs.table(sourceJudgeRows, {
+  columns: ["judge", "label_class", "matched", "match_rate"],
+  header: {judge: "Source judge", label_class: "Human-label class", matched: "Semantic matches", match_rate: "Rate"},
+  sort: "judge"
+})
+return {sourceJudgeRows};
+}});
+
+define({id: "28aa12c1", inputs: ["labelAnalysis","promptNames","pct","Inputs"], outputs: ["promptCoreRows"], body: (labelAnalysis,promptNames,pct,Inputs) => {
+const promptCoreRows = labelAnalysis.focus_by_prompt
+  .filter((row) => row.profile === "flashlite" && row.category === "required")
+  .map((row) => ({
+    treatment: promptNames.get(row.prompt_variant),
+    source_matches: `${row.source_yes}/${row.opportunities}`,
+    source_match_rate: pct(row.source_yes_rate),
+    flash_valid_output: pct(row.coverage),
+    flash_end_to_end_preservation: pct(row.preservation_end_to_end)
+  }));
+
+Inputs.table(promptCoreRows, {
+  columns: ["treatment", "source_matches", "source_match_rate", "flash_valid_output", "flash_end_to_end_preservation"],
+  header: {
+    treatment: "Evaluator treatment",
+    source_matches: "Core matches",
+    source_match_rate: "Core match rate",
+    flash_valid_output: "Flash valid",
+    flash_end_to_end_preservation: "Flash E2E preservation"
+  }
+})
+return {promptCoreRows};
+}});
+
+define({id: "ccc4bfda", inputs: ["labelAnalysis","profileNames","pct","Inputs"], outputs: ["focusRollupRows"], body: (labelAnalysis,profileNames,pct,Inputs) => {
+const focusRollupRows = labelAnalysis.focus_overall.map((row) => ({
+  synthesizer: profileNames.get(row.profile),
+  label_class: row.category,
+  valid_rollup: `${row.valid_rollup}/${row.opportunities} (${pct(row.coverage)})`,
+  source_expressed: `${row.source_yes}/${row.opportunities}`,
+  preserved_valid_only: row.category === "prohibited" ? "filtering is desirable" : pct(row.preservation_valid_only),
+  preserved_end_to_end: row.category === "prohibited" ? "filtering is desirable" : pct(row.preservation_end_to_end),
+  added_after_source_no: row.added_after_source_no
+}));
+
+Inputs.table(focusRollupRows, {
+  columns: ["synthesizer", "label_class", "valid_rollup", "source_expressed", "preserved_valid_only", "preserved_end_to_end", "added_after_source_no"],
+  header: {
+    synthesizer: "Second stage",
+    label_class: "Label class",
+    valid_rollup: "Valid output",
+    source_expressed: "Source said it",
+    preserved_valid_only: "Preserved if valid",
+    preserved_end_to_end: "Preserved E2E",
+    added_after_source_no: "Added after source no"
+  }
+})
+return {focusRollupRows};
+}});
+
+define({id: "ea79d369", inputs: ["view","Inputs","profileNames","sourceNames","caseNames"], outputs: ["transitionProfile","transitionCategory","transitionJudge","transitionCase"], body: (view,Inputs,profileNames,sourceNames,caseNames) => {
+const transitionProfile = view(Inputs.select(["flashlite", "haiku"], {
+  value: "flashlite", label: "Second stage", format: (value) => profileNames.get(value)
+}));
+const transitionCategory = view(Inputs.select(["required", "soft", "prohibited"], {
+  value: "required", label: "Label class"
+}));
+const transitionJudge = view(Inputs.select(["GPT + Opus", ...sourceNames.keys()], {
+  value: "GPT + Opus", label: "Source judge", format: (value) => sourceNames.get(value) ?? value
+}));
+const transitionCase = view(Inputs.select(["All cases", ...caseNames.keys()], {
+  value: "mistargeted", label: "Case", format: (value) => caseNames.get(value) ?? value
+}));
+return {transitionProfile,transitionCategory,transitionJudge,transitionCase};
+}});
+
+define({id: "44ed984a", inputs: ["labelAnalysis","transitionProfile","transitionCategory","transitionJudge","transitionCase","caseNames","promptNames","sourceNames","Inputs"], outputs: ["visibleTransitions"], body: (labelAnalysis,transitionProfile,transitionCategory,transitionJudge,transitionCase,caseNames,promptNames,sourceNames,Inputs) => {
+const visibleTransitions = labelAnalysis.transitions.filter((row) =>
+  row.profile === transitionProfile &&
+  row.category === transitionCategory &&
+  (transitionJudge === "GPT + Opus"
+    ? row.source_model_key !== "gemini-gemini-3.1-pro-preview-high"
+    : row.source_model_key === transitionJudge) &&
+  (transitionCase === "All cases" || row.case_id === transitionCase)
+).map((row) => ({
+  case: caseNames.get(row.case_id) ?? row.case_id,
+  treatment: promptNames.get(row.prompt_variant) ?? row.prompt_variant,
+  judge: sourceNames.get(row.source_model_key) ?? row.source_model_key,
+  label: row.claim_id,
+  source: row.source_verdict,
+  rollup: row.rollup_verdict,
+  source_excerpt: row.source_match_quote,
+  rollup_excerpt: row.rollup_match_quote
+}));
+
+Inputs.table(visibleTransitions, {
+  columns: ["case", "treatment", "judge", "label", "source", "rollup", "source_excerpt", "rollup_excerpt"],
+  header: {
+    case: "Case", treatment: "Treatment", judge: "Source judge", label: "Human label",
+    source: "Evaluator", rollup: "Roll-up", source_excerpt: "Checker's source excerpt",
+    rollup_excerpt: "Checker's roll-up excerpt"
+  },
+  rows: 20
+})
+return {visibleTransitions};
+}});
+
+</script>
+<script src="/observable/_import/jay-standalone.js" defer></script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="../../">juliusm.com</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link"><a href="../">Projects</a></li>
+    <li class="observablehq-link"><a href="../llm-fundamentals/">LLM Fundamentals</a></li>
+    <li class="observablehq-link"><a href="./">Resume Generator</a></li>
+    <li class="observablehq-link"><a href="../data-playground/">Data Playground</a></li>
+    <li class="observablehq-link"><a href="../site-chatbot/">Site Design and RAG Chatbot Integration</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<header id="observablehq-header">
+<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><div class="portfolio-header-actions"><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="/consulting/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/consulting/');">Consulting</a><a class="portfolio-nav-link" href="/resume/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav><button class="portfolio-theme-control" type="button" data-theme-control="" data-theme-preference="system"><span class="portfolio-theme-control__icon" aria-hidden="true"></span><span data-theme-label="">System</span></button></div></div><script>(function(){
+        const storageKey = 'juliusm-theme';
+        const modes = ['system', 'dark', 'light'];
+        const labels = {system: 'System', dark: 'Dark', light: 'Light'};
+        const metaColors = {dark: '#0b1017', light: '#f5f7f3'};
+        const media = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+        const mount = window.location.pathname.startsWith('/observable') ? '/observable' : '';
+        const path = window.location.pathname.replace(/^\/observable(?=\/|$)/,'').replace(/\/index\.html$/,'/');
+        const normalized = path.endsWith('/') ? path : path + '/';
+        const slot = document.getElementById('portfolio-current-project-slot');
+
+        function readThemePreference(){
+          try {
+            const stored = window.localStorage.getItem(storageKey);
+            if (modes.includes(stored)) return stored;
+          } catch {
+            return 'system';
+          }
+          return 'system';
+        }
+
+        function resolveThemePreference(preference){
+          if (preference === 'light' || (preference === 'system' && media && media.matches)) return 'light';
+          return 'dark';
+        }
+
+        function nextThemePreference(preference){
+          return modes[(modes.indexOf(preference) + 1) % modes.length] || 'system';
+        }
+
+        function updateThemeControls(preference, resolved){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            const next = nextThemePreference(preference);
+            control.dataset.themePreference = preference;
+            control.dataset.themeResolved = resolved;
+            control.setAttribute('aria-label', 'Theme: ' + labels[preference] + '. Switch to ' + labels[next] + '.');
+            control.setAttribute('title', 'Theme: ' + labels[preference]);
+            const label = control.querySelector('[data-theme-label]');
+            if (label) label.textContent = labels[preference];
+          });
+        }
+
+        function applyThemePreference(preference, persist){
+          const normalizedPreference = modes.includes(preference) ? preference : 'system';
+          const resolved = resolveThemePreference(normalizedPreference);
+          document.documentElement.dataset.theme = normalizedPreference;
+          document.documentElement.dataset.themeResolved = resolved;
+          const meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', metaColors[resolved]);
+          if (persist) {
+            try {
+              window.localStorage.setItem(storageKey, normalizedPreference);
+            } catch {}
+          }
+          updateThemeControls(normalizedPreference, resolved);
+        }
+
+        function bindThemeControls(){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            if (control.dataset.themeBound === 'true') return;
+            control.dataset.themeBound = 'true';
+            control.addEventListener('click', function(){
+              applyThemePreference(nextThemePreference(readThemePreference()), true);
+            });
+          });
+          applyThemePreference(readThemePreference(), false);
+        }
+
+        applyThemePreference(readThemePreference(), false);
+        bindThemeControls();
+        if (media) media.addEventListener('change', function(){
+          if (readThemePreference() === 'system') applyThemePreference('system', false);
+        });
+        window.addEventListener('storage', function(event){
+          if (event.key === storageKey) applyThemePreference(readThemePreference(), false);
+        });
+
+        function navigate(target){
+          window.location.assign(window.location.origin + target);
+        }
+
+        function makeNavLink(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-nav-link';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        function makeBreadcrumbSeparator(){
+          const sep = document.createElement('span');
+          sep.className = 'portfolio-breadcrumb-separator';
+          sep.setAttribute('aria-hidden', 'true');
+          sep.textContent = '›';
+          return sep;
+        }
+
+        function makeProjectItem(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-project-item';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        if (slot) {
+          const projectMatch = normalized.match(/^\/projects\/([^/]+)\//);
+          if (projectMatch) {
+            const slug = projectMatch[1];
+            slot.appendChild(makeBreadcrumbSeparator());
+            if (slug === 'llm-fundamentals') {
+              const details = document.createElement('details');
+              details.id = 'portfolio-current-project-menu';
+              details.className = 'portfolio-project-menu';
+
+              const summary = document.createElement('summary');
+              summary.className = 'portfolio-nav-link portfolio-project-toggle';
+              summary.textContent = 'LLM Fundamentals';
+              details.appendChild(summary);
+
+              const dropdown = document.createElement('div');
+              dropdown.className = 'portfolio-project-dropdown';
+              const items = [
+                ['Introduction', '/projects/llm-fundamentals/'],
+                ['Architecture and Expected Performance Analysis', '/projects/llm-fundamentals/perf-expected/'],
+                ['Benchmarks and Empirical Performance Analysis', '/projects/llm-fundamentals/perf-empirical/'],
+                ['Nvidia CUDA Nsys Trace Analysis', '/projects/llm-fundamentals/nsys/'],
+                ['Nsys GPU Trace Viewer', '/projects/llm-fundamentals/nsys-viewer/'],
+                ['Learning Parameter Sweeps', '/projects/llm-fundamentals/optimizer-sweep/'],
+                ['Architectural Variations (Ablations)', '/projects/llm-fundamentals/ablations/']
+              ];
+              for (const [label, target] of items) {
+                dropdown.appendChild(makeProjectItem(label, mount + target));
+              }
+              details.appendChild(dropdown);
+              slot.appendChild(details);
+
+              document.addEventListener('click', function(event){
+                if (!details.hasAttribute('open')) return;
+                if (!details.contains(event.target)) details.removeAttribute('open');
+              });
+              document.addEventListener('keydown', function(event){
+                if (event.key === 'Escape') details.removeAttribute('open');
+              });
+            } else if (slug === 'resume-generator') {
+              slot.appendChild(makeNavLink('Resume Generator', mount + '/projects/resume-generator/'));
+            } else {
+              const labels = {
+                'resume-generator': 'Resume Generator',
+                'data-playground': 'Data Playground',
+                'site-chatbot': 'Site Design and RAG Chatbot Integration'
+              };
+              const fallback = slug
+                .split('-')
+                .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+                .join(' ');
+              slot.appendChild(makeNavLink(labels[slug] || fallback, mount + '/projects/' + slug + '/'));
+            }
+          }
+        }
+
+        for (const id of ['observablehq-sidebar-toggle', 'observablehq-sidebar-backdrop', 'observablehq-sidebar']) {
+          const node = document.getElementById(id);
+          if (node) node.remove();
+        }
+      })();</script>
+</header>
+<aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
+<nav>
+<div>Contents</div>
+<ol>
+<li class="observablehq-secondary-link"><a href="#what-the-evaluators-are-saying">What the evaluators are saying</a></li>
+<li class="observablehq-secondary-link"><a href="#what-the-roll-up-changes">What the roll-up changes</a></li>
+<li class="observablehq-secondary-link"><a href="#the-mistargeted-case-audit-the-human-label-is-sharper-than-the-machinery">The mistargeted-case audit: the human label is sharper than the machinery</a></li>
+<li class="observablehq-secondary-link"><a href="#explore-every-label-transition">Explore every label transition</a></li>
+<li class="observablehq-secondary-link"><a href="#method-and-limitations">Method and limitations</a></li>
+<li class="observablehq-secondary-link"><a href="#how-this-should-be-used-for-generation-graphs">How this should be used for generation graphs</a></li>
+</ol>
+</nav>
+</aside>
+<main id="observablehq-main" class="observablehq">
+<h1 id="do-the-evaluator-roll-ups-match-the-human-labels" tabindex="-1"><a class="observablehq-header-anchor" href="#do-the-evaluator-roll-ups-match-the-human-labels">Do the evaluator roll-ups match the human labels?</a></h1>
+<h2 id="bottom-line" tabindex="-1"><a class="observablehq-header-anchor" href="#bottom-line">Bottom line</a></h2>
+<p>The evaluator prose contains real signal, but it is not a complete or stable
+measurement of resume quality. On the two source judges of interest—GPT-5.4
+high and Opus 4.6 adaptive medium—the semantic checker finds <strong>135 of 230 core
+label opportunities (58.7%)</strong>, <strong>26 of 80 soft opportunities (32.5%)</strong>, and
+<strong>2 of 100 prohibited-claim opportunities (2.0%)</strong>. Those recall figures are
+optimistic: the mistargeted-case audit below shows that the checker sometimes
+counts an adjacent criticism as the specific human label.</p>
+<p>The second stage is mostly a compressor, not a rescue mechanism. Flash-Lite
+returns valid, source-linked output for <strong>218/230 core-label opportunities
+(94.8%)</strong> and preserves <strong>92/135 source-expressed core claims end to end
+(68.1%)</strong>. Haiku returns valid output for <strong>146/230 (63.5%)</strong> and preserves
+<strong>76/135 (56.3%)</strong>. Conditional on a valid output, Haiku is the more faithful
+reader—<strong>86.4%</strong> core preservation versus <strong>71.9%</strong> for Flash-Lite—but its
+quotation/schema failures erase that advantage in an unretried pipeline.</p>
+<p>That means the useful experimental object is a transition, not another mean:</p>
+<blockquote>
+<p>human label → evaluator prose → accepted roll-up → artifact verification</p>
+</blockquote>
+<p>The roll-up makes the evaluator's analysis legible. It does not establish that
+the analysis is true, and it cannot recover a percept that the evaluator never
+expressed.</p>
+<div class="observablehq observablehq--block"><!--:c09b97c1:--></div>
+<h2 id="what-the-evaluators-are-saying" tabindex="-1"><a class="observablehq-header-anchor" href="#what-the-evaluators-are-saying">What the evaluators are saying</a></h2>
+<p>The strongest repeatable findings are not subtle writing preferences. Across
+all five prompts, both GPT-5.4 and Opus consistently catch the unsupported
+skills in the skills-spam trap, that case's unaddressed UX-research
+requirement, the salience pair's in-progress work presented as complete, the
+pitch pair's seniority inflation, and the bolding pair's gradient-
+checkpointing upgrade. They almost always catch the truncation in the
+floor-check case and the credential-trap case's
+implementation-without-measurement problem.</p>
+<p>They are much weaker on linguistic and editorial defects. Across the ten
+GPT/Opus opportunities per label, neither judge ever identifies the
+long-and-spammy case's length-driven keyword spam, the bolding pair's
+inline-bolding spam, the irrelevant credential in the credential trap, or the
+grounding pair's awkward phrasing as the corresponding human finding. The
+voice pair's imperative-summary label and the long-and-spammy case's
+unfocused-writing label are each recovered only once. The prose evaluators are
+therefore better at grounding, omission, and calibration failures than at
+whole-document voice, emphasis, and rhetorical-shape failures.</p>
+<p>Opus recovers more core labels than GPT-5.4 (<strong>70/115 vs 65/115</strong>), while
+GPT-5.4 recovers far more soft labels (<strong>19/40 vs 7/40</strong>). Both trigger only one
+of fifty prohibited-label checks. This does not make either judge globally
+better; it describes their operating points on this small label catalog.</p>
+<div class="observablehq observablehq--block"><!--:bdef4970:--></div>
+<h3 id="prompt-treatment-changes-what-gets-surfaced" tabindex="-1"><a class="observablehq-header-anchor" href="#prompt-treatment-changes-what-gets-surfaced">Prompt treatment changes what gets surfaced</a></h3>
+<p>For GPT-5.4 and Opus together, the core-label match rate rises from <strong>54.3%</strong>
+under the control to <strong>60.9%</strong> under mixed-neutral and <strong>67.4%</strong> under
+mixed-harsh. Human-reading is <strong>56.5%</strong>; bias-priming returns to <strong>54.3%</strong>.
+This is evidence that the prompt changes the content of the prose even when a
+small numeric scale moves little. It is not evidence that harshness is
+automatically better: more criticism can include adjacent or over-broad claims,
+and this label set is too small to estimate that tradeoff tightly.</p>
+<div class="observablehq observablehq--block"><!--:28aa12c1:--></div>
+<h2 id="what-the-roll-up-changes" tabindex="-1"><a class="observablehq-header-anchor" href="#what-the-roll-up-changes">What the roll-up changes</a></h2>
+<p>The two quality questions separate cleanly:</p>
+<ol>
+<li><strong>Did the synthesizer return an admissible artifact?</strong> Flash-Lite wins by a
+wide margin.</li>
+<li><strong>When it returned one, did it preserve the evaluator's substantive point?</strong>
+Haiku wins on core and soft claims.</li>
+</ol>
+<p>For prohibited claims, preservation is not desirable. GPT and Opus together
+make two prohibited assertions; both synthesizers filter them from every valid
+roll-up. Flash-Lite then adds two prohibited label-like claims in different
+runs, while Haiku adds none in this two-judge focus set. The additions are rare,
+but they show why a normalized report still needs artifact-level verification.</p>
+<div class="observablehq observablehq--block"><!--:ccc4bfda:--></div>
+<h2 id="the-mistargeted-case-audit-the-human-label-is-sharper-than-the-machinery" tabindex="-1"><a class="observablehq-header-anchor" href="#the-mistargeted-case-audit-the-human-label-is-sharper-than-the-machinery">The mistargeted-case audit: the human label is sharper than the machinery</a></h2>
+<p>The core mistargeted-case judgment is stable in the source prose. All ten
+GPT-5.4/Opus reviews say, in substance, that the resume leans too technical and
+under-argues the business-partner, coaching, change, or adoption side. All five
+Gemini reviews miss that human label. Each synthesizer carries the hybrid-role
+point through in seven of the ten GPT/Opus runs. Haiku loses two to invalid
+output and drops one valid source claim; Flash-Lite loses one to invalid output
+and drops two.</p>
+<p>GPT-5.4 is uniquely good on the concrete adoption evidence: all five GPT
+reviews call out the unused <strong>20% portal-adoption growth</strong> and <strong>18% support-call
+reduction</strong>. Flash-Lite preserves all five; Haiku preserves four and loses one
+to invalid output. Opus talks about adoption and change, but it does not surface
+those two quantified outcomes. The automated checker incorrectly promotes one
+generic Opus adoption comment into the quantified label.</p>
+<p>The road-mapping/collaboration label is the diagnostic failure. The checker
+reports it in nine of fifteen source reviews. Manual reading finds <strong>zero</strong>
+reviews that name initiative road-mapping and only <strong>two</strong> that explicitly say
+unused cross-functional or cross-organization evidence should have been
+connected. The roll-up checker then calls three Haiku outputs and one Flash-Lite
+output matches, but none states the full road-mapping/collaboration inference;
+most discuss adjacent adoption, coaching, or business-positioning evidence.</p>
+<p>So the mistargeted-case answer is not “the roll-up matches the labels.” It is:</p>
+<ul>
+<li>the evaluators reliably perceive the high-level hybrid-role mismatch;</li>
+<li>GPT-5.4 reliably sees the omitted quantified adoption evidence;</li>
+<li>neither stage expresses the owner's road-mapping inference;</li>
+<li>a cheap semantic checker can conceal that miss by accepting nearby language.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Human label (mistargeted case)</th>
+<th style="text-align:right">Automated source verdict</th>
+<th>Manual reading</th>
+<th>Second-stage result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Too technical for the hybrid role</td>
+<td style="text-align:right">10/15</td>
+<td>10/10 GPT+Opus; 0/5 Gemini</td>
+<td>7/10 GPT+Opus for each synthesizer</td>
+</tr>
+<tr>
+<td>Missed road-mapping / collaboration inference</td>
+<td style="text-align:right">9/15</td>
+<td>0 name road-mapping; 2 partial collaboration matches</td>
+<td>0 full matches; automated adjacent matches are overstated</td>
+</tr>
+<tr>
+<td>Omitted 20% / 18% adoption outcomes</td>
+<td style="text-align:right">6/15</td>
+<td>5/5 GPT; 0/5 Opus; 0/5 Gemini</td>
+<td>Flash 5/5 GPT; Haiku 4/5 GPT plus one invalid</td>
+</tr>
+</tbody>
+</table>
+<h2 id="explore-every-label-transition" tabindex="-1"><a class="observablehq-header-anchor" href="#explore-every-label-transition">Explore every label transition</a></h2>
+<p>This table contains the 1,230 source-review-to-roll-up opportunities. A
+<code>missing</code> roll-up verdict means the synthesizer output failed structural or
+verbatim-citation validation; it is not counted as a semantic “no.” Source
+citations were deliberately excluded from roll-up checking so copied evidence
+could not create a match by itself.</p>
+<div class="observablehq observablehq--block"><!--:ea79d369:--></div>
+<div class="observablehq observablehq--block"><!--:44ed984a:--></div>
+<h2 id="method-and-limitations" tabindex="-1"><a class="observablehq-header-anchor" href="#method-and-limitations">Method and limitations</a></h2>
+<p>The current human catalog contains 41 single-run claims across 15 of the 16
+cases: 23 core required findings, 8 soft required findings, 8 core prohibited
+claims, and 2 soft prohibited claims. Repeating them across five evaluator prompts and
+three judges creates 615 source-review checks. Valid Haiku roll-ups add 451
+checks and valid Flash-Lite roll-ups add 593, for <strong>1,659 checks total</strong>.
+The grounding-fabricated case is present in the full 240-review matrix but absent here
+because its current catalog contains pair-only, rather than single-run, labels.</p>
+<p>Each check used <code>claude-haiku-4-5-20251001</code>, thinking off, a 1,024-token maximum,
+strict JSON, and Anthropic's Batch API. The run consumed 1,778,312 input tokens
+and 57,355 output tokens for an estimated <strong>$1.0325</strong> at batch rates. There were
+no API or parse failures.</p>
+<p>The exact checker instruction was:</p>
+<pre data-language="text"><code class="language-text">You are verifying whether a resume-review actually makes a specific point.
+You will receive one claim and the full text of one review. Decide only
+whether THIS review makes THIS point. Judge substance, not wording: a
+paraphrase that raises the same specific issue counts; a vague adjacent
+remark, or a passing use of similar words about a different issue, does not.
+
+The claim arrives with a kind:
+
+- kind "should_mention": answer yes only if the review surfaces the same
+  substantive problem or observation the claim describes.
+- kind "should_not_assert": answer yes only if the review affirmatively
+  asserts the claim as its own finding. A review that raises the idea and
+  rejects it, or hedges it into a non-finding, is a no.
+
+Return JSON only:
+
+- `verdict`: "yes" or "no".
+- `confidence`: "high" or "low".
+- `quote`: the shortest excerpt from the review (up to 200 characters) that
+  supports your verdict, or "" when the verdict is no because nothing in the
+  review relates to the claim.
+</code></pre>
+<p>Only 135/196 source “yes” excerpts and 179/231 roll-up “yes” excerpts are
+literal substrings. Many of the rest are shortened or stitched with ellipses,
+but the field must not be mistaken for verified provenance. More importantly,
+the mistargeted case's road-mapping result shows that even a well-instructed semantic checker
+can be too liberal. These outputs are an index for human reading, not a new
+truth layer.</p>
+<h2 id="how-this-should-be-used-for-generation-graphs" tabindex="-1"><a class="observablehq-header-anchor" href="#how-this-should-be-used-for-generation-graphs">How this should be used for generation graphs</a></h2>
+<p>Do not turn the table above directly into one graph-quality number. Use it as a
+scorecard with separate axes:</p>
+<ul>
+<li><strong>artifact validity:</strong> did the graph produce a usable resume and a usable
+evaluation artifact?</li>
+<li><strong>verified core recovery:</strong> after reading the artifact, which owner-ratified
+defects were actually present and surfaced?</li>
+<li><strong>prohibited assertion rate:</strong> which human-rejected criticisms did the graph
+or evaluator introduce?</li>
+<li><strong>editorial quality:</strong> blinded human preference on voice, hierarchy,
+relevance, and whole-document argument—the areas these evaluators miss most;</li>
+<li><strong>stability:</strong> how much do findings change across prompt treatment and judge?</li>
+</ul>
+<p>For each candidate generation graph, run the same controlled cases, preserve
+the evaluator prose, use the second stage to normalize it, and manually verify
+the final claim set against the resume and source data. Compare graphs on that
+vector and inspect the disagreements. A weighted scalar can be added later for
+a specific decision, but it should be derived from the verified claim ledger,
+not from evaluator scores or unreviewed semantic-check verdicts.</p>
+<p>The companion <a href="./finding-synthesis-haiku-flashlite-fullmatrix">full-matrix output explorer</a>
+shows every source review, accepted roll-up, rejected raw output, exact roll-up
+prompt, settings, usage, and measured synthesis cost.</p>
+<pre data-language="css"><code class="language-css"><span class="hljs-selector-class">.observablehq</span> <span class="hljs-selector-tag">table</span> {
+  <span class="hljs-attribute">font-size</span>: <span class="hljs-number">0.82rem</span>;
+}
+<span class="hljs-selector-class">.observablehq</span> <span class="hljs-selector-tag">td</span> {
+  <span class="hljs-attribute">vertical-align</span>: top;
+  <span class="hljs-attribute">max-width</span>: <span class="hljs-number">34rem</span>;
+}
+<span class="hljs-selector-class">.observablehq</span> <span class="hljs-selector-tag">blockquote</span> {
+  <span class="hljs-attribute">border-left</span>: <span class="hljs-number">0.25rem</span> solid <span class="hljs-built_in">color-mix</span>(in srgb, currentColor <span class="hljs-number">24%</span>, transparent);
+  <span class="hljs-attribute">margin-left</span>: <span class="hljs-number">0</span>;
+  <span class="hljs-attribute">padding-left</span>: <span class="hljs-number">1rem</span>;
+}
+</code></pre>
+</main>
+</div>
+</body>
+</html>

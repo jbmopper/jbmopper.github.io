@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.4">
+<base href="/observable/projects/resume-generator/finding-synthesis-model-pilot.html">
+<title>Single-Review Synthesis Pilot: Flash, Flash-Lite, and Luna | juliusm.com</title>
+
+<link rel="preload" as="style" href="../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="preload" as="style" href="../../_npm/katex@0.17.0/dist/katex.min.css">
+<link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="stylesheet" type="text/css" href="../../_npm/katex@0.17.0/dist/katex.min.css">
+<script type="module">
+
+import {define} from "../../_observablehq/client.5d43dcff.js";
+
+define({id: "b1b478b5", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`0.0130 total**.
+At the observed token shape, 240 synchronous rollups project to **`
+))
+}});
+
+define({id: "7e757f17", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`0.1280** for the five
+calls, more than the prior GPT-5.4 Flex run, without producing a clearly better
+rollup. Its observed 240-call projection is **`
+))
+}});
+
+define({id: "88be6c6a", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`6.15 standard / `
+))
+}});
+
+define({id: "180e24a1", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`0.63 standard / `
+))
+}});
+
+</script>
+<script src="/observable/_import/jay-standalone.js" defer></script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="../../">juliusm.com</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link"><a href="../">Projects</a></li>
+    <li class="observablehq-link"><a href="../llm-fundamentals/">LLM Fundamentals</a></li>
+    <li class="observablehq-link"><a href="./">Resume Generator</a></li>
+    <li class="observablehq-link"><a href="../data-playground/">Data Playground</a></li>
+    <li class="observablehq-link"><a href="../site-chatbot/">Site Design and RAG Chatbot Integration</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<header id="observablehq-header">
+<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><div class="portfolio-header-actions"><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="/consulting/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/consulting/');">Consulting</a><a class="portfolio-nav-link" href="/resume/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav><button class="portfolio-theme-control" type="button" data-theme-control="" data-theme-preference="system"><span class="portfolio-theme-control__icon" aria-hidden="true"></span><span data-theme-label="">System</span></button></div></div><script>(function(){
+        const storageKey = 'juliusm-theme';
+        const modes = ['system', 'dark', 'light'];
+        const labels = {system: 'System', dark: 'Dark', light: 'Light'};
+        const metaColors = {dark: '#0b1017', light: '#f5f7f3'};
+        const media = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+        const mount = window.location.pathname.startsWith('/observable') ? '/observable' : '';
+        const path = window.location.pathname.replace(/^\/observable(?=\/|$)/,'').replace(/\/index\.html$/,'/');
+        const normalized = path.endsWith('/') ? path : path + '/';
+        const slot = document.getElementById('portfolio-current-project-slot');
+
+        function readThemePreference(){
+          try {
+            const stored = window.localStorage.getItem(storageKey);
+            if (modes.includes(stored)) return stored;
+          } catch {
+            return 'system';
+          }
+          return 'system';
+        }
+
+        function resolveThemePreference(preference){
+          if (preference === 'light' || (preference === 'system' && media && media.matches)) return 'light';
+          return 'dark';
+        }
+
+        function nextThemePreference(preference){
+          return modes[(modes.indexOf(preference) + 1) % modes.length] || 'system';
+        }
+
+        function updateThemeControls(preference, resolved){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            const next = nextThemePreference(preference);
+            control.dataset.themePreference = preference;
+            control.dataset.themeResolved = resolved;
+            control.setAttribute('aria-label', 'Theme: ' + labels[preference] + '. Switch to ' + labels[next] + '.');
+            control.setAttribute('title', 'Theme: ' + labels[preference]);
+            const label = control.querySelector('[data-theme-label]');
+            if (label) label.textContent = labels[preference];
+          });
+        }
+
+        function applyThemePreference(preference, persist){
+          const normalizedPreference = modes.includes(preference) ? preference : 'system';
+          const resolved = resolveThemePreference(normalizedPreference);
+          document.documentElement.dataset.theme = normalizedPreference;
+          document.documentElement.dataset.themeResolved = resolved;
+          const meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', metaColors[resolved]);
+          if (persist) {
+            try {
+              window.localStorage.setItem(storageKey, normalizedPreference);
+            } catch {}
+          }
+          updateThemeControls(normalizedPreference, resolved);
+        }
+
+        function bindThemeControls(){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            if (control.dataset.themeBound === 'true') return;
+            control.dataset.themeBound = 'true';
+            control.addEventListener('click', function(){
+              applyThemePreference(nextThemePreference(readThemePreference()), true);
+            });
+          });
+          applyThemePreference(readThemePreference(), false);
+        }
+
+        applyThemePreference(readThemePreference(), false);
+        bindThemeControls();
+        if (media) media.addEventListener('change', function(){
+          if (readThemePreference() === 'system') applyThemePreference('system', false);
+        });
+        window.addEventListener('storage', function(event){
+          if (event.key === storageKey) applyThemePreference(readThemePreference(), false);
+        });
+
+        function navigate(target){
+          window.location.assign(window.location.origin + target);
+        }
+
+        function makeNavLink(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-nav-link';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        function makeBreadcrumbSeparator(){
+          const sep = document.createElement('span');
+          sep.className = 'portfolio-breadcrumb-separator';
+          sep.setAttribute('aria-hidden', 'true');
+          sep.textContent = '›';
+          return sep;
+        }
+
+        function makeProjectItem(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-project-item';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        if (slot) {
+          const projectMatch = normalized.match(/^\/projects\/([^/]+)\//);
+          if (projectMatch) {
+            const slug = projectMatch[1];
+            slot.appendChild(makeBreadcrumbSeparator());
+            if (slug === 'llm-fundamentals') {
+              const details = document.createElement('details');
+              details.id = 'portfolio-current-project-menu';
+              details.className = 'portfolio-project-menu';
+
+              const summary = document.createElement('summary');
+              summary.className = 'portfolio-nav-link portfolio-project-toggle';
+              summary.textContent = 'LLM Fundamentals';
+              details.appendChild(summary);
+
+              const dropdown = document.createElement('div');
+              dropdown.className = 'portfolio-project-dropdown';
+              const items = [
+                ['Introduction', '/projects/llm-fundamentals/'],
+                ['Architecture and Expected Performance Analysis', '/projects/llm-fundamentals/perf-expected/'],
+                ['Benchmarks and Empirical Performance Analysis', '/projects/llm-fundamentals/perf-empirical/'],
+                ['Nvidia CUDA Nsys Trace Analysis', '/projects/llm-fundamentals/nsys/'],
+                ['Nsys GPU Trace Viewer', '/projects/llm-fundamentals/nsys-viewer/'],
+                ['Learning Parameter Sweeps', '/projects/llm-fundamentals/optimizer-sweep/'],
+                ['Architectural Variations (Ablations)', '/projects/llm-fundamentals/ablations/']
+              ];
+              for (const [label, target] of items) {
+                dropdown.appendChild(makeProjectItem(label, mount + target));
+              }
+              details.appendChild(dropdown);
+              slot.appendChild(details);
+
+              document.addEventListener('click', function(event){
+                if (!details.hasAttribute('open')) return;
+                if (!details.contains(event.target)) details.removeAttribute('open');
+              });
+              document.addEventListener('keydown', function(event){
+                if (event.key === 'Escape') details.removeAttribute('open');
+              });
+            } else if (slug === 'resume-generator') {
+              slot.appendChild(makeNavLink('Resume Generator', mount + '/projects/resume-generator/'));
+            } else {
+              const labels = {
+                'resume-generator': 'Resume Generator',
+                'data-playground': 'Data Playground',
+                'site-chatbot': 'Site Design and RAG Chatbot Integration'
+              };
+              const fallback = slug
+                .split('-')
+                .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+                .join(' ');
+              slot.appendChild(makeNavLink(labels[slug] || fallback, mount + '/projects/' + slug + '/'));
+            }
+          }
+        }
+
+        for (const id of ['observablehq-sidebar-toggle', 'observablehq-sidebar-backdrop', 'observablehq-sidebar']) {
+          const node = document.getElementById(id);
+          if (node) node.remove();
+        }
+      })();</script>
+</header>
+<aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
+<nav>
+<div>Contents</div>
+<ol>
+<li class="observablehq-secondary-link"><a href="#what-was-run">What was run</a></li>
+<li class="observablehq-secondary-link"><a href="#settings-and-cost">Settings and cost</a></li>
+<li class="observablehq-secondary-link"><a href="#token-behavior">Token behavior</a></li>
+<li class="observablehq-secondary-link"><a href="#what-flash-lite-preserved">What Flash-Lite preserved</a></li>
+<li class="observablehq-secondary-link"><a href="#what-regular-flash-added">What regular Flash added</a></li>
+<li class="observablehq-secondary-link"><a href="#lunas-failure-mode">Luna&#x27;s failure mode</a></li>
+<li class="observablehq-secondary-link"><a href="#decision">Decision</a></li>
+<li class="observablehq-secondary-link"><a href="#artifacts">Artifacts</a></li>
+</ol>
+</nav>
+</aside>
+<main id="observablehq-main" class="observablehq">
+<h1 id="single-review-synthesis-pilot-gemini-flash-flash-lite-and-luna" tabindex="-1"><a class="observablehq-header-anchor" href="#single-review-synthesis-pilot-gemini-flash-flash-lite-and-luna">Single-review synthesis pilot: Gemini Flash, Flash-Lite, and Luna</a></h1>
+<h2 id="bottom-line" tabindex="-1"><a class="observablehq-header-anchor" href="#bottom-line">Bottom line</a></h2>
+<p>Gemini 3.5 Flash-Lite at low thinking is the clear result of this small test. It
+validated all five rollups of the mistargeted case on the first attempt, preserved the
+differences among the five source-review treatments, and cost <strong><observablehq-loading></observablehq-loading><!--:b1b478b5:-->0.63</strong>, or
+about <strong>$0.31</strong> through Flex/Batch.</p>
+<p>Gemini 3.6 Flash at medium also validated 5/5, but spent 11,623 thinking tokens
+to produce only 2,921 visible output tokens. It cost <strong><observablehq-loading></observablehq-loading><!--:7e757f17:-->6.15</strong> standard or <strong>$3.07</strong>
+through Flex/Batch.</p>
+<p>GPT-5.6 Luna at medium on Flex is extraordinarily cheap and its three validated
+reports are the most detailed of the new candidates. It is not usable under the
+current evidence contract: only 3/5 first-pass outputs validated, and both failed
+treatments repeated the same non-verbatim quotation error on retry. This was not
+random API noise.</p>
+<h2 id="what-was-run" tabindex="-1"><a class="observablehq-header-anchor" href="#what-was-run">What was run</a></h2>
+<p>Every call received exactly one GPT-5.4-high evaluator review for the same
+resume — the mistargeted case. The five calls differed only in the evaluator
+prompt that had produced the source review:</p>
+<ol>
+<li><code>anchored</code> — control</li>
+<li><code>anchored-mechanism</code> — human-reading/mechanism passage</li>
+<li><code>anchored-pressure</code> — bias/leniency pressure passage</li>
+<li><code>anchored-mixed</code> — the integrated neutral prompt</li>
+<li><code>anchored-negging</code> — the integrated harsh prompt</li>
+</ol>
+<p>The five reviews were never concatenated. The synthesizer saw no resume, job
+description, or candidate record. It received only the selected evaluator
+review, flattened into citeable prose fields plus score telemetry.</p>
+<p>All calls used the same finding-synthesis system prompt, strict response schema,
+8,192-token output allowance, and deterministic verifier. The verifier rejects
+the entire report unless every <code>review_id</code> and <code>field</code> exists and every quoted
+source is a byte-for-byte substring of that field.</p>
+<h2 id="settings-and-cost" tabindex="-1"><a class="observablehq-header-anchor" href="#settings-and-cost">Settings and cost</a></h2>
+<table>
+<thead>
+<tr>
+<th>Synthesizer</th>
+<th>Thinking</th>
+<th>Service</th>
+<th style="text-align:right">First-pass validation</th>
+<th style="text-align:right">Five-call cost</th>
+<th style="text-align:right">240-call projection</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gemini 3.6 Flash</td>
+<td>medium</td>
+<td>on-demand</td>
+<td style="text-align:right">5/5</td>
+<td style="text-align:right">$0.1280</td>
+<td style="text-align:right"><observablehq-loading></observablehq-loading><!--:88be6c6a:-->3.07 Flex-Batch</td>
+</tr>
+<tr>
+<td>Gemini 3.5 Flash-Lite</td>
+<td>low</td>
+<td>on-demand</td>
+<td style="text-align:right">5/5</td>
+<td style="text-align:right">$0.0130</td>
+<td style="text-align:right"><observablehq-loading></observablehq-loading><!--:180e24a1:-->0.31 Flex-Batch</td>
+</tr>
+<tr>
+<td>GPT-5.6 Luna</td>
+<td>medium</td>
+<td>Flex</td>
+<td style="text-align:right">3/5</td>
+<td style="text-align:right">$0.0028 known for three valid calls</td>
+<td style="text-align:right">$0.23 estimated at the valid-call mean</td>
+</tr>
+<tr>
+<td>GPT-5.4 reference</td>
+<td>medium</td>
+<td>Flex</td>
+<td style="text-align:right">5/5</td>
+<td style="text-align:right">$0.0914</td>
+<td style="text-align:right">$4.39</td>
+</tr>
+<tr>
+<td>Haiku 4.5 reference</td>
+<td>2,048-token manual budget</td>
+<td>standard</td>
+<td style="text-align:right">5/5 mistargeted case</td>
+<td style="text-align:right">$0.0606</td>
+<td style="text-align:right">$2.91</td>
+</tr>
+</tbody>
+</table>
+<p>Gemini costs use billed output: visible response tokens plus thinking tokens.
+The local provider reports Gemini's <code>candidatesTokenCount</code> and
+<code>thoughtsTokenCount</code> separately. Luna's failed-call usage is unavailable because
+the current CLI discards the model result when quote validation raises, so its
+known cost is a lower bound. The estimate scales the mean of its three validated
+calls and should not be mistaken for measured five-call spend.</p>
+<h2 id="token-behavior" tabindex="-1"><a class="observablehq-header-anchor" href="#token-behavior">Token behavior</a></h2>
+<table>
+<thead>
+<tr>
+<th>Synthesizer</th>
+<th style="text-align:right">Input</th>
+<th style="text-align:right">Visible output</th>
+<th style="text-align:right">Thinking</th>
+<th style="text-align:right">Billed output</th>
+<th style="text-align:right">Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gemini 3.6 Flash</td>
+<td style="text-align:right">12,628</td>
+<td style="text-align:right">2,921</td>
+<td style="text-align:right">11,623</td>
+<td style="text-align:right">14,544</td>
+<td style="text-align:right">27,172</td>
+</tr>
+<tr>
+<td>Gemini 3.5 Flash-Lite</td>
+<td style="text-align:right">12,628</td>
+<td style="text-align:right">3,702</td>
+<td style="text-align:right">0 reported</td>
+<td style="text-align:right">3,702</td>
+<td style="text-align:right">16,330</td>
+</tr>
+<tr>
+<td>Luna, three validated calls only</td>
+<td style="text-align:right">5,999</td>
+<td style="text-align:right">3,693</td>
+<td style="text-align:right">1,064 included in output</td>
+<td style="text-align:right">3,693</td>
+<td style="text-align:right">9,692</td>
+</tr>
+</tbody>
+</table>
+<p>The regular Flash result is the opposite of token efficiency for this task. It
+used nearly four thinking tokens for every visible token and then returned the
+shortest reports. Flash-Lite produced more visible analysis, with no separately
+reported thinking tokens, for roughly one tenth the money.</p>
+<h2 id="what-flash-lite-preserved" tabindex="-1"><a class="observablehq-header-anchor" href="#what-flash-lite-preserved">What Flash-Lite preserved</a></h2>
+<p>The useful question is not the number of findings. It is whether the second
+stage faithfully exposes what each source review said without flattening the
+treatments into one generic answer.</p>
+<ul>
+<li>The control remained narrow: unused adoption/ROI evidence and incomplete
+keyword optimization.</li>
+<li>The mechanism review added the Microsoft-tooling gap, underused evidence for
+adoption/coaching/outcomes, and mildly overstated title/coaching framing.</li>
+<li>The pressure review retained omitted business-impact evidence,
+overformalization of independent work, and missing Microsoft/change terms.</li>
+<li>The integrated neutral review kept four distinct diagnoses: stack/change
+alignment, underused impact evidence, over-mature framing of self-directed
+work, and ambiguous employment labeling.</li>
+<li>The harsh review retained the additional governance-maturity and
+architecture-first-writing criticisms rather than replacing them with a
+generic low-quality verdict.</li>
+</ul>
+<p>That is the desired second-stage behavior. It is reading and compressing the
+review prose; it is not averaging scores, voting across prompts, or pretending
+to independently judge the resume.</p>
+<p>Flash-Lite is somewhat more willing than GPT-5.4 to label source-described gaps
+<code>important</code>, but in this one-review setup that does not distort cross-review
+agreement: every finding is necessarily found by one of one review instances.
+Severity should still be treated as presentation metadata, not a graph score.</p>
+<h2 id="what-regular-flash-added" tabindex="-1"><a class="observablehq-header-anchor" href="#what-regular-flash-added">What regular Flash added</a></h2>
+<p>Gemini 3.6 Flash reached essentially the same substantive center as Flash-Lite:
+missing adoption and ROI proof, Microsoft ecosystem mismatch, overformalized
+self-directed work, and—in the harsh treatment—governance and architecture-first
+writing concerns. It merged more material into fewer findings (15 total versus
+Flash-Lite's 16) and wrote more compressed diagnoses.</p>
+<p>Nothing in the five reports demonstrates that its 11.6K thinking tokens bought
+better fidelity or a more useful human-facing artifact. On the mistargeted
+case, medium-thinking Flash is dominated by low-thinking Flash-Lite on cost and
+at least tied on quality.</p>
+<h2 id="lunas-failure-mode" tabindex="-1"><a class="observablehq-header-anchor" href="#lunas-failure-mode">Luna's failure mode</a></h2>
+<p>Luna's valid control, mechanism, and mixed-neutral reports are good. They are
+specific, preserve minor qualifications, and separate ATS gaps from underused
+business-impact evidence and from overstatement. Their five treatment-level
+finding counts would likely be higher than either Gemini model if all outputs
+passed.</p>
+<p>But the evidence plumbing failed on <code>anchored-pressure</code> and <code>anchored-negging</code>:</p>
+<ul>
+<li>pressure: a citation to <code>comments[1]</code> was not a verbatim source substring;</li>
+<li>harsh: a citation to <code>grounding.evidence</code> was not a verbatim source substring.</li>
+</ul>
+<p>Each call was retried once at identical settings. Each retry produced the same
+field-level validation failure. That makes the first-pass yield <strong>60%</strong> and the
+retry recovery <strong>0/2</strong>. A quote-repair pass or a source-span/index output format
+could probably make Luna operational, but that would be a different pipeline
+with an additional failure surface. Under the current fail-closed contract,
+Luna loses despite its negligible token price.</p>
+<h2 id="decision" tabindex="-1"><a class="observablehq-header-anchor" href="#decision">Decision</a></h2>
+<p>Use Flash-Lite, not regular Flash, for the next controlled expansion. The next
+test should keep the same five prompt treatments and add the two voice-pair
+cases already used in the Haiku pilot. That asks whether Flash-Lite's 5/5
+result on the mistargeted case survives a case where the treatments differ on
+a narrow linguistic defect rather than on several overlapping targeting
+findings.</p>
+<p>Do not turn this into a synthesizer score or a graph-quality score. The evidence
+supports a narrower claim: <strong>Flash-Lite is currently the cheapest tested model
+that can turn each mistargeted-case evaluator review into a valid, source-linked
+qualitative artifact without visibly flattening the review.</strong></p>
+<h2 id="artifacts" tabindex="-1"><a class="observablehq-header-anchor" href="#artifacts">Artifacts</a></h2>
+<p>Each model/treatment directory contains the normalized <code>synthesis-input.json</code>,
+the validated <code>finding-synthesis.json</code>, a rendered <code>finding-synthesis.md</code>, and a
+per-call <code>summary.json</code>. Luna's rejected attempts contain <code>error.json</code> instead.
+The machine-readable aggregate is <code>summary.json</code> in this directory.</p>
+</main>
+</div>
+</body>
+</html>

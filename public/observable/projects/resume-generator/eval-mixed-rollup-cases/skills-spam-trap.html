@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.4">
+<base href="/observable/projects/resume-generator/eval-mixed-rollup-cases/skills-spam-trap.html">
+<title>Skills-spam trap | juliusm.com</title>
+
+<link rel="preload" as="style" href="../../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.87b41aae.css">
+<script type="module">
+
+import "../../../_observablehq/client.5d43dcff.js";
+
+</script>
+<script src="/observable/_import/jay-standalone.js" defer></script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="../../../">juliusm.com</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link"><a href="../../">Projects</a></li>
+    <li class="observablehq-link"><a href="../../llm-fundamentals/">LLM Fundamentals</a></li>
+    <li class="observablehq-link"><a href="../">Resume Generator</a></li>
+    <li class="observablehq-link"><a href="../../data-playground/">Data Playground</a></li>
+    <li class="observablehq-link"><a href="../../site-chatbot/">Site Design and RAG Chatbot Integration</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<header id="observablehq-header">
+<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><div class="portfolio-header-actions"><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="/consulting/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/consulting/');">Consulting</a><a class="portfolio-nav-link" href="/resume/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav><button class="portfolio-theme-control" type="button" data-theme-control="" data-theme-preference="system"><span class="portfolio-theme-control__icon" aria-hidden="true"></span><span data-theme-label="">System</span></button></div></div><script>(function(){
+        const storageKey = 'juliusm-theme';
+        const modes = ['system', 'dark', 'light'];
+        const labels = {system: 'System', dark: 'Dark', light: 'Light'};
+        const metaColors = {dark: '#0b1017', light: '#f5f7f3'};
+        const media = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+        const mount = window.location.pathname.startsWith('/observable') ? '/observable' : '';
+        const path = window.location.pathname.replace(/^\/observable(?=\/|$)/,'').replace(/\/index\.html$/,'/');
+        const normalized = path.endsWith('/') ? path : path + '/';
+        const slot = document.getElementById('portfolio-current-project-slot');
+
+        function readThemePreference(){
+          try {
+            const stored = window.localStorage.getItem(storageKey);
+            if (modes.includes(stored)) return stored;
+          } catch {
+            return 'system';
+          }
+          return 'system';
+        }
+
+        function resolveThemePreference(preference){
+          if (preference === 'light' || (preference === 'system' && media && media.matches)) return 'light';
+          return 'dark';
+        }
+
+        function nextThemePreference(preference){
+          return modes[(modes.indexOf(preference) + 1) % modes.length] || 'system';
+        }
+
+        function updateThemeControls(preference, resolved){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            const next = nextThemePreference(preference);
+            control.dataset.themePreference = preference;
+            control.dataset.themeResolved = resolved;
+            control.setAttribute('aria-label', 'Theme: ' + labels[preference] + '. Switch to ' + labels[next] + '.');
+            control.setAttribute('title', 'Theme: ' + labels[preference]);
+            const label = control.querySelector('[data-theme-label]');
+            if (label) label.textContent = labels[preference];
+          });
+        }
+
+        function applyThemePreference(preference, persist){
+          const normalizedPreference = modes.includes(preference) ? preference : 'system';
+          const resolved = resolveThemePreference(normalizedPreference);
+          document.documentElement.dataset.theme = normalizedPreference;
+          document.documentElement.dataset.themeResolved = resolved;
+          const meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', metaColors[resolved]);
+          if (persist) {
+            try {
+              window.localStorage.setItem(storageKey, normalizedPreference);
+            } catch {}
+          }
+          updateThemeControls(normalizedPreference, resolved);
+        }
+
+        function bindThemeControls(){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            if (control.dataset.themeBound === 'true') return;
+            control.dataset.themeBound = 'true';
+            control.addEventListener('click', function(){
+              applyThemePreference(nextThemePreference(readThemePreference()), true);
+            });
+          });
+          applyThemePreference(readThemePreference(), false);
+        }
+
+        applyThemePreference(readThemePreference(), false);
+        bindThemeControls();
+        if (media) media.addEventListener('change', function(){
+          if (readThemePreference() === 'system') applyThemePreference('system', false);
+        });
+        window.addEventListener('storage', function(event){
+          if (event.key === storageKey) applyThemePreference(readThemePreference(), false);
+        });
+
+        function navigate(target){
+          window.location.assign(window.location.origin + target);
+        }
+
+        function makeNavLink(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-nav-link';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        function makeBreadcrumbSeparator(){
+          const sep = document.createElement('span');
+          sep.className = 'portfolio-breadcrumb-separator';
+          sep.setAttribute('aria-hidden', 'true');
+          sep.textContent = '›';
+          return sep;
+        }
+
+        function makeProjectItem(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-project-item';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        if (slot) {
+          const projectMatch = normalized.match(/^\/projects\/([^/]+)\//);
+          if (projectMatch) {
+            const slug = projectMatch[1];
+            slot.appendChild(makeBreadcrumbSeparator());
+            if (slug === 'llm-fundamentals') {
+              const details = document.createElement('details');
+              details.id = 'portfolio-current-project-menu';
+              details.className = 'portfolio-project-menu';
+
+              const summary = document.createElement('summary');
+              summary.className = 'portfolio-nav-link portfolio-project-toggle';
+              summary.textContent = 'LLM Fundamentals';
+              details.appendChild(summary);
+
+              const dropdown = document.createElement('div');
+              dropdown.className = 'portfolio-project-dropdown';
+              const items = [
+                ['Introduction', '/projects/llm-fundamentals/'],
+                ['Architecture and Expected Performance Analysis', '/projects/llm-fundamentals/perf-expected/'],
+                ['Benchmarks and Empirical Performance Analysis', '/projects/llm-fundamentals/perf-empirical/'],
+                ['Nvidia CUDA Nsys Trace Analysis', '/projects/llm-fundamentals/nsys/'],
+                ['Nsys GPU Trace Viewer', '/projects/llm-fundamentals/nsys-viewer/'],
+                ['Learning Parameter Sweeps', '/projects/llm-fundamentals/optimizer-sweep/'],
+                ['Architectural Variations (Ablations)', '/projects/llm-fundamentals/ablations/']
+              ];
+              for (const [label, target] of items) {
+                dropdown.appendChild(makeProjectItem(label, mount + target));
+              }
+              details.appendChild(dropdown);
+              slot.appendChild(details);
+
+              document.addEventListener('click', function(event){
+                if (!details.hasAttribute('open')) return;
+                if (!details.contains(event.target)) details.removeAttribute('open');
+              });
+              document.addEventListener('keydown', function(event){
+                if (event.key === 'Escape') details.removeAttribute('open');
+              });
+            } else if (slug === 'resume-generator') {
+              slot.appendChild(makeNavLink('Resume Generator', mount + '/projects/resume-generator/'));
+            } else {
+              const labels = {
+                'resume-generator': 'Resume Generator',
+                'data-playground': 'Data Playground',
+                'site-chatbot': 'Site Design and RAG Chatbot Integration'
+              };
+              const fallback = slug
+                .split('-')
+                .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+                .join(' ');
+              slot.appendChild(makeNavLink(labels[slug] || fallback, mount + '/projects/' + slug + '/'));
+            }
+          }
+        }
+
+        for (const id of ['observablehq-sidebar-toggle', 'observablehq-sidebar-backdrop', 'observablehq-sidebar']) {
+          const node = document.getElementById(id);
+          if (node) node.remove();
+        }
+      })();</script>
+</header>
+<aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
+<nav>
+<div>Contents</div>
+<ol>
+<li class="observablehq-secondary-link"><a href="#findings">Findings</a></li>
+<li class="observablehq-secondary-link"><a href="#disagreements">Disagreements</a></li>
+</ol>
+</nav>
+</aside>
+<main id="observablehq-main" class="observablehq">
+<p><a href="./">← All case rollups</a></p>
+<h1 id="skills-spam-trap" tabindex="-1"><a class="observablehq-header-anchor" href="#skills-spam-trap">Skills-spam trap</a></h1>
+<p>Reviewers consistently describe the resume as strong on backlog, requirements, and stakeholder-facing Product Owner/BA work, with clear writing and solid structure. The main issues are grounding and calibration: unsupported UX/research/tool skills, some overstated Product Owner phrasing, and thinner evidence for user research and roadmap/prioritization aspects of the JD.</p>
+<p>This page is the validated second-stage synthesis of exactly two
+<code>anchored-mixed</code> reviews: GPT-5.4 high and Opus 4.6 medium. The
+synthesizer saw the reviews, not the résumé, job description, or candidate
+record. Findings therefore remain evaluator claims pending human verification.</p>
+<h2 id="findings" tabindex="-1"><a class="observablehq-header-anchor" href="#findings">Findings</a></h2>
+<h3 id="important-unsupported-ux-research-skills-and-tool-claims" tabindex="-1"><a class="observablehq-header-anchor" href="#important-unsupported-ux-research-skills-and-tool-claims">[IMPORTANT] Unsupported UX/research skills and tool claims</a></h3>
+<p>Multiple reviewers say the resume adds UX/research methods and tools that are not supported by the candidate data, especially in the skills section.</p>
+<p>Dimension: <code>grounding</code> · cited from 2 of 2 reviews</p>
+<blockquote>
+<p>“The skills section lists 'Usability Testing' and 'Contextual Inquiry' under Research &amp; Discovery, but the candidate data never mentions conducting usability tests or contextual inquiries. [A design tool] is listed as a tool but does not appear in the candidate data.”</p>
+<p>— Opus 4.6 medium, <code>grounding.evidence</code></p>
+</blockquote>
+<blockquote>
+<p>“the skills section lists 'Figma,' 'User Interviews,' 'Usability Testing,' and 'Contextual Inquiry,' none of which are explicitly present in the candidate data.”</p>
+<p>— GPT-5.4 high, <code>grounding.evidence</code></p>
+</blockquote>
+<h3 id="important-user-research-discovery-evidence-is-thin-for-this-jd" tabindex="-1"><a class="observablehq-header-anchor" href="#important-user-research-discovery-evidence-is-thin-for-this-jd">[IMPORTANT] User research/discovery evidence is thin for this JD</a></h3>
+<p>Even apart from unsupported keywords, reviewers say the underlying evidence for applied UX research or direct user discovery is weak relative to what the job description emphasizes.</p>
+<p>Dimension: <code>argument</code> · cited from 2 of 2 reviews</p>
+<blockquote>
+<p>“the JD specifically mentions 'applied User Experience Research' and 'lightweight research activities to validate assumptions,' and the candidate data doesn't strongly support UX research experience”</p>
+<p>— Opus 4.6 medium, <code>argument.evidence</code></p>
+</blockquote>
+<blockquote>
+<p>“the resume is thinner on directly evidenced user research/discovery work with end users”</p>
+<p>— GPT-5.4 high, <code>argument.evidence</code></p>
+</blockquote>
+<h3 id="important-some-product-owner-and-stakeholder-wording-overstates-the-source-material" tabindex="-1"><a class="observablehq-header-anchor" href="#important-some-product-owner-and-stakeholder-wording-overstates-the-source-material">[IMPORTANT] Some Product Owner and stakeholder wording overstates the source material</a></h3>
+<p>Reviewers flag several claims as stronger than the source data supports, including backlog ownership language, outcome claims, and one stakeholder phrasing.</p>
+<p>Dimension: <code>grounding</code> · cited from 2 of 2 reviews</p>
+<blockquote>
+<p>“The Charter bullets also strengthen some claims beyond the source, e.g., 'Owned the product backlog' and 'reducing implementation churn,' where the source more cautiously describes story writing, refinement, and cross-team support.”</p>
+<p>— GPT-5.4 high, <code>grounding.evidence</code></p>
+</blockquote>
+<blockquote>
+<p>“The claim of 'partnered with operational users and UX designers' is supported for UX designers but 'operational users' is a stretch”</p>
+<p>— Opus 4.6 medium, <code>grounding.evidence</code></p>
+</blockquote>
+<h3 id="minor-roadmap-and-prioritization-coverage-is-underdeveloped" tabindex="-1"><a class="observablehq-header-anchor" href="#minor-roadmap-and-prioritization-coverage-is-underdeveloped">[MINOR] Roadmap and prioritization coverage is underdeveloped</a></h3>
+<p>One reviewer says the resume does not fully support the JD's prioritization and Product Manager partnership aspects, and another notes that roadmap language is missing.</p>
+<p>Dimension: <code>argument</code> · cited from 2 of 2 reviews</p>
+<blockquote>
+<p>“the resume is thinner on directly evidenced user research/discovery work with end users and on prioritization tied to roadmap direction/Product Manager partnership, both of which the JD emphasizes.”</p>
+<p>— GPT-5.4 high, <code>argument.evidence</code></p>
+</blockquote>
+<blockquote>
+<p>“'roadmap' (mentioned in JD).”</p>
+<p>— Opus 4.6 medium, <code>keywords.evidence</code></p>
+</blockquote>
+<h3 id="minor-top-chronology-placement-weakens-the-product-owner-pitch" tabindex="-1"><a class="observablehq-header-anchor" href="#minor-top-chronology-placement-weakens-the-product-owner-pitch">[MINOR] Top chronology placement weakens the Product Owner pitch</a></h3>
+<p>One reviewer says the most recent Independent Developer role occupies the most prominent chronology position while contributing less to the Product Owner case than stronger earlier experience.</p>
+<p>Dimension: <code>structure</code> · cited from 1 of 2 reviews</p>
+<blockquote>
+<p>“The recent Independent Developer role takes the top chronology slot but contributes relatively little to the Product Owner pitch compared with the much stronger Charter experience.”</p>
+<p>— GPT-5.4 high, <code>comments[1]</code></p>
+</blockquote>
+<h3 id="minor-current-title-line-includes-a-minor-embellishment" tabindex="-1"><a class="observablehq-header-anchor" href="#minor-current-title-line-includes-a-minor-embellishment">[MINOR] Current title line includes a minor embellishment</a></h3>
+<p>One reviewer flags the added parenthetical '(Product Owner)' as not being part of the actual title, though they describe it as slight.</p>
+<p>Dimension: <code>grounding</code> · cited from 1 of 2 reviews</p>
+<blockquote>
+<p>“The title 'Senior Business Analyst (Product Owner)' is a slight embellishment — the actual title was 'Senior Business Analyst' — though the parenthetical framing is a common practice to clarify functional role.”</p>
+<p>— Opus 4.6 medium, <code>comments[1]</code></p>
+</blockquote>
+<blockquote>
+<p>“The title 'Senior Business Analyst (Product Owner)' adds a parenthetical not in the actual title.”</p>
+<p>— Opus 4.6 medium, <code>grounding.evidence</code></p>
+</blockquote>
+<h2 id="disagreements" tabindex="-1"><a class="observablehq-header-anchor" href="#disagreements">Disagreements</a></h2>
+<h3 id="how-completely-the-resume-covers-the-jd" tabindex="-1"><a class="observablehq-header-anchor" href="#how-completely-the-resume-covers-the-jd">How completely the resume covers the JD</a></h3>
+<p>One review says the resume maps nearly every core responsibility to concrete experience, while another says important discovery and prioritization aspects are not fully supported.</p>
+<blockquote>
+<p>“The resume maps nearly every core JD responsibility to concrete candidate experience.”</p>
+<p>— Opus 4.6 medium, <code>argument.rationale</code></p>
+</blockquote>
+<blockquote>
+<p>“it does not fully marshal the best available evidence for discovery/user-research and prioritization aspects of the job.”</p>
+<p>— GPT-5.4 high, <code>argument.rationale</code></p>
+</blockquote>
+<h3 id="how-acceptable-the-product-owner-framing-is" tabindex="-1"><a class="observablehq-header-anchor" href="#how-acceptable-the-product-owner-framing-is">How acceptable the Product Owner framing is</a></h3>
+<p>One review treats the Product Owner framing as a common clarification or strong alignment signal, while another says some backlog-ownership wording goes beyond the source material.</p>
+<blockquote>
+<p>“though the parenthetical framing is a common practice to clarify functional role.”</p>
+<p>— Opus 4.6 medium, <code>comments[1]</code></p>
+</blockquote>
+<blockquote>
+<p>“The Charter bullets also strengthen some claims beyond the source, e.g., 'Owned the product backlog' and 'reducing implementation churn,' where the source more cautiously describes story writing, refinement, and cross-team support.”</p>
+<p>— GPT-5.4 high, <code>grounding.evidence</code></p>
+</blockquote>
+<details>
+<summary>Original numeric telemetry (not used to select findings)</summary>
+<table>
+<thead>
+<tr>
+<th>Source review</th>
+<th style="text-align:right">Basics</th>
+<th style="text-align:right">Writing</th>
+<th style="text-align:right">Argument</th>
+<th style="text-align:right">Grounding</th>
+<th style="text-align:right">Keywords</th>
+<th style="text-align:right">Overall</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Opus 4.6 medium</td>
+<td style="text-align:right">1.0</td>
+<td style="text-align:right">1.0</td>
+<td style="text-align:right">1.0</td>
+<td style="text-align:right">0.5</td>
+<td style="text-align:right">0.5</td>
+<td style="text-align:right">0.5</td>
+</tr>
+<tr>
+<td>GPT-5.4 high</td>
+<td style="text-align:right">1.0</td>
+<td style="text-align:right">1.0</td>
+<td style="text-align:right">0.5</td>
+<td style="text-align:right">0.0</td>
+<td style="text-align:right">0.0</td>
+<td style="text-align:right">0.5</td>
+</tr>
+</tbody>
+</table>
+</details>
+<hr>
+<p><a href="./mistargeted">← Previous case</a> · <a href="./">All cases</a> · <a href="./credential-trap">Next case →</a></p>
+</main>
+</div>
+</body>
+</html>

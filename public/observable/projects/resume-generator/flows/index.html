@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.4">
+<base href="/observable/projects/resume-generator/flows/">
+<title>Résumé Generation Flows | juliusm.com</title>
+
+<link rel="preload" as="style" href="../../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.87b41aae.css">
+<script type="module">
+
+import "../../../_observablehq/client.5d43dcff.js";
+
+</script>
+<script src="/observable/_import/jay-standalone.js" defer></script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="../../../">juliusm.com</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link"><a href="../../">Projects</a></li>
+    <li class="observablehq-link"><a href="../../llm-fundamentals/">LLM Fundamentals</a></li>
+    <li class="observablehq-link"><a href="../">Resume Generator</a></li>
+    <li class="observablehq-link"><a href="../../data-playground/">Data Playground</a></li>
+    <li class="observablehq-link"><a href="../../site-chatbot/">Site Design and RAG Chatbot Integration</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<header id="observablehq-header">
+<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><div class="portfolio-header-actions"><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="/consulting/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/consulting/');">Consulting</a><a class="portfolio-nav-link" href="/resume/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav><button class="portfolio-theme-control" type="button" data-theme-control="" data-theme-preference="system"><span class="portfolio-theme-control__icon" aria-hidden="true"></span><span data-theme-label="">System</span></button></div></div><script>(function(){
+        const storageKey = 'juliusm-theme';
+        const modes = ['system', 'dark', 'light'];
+        const labels = {system: 'System', dark: 'Dark', light: 'Light'};
+        const metaColors = {dark: '#0b1017', light: '#f5f7f3'};
+        const media = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+        const mount = window.location.pathname.startsWith('/observable') ? '/observable' : '';
+        const path = window.location.pathname.replace(/^\/observable(?=\/|$)/,'').replace(/\/index\.html$/,'/');
+        const normalized = path.endsWith('/') ? path : path + '/';
+        const slot = document.getElementById('portfolio-current-project-slot');
+
+        function readThemePreference(){
+          try {
+            const stored = window.localStorage.getItem(storageKey);
+            if (modes.includes(stored)) return stored;
+          } catch {
+            return 'system';
+          }
+          return 'system';
+        }
+
+        function resolveThemePreference(preference){
+          if (preference === 'light' || (preference === 'system' && media && media.matches)) return 'light';
+          return 'dark';
+        }
+
+        function nextThemePreference(preference){
+          return modes[(modes.indexOf(preference) + 1) % modes.length] || 'system';
+        }
+
+        function updateThemeControls(preference, resolved){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            const next = nextThemePreference(preference);
+            control.dataset.themePreference = preference;
+            control.dataset.themeResolved = resolved;
+            control.setAttribute('aria-label', 'Theme: ' + labels[preference] + '. Switch to ' + labels[next] + '.');
+            control.setAttribute('title', 'Theme: ' + labels[preference]);
+            const label = control.querySelector('[data-theme-label]');
+            if (label) label.textContent = labels[preference];
+          });
+        }
+
+        function applyThemePreference(preference, persist){
+          const normalizedPreference = modes.includes(preference) ? preference : 'system';
+          const resolved = resolveThemePreference(normalizedPreference);
+          document.documentElement.dataset.theme = normalizedPreference;
+          document.documentElement.dataset.themeResolved = resolved;
+          const meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', metaColors[resolved]);
+          if (persist) {
+            try {
+              window.localStorage.setItem(storageKey, normalizedPreference);
+            } catch {}
+          }
+          updateThemeControls(normalizedPreference, resolved);
+        }
+
+        function bindThemeControls(){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            if (control.dataset.themeBound === 'true') return;
+            control.dataset.themeBound = 'true';
+            control.addEventListener('click', function(){
+              applyThemePreference(nextThemePreference(readThemePreference()), true);
+            });
+          });
+          applyThemePreference(readThemePreference(), false);
+        }
+
+        applyThemePreference(readThemePreference(), false);
+        bindThemeControls();
+        if (media) media.addEventListener('change', function(){
+          if (readThemePreference() === 'system') applyThemePreference('system', false);
+        });
+        window.addEventListener('storage', function(event){
+          if (event.key === storageKey) applyThemePreference(readThemePreference(), false);
+        });
+
+        function navigate(target){
+          window.location.assign(window.location.origin + target);
+        }
+
+        function makeNavLink(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-nav-link';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        function makeBreadcrumbSeparator(){
+          const sep = document.createElement('span');
+          sep.className = 'portfolio-breadcrumb-separator';
+          sep.setAttribute('aria-hidden', 'true');
+          sep.textContent = '›';
+          return sep;
+        }
+
+        function makeProjectItem(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-project-item';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        if (slot) {
+          const projectMatch = normalized.match(/^\/projects\/([^/]+)\//);
+          if (projectMatch) {
+            const slug = projectMatch[1];
+            slot.appendChild(makeBreadcrumbSeparator());
+            if (slug === 'llm-fundamentals') {
+              const details = document.createElement('details');
+              details.id = 'portfolio-current-project-menu';
+              details.className = 'portfolio-project-menu';
+
+              const summary = document.createElement('summary');
+              summary.className = 'portfolio-nav-link portfolio-project-toggle';
+              summary.textContent = 'LLM Fundamentals';
+              details.appendChild(summary);
+
+              const dropdown = document.createElement('div');
+              dropdown.className = 'portfolio-project-dropdown';
+              const items = [
+                ['Introduction', '/projects/llm-fundamentals/'],
+                ['Architecture and Expected Performance Analysis', '/projects/llm-fundamentals/perf-expected/'],
+                ['Benchmarks and Empirical Performance Analysis', '/projects/llm-fundamentals/perf-empirical/'],
+                ['Nvidia CUDA Nsys Trace Analysis', '/projects/llm-fundamentals/nsys/'],
+                ['Nsys GPU Trace Viewer', '/projects/llm-fundamentals/nsys-viewer/'],
+                ['Learning Parameter Sweeps', '/projects/llm-fundamentals/optimizer-sweep/'],
+                ['Architectural Variations (Ablations)', '/projects/llm-fundamentals/ablations/']
+              ];
+              for (const [label, target] of items) {
+                dropdown.appendChild(makeProjectItem(label, mount + target));
+              }
+              details.appendChild(dropdown);
+              slot.appendChild(details);
+
+              document.addEventListener('click', function(event){
+                if (!details.hasAttribute('open')) return;
+                if (!details.contains(event.target)) details.removeAttribute('open');
+              });
+              document.addEventListener('keydown', function(event){
+                if (event.key === 'Escape') details.removeAttribute('open');
+              });
+            } else if (slug === 'resume-generator') {
+              slot.appendChild(makeNavLink('Resume Generator', mount + '/projects/resume-generator/'));
+            } else {
+              const labels = {
+                'resume-generator': 'Resume Generator',
+                'data-playground': 'Data Playground',
+                'site-chatbot': 'Site Design and RAG Chatbot Integration'
+              };
+              const fallback = slug
+                .split('-')
+                .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+                .join(' ');
+              slot.appendChild(makeNavLink(labels[slug] || fallback, mount + '/projects/' + slug + '/'));
+            }
+          }
+        }
+
+        for (const id of ['observablehq-sidebar-toggle', 'observablehq-sidebar-backdrop', 'observablehq-sidebar']) {
+          const node = document.getElementById(id);
+          if (node) node.remove();
+        }
+      })();</script>
+</header>
+<aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
+<nav>
+<div>Contents</div>
+<ol>
+<li class="observablehq-secondary-link"><a href="#the-progression-at-a-glance">The progression at a glance</a></li>
+<li class="observablehq-secondary-link"><a href="#direct-and-prose-first-flows">Direct and prose-first flows</a></li>
+<li class="observablehq-secondary-link"><a href="#decomposed-v3-flows">Decomposed V3 flows</a></li>
+<li class="observablehq-secondary-link"><a href="#structured-v3-models-write-code-assembles">Structured V3: models write, code assembles</a></li>
+<li class="observablehq-secondary-link"><a href="#what-the-deterministic-path-actually-does">What the deterministic path actually does</a></li>
+<li class="observablehq-secondary-link"><a href="#decision-ownership">Decision ownership</a></li>
+<li class="observablehq-secondary-link"><a href="#registered-generation-versions">Registered generation versions</a></li>
+</ol>
+</nav>
+</aside>
+<main id="observablehq-main" class="observablehq">
+<h1 id="resume-generation-flows" tabindex="-1"><a class="observablehq-header-anchor" href="#resume-generation-flows">Résumé generation flows</a></h1>
+<p>The generator has evolved from one model writing an entire résumé to a structured pipeline in which models still make the judgment calls, but code owns identity, attribution, ordering, and document assembly. This page maps the generation flows currently implemented in <code>resume-lambda</code>, with special attention to where deterministic processing replaces prompt compliance.</p>
+<p>This is deliberately a generation-architecture view. It leaves out deployment, job execution, batching, and caching.</p>
+<div class="flow-legend" aria-label="Flow diagram legend">
+  <span><span class="flow-badge flow-badge--model">Model</span> judgment or prose generation</span>
+  <span><span class="flow-badge flow-badge--code">Code</span> deterministic transformation or validation</span>
+  <span><span class="flow-badge flow-badge--hybrid">Model + code</span> model output checked against canonical data</span>
+</div>
+<h2 id="the-progression-at-a-glance" tabindex="-1"><a class="observablehq-header-anchor" href="#the-progression-at-a-glance">The progression at a glance</a></h2>
+<table>
+<thead>
+<tr>
+<th>Family</th>
+<th>Core idea</th>
+<th>Principal trade-off</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>V1</strong></td>
+<td>One model reads the raw inputs and writes the finished résumé.</td>
+<td>Simple, but the prompt is responsible for strategy, evidence, facts, prose, and formatting at once.</td>
+</tr>
+<tr>
+<td><strong>V2 alpha / gamma</strong></td>
+<td>A strategist produces a brief and evidence plan; a composer writes from it.</td>
+<td>Better separation of planning and writing, but the composer still emits the whole document.</td>
+</tr>
+<tr>
+<td><strong>V2 beta experiments</strong></td>
+<td>Add critics, revision loops, or parallel specialist passes around composition.</td>
+<td>More chances to catch weak work, with more model-mediated state and reconciliation.</td>
+</tr>
+<tr>
+<td><strong>V3 classic</strong></td>
+<td>Decompose the job, mine evidence per requirement, select globally, then compose.</td>
+<td>Much better evidence coverage, but the final Markdown still belongs to a model.</td>
+</tr>
+<tr>
+<td><strong>V3 structured</strong></td>
+<td>Build canonical source and evidence records, ask for cited prose only, then render in code.</td>
+<td>The strongest provenance and formatting guarantees, at the cost of a stricter data contract.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="direct-and-prose-first-flows" tabindex="-1"><a class="observablehq-header-anchor" href="#direct-and-prose-first-flows">Direct and prose-first flows</a></h2>
+<h3 id="v1-single-pass-generation" tabindex="-1"><a class="observablehq-header-anchor" href="#v1-single-pass-generation">V1: single-pass generation</a></h3>
+<ol class="flow-track">
+  <li class="flow-step"><span class="flow-badge flow-badge--model">Model</span><strong>Generate résumé</strong><small>Candidate history + job description + full format prompt</small></li>
+  <li class="flow-step"><span class="flow-badge flow-badge--code">Code</span><strong>Sanitize output</strong><small>Strip fences, tool scaffolding, and leading chatter</small></li>
+  <li class="flow-step"><span class="flow-badge flow-badge--code">Code</span><strong>Lint</strong><small>Record structural and candidate-history defects</small></li>
+</ol>
+<p>V1 is the baseline. One request chooses the content, writes the prose, and emits Power Markdown. Code trims provider scaffolding and checks the result, but it does not constrain the model through an intermediate evidence representation.</p>
+<h3 id="v2-alpha-and-gamma-plan-then-compose" tabindex="-1"><a class="observablehq-header-anchor" href="#v2-alpha-and-gamma-plan-then-compose">V2 alpha and gamma: plan, then compose</a></h3>
+<ol class="flow-track">
+  <li class="flow-step"><span class="flow-badge flow-badge--model">Model</span><strong>Strategy + evidence</strong><small>Analyze the role and decide what candidate evidence matters</small></li>
+  <li class="flow-step"><span class="flow-badge flow-badge--model">Model</span><strong>Compose</strong><small>Write the résumé from the intermediate artifacts</small></li>
+  <li class="flow-step"><span class="flow-badge flow-badge--code">Code</span><strong>Normalize + lint</strong><small>Repair mechanics and check blocking structure</small></li>
+</ol>
+<p>Alpha established the two-stage split. Gamma keeps that topology but restores stronger writing rules: write rather than transcribe the evidence notes, vary which facet of recurring flagship work leads, avoid worn canonical phrases, and keep titles defensible. The gated gamma flow then runs the same deterministic format checks used elsewhere.</p>
+<p>The V2 beta family explores alternate control structures around prose-first composition:</p>
+<ul>
+<li><strong>Single stage:</strong> the direct baseline with the newer compose contract.</li>
+<li><strong>Generator–critic:</strong> compose, score the résumé, and revise until accepted or the retry cap is reached.</li>
+<li><strong>Cyclic serial:</strong> critique strategy, then evidence, then the résumé; rejected planning stages regenerate upstream artifacts.</li>
+<li><strong>Parallel custom:</strong> collect evidence from role-alignment, technical-depth, and risk-gap perspectives; compose once; then run truthfulness, tailoring, and writing revisions before reconciliation.</li>
+</ul>
+<p>These flows can improve a model-authored draft, but critics and revisers still operate on prose or prose-like artifacts. They do not create a hard provenance boundary.</p>
+<h2 id="decomposed-v3-flows" tabindex="-1"><a class="observablehq-header-anchor" href="#decomposed-v3-flows">Decomposed V3 flows</a></h2>
+<p>V3 changes the unit of planning. Instead of asking one strategist to solve the whole job description, it decomposes the role into independently searchable desired attributes and runs an evidence miner for each.</p>
+<ol class="flow-track">
+  <li class="flow-step"><span class="flow-badge flow-badge--model">Model</span><strong>Decompose JD</strong><small>Role-level picture plus desired attributes</small></li>
+  <li class="flow-step"><span class="flow-badge flow-badge--model">Model</span><strong>Mine per attribute</strong><small>One evidence branch for each requirement</small></li>
+  <li class="flow-step"><span class="flow-badge flow-badge--model">Model</span><strong>Winnow</strong><small>Deduplicate and select a global evidence plan</small></li>
+  <li class="flow-step"><span class="flow-badge flow-badge--model">Model</span><strong>Compose Markdown</strong><small>Write the complete Power-Markdown document</small></li>
+  <li class="flow-step"><span class="flow-badge flow-badge--code">Code</span><strong>Format gate + lint</strong><small>Normalize mechanics and detect blocking defects</small></li>
+</ol>
+<p>The standard V3 graph uses all four model stages. The fused variant combines winnowing and composition into one final call. The veracity-checked variant inserts a claim audit after composition and before the format guardrails. That audit is observational—it records whether the draft's claims are supported, but it is itself a model judgment rather than a deterministic proof.</p>
+<h2 id="structured-v3-models-write-code-assembles" tabindex="-1"><a class="observablehq-header-anchor" href="#structured-v3-models-write-code-assembles">Structured V3: models write, code assembles</a></h2>
+<p>The structured graphs keep V3's job decomposition and per-attribute search, but replace free-form evidence and document generation with canonical records and validated JSON.</p>
+<ol class="flow-track flow-track--structured">
+  <li class="flow-step"><span class="flow-badge flow-badge--code">Code</span><strong>Normalize sources</strong><small>Stable source references and canonical identity</small></li>
+  <li class="flow-step"><span class="flow-badge flow-badge--model">Model</span><strong>Decompose JD</strong><small>Ranked requirements and narrative strategy</small></li>
+  <li class="flow-step"><span class="flow-badge flow-badge--hybrid">Model + code</span><strong>Extract passages</strong><small>Exact quotes, then source-span validation</small></li>
+  <li class="flow-step"><span class="flow-badge flow-badge--hybrid">Model + code</span><strong>Select evidence</strong><small>Choose IDs, then materialize immutable records</small></li>
+  <li class="flow-step"><span class="flow-badge flow-badge--code">Code</span><strong>Assemble plan</strong><small>Canonical role containers and ordering</small></li>
+  <li class="flow-step"><span class="flow-badge flow-badge--model">Model</span><strong>Rewrite</strong><small>Cited summary, context, bullets, skills, and functional titles</small></li>
+  <li class="flow-step"><span class="flow-badge flow-badge--code">Code</span><strong>Validate + render</strong><small>Canonical metadata and Power Markdown</small></li>
+  <li class="flow-step"><span class="flow-badge flow-badge--code">Code</span><strong>Normalize + lint</strong><small>Final deterministic guardrails</small></li>
+</ol>
+<p>There are three structured variants:</p>
+<ul>
+<li><strong>Structured budgeted (<code>main/15</code>)</strong> caps extraction, uses a model to select immutable evidence IDs, and targets a bounded résumé.</li>
+<li><strong>Structured retain-all (<code>main/16</code>)</strong> keeps every validated, placeable evidence record and skips the model winnow.</li>
+<li><strong>V3 beta (<code>main/19</code>)</strong> uses the budgeted structured flow but gives the rewrite stage gamma's stronger compose guidance. The model still returns JSON prose and evidence-backed parenthetical titles; it never owns the roster or final markup.</li>
+</ul>
+<h2 id="what-the-deterministic-path-actually-does" tabindex="-1"><a class="observablehq-header-anchor" href="#what-the-deterministic-path-actually-does">What the deterministic path actually does</a></h2>
+<p>“Structured” does not mean the model has no discretion. It means model discretion is confined to typed, cited fields that code can reject or safely render.</p>
+<h3 id="1-build-a-canonical-source-catalog" tabindex="-1"><a class="observablehq-header-anchor" href="#1-build-a-canonical-source-catalog">1. Build a canonical source catalog</a></h3>
+<p>Candidate YAML is parsed into records with stable references such as <code>experience[0]</code>, <code>projects[2]</code>, and <code>education[1]</code>. Code preserves the original ordinal and canonical display identity—actual title, employer, dates, location, project name, or credential. Roles at the same company remain separate records.</p>
+<h3 id="2-validate-exact-evidence" tabindex="-1"><a class="observablehq-header-anchor" href="#2-validate-exact-evidence">2. Validate exact evidence</a></h3>
+<p>An evidence miner names a source field and returns one to three exact excerpts. Code resolves each excerpt back to the canonical source text, tolerating whitespace-only formatting differences but rejecting paraphrases, unknown references, wrong source types, invalid project-to-role destinations, and conflicting parent assignments.</p>
+<p>Accepted evidence receives a stable ID derived from its source, destination, field offsets, and text. If multiple miners find the same passage, code deduplicates it and merges the attributes it supports.</p>
+<h3 id="3-materialize-selection-by-id" tabindex="-1"><a class="observablehq-header-anchor" href="#3-materialize-selection-by-id">3. Materialize selection by ID</a></h3>
+<p>In the budgeted flow, the selector can choose evidence IDs, coverage, and a recommended level of detail. It cannot rewrite the evidence. Code looks up every selected ID in the canonical catalog, rejects unknown or duplicate IDs, and carries forward the immutable source spans and destination role.</p>
+<p>The retain-all flow makes this decision deterministically: every validated, placeable record is kept, direct and adjacent evidence are bucketed by strength, and unplaced evidence is omitted.</p>
+<h3 id="4-assemble-canonical-role-containers" tabindex="-1"><a class="observablehq-header-anchor" href="#4-assemble-canonical-role-containers">4. Assemble canonical role containers</a></h3>
+<p>Code groups retained evidence under its validated destination role. The included role set therefore follows selected evidence, not a model-generated roster. Each container receives canonical metadata from the source catalog, and the role list is sorted by the source ordinal. Education candidates are built the same way.</p>
+<p>Before the writing call, the full source catalog is reduced to a writer plan containing only the selected evidence, role identities, role-specific directives, job strategy, and length target. Unselected narrative is not available for opportunistic mining.</p>
+<h3 id="5-constrain-and-validate-the-rewrite" tabindex="-1"><a class="observablehq-header-anchor" href="#5-constrain-and-validate-the-rewrite">5. Constrain and validate the rewrite</a></h3>
+<p>The writer returns JSON containing:</p>
+<ul>
+<li>a cited summary;</li>
+<li>exactly one object for each supplied role;</li>
+<li>an evidence-backed parenthetical functional title for each role;</li>
+<li>cited role context and bullets;</li>
+<li>cited skills; and</li>
+<li>selected education references.</li>
+</ul>
+<p>Validation rejects missing, duplicated, or invented roles; unknown evidence; evidence moved between jobs; uncited titles or context; evidence reused across bullets; unsupported skills; and invalid or omitted required education. The validator then restores canonical role and education order regardless of the order returned by the model.</p>
+<h3 id="6-render-canonical-metadata-in-code" tabindex="-1"><a class="observablehq-header-anchor" href="#6-render-canonical-metadata-in-code">6. Render canonical metadata in code</a></h3>
+<p>The renderer writes the header, sections, experience containers, skill markup, and education markup. Actual titles, employers, dates, locations, contact data, and section structure come from the canonical plan. Only validated prose and the cited parenthetical title come from the model. Authored text is flattened to plain text and HTML-escaped before insertion.</p>
+<h3 id="7-normalize-and-lint-the-result" tabindex="-1"><a class="observablehq-header-anchor" href="#7-normalize-and-lint-the-result">7. Normalize and lint the result</a></h3>
+<p>The normalizer performs mechanical repairs: removing code fences and preambles, reconstructing a missing header from canonical candidate data, standardizing headings and bullet markers, fixing common Power-Markdown punctuation, balancing indentation, and closing a final missing <code>div</code> when safe.</p>
+<p>The format gate checks defects that mechanical rewriting cannot safely infer, including an empty document, unbalanced containers, unresolved placeholders, missing employment history, missing role titles or dates, a missing header or contact block, and missing required sections. Model-authored flows may receive one narrowly scoped format-repair pass. Structured flows do not: once code renders the document, a failed gate proceeds to lint as a visible defect rather than handing canonical markup back to a model.</p>
+<h2 id="decision-ownership" tabindex="-1"><a class="observablehq-header-anchor" href="#decision-ownership">Decision ownership</a></h2>
+<table>
+<thead>
+<tr>
+<th>Models decide</th>
+<th>Code decides</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Which job requirements matter most</td>
+<td>Stable source references and source identity</td>
+</tr>
+<tr>
+<td>Which validated evidence best supports the target role</td>
+<td>Whether evidence is verbatim and correctly attributed</td>
+</tr>
+<tr>
+<td>Narrative angle and emphasis</td>
+<td>Which role each evidence record is allowed to support</td>
+</tr>
+<tr>
+<td>Summary, context, bullet, and skill wording</td>
+<td>Actual titles, employers, dates, locations, and contact data</td>
+</tr>
+<tr>
+<td>Evidence-backed parenthetical functional titles</td>
+<td>Role containers derived from retained evidence, and canonical ordering</td>
+</tr>
+<tr>
+<td>In non-structured graphs, the complete document</td>
+<td>In structured graphs, final Power-Markdown markup</td>
+</tr>
+</tbody>
+</table>
+<h2 id="registered-generation-versions" tabindex="-1"><a class="observablehq-header-anchor" href="#registered-generation-versions">Registered generation versions</a></h2>
+<table>
+<thead>
+<tr>
+<th>Graph reference</th>
+<th>Flow</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>main/1</code></td>
+<td>V1 single pass + deterministic lint</td>
+</tr>
+<tr>
+<td><code>main/2</code>, <code>main/7</code></td>
+<td>V2 alpha two-stage; <code>main/7</code> adds terminal lint</td>
+</tr>
+<tr>
+<td><code>main/3</code>, <code>main/8</code></td>
+<td>V2 beta single-stage; <code>main/8</code> adds lint</td>
+</tr>
+<tr>
+<td><code>main/4</code>, <code>main/9</code></td>
+<td>V2 beta generator–critic; <code>main/9</code> adds lint</td>
+</tr>
+<tr>
+<td><code>main/5</code>, <code>main/10</code></td>
+<td>V2 beta cyclic strategy/evidence/resume critics; <code>main/10</code> adds lint</td>
+</tr>
+<tr>
+<td><code>main/6</code>, <code>main/11</code></td>
+<td>V2 beta parallel evidence and revision; <code>main/11</code> adds lint</td>
+</tr>
+<tr>
+<td><code>main/12</code></td>
+<td>V3 decomposition, miners, winnow, compose, and format guardrails</td>
+</tr>
+<tr>
+<td><code>main/13</code></td>
+<td>V3 with fused winnow and compose</td>
+</tr>
+<tr>
+<td><code>main/14</code></td>
+<td>V3 with a post-compose claim audit</td>
+</tr>
+<tr>
+<td><code>main/15</code></td>
+<td>Structured budgeted V3</td>
+</tr>
+<tr>
+<td><code>main/16</code></td>
+<td>Structured retain-all V3</td>
+</tr>
+<tr>
+<td><code>main/17</code>, <code>main/18</code></td>
+<td>V2 gamma serial; <code>main/18</code> adds the format gate and lint</td>
+</tr>
+<tr>
+<td><code>main/19</code></td>
+<td>V3 beta: structured budgeted flow with gamma-guided prose</td>
+</tr>
+</tbody>
+</table>
+<p><a href="../">Back to the Résumé Generator overview</a></p>
+<style>
+.flow-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  margin: 1.25rem 0 1.75rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--theme-foreground-faintest);
+  border-radius: var(--bridge-radius);
+  background: var(--surface-2);
+  color: var(--theme-foreground-muted);
+  font-size: 0.9rem;
+}
+.flow-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.flow-badge {
+  display: inline-flex;
+  width: fit-content;
+  padding: 0.18rem 0.48rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.045em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+.flow-badge--model {
+  color: #fff;
+  background: #7455c3;
+}
+.flow-badge--code {
+  color: #fff;
+  background: #23766f;
+}
+.flow-badge--hybrid {
+  color: #1d2330;
+  background: #d7a83d;
+}
+.flow-track {
+  display: flex;
+  gap: 1.65rem;
+  margin: 1.15rem 0 1.65rem;
+  padding: 0.2rem 0 0.65rem;
+  overflow-x: auto;
+  list-style: none;
+}
+.flow-step {
+  position: relative;
+  display: grid;
+  flex: 1 0 10.5rem;
+  align-content: start;
+  gap: 0.5rem;
+  min-height: 8.4rem;
+  margin: 0;
+  padding: 0.9rem;
+  border: 1px solid var(--theme-foreground-faintest);
+  border-radius: var(--bridge-radius);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--surface-2) 82%, transparent), var(--surface-glass));
+  box-shadow: var(--shadow-card);
+}
+.flow-step:not(:last-child)::after {
+  position: absolute;
+  top: 50%;
+  right: -1.25rem;
+  content: "→";
+  color: var(--theme-foreground-muted);
+  font-size: 1.15rem;
+  transform: translateY(-50%);
+}
+.flow-step strong {
+  line-height: 1.25;
+}
+.flow-step small {
+  color: var(--theme-foreground-muted);
+  font-size: 0.79rem;
+  line-height: 1.45;
+}
+.flow-track--structured .flow-step {
+  flex-basis: 10rem;
+}
+@media (max-width: 700px) {
+  .flow-track {
+    display: grid;
+    gap: 1.45rem;
+    overflow: visible;
+  }
+  .flow-step {
+    min-height: 0;
+  }
+  .flow-step:not(:last-child)::after {
+    top: auto;
+    right: 50%;
+    bottom: -1.2rem;
+    content: "↓";
+    transform: translateX(50%);
+  }
+}
+</style>
+</main>
+</div>
+</body>
+</html>

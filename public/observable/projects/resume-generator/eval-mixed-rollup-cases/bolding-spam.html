@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.4">
+<base href="/observable/projects/resume-generator/eval-mixed-rollup-cases/bolding-spam.html">
+<title>Bolding · spam | juliusm.com</title>
+
+<link rel="preload" as="style" href="../../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.87b41aae.css">
+<script type="module">
+
+import "../../../_observablehq/client.5d43dcff.js";
+
+</script>
+<script src="/observable/_import/jay-standalone.js" defer></script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="../../../">juliusm.com</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link"><a href="../../">Projects</a></li>
+    <li class="observablehq-link"><a href="../../llm-fundamentals/">LLM Fundamentals</a></li>
+    <li class="observablehq-link"><a href="../">Resume Generator</a></li>
+    <li class="observablehq-link"><a href="../../data-playground/">Data Playground</a></li>
+    <li class="observablehq-link"><a href="../../site-chatbot/">Site Design and RAG Chatbot Integration</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<header id="observablehq-header">
+<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><div class="portfolio-header-actions"><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="/consulting/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/consulting/');">Consulting</a><a class="portfolio-nav-link" href="/resume/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav><button class="portfolio-theme-control" type="button" data-theme-control="" data-theme-preference="system"><span class="portfolio-theme-control__icon" aria-hidden="true"></span><span data-theme-label="">System</span></button></div></div><script>(function(){
+        const storageKey = 'juliusm-theme';
+        const modes = ['system', 'dark', 'light'];
+        const labels = {system: 'System', dark: 'Dark', light: 'Light'};
+        const metaColors = {dark: '#0b1017', light: '#f5f7f3'};
+        const media = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+        const mount = window.location.pathname.startsWith('/observable') ? '/observable' : '';
+        const path = window.location.pathname.replace(/^\/observable(?=\/|$)/,'').replace(/\/index\.html$/,'/');
+        const normalized = path.endsWith('/') ? path : path + '/';
+        const slot = document.getElementById('portfolio-current-project-slot');
+
+        function readThemePreference(){
+          try {
+            const stored = window.localStorage.getItem(storageKey);
+            if (modes.includes(stored)) return stored;
+          } catch {
+            return 'system';
+          }
+          return 'system';
+        }
+
+        function resolveThemePreference(preference){
+          if (preference === 'light' || (preference === 'system' && media && media.matches)) return 'light';
+          return 'dark';
+        }
+
+        function nextThemePreference(preference){
+          return modes[(modes.indexOf(preference) + 1) % modes.length] || 'system';
+        }
+
+        function updateThemeControls(preference, resolved){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            const next = nextThemePreference(preference);
+            control.dataset.themePreference = preference;
+            control.dataset.themeResolved = resolved;
+            control.setAttribute('aria-label', 'Theme: ' + labels[preference] + '. Switch to ' + labels[next] + '.');
+            control.setAttribute('title', 'Theme: ' + labels[preference]);
+            const label = control.querySelector('[data-theme-label]');
+            if (label) label.textContent = labels[preference];
+          });
+        }
+
+        function applyThemePreference(preference, persist){
+          const normalizedPreference = modes.includes(preference) ? preference : 'system';
+          const resolved = resolveThemePreference(normalizedPreference);
+          document.documentElement.dataset.theme = normalizedPreference;
+          document.documentElement.dataset.themeResolved = resolved;
+          const meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', metaColors[resolved]);
+          if (persist) {
+            try {
+              window.localStorage.setItem(storageKey, normalizedPreference);
+            } catch {}
+          }
+          updateThemeControls(normalizedPreference, resolved);
+        }
+
+        function bindThemeControls(){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            if (control.dataset.themeBound === 'true') return;
+            control.dataset.themeBound = 'true';
+            control.addEventListener('click', function(){
+              applyThemePreference(nextThemePreference(readThemePreference()), true);
+            });
+          });
+          applyThemePreference(readThemePreference(), false);
+        }
+
+        applyThemePreference(readThemePreference(), false);
+        bindThemeControls();
+        if (media) media.addEventListener('change', function(){
+          if (readThemePreference() === 'system') applyThemePreference('system', false);
+        });
+        window.addEventListener('storage', function(event){
+          if (event.key === storageKey) applyThemePreference(readThemePreference(), false);
+        });
+
+        function navigate(target){
+          window.location.assign(window.location.origin + target);
+        }
+
+        function makeNavLink(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-nav-link';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        function makeBreadcrumbSeparator(){
+          const sep = document.createElement('span');
+          sep.className = 'portfolio-breadcrumb-separator';
+          sep.setAttribute('aria-hidden', 'true');
+          sep.textContent = '›';
+          return sep;
+        }
+
+        function makeProjectItem(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-project-item';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        if (slot) {
+          const projectMatch = normalized.match(/^\/projects\/([^/]+)\//);
+          if (projectMatch) {
+            const slug = projectMatch[1];
+            slot.appendChild(makeBreadcrumbSeparator());
+            if (slug === 'llm-fundamentals') {
+              const details = document.createElement('details');
+              details.id = 'portfolio-current-project-menu';
+              details.className = 'portfolio-project-menu';
+
+              const summary = document.createElement('summary');
+              summary.className = 'portfolio-nav-link portfolio-project-toggle';
+              summary.textContent = 'LLM Fundamentals';
+              details.appendChild(summary);
+
+              const dropdown = document.createElement('div');
+              dropdown.className = 'portfolio-project-dropdown';
+              const items = [
+                ['Introduction', '/projects/llm-fundamentals/'],
+                ['Architecture and Expected Performance Analysis', '/projects/llm-fundamentals/perf-expected/'],
+                ['Benchmarks and Empirical Performance Analysis', '/projects/llm-fundamentals/perf-empirical/'],
+                ['Nvidia CUDA Nsys Trace Analysis', '/projects/llm-fundamentals/nsys/'],
+                ['Nsys GPU Trace Viewer', '/projects/llm-fundamentals/nsys-viewer/'],
+                ['Learning Parameter Sweeps', '/projects/llm-fundamentals/optimizer-sweep/'],
+                ['Architectural Variations (Ablations)', '/projects/llm-fundamentals/ablations/']
+              ];
+              for (const [label, target] of items) {
+                dropdown.appendChild(makeProjectItem(label, mount + target));
+              }
+              details.appendChild(dropdown);
+              slot.appendChild(details);
+
+              document.addEventListener('click', function(event){
+                if (!details.hasAttribute('open')) return;
+                if (!details.contains(event.target)) details.removeAttribute('open');
+              });
+              document.addEventListener('keydown', function(event){
+                if (event.key === 'Escape') details.removeAttribute('open');
+              });
+            } else if (slug === 'resume-generator') {
+              slot.appendChild(makeNavLink('Resume Generator', mount + '/projects/resume-generator/'));
+            } else {
+              const labels = {
+                'resume-generator': 'Resume Generator',
+                'data-playground': 'Data Playground',
+                'site-chatbot': 'Site Design and RAG Chatbot Integration'
+              };
+              const fallback = slug
+                .split('-')
+                .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+                .join(' ');
+              slot.appendChild(makeNavLink(labels[slug] || fallback, mount + '/projects/' + slug + '/'));
+            }
+          }
+        }
+
+        for (const id of ['observablehq-sidebar-toggle', 'observablehq-sidebar-backdrop', 'observablehq-sidebar']) {
+          const node = document.getElementById(id);
+          if (node) node.remove();
+        }
+      })();</script>
+</header>
+<aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
+<nav>
+<div>Contents</div>
+<ol>
+<li class="observablehq-secondary-link"><a href="#findings">Findings</a></li>
+<li class="observablehq-secondary-link"><a href="#disagreements">Disagreements</a></li>
+</ol>
+</nav>
+</aside>
+<main id="observablehq-main" class="observablehq">
+<p><a href="./">← All case rollups</a></p>
+<h1 id="bolding-spam" tabindex="-1"><a class="observablehq-header-anchor" href="#bolding-spam">Bolding · spam</a></h1>
+<p>Across the reviews, the resume is seen as polished and reasonably targeted to an ML/AI role, but it has notable calibration problems, under-surfaces several core JD themes, and presents some of the strongest current engineering evidence suboptimally. The most serious concerns are unsupported/oversold framing around ML seniority and role scope, plus one reviewer’s unsupported-claim flag on "gradient checkpointing."</p>
+<p>This page is the validated second-stage synthesis of exactly two
+<code>anchored-mixed</code> reviews: GPT-5.4 high and Opus 4.6 medium. The
+synthesizer saw the reviews, not the résumé, job description, or candidate
+record. Findings therefore remain evaluator claims pending human verification.</p>
+<h2 id="findings" tabindex="-1"><a class="observablehq-header-anchor" href="#findings">Findings</a></h2>
+<h3 id="important-ml-seniority-and-charter-role-are-framed-more-strongly-than-the-source-data-supports" tabindex="-1"><a class="observablehq-header-anchor" href="#important-ml-seniority-and-charter-role-are-framed-more-strongly-than-the-source-data-supports">[IMPORTANT] ML seniority and Charter role are framed more strongly than the source data supports</a></h3>
+<p>Reviewers say the resume overstates the candidate’s ML tenure and the scope/seniority of the Charter work. The main issues cited are the "5+ years" ML framing and labeling Business Analyst work as "AI integration lead," which pushes the profile into a stronger ML-engineer narrative than the source data cleanly supports.</p>
+<p>Dimension: <code>grounding</code> · cited from 2 of 2 reviews</p>
+<blockquote>
+<p>“The summary's '5+ years' ML claim is misleading. 'AI integration lead' for a Business Analyst role is a significant overstatement.”</p>
+<p>— Opus 4.6 medium, <code>grounding.rationale</code></p>
+</blockquote>
+<blockquote>
+<p>“The candidate's ML-specific role was ~3.5 years at Wiland. The Charter role was Senior Business Analyst, not an ML engineering role. 'AI integration lead' in the Charter description is the resume's framing, not the candidate's actual title or described role.”</p>
+<p>— Opus 4.6 medium, <code>grounding.evidence</code></p>
+</blockquote>
+<blockquote>
+<p>“The summary says 'Applied ML engineer with 5+ years' and 'track record of owning ML-powered products from research through production at national scale.'”</p>
+<p>— GPT-5.4 high, <code>grounding.evidence</code></p>
+</blockquote>
+<blockquote>
+<p>“several framing choices push the candidate into a more senior ML-engineer narrative than the source data cleanly supports.”</p>
+<p>— GPT-5.4 high, <code>grounding.rationale</code></p>
+</blockquote>
+<h3 id="important-one-reviewer-flagged-an-unsupported-technical-claim-gradient-checkpointing" tabindex="-1"><a class="observablehq-header-anchor" href="#important-one-reviewer-flagged-an-unsupported-technical-claim-gradient-checkpointing">[IMPORTANT] One reviewer flagged an unsupported technical claim: "gradient checkpointing"</a></h3>
+<p>A reviewer identified a specific technical detail in the resume that does not appear in the candidate data, making it an explicit grounding problem rather than just aggressive phrasing.</p>
+<p>Dimension: <code>grounding</code> · cited from 1 of 2 reviews</p>
+<blockquote>
+<p>“'gradient checkpointing' is listed under Training Infrastructure bullet but not mentioned in the candidate data.”</p>
+<p>— Opus 4.6 medium, <code>grounding.evidence</code></p>
+</blockquote>
+<blockquote>
+<p>“'Gradient checkpointing' appears to be hallucinated — not present in candidate data.”</p>
+<p>— Opus 4.6 medium, <code>grounding.rationale</code></p>
+</blockquote>
+<h3 id="important-core-jd-themes-like-search-ranking-annotation-evaluation-and-monitoring-are-under-surfaced" tabindex="-1"><a class="observablehq-header-anchor" href="#important-core-jd-themes-like-search-ranking-annotation-evaluation-and-monitoring-are-under-surfaced">[IMPORTANT] Core JD themes like search/ranking, annotation, evaluation, and monitoring are under-surfaced</a></h3>
+<p>Both reviews say the resume is targeted to ML/AI generally, but it does not strongly connect the candidate’s evidence to several of this job’s most specific priorities. The biggest recurring gap is search/ranking/retrieval relevance, with additional underdevelopment around annotation or human-in-the-loop workflows, evaluation systems, and monitoring/observability.</p>
+<p>Dimension: <code>argument</code> · cited from 2 of 2 reviews</p>
+<blockquote>
+<p>“the Wiland experience could be better connected to search/ranking/retrieval concepts, and the annotation/evaluation pipeline experience from the JD is only loosely addressed.”</p>
+<p>— Opus 4.6 medium, <code>argument.rationale</code></p>
+</blockquote>
+<blockquote>
+<p>“The connection between audience segmentation and ranking/discovery is left implicit.”</p>
+<p>— Opus 4.6 medium, <code>argument.rationale</code></p>
+</blockquote>
+<blockquote>
+<p>“it does not strongly surface JD-specific areas like search/ranking/retrieval relevance, annotation or human-in-the-loop workflows, monitoring/observability, or mentoring”</p>
+<p>— GPT-5.4 high, <code>argument.evidence</code></p>
+</blockquote>
+<blockquote>
+<p>“some JD-relevant terms are missing or underemphasized, such as search/ranking/retrieval, monitoring, MLOps, CI/CD, annotation pipelines, and evaluation systems.”</p>
+<p>— GPT-5.4 high, <code>keywords.evidence</code></p>
+</blockquote>
+<h3 id="minor-keyword-coverage-is-only-partial-including-some-terms-the-candidate-may-be-able-to-support" tabindex="-1"><a class="observablehq-header-anchor" href="#minor-keyword-coverage-is-only-partial-including-some-terms-the-candidate-may-be-able-to-support">[MINOR] Keyword coverage is only partial, including some terms the candidate may be able to support</a></h3>
+<p>Reviewers noted several JD-relevant keywords are missing from the resume, including some that one reviewer says the candidate has at least some basis to claim. This is described as a coverage gap rather than keyword stuffing.</p>
+<p>Dimension: <code>keywords</code> · cited from 2 of 2 reviews</p>
+<blockquote>
+<p>“The resume omits TensorFlow, Scikit-learn, Spark MLlib, and XGBoost from the skills section despite the JD listing them and the candidate having XGBoost exposure via the eCornell certificate. Including XGBoost would be a free keyword win.”</p>
+<p>— Opus 4.6 medium, <code>comments[0]</code></p>
+</blockquote>
+<blockquote>
+<p>“Missing from JD requirements: TensorFlow, Scikit-learn, XGBoost (candidate has exposure via eCornell), Spark MLlib, CI/CD, monitoring, NLP, C++.”</p>
+<p>— Opus 4.6 medium, <code>keywords.evidence</code></p>
+</blockquote>
+<blockquote>
+<p>“coverage of the job’s full ATS vocabulary is only partial.”</p>
+<p>— GPT-5.4 high, <code>keywords.rationale</code></p>
+</blockquote>
+<h3 id="important-some-of-the-strongest-current-engineering-evidence-is-not-positioned-as-effectively-as-it-could-be" tabindex="-1"><a class="observablehq-header-anchor" href="#important-some-of-the-strongest-current-engineering-evidence-is-not-positioned-as-effectively-as-it-could-be">[IMPORTANT] Some of the strongest current engineering evidence is not positioned as effectively as it could be</a></h3>
+<p>The current juliusm.com work is described as strong direct ML/AI engineering evidence, but one review says it is not presented as a dated experience entry. Separately, both reviews say compressing the Charter timeline/roles reduces transparency around progression and slightly hurts credibility.</p>
+<p>Dimension: <code>basics</code> · cited from 2 of 2 reviews</p>
+<blockquote>
+<p>“the current juliusm.com work from 'Oct 2025 – Present' in the candidate data is not presented as a dated experience entry”</p>
+<p>— GPT-5.4 high, <code>basics.evidence</code></p>
+</blockquote>
+<blockquote>
+<p>“The current juliusm.com work is some of the strongest direct evidence for an ML/AI engineering role and would be stronger as a formal experience entry rather than only projects.”</p>
+<p>— GPT-5.4 high, <code>comments[0]</code></p>
+</blockquote>
+<blockquote>
+<p>“Collapsing these is defensible but loses the promotion timeline detail that was verbally noted.”</p>
+<p>— Opus 4.6 medium, <code>comments[1]</code></p>
+</blockquote>
+<blockquote>
+<p>“Merging the Charter roles under a single 'Senior Business Analyst' heading makes the title progression less transparent and slightly weakens credibility.”</p>
+<p>— GPT-5.4 high, <code>comments[1]</code></p>
+</blockquote>
+<h3 id="minor-writing-is-generally-strong-but-there-are-minor-hype-and-phrasing-issues" tabindex="-1"><a class="observablehq-header-anchor" href="#minor-writing-is-generally-strong-but-there-are-minor-hype-and-phrasing-issues">[MINOR] Writing is generally strong, but there are minor hype and phrasing issues</a></h3>
+<p>Both reviews describe the writing as crisp overall, but they call out some inflated phrasing and one small grammar/tense issue that can undermine credibility for a careful reader.</p>
+<p>Dimension: <code>writing</code> · cited from 2 of 2 reviews</p>
+<blockquote>
+<p>“'Applied ML engineer with 5+ years spanning model development, training infrastructure, data pipelines, and production deployment' — punchy but oversold.”</p>
+<p>— Opus 4.6 medium, <code>writing.evidence</code></p>
+</blockquote>
+<blockquote>
+<p>“'Diagnosed undocumented behaviors and resolving issues' has a tense inconsistency.”</p>
+<p>— Opus 4.6 medium, <code>writing.evidence</code></p>
+</blockquote>
+<blockquote>
+<p>“A few lines read as slightly inflated or jargon-heavy for a human reviewer”</p>
+<p>— GPT-5.4 high, <code>writing.evidence</code></p>
+</blockquote>
+<h2 id="disagreements" tabindex="-1"><a class="observablehq-header-anchor" href="#disagreements">Disagreements</a></h2>
+<h3 id="how-severe-the-grounding-problems-are-and-whether-the-resume-is-ready-to-send" tabindex="-1"><a class="observablehq-header-anchor" href="#how-severe-the-grounding-problems-are-and-whether-the-resume-is-ready-to-send">How severe the grounding problems are, and whether the resume is ready to send</a></h3>
+<p>The reviews disagree materially on calibration severity. One treats the grounding issues as serious enough to require correction before sending and says the framing crosses into "indefensible territory." The other says the resume generally stays within the facts and is already a "solid, sendable resume," despite aggressive framing.</p>
+<blockquote>
+<p>“These collectively cross from aggressive framing into indefensible territory.”</p>
+<p>— Opus 4.6 medium, <code>grounding.rationale</code></p>
+</blockquote>
+<blockquote>
+<p>“the grounding issues — particularly the hallucination and the oversold framing — need correction before sending.”</p>
+<p>— Opus 4.6 medium, <code>overall.rationale</code></p>
+</blockquote>
+<blockquote>
+<p>“The resume generally stays within the facts”</p>
+<p>— GPT-5.4 high, <code>grounding.rationale</code></p>
+</blockquote>
+<blockquote>
+<p>“This is a solid, sendable resume, but there is meaningful room to improve both targeting and calibration.”</p>
+<p>— GPT-5.4 high, <code>overall.rationale</code></p>
+</blockquote>
+<details>
+<summary>Original numeric telemetry (not used to select findings)</summary>
+<table>
+<thead>
+<tr>
+<th>Source review</th>
+<th style="text-align:right">Basics</th>
+<th style="text-align:right">Writing</th>
+<th style="text-align:right">Argument</th>
+<th style="text-align:right">Grounding</th>
+<th style="text-align:right">Keywords</th>
+<th style="text-align:right">Overall</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Opus 4.6 medium</td>
+<td style="text-align:right">1.0</td>
+<td style="text-align:right">0.5</td>
+<td style="text-align:right">0.5</td>
+<td style="text-align:right">0.0</td>
+<td style="text-align:right">0.5</td>
+<td style="text-align:right">0.5</td>
+</tr>
+<tr>
+<td>GPT-5.4 high</td>
+<td style="text-align:right">0.5</td>
+<td style="text-align:right">1.0</td>
+<td style="text-align:right">0.5</td>
+<td style="text-align:right">0.5</td>
+<td style="text-align:right">0.5</td>
+<td style="text-align:right">0.5</td>
+</tr>
+</tbody>
+</table>
+</details>
+<hr>
+<p><a href="./bolding-clean">← Previous case</a> · <a href="./">All cases</a> · <a href="./salience-lead-first">Next case →</a></p>
+</main>
+</div>
+</body>
+</html>

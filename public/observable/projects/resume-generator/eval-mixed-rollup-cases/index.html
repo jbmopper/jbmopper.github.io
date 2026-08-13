@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.4">
+<base href="/observable/projects/resume-generator/eval-mixed-rollup-cases/">
+<title>Mixed-Prompt Case Rollups | juliusm.com</title>
+
+<link rel="preload" as="style" href="../../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.87b41aae.css">
+<script type="module">
+
+import "../../../_observablehq/client.5d43dcff.js";
+
+</script>
+<script src="/observable/_import/jay-standalone.js" defer></script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="../../../">juliusm.com</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link"><a href="../../">Projects</a></li>
+    <li class="observablehq-link"><a href="../../llm-fundamentals/">LLM Fundamentals</a></li>
+    <li class="observablehq-link"><a href="../">Resume Generator</a></li>
+    <li class="observablehq-link"><a href="../../data-playground/">Data Playground</a></li>
+    <li class="observablehq-link"><a href="../../site-chatbot/">Site Design and RAG Chatbot Integration</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<header id="observablehq-header">
+<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><div class="portfolio-header-actions"><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="/consulting/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/consulting/');">Consulting</a><a class="portfolio-nav-link" href="/resume/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav><button class="portfolio-theme-control" type="button" data-theme-control="" data-theme-preference="system"><span class="portfolio-theme-control__icon" aria-hidden="true"></span><span data-theme-label="">System</span></button></div></div><script>(function(){
+        const storageKey = 'juliusm-theme';
+        const modes = ['system', 'dark', 'light'];
+        const labels = {system: 'System', dark: 'Dark', light: 'Light'};
+        const metaColors = {dark: '#0b1017', light: '#f5f7f3'};
+        const media = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+        const mount = window.location.pathname.startsWith('/observable') ? '/observable' : '';
+        const path = window.location.pathname.replace(/^\/observable(?=\/|$)/,'').replace(/\/index\.html$/,'/');
+        const normalized = path.endsWith('/') ? path : path + '/';
+        const slot = document.getElementById('portfolio-current-project-slot');
+
+        function readThemePreference(){
+          try {
+            const stored = window.localStorage.getItem(storageKey);
+            if (modes.includes(stored)) return stored;
+          } catch {
+            return 'system';
+          }
+          return 'system';
+        }
+
+        function resolveThemePreference(preference){
+          if (preference === 'light' || (preference === 'system' && media && media.matches)) return 'light';
+          return 'dark';
+        }
+
+        function nextThemePreference(preference){
+          return modes[(modes.indexOf(preference) + 1) % modes.length] || 'system';
+        }
+
+        function updateThemeControls(preference, resolved){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            const next = nextThemePreference(preference);
+            control.dataset.themePreference = preference;
+            control.dataset.themeResolved = resolved;
+            control.setAttribute('aria-label', 'Theme: ' + labels[preference] + '. Switch to ' + labels[next] + '.');
+            control.setAttribute('title', 'Theme: ' + labels[preference]);
+            const label = control.querySelector('[data-theme-label]');
+            if (label) label.textContent = labels[preference];
+          });
+        }
+
+        function applyThemePreference(preference, persist){
+          const normalizedPreference = modes.includes(preference) ? preference : 'system';
+          const resolved = resolveThemePreference(normalizedPreference);
+          document.documentElement.dataset.theme = normalizedPreference;
+          document.documentElement.dataset.themeResolved = resolved;
+          const meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', metaColors[resolved]);
+          if (persist) {
+            try {
+              window.localStorage.setItem(storageKey, normalizedPreference);
+            } catch {}
+          }
+          updateThemeControls(normalizedPreference, resolved);
+        }
+
+        function bindThemeControls(){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            if (control.dataset.themeBound === 'true') return;
+            control.dataset.themeBound = 'true';
+            control.addEventListener('click', function(){
+              applyThemePreference(nextThemePreference(readThemePreference()), true);
+            });
+          });
+          applyThemePreference(readThemePreference(), false);
+        }
+
+        applyThemePreference(readThemePreference(), false);
+        bindThemeControls();
+        if (media) media.addEventListener('change', function(){
+          if (readThemePreference() === 'system') applyThemePreference('system', false);
+        });
+        window.addEventListener('storage', function(event){
+          if (event.key === storageKey) applyThemePreference(readThemePreference(), false);
+        });
+
+        function navigate(target){
+          window.location.assign(window.location.origin + target);
+        }
+
+        function makeNavLink(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-nav-link';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        function makeBreadcrumbSeparator(){
+          const sep = document.createElement('span');
+          sep.className = 'portfolio-breadcrumb-separator';
+          sep.setAttribute('aria-hidden', 'true');
+          sep.textContent = '›';
+          return sep;
+        }
+
+        function makeProjectItem(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-project-item';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        if (slot) {
+          const projectMatch = normalized.match(/^\/projects\/([^/]+)\//);
+          if (projectMatch) {
+            const slug = projectMatch[1];
+            slot.appendChild(makeBreadcrumbSeparator());
+            if (slug === 'llm-fundamentals') {
+              const details = document.createElement('details');
+              details.id = 'portfolio-current-project-menu';
+              details.className = 'portfolio-project-menu';
+
+              const summary = document.createElement('summary');
+              summary.className = 'portfolio-nav-link portfolio-project-toggle';
+              summary.textContent = 'LLM Fundamentals';
+              details.appendChild(summary);
+
+              const dropdown = document.createElement('div');
+              dropdown.className = 'portfolio-project-dropdown';
+              const items = [
+                ['Introduction', '/projects/llm-fundamentals/'],
+                ['Architecture and Expected Performance Analysis', '/projects/llm-fundamentals/perf-expected/'],
+                ['Benchmarks and Empirical Performance Analysis', '/projects/llm-fundamentals/perf-empirical/'],
+                ['Nvidia CUDA Nsys Trace Analysis', '/projects/llm-fundamentals/nsys/'],
+                ['Nsys GPU Trace Viewer', '/projects/llm-fundamentals/nsys-viewer/'],
+                ['Learning Parameter Sweeps', '/projects/llm-fundamentals/optimizer-sweep/'],
+                ['Architectural Variations (Ablations)', '/projects/llm-fundamentals/ablations/']
+              ];
+              for (const [label, target] of items) {
+                dropdown.appendChild(makeProjectItem(label, mount + target));
+              }
+              details.appendChild(dropdown);
+              slot.appendChild(details);
+
+              document.addEventListener('click', function(event){
+                if (!details.hasAttribute('open')) return;
+                if (!details.contains(event.target)) details.removeAttribute('open');
+              });
+              document.addEventListener('keydown', function(event){
+                if (event.key === 'Escape') details.removeAttribute('open');
+              });
+            } else if (slug === 'resume-generator') {
+              slot.appendChild(makeNavLink('Resume Generator', mount + '/projects/resume-generator/'));
+            } else {
+              const labels = {
+                'resume-generator': 'Resume Generator',
+                'data-playground': 'Data Playground',
+                'site-chatbot': 'Site Design and RAG Chatbot Integration'
+              };
+              const fallback = slug
+                .split('-')
+                .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+                .join(' ');
+              slot.appendChild(makeNavLink(labels[slug] || fallback, mount + '/projects/' + slug + '/'));
+            }
+          }
+        }
+
+        for (const id of ['observablehq-sidebar-toggle', 'observablehq-sidebar-backdrop', 'observablehq-sidebar']) {
+          const node = document.getElementById(id);
+          if (node) node.remove();
+        }
+      })();</script>
+</header>
+<aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
+<nav>
+<div>Contents</div>
+<ol>
+<li class="observablehq-secondary-link"><a href="#mistargeted">Mistargeted</a></li>
+<li class="observablehq-secondary-link"><a href="#skills-spam-trap">Skills-spam trap</a></li>
+<li class="observablehq-secondary-link"><a href="#credential-trap">Credential trap</a></li>
+<li class="observablehq-secondary-link"><a href="#long-and-spammy">Long and spammy</a></li>
+<li class="observablehq-secondary-link"><a href="#hollow-history">Hollow history</a></li>
+<li class="observablehq-secondary-link"><a href="#truncated-floor-check">Truncated (floor check)</a></li>
+<li class="observablehq-secondary-link"><a href="#voice-clean">Voice · clean</a></li>
+<li class="observablehq-secondary-link"><a href="#voice-imperative">Voice · imperative</a></li>
+<li class="observablehq-secondary-link"><a href="#bolding-clean">Bolding · clean</a></li>
+<li class="observablehq-secondary-link"><a href="#bolding-spam">Bolding · spam</a></li>
+<li class="observablehq-secondary-link"><a href="#salience-lead-first">Salience · lead first</a></li>
+<li class="observablehq-secondary-link"><a href="#salience-buried-lead">Salience · buried lead</a></li>
+<li class="observablehq-secondary-link"><a href="#grounding-clean">Grounding · clean</a></li>
+<li class="observablehq-secondary-link"><a href="#grounding-fabricated">Grounding · fabricated</a></li>
+<li class="observablehq-secondary-link"><a href="#pitch-calibrated">Pitch · calibrated</a></li>
+<li class="observablehq-secondary-link"><a href="#pitch-inflated">Pitch · inflated</a></li>
+</ol>
+</nav>
+</aside>
+<main id="observablehq-main" class="observablehq">
+<p><a href="../eval-mixed-rollup">← Test overview</a></p>
+<h1 id="mixed-prompt-case-rollups" tabindex="-1"><a class="observablehq-header-anchor" href="#mixed-prompt-case-rollups">Mixed-Prompt Case Rollups</a></h1>
+<p>Each page below is one validated second-stage synthesis from the
+<code>anchored-mixed</code> GPT-5.4 high and Opus 4.6 medium reviews. The pages are
+qualitative first: findings, disagreements, and verbatim sources are the main
+artifact; numeric review telemetry is collapsed at the bottom of each page.</p>
+<h2 id="mistargeted" tabindex="-1"><a class="observablehq-header-anchor" href="#mistargeted"><a href="./mistargeted">Mistargeted</a></a></h2>
+<p>Across the reviews, the resume is seen as clean, credible, and well written, but not fully targeted to this specific role. The biggest issues are the missing Microsoft/Copilot ecosystem alignment, underemphasis on change/adoption/coaching/business-case themes that the JD centers, and some calibration risk in how the candidate’s AI experience is framed.</p>
+<h2 id="skills-spam-trap" tabindex="-1"><a class="observablehq-header-anchor" href="#skills-spam-trap"><a href="./skills-spam-trap">Skills-spam trap</a></a></h2>
+<p>Reviewers consistently describe the resume as strong on backlog, requirements, and stakeholder-facing Product Owner/BA work, with clear writing and solid structure. The main issues are grounding and calibration: unsupported UX/research/tool skills, some overstated Product Owner phrasing, and thinner evidence for user research and roadmap/prioritization aspects of the JD.</p>
+<h2 id="credential-trap" tabindex="-1"><a class="observablehq-header-anchor" href="#credential-trap"><a href="./credential-trap">Credential trap</a></a></h2>
+<p>The reviews agree the resume is clean and generally targeted, but it has meaningful weaknesses: it overstates some portfolio/current-project claims, underuses role-critical evidence like SQL-in-context and RAG terminology, lacks concrete quantitative outcomes, and leans a bit more AI-engineer than analyst in its framing.</p>
+<h2 id="long-and-spammy" tabindex="-1"><a class="observablehq-header-anchor" href="#long-and-spammy"><a href="./long-and-spammy">Long and spammy</a></a></h2>
+<p>The reviews describe a well-structured, strongly targeted resume for an AI platform role, but both flag credibility problems from unsupported exact tool claims. One review also sees a more fundamental gap: the resume's Senior SWE case depends heavily on independent projects and engineering-style framing of analyst roles.</p>
+<h2 id="hollow-history" tabindex="-1"><a class="observablehq-header-anchor" href="#hollow-history"><a href="./hollow-history">Hollow history</a></a></h2>
+<p>Across the reviews, the resume is seen as generally targeted around the candidate’s strongest transformer/PyTorch work, but it leaves relevant evidence on the table and has several credibility/completeness issues. The main problems raised are omission/thin treatment of Charter AI work, unsupported or inflated phrasing in a few places, indirect coverage of key JD language around distributed training and data pipelines, and an omitted 2022 role that creates an apparent gap. Reviewers disagree on whether the resume’s grounding is acceptably calibrated and whether the writing is fully crisp versus somewhat dense.</p>
+<h2 id="truncated-floor-check" tabindex="-1"><a class="observablehq-header-anchor" href="#truncated-floor-check"><a href="./truncated">Truncated (floor check)</a></a></h2>
+<p>Both reviews say the generated resume is unusable because it was truncated after the header and partial summary, leaving out all substantive sections. The visible opening is directionally targeted to the GenAI role, but one review says it still fails to substantiate fit with concrete relevant achievements and keyword coverage, and another flags an unsupported tenure/scope claim.</p>
+<h2 id="voice-clean" tabindex="-1"><a class="observablehq-header-anchor" href="#voice-clean"><a href="./voice-clean">Voice · clean</a></a></h2>
+<p>The reviews describe a well-structured, generally well-targeted resume with strong LLM/architecture positioning, but they consistently flag calibration problems and note that the resume does not fully evidence the role's customer-facing observability-advisory expectations. They also identify smaller targeting gaps around [the company]/JD-specific terminology and one omitted engineering proof point.</p>
+<h2 id="voice-imperative" tabindex="-1"><a class="observablehq-header-anchor" href="#voice-imperative"><a href="./voice-imperative">Voice · imperative</a></a></h2>
+<p>The reviews describe a well-structured, broadly relevant resume that surfaces LLM, observability, and architecture work, but they consistently flag credibility/calibration issues, underused top-tier engineering evidence, and weaker-than-ideal positioning of [the company]-specific and PSA-style consultative experience.</p>
+<h2 id="bolding-clean" tabindex="-1"><a class="observablehq-header-anchor" href="#bolding-clean"><a href="./bolding-clean">Bolding · clean</a></a></h2>
+<p>Reviewers agree the resume is readable and directionally targeted to an ML/AI role, but they consistently flag credibility issues from overstated or unsupported claims and say it is not fully tailored to [the company]’s search-oriented ML, evaluation/monitoring, and related JD requirements.</p>
+<h2 id="bolding-spam" tabindex="-1"><a class="observablehq-header-anchor" href="#bolding-spam"><a href="./bolding-spam">Bolding · spam</a></a></h2>
+<p>Across the reviews, the resume is seen as polished and reasonably targeted to an ML/AI role, but it has notable calibration problems, under-surfaces several core JD themes, and presents some of the strongest current engineering evidence suboptimally. The most serious concerns are unsupported/oversold framing around ML seniority and role scope, plus one reviewer’s unsupported-claim flag on "gradient checkpointing."</p>
+<h2 id="salience-lead-first" tabindex="-1"><a class="observablehq-header-anchor" href="#salience-lead-first"><a href="./salience-lead-first">Salience · lead first</a></a></h2>
+<p>Reviews consistently describe a polished, well-structured resume that targets the AI, agentic, and integration parts of the role well, but they also flag material grounding problems and weak alignment to the role’s core ServiceNow dimension. Additional review-specific concerns include omission of LLM-depth evidence and underuse of strong Python/API project evidence.</p>
+<h2 id="salience-buried-lead" tabindex="-1"><a class="observablehq-header-anchor" href="#salience-buried-lead"><a href="./salience-buried-lead">Salience · buried lead</a></a></h2>
+<p>Evaluators describe the resume as polished and reasonably targeted to adjacent AI/integration work, but they consistently flag a core ServiceNow fit gap and cite grounding problems where in-progress AI workflow/evaluation work is presented as completed. One review also says the resume underuses stronger AI-engineering evidence from the candidate data.</p>
+<h2 id="grounding-clean" tabindex="-1"><a class="observablehq-header-anchor" href="#grounding-clean"><a href="./grounding-clean">Grounding · clean</a></a></h2>
+<p>The reviews agree the resume is well-structured and makes a credible Product Owner case from BA experience, but they consistently flag a meaningful targeting gap: it does not address the role's mobile application focus. Additional issues raised include underused JD-relevant source material, the missing explicit "epics" term, and one review's concern that some ownership claims and phrasing are slightly overstated or generic.</p>
+<h2 id="grounding-fabricated" tabindex="-1"><a class="observablehq-header-anchor" href="#grounding-fabricated"><a href="./grounding-fabricated">Grounding · fabricated</a></a></h2>
+<p>The reviews agree the resume is strong in targeting and writing for a Product Owner-style role, but they also agree it has blocking grounding problems: an unsupported AWS certification and materially inflated Wiland metrics. Secondary issues noted were missing some JD-specific keywords and, in one review, omission of a current role from the source data.</p>
+<h2 id="pitch-calibrated" tabindex="-1"><a class="observablehq-header-anchor" href="#pitch-calibrated"><a href="./pitch-calibrated">Pitch · calibrated</a></a></h2>
+<p>Reviews agree the resume makes a strong targeted case for the GenAI-oriented associate role, especially on LLM integration, APIs, cloud/serverless work, documentation, and security. The main improvement areas raised are calibration of the self-directed AI role and some in-progress features, missing evidence for testing/troubleshooting and transformer work, plus smaller concerns about length, a few JD keyword gaps, level fit, and some dense phrasing.</p>
+<h2 id="pitch-inflated" tabindex="-1"><a class="observablehq-header-anchor" href="#pitch-inflated"><a href="./pitch-inflated">Pitch · inflated</a></a></h2>
+<p>Across the supplied reviews, the resume is seen as strongly targeted and broadly complete for [the role], with especially good alignment on GenAI, LLM integration, APIs, cloud, documentation, and security/compliance. The main weakness is calibration: reviewers repeatedly say the resume overstates the formality, authority, or maturity of some work, especially the self-directed juliusm.com experience and a few leadership/implementation claims. Secondary issues are thinner-than-available troubleshooting/testing evidence, some dense jargon-heavy phrasing, and a few omitted or very lightly developed experience details.</p>
+</main>
+</div>
+</body>
+</html>

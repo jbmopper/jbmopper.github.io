@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.4">
+<base href="/observable/projects/resume-generator/eval-calibration.html">
+<title>The Evaluator Reads Well and Scores Badly | juliusm.com</title>
+
+<link rel="preload" as="style" href="../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.87b41aae.css">
+<script type="module">
+
+import "../../_observablehq/client.5d43dcff.js";
+
+</script>
+<script src="/observable/_import/jay-standalone.js" defer></script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="../../">juliusm.com</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link"><a href="../">Projects</a></li>
+    <li class="observablehq-link"><a href="../llm-fundamentals/">LLM Fundamentals</a></li>
+    <li class="observablehq-link"><a href="./">Resume Generator</a></li>
+    <li class="observablehq-link"><a href="../data-playground/">Data Playground</a></li>
+    <li class="observablehq-link"><a href="../site-chatbot/">Site Design and RAG Chatbot Integration</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<header id="observablehq-header">
+<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><div class="portfolio-header-actions"><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="/consulting/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/consulting/');">Consulting</a><a class="portfolio-nav-link" href="/resume/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav><button class="portfolio-theme-control" type="button" data-theme-control="" data-theme-preference="system"><span class="portfolio-theme-control__icon" aria-hidden="true"></span><span data-theme-label="">System</span></button></div></div><script>(function(){
+        const storageKey = 'juliusm-theme';
+        const modes = ['system', 'dark', 'light'];
+        const labels = {system: 'System', dark: 'Dark', light: 'Light'};
+        const metaColors = {dark: '#0b1017', light: '#f5f7f3'};
+        const media = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+        const mount = window.location.pathname.startsWith('/observable') ? '/observable' : '';
+        const path = window.location.pathname.replace(/^\/observable(?=\/|$)/,'').replace(/\/index\.html$/,'/');
+        const normalized = path.endsWith('/') ? path : path + '/';
+        const slot = document.getElementById('portfolio-current-project-slot');
+
+        function readThemePreference(){
+          try {
+            const stored = window.localStorage.getItem(storageKey);
+            if (modes.includes(stored)) return stored;
+          } catch {
+            return 'system';
+          }
+          return 'system';
+        }
+
+        function resolveThemePreference(preference){
+          if (preference === 'light' || (preference === 'system' && media && media.matches)) return 'light';
+          return 'dark';
+        }
+
+        function nextThemePreference(preference){
+          return modes[(modes.indexOf(preference) + 1) % modes.length] || 'system';
+        }
+
+        function updateThemeControls(preference, resolved){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            const next = nextThemePreference(preference);
+            control.dataset.themePreference = preference;
+            control.dataset.themeResolved = resolved;
+            control.setAttribute('aria-label', 'Theme: ' + labels[preference] + '. Switch to ' + labels[next] + '.');
+            control.setAttribute('title', 'Theme: ' + labels[preference]);
+            const label = control.querySelector('[data-theme-label]');
+            if (label) label.textContent = labels[preference];
+          });
+        }
+
+        function applyThemePreference(preference, persist){
+          const normalizedPreference = modes.includes(preference) ? preference : 'system';
+          const resolved = resolveThemePreference(normalizedPreference);
+          document.documentElement.dataset.theme = normalizedPreference;
+          document.documentElement.dataset.themeResolved = resolved;
+          const meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', metaColors[resolved]);
+          if (persist) {
+            try {
+              window.localStorage.setItem(storageKey, normalizedPreference);
+            } catch {}
+          }
+          updateThemeControls(normalizedPreference, resolved);
+        }
+
+        function bindThemeControls(){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            if (control.dataset.themeBound === 'true') return;
+            control.dataset.themeBound = 'true';
+            control.addEventListener('click', function(){
+              applyThemePreference(nextThemePreference(readThemePreference()), true);
+            });
+          });
+          applyThemePreference(readThemePreference(), false);
+        }
+
+        applyThemePreference(readThemePreference(), false);
+        bindThemeControls();
+        if (media) media.addEventListener('change', function(){
+          if (readThemePreference() === 'system') applyThemePreference('system', false);
+        });
+        window.addEventListener('storage', function(event){
+          if (event.key === storageKey) applyThemePreference(readThemePreference(), false);
+        });
+
+        function navigate(target){
+          window.location.assign(window.location.origin + target);
+        }
+
+        function makeNavLink(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-nav-link';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        function makeBreadcrumbSeparator(){
+          const sep = document.createElement('span');
+          sep.className = 'portfolio-breadcrumb-separator';
+          sep.setAttribute('aria-hidden', 'true');
+          sep.textContent = '›';
+          return sep;
+        }
+
+        function makeProjectItem(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-project-item';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        if (slot) {
+          const projectMatch = normalized.match(/^\/projects\/([^/]+)\//);
+          if (projectMatch) {
+            const slug = projectMatch[1];
+            slot.appendChild(makeBreadcrumbSeparator());
+            if (slug === 'llm-fundamentals') {
+              const details = document.createElement('details');
+              details.id = 'portfolio-current-project-menu';
+              details.className = 'portfolio-project-menu';
+
+              const summary = document.createElement('summary');
+              summary.className = 'portfolio-nav-link portfolio-project-toggle';
+              summary.textContent = 'LLM Fundamentals';
+              details.appendChild(summary);
+
+              const dropdown = document.createElement('div');
+              dropdown.className = 'portfolio-project-dropdown';
+              const items = [
+                ['Introduction', '/projects/llm-fundamentals/'],
+                ['Architecture and Expected Performance Analysis', '/projects/llm-fundamentals/perf-expected/'],
+                ['Benchmarks and Empirical Performance Analysis', '/projects/llm-fundamentals/perf-empirical/'],
+                ['Nvidia CUDA Nsys Trace Analysis', '/projects/llm-fundamentals/nsys/'],
+                ['Nsys GPU Trace Viewer', '/projects/llm-fundamentals/nsys-viewer/'],
+                ['Learning Parameter Sweeps', '/projects/llm-fundamentals/optimizer-sweep/'],
+                ['Architectural Variations (Ablations)', '/projects/llm-fundamentals/ablations/']
+              ];
+              for (const [label, target] of items) {
+                dropdown.appendChild(makeProjectItem(label, mount + target));
+              }
+              details.appendChild(dropdown);
+              slot.appendChild(details);
+
+              document.addEventListener('click', function(event){
+                if (!details.hasAttribute('open')) return;
+                if (!details.contains(event.target)) details.removeAttribute('open');
+              });
+              document.addEventListener('keydown', function(event){
+                if (event.key === 'Escape') details.removeAttribute('open');
+              });
+            } else if (slug === 'resume-generator') {
+              slot.appendChild(makeNavLink('Resume Generator', mount + '/projects/resume-generator/'));
+            } else {
+              const labels = {
+                'resume-generator': 'Resume Generator',
+                'data-playground': 'Data Playground',
+                'site-chatbot': 'Site Design and RAG Chatbot Integration'
+              };
+              const fallback = slug
+                .split('-')
+                .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+                .join(' ');
+              slot.appendChild(makeNavLink(labels[slug] || fallback, mount + '/projects/' + slug + '/'));
+            }
+          }
+        }
+
+        for (const id of ['observablehq-sidebar-toggle', 'observablehq-sidebar-backdrop', 'observablehq-sidebar']) {
+          const node = document.getElementById(id);
+          if (node) node.remove();
+        }
+      })();</script>
+</header>
+<aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
+<nav>
+<div>Contents</div>
+<ol>
+<li class="observablehq-secondary-link"><a href="#the-system-this-sits-inside">The system this sits inside</a></li>
+<li class="observablehq-secondary-link"><a href="#the-instrument">The instrument</a></li>
+<li class="observablehq-secondary-link"><a href="#the-scoring-channel-is-inert">The scoring channel is inert</a></li>
+<li class="observablehq-secondary-link"><a href="#the-reading-channel-is-live">The reading channel is live</a></li>
+<li class="observablehq-secondary-link"><a href="#what-the-union-contains">What the union contains</a></li>
+<li class="observablehq-secondary-link"><a href="#what-the-collection-step-actually-produced">What the collection step actually produced</a></li>
+<li class="observablehq-secondary-link"><a href="#the-hard-ceiling">The hard ceiling</a></li>
+<li class="observablehq-secondary-link"><a href="#what-to-expect-on-architecture-variations">What to expect on architecture variations</a></li>
+<li class="observablehq-secondary-link"><a href="#what-is-actually-missing">What is actually missing</a></li>
+<li class="observablehq-secondary-link"><a href="#verdict">Verdict</a></li>
+</ol>
+</nav>
+</aside>
+<main id="observablehq-main" class="observablehq">
+<h1 id="the-evaluator-reads-well-and-scores-badly" tabindex="-1"><a class="observablehq-header-anchor" href="#the-evaluator-reads-well-and-scores-badly">The Evaluator Reads Well and Scores Badly</a></h1>
+<p>I built a calibration set to find out whether an LLM judge could rank résumé-generation pipelines. It cannot, and for a while I read that as a failure. It was the wrong reading, because it measured the wrong output.</p>
+<p>Across 288 judgments — sixteen cases, six prompts, three frontier judges — the numeric channel is close to inert. On the set's hardest case it is <em>completely</em> inert: eighteen configurations returned the same three numbers, and no prompt moved any of them by a point. The prose those same judges wrote is a different story. The diagnosis the scores could never reach is sitting in the rationale fields of the runs that got the score wrong.</p>
+<p>Scores were never the deliverable. The evaluator feeds a collection step, and that step is where a résumé problem is supposed to become visible. So I ran it across all sixteen cases. It recovered the decisive diagnosis on the hardest case, verbatim and fully cited, for seven cents — and then showed two failure modes serious enough that it is not ready to run unattended. Both are in the wiring rather than the models.</p>
+<h2 id="the-system-this-sits-inside" tabindex="-1"><a class="observablehq-header-anchor" href="#the-system-this-sits-inside">The system this sits inside</a></h2>
+<p>A generation graph produces a résumé. A post-hoc evaluator graph (<code>resume_eval/main/1</code>) runs two independent rails over it:</p>
+<ul>
+<li><strong>Deterministic lint</strong> — truncation, structure, candidate employment titles and dates. No model, no judgment.</li>
+<li><strong>A qualitative review</strong> — six dimensions (<code>basics</code>, <code>writing</code>, <code>argument</code>, <code>grounding</code>, <code>keywords</code>, <code>overall</code>), each returning <code>{judgment, rationale, evidence}</code>, plus a summary and freeform comments.</li>
+</ul>
+<p>A single review is not the product. Downstream, <strong>finding synthesis</strong> consumes one or more reviews and compiles a findings report. It receives only evaluator output — never the résumé, job description, or candidate data — so it organizes what was said without becoming a second judge. Its contract is written directly against the failure documented below:</p>
+<blockquote>
+<p>Scan every supplied field, including summaries, rationales, evidence, and comments. <strong>A high numeric score does not cancel a problem described in prose.</strong></p>
+<p>Preserve the union of substantive findings. Do not require majority agreement and do not discard a finding because only one review instance mentions it.</p>
+<p>Merge findings only when they diagnose the same underlying problem. <strong>An omitted detail is not the same diagnosis as a whole-document targeting failure.</strong></p>
+</blockquote>
+<p>Every finding must cite a <code>review_id</code>, a field name, and a verbatim quote. The caller re-checks each quote against the source text and rejects the entire synthesis if one fails.</p>
+<p><em>(A separate veracity rail — claim decomposition and graph-based verification against candidate data — handles factual grounding. Out of scope here.)</em></p>
+<h2 id="the-instrument" tabindex="-1"><a class="observablehq-header-anchor" href="#the-instrument">The instrument</a></h2>
+<p><strong>Sixteen cases.</strong> Eleven organic pipeline outputs and five synthetic near-twins. Each twin changes exactly one thing in a real résumé — a fabricated credential, a buried lead, inflated seniority, inline keyword bolding, a summary rewritten into imperative voice — so a paired comparison isolates whether the judge perceives that defect. The organic cases test the harder thing: recognizing a bad résumé when the failure is spread across the document rather than sitting in one sentence.</p>
+<p><strong>Owner-ratified labels.</strong> Score bands on a 0–2 scale, findings the review must mention, accusations it must not make. Twenty-two findings are graded hard, eight more soft, ten forbidden accusations test discipline. Three findings are weighted <strong>core</strong> — the ones that decide whether a case was really understood.</p>
+<p><strong>Six prompts.</strong> An anchored base rubric plus reading-instruction passages in a 2×2: <em>mechanism</em> (model reading is statistical rather than sequential, and can miss placement, order, and emphasis) and <em>pressure</em> (evaluators inflate, and must move the judgment when the rationale finds a real weakness). Two later prompts fold both into single integrated passages, one neutral and one deliberately harsh.</p>
+<p><strong>A claim check.</strong> A smaller model examined each review one claim at a time, every verdict backed by a quote: did it mention the required finding, did it make a forbidden accusation. 480 graded verdicts over the four-prompt matrix.</p>
+<h2 id="the-scoring-channel-is-inert" tabindex="-1"><a class="observablehq-header-anchor" href="#the-scoring-channel-is-inert">The scoring channel is inert</a></h2>
+<p>The posting behind the mistargeted case is not an engineering role. It is an embedded, business-facing AI job: discover workflows with business teams, prioritize use cases, coach users, drive adoption, leave a department more capable after rotating out.</p>
+<p>The résumé answers a different job. Ten of its fourteen experience bullets are about systems built. None shows discovering a workflow with a business team; none shows coaching users. The summary asserts business enablement while the work history argues for an AI engineer. Not overweighted technical content — the wrong center of gravity, and exactly the judgment no linter can make.</p>
+<p>The human band puts <code>argument</code> at 0. Every judgment in the study:</p>
+<table>
+<thead>
+<tr>
+<th>judge</th>
+<th style="text-align:center">base</th>
+<th style="text-align:center">+mechanism</th>
+<th style="text-align:center">+pressure</th>
+<th style="text-align:center">+both</th>
+<th style="text-align:center">integrated</th>
+<th style="text-align:center">harsh</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Opus 4.6</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td>GPT-5.4</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td>Gemini 3.1 Pro</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">2</td>
+</tr>
+</tbody>
+</table>
+<p>Eighteen configurations. Zero variance. The <code>overall</code> score is worse than a miss: the human band is 1, and Opus and GPT both return 1 — in band. They reach a defensible bottom line through an indefensible reading. A comparison that reads only <code>overall</code> sees nothing wrong at all.</p>
+<p>It generalizes. Across 96 judgments per judge, <code>overall</code> barely moves:</p>
+<table>
+<thead>
+<tr>
+<th>judge</th>
+<th style="text-align:center">overall = 0</th>
+<th style="text-align:center">overall = 1</th>
+<th style="text-align:center">overall = 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPT-5.4</td>
+<td style="text-align:center">18%</td>
+<td style="text-align:center">82%</td>
+<td style="text-align:center"><strong>0%</strong></td>
+</tr>
+<tr>
+<td>Opus 4.6</td>
+<td style="text-align:center">19%</td>
+<td style="text-align:center">77%</td>
+<td style="text-align:center">4%</td>
+</tr>
+<tr>
+<td>Gemini 3.1 Pro</td>
+<td style="text-align:center">15%</td>
+<td style="text-align:center">29%</td>
+<td style="text-align:center">56%</td>
+</tr>
+</tbody>
+</table>
+<p>GPT-5.4 never used the top score in 96 opportunities; excluding the one truncated case, 88% of its verdicts are the same integer. Band compliance says the same thing from another angle: 30 to 40 of 64 cells — 47% to 63% — for every judge under every prompt, no trend across the six. The direction of the misses is the one useful thing the scores produce: Gemini sits 25–30 cells above band against 3–6 below in every configuration; Opus is roughly symmetric; GPT trends harsher under pressure without becoming more perceptive.</p>
+<p>Two scores do work. All eighteen configurations scored the truncated résumé <code>overall</code> 0, and all twelve claim-checked reviews named the truncation. And the grounding pair — a fake AWS certification, 6% inflated to 16%, 15× to 40× — was separated by every judge under every prompt, 18 of 18. Grounding is the one score I would gate on, because the defect is local, textual, and checkable.</p>
+<h2 id="the-reading-channel-is-live" tabindex="-1"><a class="observablehq-header-anchor" href="#the-reading-channel-is-live">The reading channel is live</a></h2>
+<p>Required-claim recall, each mention backed by a quote:</p>
+<table>
+<thead>
+<tr>
+<th>judge</th>
+<th style="text-align:center">base</th>
+<th style="text-align:center">+mechanism</th>
+<th style="text-align:center">+pressure</th>
+<th style="text-align:center">+both</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Opus 4.6</td>
+<td style="text-align:center">45%</td>
+<td style="text-align:center">55%</td>
+<td style="text-align:center">55%</td>
+<td style="text-align:center"><strong>64%</strong></td>
+</tr>
+<tr>
+<td>GPT-5.4</td>
+<td style="text-align:center">41%</td>
+<td style="text-align:center">50%</td>
+<td style="text-align:center">50%</td>
+<td style="text-align:center"><strong>59%</strong></td>
+</tr>
+<tr>
+<td>Gemini 3.1 Pro</td>
+<td style="text-align:center">18%</td>
+<td style="text-align:center">23%</td>
+<td style="text-align:center">23%</td>
+<td style="text-align:center"><strong>32%</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Opus and GPT made <strong>zero forbidden accusations</strong> in every configuration — ten opportunities each, none taken. Gemini made one or two per prompt. The same passages that leave the scores flat lift what the review says by fifteen to twenty points, and do not buy that recall with false positives.</p>
+<h2 id="what-the-union-contains" tabindex="-1"><a class="observablehq-header-anchor" href="#what-the-union-contains">What the union contains</a></h2>
+<p>If the deliverable is a findings report, the question is what an ensemble covers, not how good one review is. Coverage of the 22 hard-required findings:</p>
+<table>
+<thead>
+<tr>
+<th>review ensemble</th>
+<th style="text-align:center">required findings covered</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>best single review (Opus, +both)</td>
+<td style="text-align:center">14/22 (64%)</td>
+</tr>
+<tr>
+<td>Gemini alone, 4 prompts</td>
+<td style="text-align:center">8/22 (36%)</td>
+</tr>
+<tr>
+<td>GPT alone, 4 prompts</td>
+<td style="text-align:center">14/22 (64%)</td>
+</tr>
+<tr>
+<td>Opus alone, 4 prompts</td>
+<td style="text-align:center">15/22 (68%)</td>
+</tr>
+<tr>
+<td><strong>Opus + GPT, 8 reviews</strong></td>
+<td style="text-align:center"><strong>16/22 (73%)</strong></td>
+</tr>
+<tr>
+<td>all three judges, 12 reviews</td>
+<td style="text-align:center">16/22 (73%)</td>
+</tr>
+</tbody>
+</table>
+<p>Collection beats the best single review by nine points. Prompt variation is cheap diversity — four prompts against one model add four points, a second model adds five more.</p>
+<p>Gemini contributes nothing. Its eight findings are all already covered by Opus or GPT, so it moves ensemble coverage by zero, while importing both of the study's false accusations: union semantics inherit every claim any member makes. Opus + GPT carries 0 of 10 forbidden accusations; adding Gemini carries 2.</p>
+<p>And the core findings survive. The three core-weighted claims are exactly the whole-document failures the scores are blind to, and all three are in the union:</p>
+<table>
+<thead>
+<tr>
+<th>core finding</th>
+<th style="text-align:center">reviews that stated it</th>
+<th style="text-align:center">in Opus+GPT union</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mistargeted: technically focused, no case for the hybrid role</td>
+<td style="text-align:center">5/12</td>
+<td style="text-align:center">yes</td>
+</tr>
+<tr>
+<td>mistargeted: road-mapping and collaboration inferences never made</td>
+<td style="text-align:center">8/12</td>
+<td style="text-align:center">yes</td>
+</tr>
+<tr>
+<td>hollow history: two roles collapsed, no bullets</td>
+<td style="text-align:center">5/12</td>
+<td style="text-align:center">yes</td>
+</tr>
+</tbody>
+</table>
+<h2 id="what-the-collection-step-actually-produced" tabindex="-1"><a class="observablehq-header-anchor" href="#what-the-collection-step-actually-produced">What the collection step actually produced</a></h2>
+<p>Containing a finding is not surfacing it, so I ran the synthesis on the mistargeted case's eighteen reviews — the four-prompt matrix plus the two later prompts, all three judges, including every run that graded the case as adequate.</p>
+<p>Three configurations, and the first two are part of the result:</p>
+<table>
+<thead>
+<tr>
+<th>synthesizer</th>
+<th>outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPT-5.4-mini, low effort</td>
+<td><strong>rejected</strong> — 15 citations failed verbatim validation</td>
+</tr>
+<tr>
+<td>GPT-5.4, medium, 8192 tokens</td>
+<td>empty content (reasoning consumed the budget)</td>
+</tr>
+<tr>
+<td>GPT-5.4, medium, 16384 tokens</td>
+<td><strong>passed</strong> — 7 findings, 5 disagreements, $0.072</td>
+</tr>
+</tbody>
+</table>
+<p>The cheap configuration failed in the most useful way. Its first finding cited cleanly; everything after it paraphrased quotes into something plausible that did not appear in any review. The validator caught all fifteen and rejected the whole report rather than emitting a partly-fabricated one. Fail-closed is the right behaviour, and it means the citation contract is doing real work rather than decorating the schema.</p>
+<p>The configuration that passed returned this, third in its list, from reviews that had scored the case adequate:</p>
+<blockquote>
+<h3 id="important-narrative-leans-toward-ai-engineer-builder-more-than-embedded-business-partner" tabindex="-1"><a class="observablehq-header-anchor" href="#important-narrative-leans-toward-ai-engineer-builder-more-than-embedded-business-partner">[IMPORTANT] Narrative leans toward AI engineer/builder more than embedded business partner</a></h3>
+<p><em>Dimension: <code>argument</code> · found by 2 of 18 review instances</em></p>
+<p>— Opus 4.6 / anchored-mechanism, <code>summary</code>: "the resume reads more like an AI engineer application than [an application for the role]."</p>
+<p>— Opus 4.6 / anchored-combined, <code>summary</code>: "misses the JD's core framing as an embedded business partner and coach, instead positioning the candidate as an AI engineer/builder."</p>
+<p>— Opus 4.6 / anchored-combined, <code>overall.evidence</code>: "The argument is built around 'I build AI solutions' rather than 'I embed in teams, identify opportunities, build solutions, and leave teams more capable.'"</p>
+</blockquote>
+<p>That is the human verdict, recovered verbatim from runs that scored <code>argument</code> at 1. Alongside it the report surfaced the thin coaching and change-management evidence and the unused adoption and ROI proof — the other two things the labels require for this case.</p>
+<p><strong>It also got the ranking wrong.</strong> It marked the missing Microsoft Copilot and Power Platform keywords as the single <code>blocking</code> finding and left the targeting failure at <code>important</code>. The human verdict is the reverse: the ATS gap is real but survivable, and the targeting failure is the fatal one. The report finds the right problem and files it second.</p>
+<h3 id="then-i-ran-the-other-fifteen" tabindex="-1"><a class="observablehq-header-anchor" href="#then-i-ran-the-other-fifteen">Then I ran the other fifteen</a></h3>
+<p>One case is a demonstration. The full set is a measurement, and it is a considerably harsher one. Sixteen cases, same configuration:</p>
+<table>
+<thead>
+<tr>
+<th>outcome</th>
+<th style="text-align:center">cases</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>passed validation</td>
+<td style="text-align:center">7/16</td>
+</tr>
+<tr>
+<td>rejected</td>
+<td style="text-align:center">9/16</td>
+</tr>
+<tr>
+<td><strong>rejections caused by exactly one bad citation</strong></td>
+<td style="text-align:center"><strong>8 of 9</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The mistargeted case is in the rejected column. It passed on the standalone run and failed on the batch run under identical settings — the model misquoted a single source the second time. So the demonstration above was a lucky draw, and report-level yield on this configuration is 44%.</p>
+<p>That is not a model-capability problem. The synthesizer misquotes roughly one citation per report, and the validator is all-or-nothing at report scale: one bad quote out of twenty discards seven correct findings along with it. The granularity is wrong. Rejecting the <em>finding</em> rather than the <em>report</em> would have salvaged eight of the nine failures. The tooling also discards the raw response on rejection, so neither the good findings nor the offending quote survives for diagnosis — which is why the failing quotes are not reproduced here.</p>
+<p><strong>And the diagnosis flattens.</strong> The hollow-history case passed validation, so its report is intact. Its core finding — a three-year role represented by one sentence and no bullets, which the human bands at <code>basics</code> = 0 — does not appear. The evidence does. The first finding quotes it exactly:</p>
+<blockquote>
+<p>"the resume reduces this entire three-year role to a single sentence about being a 'technical point person.'"</p>
+</blockquote>
+<p>But it is filed under <code>argument</code> as <em>"Charter experience is compressed enough to hide relevant AI and system-design work"</em> — a content-coverage problem. The only <code>basics</code> finding in the report is <code>[minor] One omitted role creates an apparent timeline gap</code>. A structurally hollow work history has been re-diagnosed as a local omission.</p>
+<p>That is precisely the transformation the synthesis contract forbids — <em>"an omitted detail is not the same diagnosis as a whole-document targeting failure"</em> — and it is the same shape as the mistargeted case's severity inversion. Across both core cases that produced a report, the collection step recovered the evidence and then flattened the whole-document failure into a local one. It inherits the blind spot it was built to correct.</p>
+<p>The most interesting section was one I did not anticipate. Because the contract asks for contradictions rather than consensus, Gemini's inversion became visible instead of averaging away:</p>
+<blockquote>
+<p><strong>Overall targeting quality for [the role]</strong></p>
+<p>— Gemini 3.1 Pro, <code>summary</code>: "This is an exceptional resume that accurately and compellingly targets [the role]."</p>
+<p>— Opus 4.6, <code>summary</code>: "misses the JD's core framing as an embedded business partner and coach, instead positioning the candidate as an AI engineer/builder."</p>
+</blockquote>
+<p>A scoring pipeline would have averaged those into a shrug. The collection step puts them side by side and makes the disagreement the finding. That does not rescue Gemini — costing two false accusations to serve as a foil is a bad trade, and it should still be excluded — but it shows the architecture degrades gracefully when a judge is wrong, which the scoring channel does not.</p>
+<h2 id="the-hard-ceiling" tabindex="-1"><a class="observablehq-header-anchor" href="#the-hard-ceiling">The hard ceiling</a></h2>
+<p>Union is not magic. Six required findings were never produced by any of the twelve configurations: the imperative summary voice, inline keyword bolding, length-driven keyword spam and unfocused writing on the longest résumé, an irrelevant credential left in, and awkward phrasing. No collection recovers a finding no review contains.</p>
+<p>The pattern is not random. These are <em>perceptual</em> — properties of emphasis, rhythm, and visual weight rather than content. The controlled pairs measure the same wall:</p>
+<table>
+<thead>
+<tr>
+<th>pair (defect)</th>
+<th style="text-align:center">Opus 4.6</th>
+<th style="text-align:center">GPT-5.4</th>
+<th style="text-align:center">Gemini 3.1 Pro</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>grounding (fabricated facts)</td>
+<td style="text-align:center">6/6</td>
+<td style="text-align:center">6/6</td>
+<td style="text-align:center">6/6</td>
+</tr>
+<tr>
+<td>pitch (inflated seniority)</td>
+<td style="text-align:center">5/6</td>
+<td style="text-align:center">1/6</td>
+<td style="text-align:center">2/6</td>
+</tr>
+<tr>
+<td>salience (buried lead)</td>
+<td style="text-align:center">0/6</td>
+<td style="text-align:center">3/6</td>
+<td style="text-align:center">0/6</td>
+</tr>
+<tr>
+<td>voice (imperative summary)</td>
+<td style="text-align:center">2/6</td>
+<td style="text-align:center">1/6</td>
+<td style="text-align:center">0/6</td>
+</tr>
+<tr>
+<td>bolding (inline keyword spam)</td>
+<td style="text-align:center">0/6</td>
+<td style="text-align:center">1/6</td>
+<td style="text-align:center">0/6</td>
+</tr>
+</tbody>
+</table>
+<p>One effect replicated. Three further independent runs confirmed that the <em>pressure</em> passage separates the buried-lead pair for GPT-5.4 on all four runs, base on none, mechanism and combined on two of four each. Voice and bolding did not replicate, and the two later integrated prompts lost the salience effect entirely — both zero of six — while the harsh one also cost Opus the inflated-seniority catch it had held under all four earlier prompts. Consolidating two passages that each worked separately produced a prompt worse than either.</p>
+<p>Voice shows what "perceptual" means. Under the two integrated prompts Opus finally dropped the defective twin's writing score by a point, citing "keyword threading" and bullets "overstuffed with buzzwords," quoting the injected imperative summary as its evidence. The right sentences, the wrong diagnosis. Not one of the twelve claim-checked reviews named the imperative voice.</p>
+<p>The answer is not a better prompt. Inline bold spans can be counted. Summary sentence order can be diffed. These are deterministic checks mistakenly assigned to a language model, and they belong on the lint rail beside truncation.</p>
+<h2 id="what-to-expect-on-architecture-variations" tabindex="-1"><a class="observablehq-header-anchor" href="#what-to-expect-on-architecture-variations">What to expect on architecture variations</a></h2>
+<p><strong>Do not rank topologies on evaluator scores.</strong> On functioning résumés <code>overall</code> is near-constant by construction. The live model sweep confirmed it independently: eight model combinations on one input returned an identical <code>overall</code> for all eight. That was recorded as a tie; it is better read as an instrument with no resolution.</p>
+<p><strong>Do compare on collected findings.</strong> Run each variation through several reviews — two models across a few prompts — and compare the findings reports: how many blocking and important findings each architecture's output draws, and which ones. That comparison is supported by the measurements, at 73% coverage of what a human would flag with no false accusations.</p>
+<p><strong>Do not run the collection step unattended yet.</strong> Report-level yield is 44%, and a rejected report is discarded whole. Until validation moves to per-finding granularity, every synthesis needs a human to notice it did not produce anything.</p>
+<p><strong>Budget for a real synthesizer.</strong> The cheap post-processing model fabricated fifteen citations. GPT-5.4 at medium effort with 16k of headroom costs about seven cents per case and still misquotes roughly one citation per report. Cheap, but not free, and not a mini-model job.</p>
+<p><strong>Do not trust severity or dimension.</strong> On both core cases the report recovered the evidence and then filed a whole-document failure as a local one. Read the findings and their quotes; ignore the ranking and the dimension label until that is fixed.</p>
+<p><strong>Gate on grounding and lint.</strong> Fabrications 18 of 18, truncation 18 of 18. Safe to automate today.</p>
+<p><strong>Exclude Gemini 3.1 Pro.</strong> Redundant on coverage, sole source of false accusations, inflating in every configuration.</p>
+<p><strong>Expect a blind spot in typography and order</strong> until the perceptual checks move to the linter.</p>
+<h2 id="what-is-actually-missing" tabindex="-1"><a class="observablehq-header-anchor" href="#what-is-actually-missing">What is actually missing</a></h2>
+<p>Not a replacement evaluator. The judges supply the material; the collection step loses it. Four fixes, in order of value per unit of work:</p>
+<ol>
+<li><strong>Validate per finding, not per report.</strong> Eight of nine rejections were a single bad quote. Dropping the offending finding and keeping the rest would take yield from 44% to something near complete, and costs almost nothing to implement.</li>
+<li><strong>Persist the raw response on rejection.</strong> Right now a failed synthesis destroys both the correct findings and the evidence needed to diagnose the failure.</li>
+<li><strong>Stop the diagnosis flattening.</strong> On both core cases the step quoted the right evidence and downgraded a whole-document failure to a local omission — the exact move its prompt forbids. The labels already mark which findings are core; the contract does not consume that, and a separate whole-document targeting pass may be the more honest structure than asking one prompt to resist the flattening.</li>
+<li><strong>Perceptual defects to deterministic checks.</strong> Bolding, salience, and voice are countable properties of the document. They have absorbed more prompt engineering than anything else here and produced one replicated effect.</li>
+</ol>
+<h2 id="verdict" tabindex="-1"><a class="observablehq-header-anchor" href="#verdict">Verdict</a></h2>
+<p>The experiment did what an instrument should: it falsified the thing it was built to certify, then showed the failure was in the wiring rather than the component. There is no configuration here I would use to score and rank generation pipelines, and my earlier recommendation to gate on GPT-5.4 with the pressure passage overstated one narrow pairwise result.</p>
+<p>What is real is more useful than what I set out to prove. These judges read résumés considerably better than they grade them — including the case they grade most wrongly, where the correct diagnosis was recoverable, verbatim, from the same runs that got the number wrong. The union of eight reviews contains 73% of what a human would flag, with zero false accusations and all three core failures present. That material is genuinely there.</p>
+<p>The collection step does not yet get it out. It rejects more than half its reports over single misquotes, and on both core cases it recovered the evidence and then flattened a whole-document failure into a local one — reproducing downstream the exact blind spot it exists to correct. That is a sharper and more tractable problem than the one I started with. The reading is good, the collection is where the loss is, and every fix on the list is plumbing rather than research.</p>
+<p>Data and instruments live in the <code>resume-lambda</code> repository: cases and labels under <code>tests/eval_calibration/</code>; matrices, grading reports, and claim-check verdicts under <code>test_results/evaluator-batches/</code> in <code>anchored-matrix-16case-3judges-20260810</code>, <code>anchored-mixed-negging-16case-3judges-20260811</code>, <code>percept-repeats-gpt54-*</code>, and <code>claim-check-matrix-20260810</code>; the synthesis runs under <code>test_results/finding-synthesis/</code>; the collection step in <code>src/versioning/finding_synthesis.py</code>.</p>
+</main>
+</div>
+</body>
+</html>

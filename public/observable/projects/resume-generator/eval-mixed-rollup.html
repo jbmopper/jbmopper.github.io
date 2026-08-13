@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.4">
+<base href="/observable/projects/resume-generator/eval-mixed-rollup.html">
+<title>Mixed-Prompt Qualitative Rollup | juliusm.com</title>
+
+<link rel="preload" as="style" href="../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="preload" as="style" href="../../_observablehq/stdlib/inputs.f7bf0e12.css">
+<link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="stylesheet" type="text/css" href="../../_observablehq/stdlib/inputs.f7bf0e12.css">
+<script type="module">
+
+import {define} from "../../_observablehq/client.5d43dcff.js";
+import {registerFile} from "../../_observablehq/stdlib.a50b4fda.js";
+
+registerFile("./eval-mixed-rollup-data.json", {"name":"./eval-mixed-rollup-data.json","mimeType":"application/json","path":"../../_file/projects/resume-generator/eval-mixed-rollup-data.5c995d0f.json","lastModified":1786598247992,"size":221769});
+
+define({id: "39fe1da7", inputs: ["FileAttachment"], outputs: ["reports"], body: (FileAttachment) => {
+const reports = FileAttachment("./eval-mixed-rollup-data.json").json();
+return {reports};
+}});
+
+define({id: "7809a9dc", inputs: ["reports"], outputs: ["caseNames","caseName","orderedReports"], body: (reports) => {
+const caseNames = new Map([
+  ["mistargeted", "Mistargeted"],
+  ["skills-spam-trap", "Skills-spam trap"],
+  ["credential-trap", "Credential trap"],
+  ["long-and-spammy", "Long and spammy"],
+  ["hollow-history", "Hollow history"],
+  ["truncated", "Truncated (floor check)"],
+  ["voice-clean", "Voice · clean"],
+  ["voice-imperative", "Voice · imperative"],
+  ["bolding-clean", "Bolding · clean"],
+  ["bolding-spam", "Bolding · spam"],
+  ["salience-lead-first", "Salience · lead first"],
+  ["salience-buried-lead", "Salience · buried lead"],
+  ["grounding-clean", "Grounding · clean"],
+  ["grounding-fabricated", "Grounding · fabricated"],
+  ["pitch-calibrated", "Pitch · calibrated"],
+  ["pitch-inflated", "Pitch · inflated"]
+]);
+const caseName = (id) => caseNames.get(id) ?? id;
+const orderedReports = [...reports].sort((a, b) => caseName(a.case_id).localeCompare(caseName(b.case_id)));
+return {caseNames,caseName,orderedReports};
+}});
+
+define({id: "cd622209", inputs: ["Inputs","orderedReports","caseName","display"], body: async (Inputs,orderedReports,caseName,display) => {
+display(await(
+Inputs.table(
+  orderedReports.map((report) => ({case: caseName(report.case_id), rollup: report.summary})),
+  {
+    columns: ["case", "rollup"],
+    header: {case: "Case", rollup: "Qualitative rollup"},
+    rows: 16,
+    width: {case: 260, rollup: 760}
+  }
+)
+))
+}});
+
+define({id: "e5ce8316", inputs: ["view","Inputs","orderedReports","caseName","reports"], outputs: ["selectedCase","selectedReport"], body: (view,Inputs,orderedReports,caseName,reports) => {
+const selectedCase = view(Inputs.select(
+  orderedReports.map((report) => report.case_id),
+  {
+    value: "mistargeted",
+    label: "Case",
+    format: caseName
+  }
+));
+const selectedReport = reports.find((report) => report.case_id === selectedCase);
+return {selectedCase,selectedReport};
+}});
+
+define({id: "50769bdc", inputs: ["display","html","caseName","selectedReport"], body: (display,html,caseName,selectedReport) => {
+display(html`<article class="rollup-summary">
+  <h3>${caseName(selectedReport.case_id)}</h3>
+  <p>${selectedReport.summary}</p>
+</article>`);
+}});
+
+define({id: "089e6d02", inputs: ["display","html","selectedReport"], body: (display,html,selectedReport) => {
+display(html`<div class="finding-list">
+  ${selectedReport.findings.length === 0
+    ? html`<p>No substantive problems were surfaced by the two reviews.</p>`
+    : selectedReport.findings.map((finding) => html`<article class="finding-card">
+        <header>
+          <span class=${`severity severity-${finding.severity}`}>${finding.severity}</span>
+          <span class="dimension">${finding.dimension}</span>
+        </header>
+        <h4>${finding.title}</h4>
+        <p>${finding.diagnosis}</p>
+        <details>
+          <summary>Verbatim evaluator sources</summary>
+          ${finding.evaluator_sources.map((source) => html`<blockquote>
+            <p>“${source.quote}”</p>
+            <footer>${source.model === "gpt-5.4" ? "GPT-5.4 high" : "Opus 4.6 medium"} · <code>${source.field}</code></footer>
+          </blockquote>`)}
+        </details>
+      </article>`)}
+</div>`);
+}});
+
+define({id: "24e57264", inputs: ["display","html","selectedReport"], body: (display,html,selectedReport) => {
+display(html`<div class="finding-list">
+  ${selectedReport.disagreements.length === 0
+    ? html`<p>No material disagreement was surfaced.</p>`
+    : selectedReport.disagreements.map((disagreement) => html`<article class="disagreement-card">
+        <h4>${disagreement.topic}</h4>
+        <p>${disagreement.description}</p>
+        <details>
+          <summary>Verbatim evaluator sources</summary>
+          ${disagreement.evaluator_sources.map((source) => html`<blockquote>
+            <p>“${source.quote}”</p>
+            <footer>${source.model === "gpt-5.4" ? "GPT-5.4 high" : "Opus 4.6 medium"} · <code>${source.field}</code></footer>
+          </blockquote>`)}
+        </details>
+      </article>`)}
+</div>`);
+}});
+
+define({id: "1cab81a4", inputs: ["display","Inputs","selectedReport"], outputs: ["scoreDimensions"], body: (display,Inputs,selectedReport) => {
+const scoreDimensions = ["basics", "writing", "argument", "grounding", "keywords", "overall"];
+display(Inputs.table(
+  selectedReport.score_telemetry.map((review) => ({
+    judge: review.model === "gpt-5.4" ? "GPT-5.4 high" : "Opus 4.6 medium",
+    ...Object.fromEntries(scoreDimensions.map((dimension) => [dimension, review.scores[dimension]]))
+  })),
+  {
+    columns: ["judge", ...scoreDimensions],
+    header: {judge: "Source review"},
+    rows: 2
+  }
+));
+return {scoreDimensions};
+}});
+
+</script>
+<script src="/observable/_import/jay-standalone.js" defer></script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="../../">juliusm.com</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link"><a href="../">Projects</a></li>
+    <li class="observablehq-link"><a href="../llm-fundamentals/">LLM Fundamentals</a></li>
+    <li class="observablehq-link"><a href="./">Resume Generator</a></li>
+    <li class="observablehq-link"><a href="../data-playground/">Data Playground</a></li>
+    <li class="observablehq-link"><a href="../site-chatbot/">Site Design and RAG Chatbot Integration</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<header id="observablehq-header">
+<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><div class="portfolio-header-actions"><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="/consulting/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/consulting/');">Consulting</a><a class="portfolio-nav-link" href="/resume/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav><button class="portfolio-theme-control" type="button" data-theme-control="" data-theme-preference="system"><span class="portfolio-theme-control__icon" aria-hidden="true"></span><span data-theme-label="">System</span></button></div></div><script>(function(){
+        const storageKey = 'juliusm-theme';
+        const modes = ['system', 'dark', 'light'];
+        const labels = {system: 'System', dark: 'Dark', light: 'Light'};
+        const metaColors = {dark: '#0b1017', light: '#f5f7f3'};
+        const media = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+        const mount = window.location.pathname.startsWith('/observable') ? '/observable' : '';
+        const path = window.location.pathname.replace(/^\/observable(?=\/|$)/,'').replace(/\/index\.html$/,'/');
+        const normalized = path.endsWith('/') ? path : path + '/';
+        const slot = document.getElementById('portfolio-current-project-slot');
+
+        function readThemePreference(){
+          try {
+            const stored = window.localStorage.getItem(storageKey);
+            if (modes.includes(stored)) return stored;
+          } catch {
+            return 'system';
+          }
+          return 'system';
+        }
+
+        function resolveThemePreference(preference){
+          if (preference === 'light' || (preference === 'system' && media && media.matches)) return 'light';
+          return 'dark';
+        }
+
+        function nextThemePreference(preference){
+          return modes[(modes.indexOf(preference) + 1) % modes.length] || 'system';
+        }
+
+        function updateThemeControls(preference, resolved){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            const next = nextThemePreference(preference);
+            control.dataset.themePreference = preference;
+            control.dataset.themeResolved = resolved;
+            control.setAttribute('aria-label', 'Theme: ' + labels[preference] + '. Switch to ' + labels[next] + '.');
+            control.setAttribute('title', 'Theme: ' + labels[preference]);
+            const label = control.querySelector('[data-theme-label]');
+            if (label) label.textContent = labels[preference];
+          });
+        }
+
+        function applyThemePreference(preference, persist){
+          const normalizedPreference = modes.includes(preference) ? preference : 'system';
+          const resolved = resolveThemePreference(normalizedPreference);
+          document.documentElement.dataset.theme = normalizedPreference;
+          document.documentElement.dataset.themeResolved = resolved;
+          const meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', metaColors[resolved]);
+          if (persist) {
+            try {
+              window.localStorage.setItem(storageKey, normalizedPreference);
+            } catch {}
+          }
+          updateThemeControls(normalizedPreference, resolved);
+        }
+
+        function bindThemeControls(){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            if (control.dataset.themeBound === 'true') return;
+            control.dataset.themeBound = 'true';
+            control.addEventListener('click', function(){
+              applyThemePreference(nextThemePreference(readThemePreference()), true);
+            });
+          });
+          applyThemePreference(readThemePreference(), false);
+        }
+
+        applyThemePreference(readThemePreference(), false);
+        bindThemeControls();
+        if (media) media.addEventListener('change', function(){
+          if (readThemePreference() === 'system') applyThemePreference('system', false);
+        });
+        window.addEventListener('storage', function(event){
+          if (event.key === storageKey) applyThemePreference(readThemePreference(), false);
+        });
+
+        function navigate(target){
+          window.location.assign(window.location.origin + target);
+        }
+
+        function makeNavLink(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-nav-link';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        function makeBreadcrumbSeparator(){
+          const sep = document.createElement('span');
+          sep.className = 'portfolio-breadcrumb-separator';
+          sep.setAttribute('aria-hidden', 'true');
+          sep.textContent = '›';
+          return sep;
+        }
+
+        function makeProjectItem(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-project-item';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        if (slot) {
+          const projectMatch = normalized.match(/^\/projects\/([^/]+)\//);
+          if (projectMatch) {
+            const slug = projectMatch[1];
+            slot.appendChild(makeBreadcrumbSeparator());
+            if (slug === 'llm-fundamentals') {
+              const details = document.createElement('details');
+              details.id = 'portfolio-current-project-menu';
+              details.className = 'portfolio-project-menu';
+
+              const summary = document.createElement('summary');
+              summary.className = 'portfolio-nav-link portfolio-project-toggle';
+              summary.textContent = 'LLM Fundamentals';
+              details.appendChild(summary);
+
+              const dropdown = document.createElement('div');
+              dropdown.className = 'portfolio-project-dropdown';
+              const items = [
+                ['Introduction', '/projects/llm-fundamentals/'],
+                ['Architecture and Expected Performance Analysis', '/projects/llm-fundamentals/perf-expected/'],
+                ['Benchmarks and Empirical Performance Analysis', '/projects/llm-fundamentals/perf-empirical/'],
+                ['Nvidia CUDA Nsys Trace Analysis', '/projects/llm-fundamentals/nsys/'],
+                ['Nsys GPU Trace Viewer', '/projects/llm-fundamentals/nsys-viewer/'],
+                ['Learning Parameter Sweeps', '/projects/llm-fundamentals/optimizer-sweep/'],
+                ['Architectural Variations (Ablations)', '/projects/llm-fundamentals/ablations/']
+              ];
+              for (const [label, target] of items) {
+                dropdown.appendChild(makeProjectItem(label, mount + target));
+              }
+              details.appendChild(dropdown);
+              slot.appendChild(details);
+
+              document.addEventListener('click', function(event){
+                if (!details.hasAttribute('open')) return;
+                if (!details.contains(event.target)) details.removeAttribute('open');
+              });
+              document.addEventListener('keydown', function(event){
+                if (event.key === 'Escape') details.removeAttribute('open');
+              });
+            } else if (slug === 'resume-generator') {
+              slot.appendChild(makeNavLink('Resume Generator', mount + '/projects/resume-generator/'));
+            } else {
+              const labels = {
+                'resume-generator': 'Resume Generator',
+                'data-playground': 'Data Playground',
+                'site-chatbot': 'Site Design and RAG Chatbot Integration'
+              };
+              const fallback = slug
+                .split('-')
+                .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+                .join(' ');
+              slot.appendChild(makeNavLink(labels[slug] || fallback, mount + '/projects/' + slug + '/'));
+            }
+          }
+        }
+
+        for (const id of ['observablehq-sidebar-toggle', 'observablehq-sidebar-backdrop', 'observablehq-sidebar']) {
+          const node = document.getElementById(id);
+          if (node) node.remove();
+        }
+      })();</script>
+</header>
+<aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
+<nav>
+<div>Contents</div>
+<ol>
+<li class="observablehq-secondary-link"><a href="#what-this-test-says">What this test says</a></li>
+<li class="observablehq-secondary-link"><a href="#individual-case-pages">Individual case pages</a></li>
+<li class="observablehq-secondary-link"><a href="#all-case-summaries">All case summaries</a></li>
+<li class="observablehq-secondary-link"><a href="#read-one-case">Read one case</a></li>
+<li class="observablehq-secondary-link"><a href="#reproduction">Reproduction</a></li>
+</ol>
+</nav>
+</aside>
+<main id="observablehq-main" class="observablehq">
+<h1 id="mixed-prompt-qualitative-rollup" tabindex="-1"><a class="observablehq-header-anchor" href="#mixed-prompt-qualitative-rollup">Mixed-Prompt Qualitative Rollup</a></h1>
+<p>This is one narrow second-stage test of the résumé evaluator. It deliberately
+throws away most of the matrix: no Gemini, no negging prompt, no prompt ensemble,
+and no attempt to average the scores into a graph-quality number.</p>
+<p>For each of the sixteen calibration cases, the input is exactly two complete
+<code>anchored-mixed</code> reviews:</p>
+<ul>
+<li>GPT-5.4 at high reasoning effort; and</li>
+<li>Claude Opus 4.6 with adaptive thinking at medium effort.</li>
+</ul>
+<p>A separate GPT-5.4 medium call reads those two reviews and compiles their prose
+into source-cited findings and disagreements. Numeric judgments travel with the
+reviews as provenance, but they do not decide which findings survive. The
+synthesizer is explicitly instructed that a high score cannot cancel a problem
+described in the rationale or evidence.</p>
+<p>All sixteen syntheses passed strict citation validation. The run produced a
+qualitative report for every case from 32 source reviews, at a total synthesis
+cost of about $0.61. The complete validated artifacts are preserved in
+<code>resume-lambda/test_results/finding-synthesis/mixed-gpt54-opus46-16case-20260812/</code>.</p>
+<h2 id="what-this-test-says" tabindex="-1"><a class="observablehq-header-anchor" href="#what-this-test-says">What this test says</a></h2>
+<p>The two-review rollup is useful. It turns two long evaluator responses into a
+readable issue list, preserves findings raised by only one judge, and puts real
+disagreements next to their verbatim evidence. It cleanly distinguishes the
+truncated floor-check case and the grounding-fabricated case, and it retains useful
+calibration findings in the pitch pair.</p>
+<p>It does not solve perception. Neither source judge names the injected imperative
+voice, inline bolding, or buried-lead manipulation, so the second stage cannot
+recover them. The reports for those pairs mostly discuss other targeting and
+grounding issues. Collection can preserve a diagnosis; it cannot manufacture one
+that never appeared in either review.</p>
+<p>The mistargeted case remains the most informative. The rollup correctly preserves
+the underemphasis on coaching, adoption, change management, and business-case
+evidence. It still leads with missing Microsoft/Copilot terminology and never
+states the full human diagnosis as sharply as it should: the body argues for an AI
+engineer while the job requires an embedded business partner. The second stage is
+therefore better at presenting the reviews than the scores are, but it inherits
+the reviews' framing and priority errors.</p>
+<p>The practical conclusion is specific: this is a good human-facing triage artifact
+and a bad unattended graph score. For a graph comparison, read the findings and
+their sources, verify them against the résumé and candidate record, and compare
+the verified issue sets. Do not count findings, average severities, or treat
+two-model agreement as truth.</p>
+<h2 id="individual-case-pages" tabindex="-1"><a class="observablehq-header-anchor" href="#individual-case-pages">Individual case pages</a></h2>
+<p>The complete rollups are also available as <a href="./eval-mixed-rollup-cases/">sixteen standalone case
+pages</a>. Each page has a stable URL, full findings and
+disagreements, verbatim source quotations, previous/next navigation, and the two
+original score rows collapsed at the bottom.</p>
+<h2 id="all-case-summaries" tabindex="-1"><a class="observablehq-header-anchor" href="#all-case-summaries">All case summaries</a></h2>
+<p>The table contains the stage-two bottom line for every case. Select a case below
+it to inspect the complete findings, disagreements, citations, and the original
+score telemetry.</p>
+<div class="observablehq observablehq--block"><!--:39fe1da7:--></div>
+<div class="observablehq observablehq--block"><!--:7809a9dc:--></div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:cd622209:--></div>
+<h2 id="read-one-case" tabindex="-1"><a class="observablehq-header-anchor" href="#read-one-case">Read one case</a></h2>
+<div class="observablehq observablehq--block"><!--:e5ce8316:--></div>
+<div class="observablehq observablehq--block"><!--:50769bdc:--></div>
+<h3 id="findings" tabindex="-1"><a class="observablehq-header-anchor" href="#findings">Findings</a></h3>
+<div class="observablehq observablehq--block"><!--:089e6d02:--></div>
+<h3 id="disagreements" tabindex="-1"><a class="observablehq-header-anchor" href="#disagreements">Disagreements</a></h3>
+<div class="observablehq observablehq--block"><!--:24e57264:--></div>
+<h3 id="original-score-telemetry" tabindex="-1"><a class="observablehq-header-anchor" href="#original-score-telemetry">Original score telemetry</a></h3>
+<p>These values are included to make the test auditable. They are not inputs to a
+mean, vote, severity calculation, or graph-level score.</p>
+<div class="observablehq observablehq--block"><!--:1cab81a4:--></div>
+<h2 id="reproduction" tabindex="-1"><a class="observablehq-header-anchor" href="#reproduction">Reproduction</a></h2>
+<p>The source reviews are the <code>anchored-mixed</code> GPT-5.4 high and Opus 4.6 medium
+records filtered from:</p>
+<p><code>test_results/evaluator-batches/anchored-mixed-negging-16case-3judges-20260811/results.jsonl</code></p>
+<p>They were synthesized with GPT-5.4 at medium reasoning effort and a 16,384-token
+completion budget. Each generated finding and disagreement had to cite an exact
+review ID, field, and verbatim substring; any invalid citation would have failed
+that case. The run completed 16/16 cases.</p>
+<pre data-language="css"><code class="language-css"><span class="hljs-selector-class">.rollup-summary</span>,
+<span class="hljs-selector-class">.finding-card</span>,
+<span class="hljs-selector-class">.disagreement-card</span> {
+  <span class="hljs-attribute">border</span>: <span class="hljs-number">1px</span> solid <span class="hljs-built_in">color-mix</span>(in srgb, currentColor <span class="hljs-number">18%</span>, transparent);
+  <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">0.65rem</span>;
+  <span class="hljs-attribute">padding</span>: <span class="hljs-number">1rem</span> <span class="hljs-number">1.1rem</span>;
+  <span class="hljs-attribute">background</span>: <span class="hljs-built_in">color-mix</span>(in srgb, <span class="hljs-built_in">var</span>(--theme-background, white) <span class="hljs-number">96%</span>, currentColor);
+}
+
+<span class="hljs-selector-class">.rollup-summary</span> <span class="hljs-selector-tag">h3</span>,
+<span class="hljs-selector-class">.finding-card</span> <span class="hljs-selector-tag">h4</span>,
+<span class="hljs-selector-class">.disagreement-card</span> <span class="hljs-selector-tag">h4</span> {
+  <span class="hljs-attribute">margin-top</span>: <span class="hljs-number">0</span>;
+}
+
+<span class="hljs-selector-class">.finding-list</span> {
+  <span class="hljs-attribute">display</span>: grid;
+  <span class="hljs-attribute">gap</span>: <span class="hljs-number">0.85rem</span>;
+}
+
+<span class="hljs-selector-class">.finding-card</span> <span class="hljs-selector-tag">header</span> {
+  <span class="hljs-attribute">display</span>: flex;
+  <span class="hljs-attribute">gap</span>: <span class="hljs-number">0.5rem</span>;
+  <span class="hljs-attribute">align-items</span>: center;
+  <span class="hljs-attribute">margin-bottom</span>: <span class="hljs-number">0.65rem</span>;
+}
+
+<span class="hljs-selector-class">.severity</span>,
+<span class="hljs-selector-class">.dimension</span> {
+  <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">999px</span>;
+  <span class="hljs-attribute">padding</span>: <span class="hljs-number">0.15rem</span> <span class="hljs-number">0.55rem</span>;
+  <span class="hljs-attribute">font-size</span>: <span class="hljs-number">0.75rem</span>;
+  <span class="hljs-attribute">font-weight</span>: <span class="hljs-number">650</span>;
+  <span class="hljs-attribute">letter-spacing</span>: <span class="hljs-number">0.025em</span>;
+  <span class="hljs-attribute">text-transform</span>: uppercase;
+}
+
+<span class="hljs-selector-class">.severity-blocking</span> { <span class="hljs-attribute">background</span>: <span class="hljs-number">#b91c1c</span>; <span class="hljs-attribute">color</span>: white; }
+<span class="hljs-selector-class">.severity-important</span> { <span class="hljs-attribute">background</span>: <span class="hljs-number">#b45309</span>; <span class="hljs-attribute">color</span>: white; }
+<span class="hljs-selector-class">.severity-minor</span> { <span class="hljs-attribute">background</span>: <span class="hljs-number">#475569</span>; <span class="hljs-attribute">color</span>: white; }
+<span class="hljs-selector-class">.dimension</span> { <span class="hljs-attribute">border</span>: <span class="hljs-number">1px</span> solid <span class="hljs-built_in">color-mix</span>(in srgb, currentColor <span class="hljs-number">28%</span>, transparent); }
+
+<span class="hljs-selector-class">.finding-card</span> <span class="hljs-selector-tag">blockquote</span>,
+<span class="hljs-selector-class">.disagreement-card</span> <span class="hljs-selector-tag">blockquote</span> {
+  <span class="hljs-attribute">margin</span>: <span class="hljs-number">0.8rem</span> <span class="hljs-number">0</span>;
+}
+
+<span class="hljs-selector-class">.finding-card</span> <span class="hljs-selector-tag">blockquote</span> <span class="hljs-selector-tag">p</span>,
+<span class="hljs-selector-class">.disagreement-card</span> <span class="hljs-selector-tag">blockquote</span> <span class="hljs-selector-tag">p</span> {
+  <span class="hljs-attribute">margin-bottom</span>: <span class="hljs-number">0.35rem</span>;
+}
+
+<span class="hljs-selector-class">.finding-card</span> <span class="hljs-selector-tag">footer</span>,
+<span class="hljs-selector-class">.disagreement-card</span> <span class="hljs-selector-tag">footer</span> {
+  <span class="hljs-attribute">font-size</span>: <span class="hljs-number">0.8rem</span>;
+  <span class="hljs-attribute">opacity</span>: <span class="hljs-number">0.75</span>;
+}
+</code></pre>
+</main>
+</div>
+</body>
+</html>

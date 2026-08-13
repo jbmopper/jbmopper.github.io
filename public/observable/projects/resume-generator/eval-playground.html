@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.4">
+<base href="/observable/projects/resume-generator/eval-playground.html">
+<title>Evaluation Playground | juliusm.com</title>
+
+<link rel="preload" as="style" href="../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="preload" as="style" href="../../_observablehq/stdlib/inputs.f7bf0e12.css">
+<link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="stylesheet" type="text/css" href="../../_observablehq/stdlib/inputs.f7bf0e12.css">
+<script type="module">
+
+import {define} from "../../_observablehq/client.5d43dcff.js";
+import {registerFile} from "../../_observablehq/stdlib.a50b4fda.js";
+
+registerFile("./finding-synthesis-haiku-flashlite-fullmatrix-data.json", {"name":"./finding-synthesis-haiku-flashlite-fullmatrix-data.json","mimeType":"application/json","path":"../../_file/projects/resume-generator/finding-synthesis-haiku-flashlite-fullmatrix-data.39b33421.json","lastModified":1786598247947,"size":4883031});
+
+define({id: "4dba01c4", inputs: ["FileAttachment"], outputs: ["matrix"], body: (FileAttachment) => {
+const matrix = FileAttachment("./finding-synthesis-haiku-flashlite-fullmatrix-data.json").json();
+return {matrix};
+}});
+
+define({id: "cdb0ce8f", inputs: ["matrix"], outputs: ["rows"], body: (matrix) => {
+const rows = matrix.rows ?? [];
+return {rows};
+}});
+
+define({id: "45415250", inputs: ["rows"], outputs: ["caseNames","sourceNames","promptNames","judgeShort","promptShort","judgeOrder","promptOrder","judgeShortDomain","promptShortDomain","caseName","sourceName","promptName","findRow"], body: (rows) => {
+const caseNames = new Map([
+  ["mistargeted", "Mistargeted"],
+  ["skills-spam-trap", "Skills-spam trap"],
+  ["credential-trap", "Credential trap"],
+  ["long-and-spammy", "Long and spammy"],
+  ["hollow-history", "Hollow history"],
+  ["truncated", "Truncated (floor check)"],
+  ["voice-clean", "Voice · clean"],
+  ["voice-imperative", "Voice · imperative"],
+  ["bolding-clean", "Bolding · clean"],
+  ["bolding-spam", "Bolding · spam"],
+  ["salience-lead-first", "Salience · lead first"],
+  ["salience-buried-lead", "Salience · buried lead"],
+  ["grounding-clean", "Grounding · clean"],
+  ["grounding-fabricated", "Grounding · fabricated"],
+  ["pitch-calibrated", "Pitch · calibrated"],
+  ["pitch-inflated", "Pitch · inflated"]
+]);
+const sourceNames = new Map([
+  ["gpt-5.4-high", "GPT-5.4 high"],
+  ["anthropic-claude-opus-4-6-adaptive-medium", "Opus 4.6 adaptive medium"],
+  ["gemini-gemini-3.1-pro-preview-high", "Gemini 3.1 Pro high"]
+]);
+const promptNames = new Map([
+  ["anchored", "Control"],
+  ["anchored-mechanism", "Human-reading / mechanism"],
+  ["anchored-pressure", "Bias / anti-leniency"],
+  ["anchored-mixed", "Integrated neutral"],
+  ["anchored-negging", "Integrated harsh"]
+]);
+const judgeShort = new Map([
+  ["gpt-5.4-high", "GPT-5.4"],
+  ["anthropic-claude-opus-4-6-adaptive-medium", "Opus 4.6"],
+  ["gemini-gemini-3.1-pro-preview-high", "Gemini 3.1 Pro"]
+]);
+const promptShort = new Map([
+  ["anchored", "Control"],
+  ["anchored-mechanism", "Mechanism"],
+  ["anchored-pressure", "Anti-leniency"],
+  ["anchored-mixed", "Neutral"],
+  ["anchored-negging", "Harsh"]
+]);
+const judgeOrder = [...sourceNames.keys()];
+const promptOrder = [...promptNames.keys()];
+const judgeShortDomain = judgeOrder.map((j) => judgeShort.get(j));
+const promptShortDomain = promptOrder.map((p) => promptShort.get(p));
+const caseName = (id) => caseNames.get(id) ?? id;
+const sourceName = (id) => sourceNames.get(id) ?? id;
+const promptName = (id) => promptNames.get(id) ?? id;
+const findRow = (caseId, judge, prompt) => rows.find((row) =>
+  row.source_case_id === caseId &&
+  row.source_model_key === judge &&
+  row.prompt_variant === prompt
+);
+return {caseNames,sourceNames,promptNames,judgeShort,promptShort,judgeOrder,promptOrder,judgeShortDomain,promptShortDomain,caseName,sourceName,promptName,findRow};
+}});
+
+define({id: "ae1feafe", outputs: ["twinPairs"], body: () => {
+const twinPairs = new Map([
+  ["Voice", {
+    clean: "voice-clean",
+    defect: "voice-imperative",
+    injected: "imperative summary voice",
+    dimension: "writing"
+  }],
+  ["Bolding", {
+    clean: "bolding-clean",
+    defect: "bolding-spam",
+    injected: "inline keyword bolding",
+    dimension: "writing"
+  }],
+  ["Pitch", {
+    clean: "pitch-calibrated",
+    defect: "pitch-inflated",
+    injected: "inflated seniority",
+    dimension: "grounding"
+  }],
+  ["Salience", {
+    clean: "salience-lead-first",
+    defect: "salience-buried-lead",
+    injected: "buried lead",
+    dimension: "argument"
+  }],
+  ["Grounding", {
+    clean: "grounding-clean",
+    defect: "grounding-fabricated",
+    injected: "fabricated credential and inflated metrics",
+    dimension: "grounding"
+  }]
+]);
+return {twinPairs};
+}});
+
+define({id: "54473a92", inputs: ["view","Inputs","twinPairs"], outputs: ["selectedPairName"], body: (view,Inputs,twinPairs) => {
+const selectedPairName = view(Inputs.select([...twinPairs.keys()], {
+  value: "Voice",
+  label: "Twin pair"
+}));
+return {selectedPairName};
+}});
+
+define({id: "f470933f", inputs: ["twinPairs","selectedPairName","display","html"], outputs: ["pair"], body: (twinPairs,selectedPairName,display,html) => {
+const pair = twinPairs.get(selectedPairName);
+display(html`<p class="grid-caption">Injected defect: ${pair.injected} · target dimension: <code>${pair.dimension}</code></p>`);
+return {pair};
+}});
+
+define({id: "9fefd2e4", inputs: ["view","Inputs","pair"], outputs: ["twinDimension"], body: (view,Inputs,pair) => {
+const twinDimension = view(Inputs.select(
+  ["argument", "basics", "grounding", "keywords", "writing", "overall"],
+  {value: pair.dimension, label: "Dimension"}
+));
+return {twinDimension};
+}});
+
+define({id: "c600f53e", inputs: ["pair","judgeOrder","promptOrder","findRow","twinDimension","judgeShort","promptShort"], outputs: ["twinScoreCells"], body: (pair,judgeOrder,promptOrder,findRow,twinDimension,judgeShort,promptShort) => {
+const twinScoreCells = [];
+for (const [twin, caseId] of [["clean twin", pair.clean], ["defect twin", pair.defect]]) {
+  for (const judge of judgeOrder) {
+    for (const prompt of promptOrder) {
+      const row = findRow(caseId, judge, prompt);
+      const raw = row?.scores?.[twinDimension];
+      twinScoreCells.push({
+        twin,
+        judge: judgeShort.get(judge),
+        prompt: promptShort.get(prompt),
+        score: raw == null ? null : raw * 2
+      });
+    }
+  }
+}
+return {twinScoreCells};
+}});
+
+define({id: "87fc9222", inputs: ["display","html","resize","Plot","promptShortDomain","judgeShortDomain","twinDimension","twinScoreCells"], body: (display,html,resize,Plot,promptShortDomain,judgeShortDomain,twinDimension,twinScoreCells) => {
+display(html`<figure class="plot-figure">
+  ${resize((width) => Plot.plot({
+    width,
+    height: 230,
+    marginLeft: 100,
+    marginBottom: 78,
+    fx: {domain: ["clean twin", "defect twin"], label: null},
+    x: {domain: promptShortDomain, tickRotate: -35, label: null},
+    y: {domain: judgeShortDomain, label: null},
+    color: {
+      scheme: "rdylgn",
+      domain: [0, 2],
+      unknown: "#9ca3af",
+      label: `${twinDimension} score (0–2)`,
+      legend: true
+    },
+    marks: [
+      Plot.cell(twinScoreCells, {
+        fx: "twin",
+        x: "prompt",
+        y: "judge",
+        fill: "score",
+        inset: 0.5,
+        title: (d) => `${d.twin}\n${d.judge} · ${d.prompt}\n${twinDimension}: ${d.score ?? "missing"}`
+      }),
+      Plot.text(twinScoreCells, {
+        fx: "twin",
+        x: "prompt",
+        y: "judge",
+        text: (d) => d.score == null ? "–" : String(d.score),
+        fill: (d) => d.score == null || d.score === 1 ? "black" : "white",
+        fontSize: 11
+      })
+    ]
+  }))}
+  <figcaption class="grid-caption">Scores on the human 0–2 rubric for the selected dimension, clean twin vs defect twin.</figcaption>
+</figure>`);
+}});
+
+define({id: "15b1d1b5", inputs: ["judgeOrder","promptOrder","findRow","pair","twinDimension","judgeShort","promptShort"], outputs: ["deltaCells"], body: (judgeOrder,promptOrder,findRow,pair,twinDimension,judgeShort,promptShort) => {
+const deltaCells = [];
+for (const judge of judgeOrder) {
+  for (const prompt of promptOrder) {
+    const cleanRaw = findRow(pair.clean, judge, prompt)?.scores?.[twinDimension];
+    const defectRaw = findRow(pair.defect, judge, prompt)?.scores?.[twinDimension];
+    deltaCells.push({
+      judge: judgeShort.get(judge),
+      prompt: promptShort.get(prompt),
+      delta: cleanRaw == null || defectRaw == null ? null : (defectRaw - cleanRaw) * 2
+    });
+  }
+}
+return {deltaCells};
+}});
+
+define({id: "c07005d6", inputs: ["display","html","resize","Plot","promptShortDomain","judgeShortDomain","deltaCells","twinDimension"], body: (display,html,resize,Plot,promptShortDomain,judgeShortDomain,deltaCells,twinDimension) => {
+display(html`<figure class="plot-figure">
+  ${resize((width) => Plot.plot({
+    width,
+    height: 220,
+    marginLeft: 100,
+    marginBottom: 78,
+    x: {domain: promptShortDomain, tickRotate: -35, label: null},
+    y: {domain: judgeShortDomain, label: null},
+    color: {
+      type: "diverging",
+      scheme: "rdbu",
+      domain: [-2, 2],
+      unknown: "#9ca3af",
+      label: "defect − clean",
+      legend: true
+    },
+    marks: [
+      Plot.cell(deltaCells, {
+        x: "prompt",
+        y: "judge",
+        fill: "delta",
+        inset: 0.5,
+        title: (d) => `${d.judge} · ${d.prompt}\ndefect − clean (${twinDimension}): ${d.delta ?? "missing"}`
+      }),
+      Plot.text(deltaCells, {
+        x: "prompt",
+        y: "judge",
+        text: (d) => d.delta == null ? "–" : d.delta > 0 ? `+${d.delta}` : String(d.delta),
+        fill: (d) => d.delta != null && Math.abs(d.delta) >= 1.5 ? "white" : "black",
+        fontSize: 11
+      })
+    ]
+  }))}
+  <figcaption class="grid-caption">Delta = defect score − clean score on the 0–2 rubric.  Negative means the judge scored the defective twin lower.</figcaption>
+</figure>`);
+}});
+
+define({id: "6a50f0f7", inputs: ["view","Inputs","judgeOrder","sourceName"], outputs: ["twinJudge"], body: (view,Inputs,judgeOrder,sourceName) => {
+const twinJudge = view(Inputs.select(judgeOrder, {
+  value: "gpt-5.4-high",
+  label: "Judge",
+  format: sourceName
+}));
+return {twinJudge};
+}});
+
+define({id: "3b59d87b", inputs: ["view","Inputs","promptOrder","promptName"], outputs: ["twinPrompt"], body: (view,Inputs,promptOrder,promptName) => {
+const twinPrompt = view(Inputs.select(promptOrder, {
+  value: "anchored",
+  label: "Evaluator treatment",
+  format: promptName
+}));
+return {twinPrompt};
+}});
+
+define({id: "af4a972a", inputs: ["findRow","pair","twinJudge","twinPrompt"], outputs: ["cleanRow","defectRow"], body: (findRow,pair,twinJudge,twinPrompt) => {
+const cleanRow = findRow(pair.clean, twinJudge, twinPrompt);
+const defectRow = findRow(pair.defect, twinJudge, twinPrompt);
+return {cleanRow,defectRow};
+}});
+
+define({id: "b454ff7e", inputs: ["cleanRow","defectRow","view","Inputs"], outputs: ["twinFieldUnion","twinFieldOptions","twinField"], body: (cleanRow,defectRow,view,Inputs) => {
+const twinFieldUnion = [...new Set(
+  [...(cleanRow?.fields ?? []), ...(defectRow?.fields ?? [])].map((f) => f.field)
+)].sort();
+const twinFieldOptions = twinFieldUnion.length ? twinFieldUnion : ["summary"];
+const twinField = view(Inputs.select(twinFieldOptions, {
+  value: twinFieldOptions.includes("summary") ? "summary" : twinFieldOptions[0],
+  label: "Field"
+}));
+return {twinFieldUnion,twinFieldOptions,twinField};
+}});
+
+define({id: "f5acfec1", inputs: ["twinDimension","twinField","html","display","caseName","pair","cleanRow","defectRow"], outputs: ["twinCard"], body: (twinDimension,twinField,html,display,caseName,pair,cleanRow,defectRow) => {
+const twinCard = (label, row) => {
+  const raw = row?.scores?.[twinDimension];
+  const entry = row?.fields?.find((f) => f.field === twinField);
+  return html`<article class="source-review">
+    <header>
+      <strong>${label}</strong>
+      <span><code>${twinDimension}</code>: ${raw == null ? "—" : raw * 2}</span>
+    </header>
+    <section>
+      <h4><code>${twinField}</code></h4>
+      <p>${entry ? entry.text : "— field not present in this review —"}</p>
+    </section>
+  </article>`;
+};
+display(html`<div class="output-grid">
+  ${twinCard(`Clean twin — ${caseName(pair.clean)}`, cleanRow)}
+  ${twinCard(`Defect twin — ${caseName(pair.defect)}`, defectRow)}
+</div>`);
+return {twinCard};
+}});
+
+define({id: "a4384ee0", outputs: ["synthNames"], body: () => {
+const synthNames = new Map([
+  ["flashlite", "Gemini 3.5 Flash-Lite — low"],
+  ["haiku", "Haiku 4.5 — manual 2K thinking"]
+]);
+return {synthNames};
+}});
+
+define({id: "bfb495f8", inputs: ["view","Inputs","synthNames"], outputs: ["selectedSynth"], body: (view,Inputs,synthNames) => {
+const selectedSynth = view(Inputs.select([...synthNames.keys()], {
+  value: "flashlite",
+  label: "Synthesizer",
+  format: (key) => synthNames.get(key)
+}));
+return {selectedSynth};
+}});
+
+define({id: "29aab3cd", outputs: ["tryParseJson","parseReport"], body: () => {
+const tryParseJson = (text) => {
+  try { return JSON.parse(text); } catch { return null; }
+};
+const parseReport = (output) => {
+  if (output?.result?.status === "COMPLETE" && output?.report != null) {
+    return {report: output.report, validated: true};
+  }
+  const raw = output?.raw_output ?? "";
+  const parsed = tryParseJson(raw)
+    ?? tryParseJson(raw.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, ""));
+  if (parsed && Array.isArray(parsed.findings)) return {report: parsed, validated: false};
+  return {report: null, validated: false};
+};
+return {tryParseJson,parseReport};
+}});
+
+define({id: "0f9ba6cd", inputs: ["judgeShort","promptShort","judgeOrder","promptOrder","rows","parseReport","selectedSynth","caseName","d3"], outputs: ["comboLabel","comboDomain","overviewCells","maxFindings"], body: (judgeShort,promptShort,judgeOrder,promptOrder,rows,parseReport,selectedSynth,caseName,d3) => {
+const comboLabel = (judge, prompt) => `${judgeShort.get(judge)} · ${promptShort.get(prompt)}`;
+const comboDomain = judgeOrder.flatMap((judge) => promptOrder.map((prompt) => comboLabel(judge, prompt)));
+const overviewCells = rows.map((row) => {
+  const {report, validated} = parseReport(row[selectedSynth]);
+  return {
+    caseLabel: caseName(row.source_case_id),
+    combo: comboLabel(row.source_model_key, row.prompt_variant),
+    validated,
+    findings: report ? (report.findings?.length ?? 0) : null
+  };
+});
+const maxFindings = d3.max(overviewCells, (d) => d.findings ?? 0) || 1;
+return {comboLabel,comboDomain,overviewCells,maxFindings};
+}});
+
+define({id: "37b05f9b", inputs: ["display","html","resize","Plot","comboDomain","caseNames","maxFindings","overviewCells"], body: (display,html,resize,Plot,comboDomain,caseNames,maxFindings,overviewCells) => {
+display(html`<figure class="plot-figure">
+  <div class="scroll-x">
+    ${resize((width) => Plot.plot({
+      width: Math.max(width, 1000),
+      height: 640,
+      marginLeft: 250,
+      marginBottom: 175,
+      x: {domain: comboDomain, tickRotate: -75, label: null},
+      y: {domain: [...caseNames.values()], label: null},
+      color: {
+        scheme: "blues",
+        domain: [0, maxFindings],
+        label: "findings per roll-up",
+        legend: true
+      },
+      marks: [
+        Plot.cell(overviewCells.filter((d) => d.findings != null), {
+          x: "combo",
+          y: "caseLabel",
+          fill: "findings",
+          inset: 0.5,
+          title: (d) => `${d.caseLabel}\n${d.combo}\n${d.findings} finding${d.findings === 1 ? "" : "s"}${d.validated ? "" : " (unvalidated citations)"}`
+        }),
+        Plot.cell(overviewCells.filter((d) => d.findings == null), {
+          x: "combo",
+          y: "caseLabel",
+          fill: "#9ca3af",
+          inset: 0.5,
+          title: (d) => `${d.caseLabel}\n${d.combo}\nno output produced`
+        }),
+        Plot.text(overviewCells, {
+          x: "combo",
+          y: "caseLabel",
+          text: (d) => d.findings == null ? "–" : String(d.findings),
+          fill: (d) => d.findings != null && d.findings / maxFindings > 0.6 ? "white" : "black",
+          fontSize: 10
+        })
+      ]
+    }))}
+  </div>
+  <figcaption class="grid-caption">Numbers are finding counts per roll-up, validated or recovered from raw output; the gray – cell produced no output.</figcaption>
+</figure>`);
+}});
+
+define({id: "94261be7", inputs: ["view","Inputs","caseNames","caseName"], outputs: ["drillCase"], body: (view,Inputs,caseNames,caseName) => {
+const drillCase = view(Inputs.select([...caseNames.keys()], {
+  value: "mistargeted",
+  label: "Case",
+  format: caseName
+}));
+return {drillCase};
+}});
+
+define({id: "0934ce59", inputs: ["view","Inputs","judgeOrder","sourceName"], outputs: ["drillJudge"], body: (view,Inputs,judgeOrder,sourceName) => {
+const drillJudge = view(Inputs.select(judgeOrder, {
+  value: "gpt-5.4-high",
+  label: "Source judge",
+  format: sourceName
+}));
+return {drillJudge};
+}});
+
+define({id: "1625e7cc", inputs: ["view","Inputs","promptOrder","promptName"], outputs: ["drillPrompt"], body: (view,Inputs,promptOrder,promptName) => {
+const drillPrompt = view(Inputs.select(promptOrder, {
+  value: "anchored",
+  label: "Evaluator treatment",
+  format: promptName
+}));
+return {drillPrompt};
+}});
+
+define({id: "ff2c0a96", inputs: ["findRow","drillCase","drillJudge","drillPrompt"], outputs: ["drillRow"], body: (findRow,drillCase,drillJudge,drillPrompt) => {
+const drillRow = findRow(drillCase, drillJudge, drillPrompt);
+return {drillRow};
+}});
+
+define({id: "80ebf9f9", inputs: ["html","parseReport","display","drillRow","synthNames","selectedSynth"], outputs: ["citationBlocks","rollupCard"], body: (html,parseReport,display,drillRow,synthNames,selectedSynth) => {
+const citationBlocks = (sources) => (sources ?? []).map((source) => html`<blockquote>
+  <p>“${source.quote ?? ""}”</p>
+  <footer><code>${source.field ?? ""}</code></footer>
+</blockquote>`);
+
+const rollupCard = (label, output) => {
+  const result = output?.result ?? {};
+  const {report, validated} = parseReport(output);
+  const findings = report?.findings ?? [];
+  const disagreements = report?.disagreements ?? [];
+  const cardClass = report ? (validated ? "valid" : "recovered") : "invalid";
+  const statusLabel = report ? (validated ? "VALID" : "UNVALIDATED") : "NO OUTPUT";
+  return html`<article class=${`output-card ${cardClass}`}>
+    <header>
+      <h3>${label}</h3>
+      <span class="status">${statusLabel}</span>
+    </header>
+    ${report ? html`
+      <p class="output-summary">${report.summary ?? ""}</p>
+      <div class="finding-list">
+        ${findings.length === 0
+          ? html`<p>No substantive findings in the source review.</p>`
+          : findings.map((finding) => html`<section class="finding">
+              <div><span class=${`severity severity-${finding.severity ?? "minor"}`}>${finding.severity ?? "unspecified"}</span> <code>${finding.dimension ?? ""}</code></div>
+              <h4>${finding.title ?? ""}</h4>
+              <p>${finding.diagnosis ?? ""}</p>
+              <details>
+                <summary>Exact source citations${validated ? "" : " (not verified against the review)"}</summary>
+                ${citationBlocks(finding.evaluator_sources)}
+              </details>
+            </section>`)}
+      </div>
+      ${disagreements.length === 0 ? "" : html`<div class="disagreements">
+        <h4>Disagreements</h4>
+        ${disagreements.map((entry) => html`<section class="finding">
+          <h4>${entry.topic ?? "Disagreement"}</h4>
+          <p>${entry.description ?? ""}</p>
+          <details>
+            <summary>Exact source citations</summary>
+            ${citationBlocks(entry.evaluator_sources)}
+          </details>
+        </section>`)}
+      </div>`}
+      ${validated ? "" : html`<details>
+        <summary>Why the verifier rejected it</summary>
+        <pre>${result.error ?? "No error message recorded."}</pre>
+      </details>`}`
+      : html`<p><strong>Validation error:</strong> ${result.error ?? "No error message recorded."}</p>`}
+    <details>
+      <summary>Raw model output</summary>
+      <pre class="raw-output">${output?.raw_output || "Provider returned no text block."}</pre>
+    </details>
+    <details>
+      <summary>Usage and cost</summary>
+      <pre>${JSON.stringify({usage: result.usage ?? null, cost_usd: result.cost_usd ?? null}, null, 2)}</pre>
+    </details>
+  </article>`;
+};
+
+display(drillRow
+  ? rollupCard(synthNames.get(selectedSynth), drillRow[selectedSynth])
+  : html`<p>No review found for this selection.</p>`);
+return {citationBlocks,rollupCard};
+}});
+
+define({id: "3b349f4b", inputs: ["display","drillRow","html","caseName","promptName","sourceName"], body: (display,drillRow,html,caseName,promptName,sourceName) => {
+display(drillRow ? html`<details class="drill-source">
+  <summary>Source review this roll-up was compiled from</summary>
+  <article class="source-review">
+    <header>
+      <strong>${caseName(drillRow.source_case_id)}</strong>
+      <span>${promptName(drillRow.prompt_variant)} · ${sourceName(drillRow.source_model_key)}</span>
+    </header>
+    ${(drillRow.fields ?? []).map((field) => html`<section>
+      <h4><code>${field.field}</code></h4>
+      <p>${field.text}</p>
+    </section>`)}
+    <details>
+      <summary>Numeric scores (0–2 rubric)</summary>
+      <pre>${JSON.stringify(
+        Object.fromEntries(Object.entries(drillRow.scores ?? {}).map(([key, value]) =>
+          [key, typeof value === "number" ? value * 2 : value])),
+        null, 2)}</pre>
+    </details>
+  </article>
+</details>` : html`<p>No review found for this selection.</p>`);
+}});
+
+</script>
+<script src="/observable/_import/jay-standalone.js" defer></script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="../../">juliusm.com</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link"><a href="../">Projects</a></li>
+    <li class="observablehq-link"><a href="../llm-fundamentals/">LLM Fundamentals</a></li>
+    <li class="observablehq-link"><a href="./">Resume Generator</a></li>
+    <li class="observablehq-link"><a href="../data-playground/">Data Playground</a></li>
+    <li class="observablehq-link"><a href="../site-chatbot/">Site Design and RAG Chatbot Integration</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<header id="observablehq-header">
+<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><div class="portfolio-header-actions"><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="/consulting/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/consulting/');">Consulting</a><a class="portfolio-nav-link" href="/resume/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav><button class="portfolio-theme-control" type="button" data-theme-control="" data-theme-preference="system"><span class="portfolio-theme-control__icon" aria-hidden="true"></span><span data-theme-label="">System</span></button></div></div><script>(function(){
+        const storageKey = 'juliusm-theme';
+        const modes = ['system', 'dark', 'light'];
+        const labels = {system: 'System', dark: 'Dark', light: 'Light'};
+        const metaColors = {dark: '#0b1017', light: '#f5f7f3'};
+        const media = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+        const mount = window.location.pathname.startsWith('/observable') ? '/observable' : '';
+        const path = window.location.pathname.replace(/^\/observable(?=\/|$)/,'').replace(/\/index\.html$/,'/');
+        const normalized = path.endsWith('/') ? path : path + '/';
+        const slot = document.getElementById('portfolio-current-project-slot');
+
+        function readThemePreference(){
+          try {
+            const stored = window.localStorage.getItem(storageKey);
+            if (modes.includes(stored)) return stored;
+          } catch {
+            return 'system';
+          }
+          return 'system';
+        }
+
+        function resolveThemePreference(preference){
+          if (preference === 'light' || (preference === 'system' && media && media.matches)) return 'light';
+          return 'dark';
+        }
+
+        function nextThemePreference(preference){
+          return modes[(modes.indexOf(preference) + 1) % modes.length] || 'system';
+        }
+
+        function updateThemeControls(preference, resolved){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            const next = nextThemePreference(preference);
+            control.dataset.themePreference = preference;
+            control.dataset.themeResolved = resolved;
+            control.setAttribute('aria-label', 'Theme: ' + labels[preference] + '. Switch to ' + labels[next] + '.');
+            control.setAttribute('title', 'Theme: ' + labels[preference]);
+            const label = control.querySelector('[data-theme-label]');
+            if (label) label.textContent = labels[preference];
+          });
+        }
+
+        function applyThemePreference(preference, persist){
+          const normalizedPreference = modes.includes(preference) ? preference : 'system';
+          const resolved = resolveThemePreference(normalizedPreference);
+          document.documentElement.dataset.theme = normalizedPreference;
+          document.documentElement.dataset.themeResolved = resolved;
+          const meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', metaColors[resolved]);
+          if (persist) {
+            try {
+              window.localStorage.setItem(storageKey, normalizedPreference);
+            } catch {}
+          }
+          updateThemeControls(normalizedPreference, resolved);
+        }
+
+        function bindThemeControls(){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            if (control.dataset.themeBound === 'true') return;
+            control.dataset.themeBound = 'true';
+            control.addEventListener('click', function(){
+              applyThemePreference(nextThemePreference(readThemePreference()), true);
+            });
+          });
+          applyThemePreference(readThemePreference(), false);
+        }
+
+        applyThemePreference(readThemePreference(), false);
+        bindThemeControls();
+        if (media) media.addEventListener('change', function(){
+          if (readThemePreference() === 'system') applyThemePreference('system', false);
+        });
+        window.addEventListener('storage', function(event){
+          if (event.key === storageKey) applyThemePreference(readThemePreference(), false);
+        });
+
+        function navigate(target){
+          window.location.assign(window.location.origin + target);
+        }
+
+        function makeNavLink(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-nav-link';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        function makeBreadcrumbSeparator(){
+          const sep = document.createElement('span');
+          sep.className = 'portfolio-breadcrumb-separator';
+          sep.setAttribute('aria-hidden', 'true');
+          sep.textContent = '›';
+          return sep;
+        }
+
+        function makeProjectItem(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-project-item';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        if (slot) {
+          const projectMatch = normalized.match(/^\/projects\/([^/]+)\//);
+          if (projectMatch) {
+            const slug = projectMatch[1];
+            slot.appendChild(makeBreadcrumbSeparator());
+            if (slug === 'llm-fundamentals') {
+              const details = document.createElement('details');
+              details.id = 'portfolio-current-project-menu';
+              details.className = 'portfolio-project-menu';
+
+              const summary = document.createElement('summary');
+              summary.className = 'portfolio-nav-link portfolio-project-toggle';
+              summary.textContent = 'LLM Fundamentals';
+              details.appendChild(summary);
+
+              const dropdown = document.createElement('div');
+              dropdown.className = 'portfolio-project-dropdown';
+              const items = [
+                ['Introduction', '/projects/llm-fundamentals/'],
+                ['Architecture and Expected Performance Analysis', '/projects/llm-fundamentals/perf-expected/'],
+                ['Benchmarks and Empirical Performance Analysis', '/projects/llm-fundamentals/perf-empirical/'],
+                ['Nvidia CUDA Nsys Trace Analysis', '/projects/llm-fundamentals/nsys/'],
+                ['Nsys GPU Trace Viewer', '/projects/llm-fundamentals/nsys-viewer/'],
+                ['Learning Parameter Sweeps', '/projects/llm-fundamentals/optimizer-sweep/'],
+                ['Architectural Variations (Ablations)', '/projects/llm-fundamentals/ablations/']
+              ];
+              for (const [label, target] of items) {
+                dropdown.appendChild(makeProjectItem(label, mount + target));
+              }
+              details.appendChild(dropdown);
+              slot.appendChild(details);
+
+              document.addEventListener('click', function(event){
+                if (!details.hasAttribute('open')) return;
+                if (!details.contains(event.target)) details.removeAttribute('open');
+              });
+              document.addEventListener('keydown', function(event){
+                if (event.key === 'Escape') details.removeAttribute('open');
+              });
+            } else if (slug === 'resume-generator') {
+              slot.appendChild(makeNavLink('Resume Generator', mount + '/projects/resume-generator/'));
+            } else {
+              const labels = {
+                'resume-generator': 'Resume Generator',
+                'data-playground': 'Data Playground',
+                'site-chatbot': 'Site Design and RAG Chatbot Integration'
+              };
+              const fallback = slug
+                .split('-')
+                .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+                .join(' ');
+              slot.appendChild(makeNavLink(labels[slug] || fallback, mount + '/projects/' + slug + '/'));
+            }
+          }
+        }
+
+        for (const id of ['observablehq-sidebar-toggle', 'observablehq-sidebar-backdrop', 'observablehq-sidebar']) {
+          const node = document.getElementById(id);
+          if (node) node.remove();
+        }
+      })();</script>
+</header>
+<aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
+<nav>
+<div>Contents</div>
+<ol>
+<li class="observablehq-secondary-link"><a href="#the-cases">The cases</a></li>
+<li class="observablehq-secondary-link"><a href="#the-twin-pairs">The twin pairs</a></li>
+<li class="observablehq-secondary-link"><a href="#the-roll-ups">The roll-ups</a></li>
+</ol>
+</nav>
+</aside>
+<main id="observablehq-main" class="observablehq">
+<h1 id="evaluation-playground" tabindex="-1"><a class="observablehq-header-anchor" href="#evaluation-playground">Evaluation playground</a></h1>
+<p>This page is a working surface, not a writeup.  The detailed analyses have <a href="./eval-calibration">their</a> <a href="./finding-synthesis-haiku-flashlite-fullmatrix">own</a> <a href="./finding-synthesis-rollup-label-analysis">pages</a>; the goal here is to put the interesting slices of the evaluator data side by side so that conclusions can be drawn by an actual human.  Everything below comes from the anchored sixteen-case calibration matrix: three judges (GPT-5.4 at high effort, Opus 4.6 at adaptive medium, Gemini 3.1 Pro at high), five prompt treatments, and the two second-stage roll-up models (Haiku 4.5 and Gemini 3.5 Flash-Lite) run over all 240 individual reviews.</p>
+<h2 id="the-cases" tabindex="-1"><a class="observablehq-header-anchor" href="#the-cases">The cases</a></h2>
+<p>Every resume in the set is a real generation for the same candidate against a real job posting; the companies and posting titles are withheld here.  Five cases stand alone, five come as clean/defect pairs, and the last (<strong>Truncated</strong>) is the floor check.</p>
+<h3 id="the-five-pure-cases" tabindex="-1"><a class="observablehq-header-anchor" href="#the-five-pure-cases">The five pure cases</a></h3>
+<p>These are unmodified pipeline outputs, each carrying my review notes as the ground truth the judges are graded against.</p>
+<ul>
+<li><strong>Mistargeted</strong> — a polished, keyword-heavy resume aimed at an embedded, business-facing AI role.  The posting wants initiative road-mapping, cross-functional collaboration, and user coaching; those connections are reachable from the candidate history, and the resume never makes them, arguing "engineer" instead.  Demoted from a positive anchor after my review, it now serves as the leniency probe: a judge that scores it high on overall, writing, or argument has missed the point of the document.</li>
+<li><strong>Skills-spam trap</strong> — an older-pipeline output for a product role, originally labeled as fabricated skills spam.  My review inverted that: the skills-spam verdict is not well supported, and flagging it is a false positive.  The real defect is that the posting's UX-research responsibilities go unaddressed, even though they are inferable from the customer-facing portal work and an advanced degree in economics.</li>
+<li><strong>Credential trap</strong> — an older-pipeline output for a process-improvement analyst role.  The off-topic graduate credential it includes <em>is</em> present in the pinned candidate snapshot, so calling it a grounding failure is a false positive.  The real defects: a pile of cloud and architecture bullets that are off-target for an analyst role, flat writing, and connections to the job's needs that are never argued.</li>
+<li><strong>Long and spammy</strong> — the longest resume in the corpus at roughly 1,130 words.  Flipped by my review from "long but clean": the length produces keyword spam and an unfocused feel, and that is what should be penalized, not the word count itself.</li>
+<li><strong>Hollow history</strong> — a complete-looking resume in which a three-year role is reduced to a single sentence with no bullets.  Nothing is cut off; the substance was simply never written.  The posting is research-heavy, so fit is a stretch on top of it.</li>
+</ul>
+<h3 id="the-five-manipulated-pairs" tabindex="-1"><a class="observablehq-header-anchor" href="#the-five-manipulated-pairs">The five manipulated pairs</a></h3>
+<p>Each pair is one resume in two versions differing by exactly one manipulation, so a judge's clean-versus-defect delta isolates whether it perceived that one thing.</p>
+<ul>
+<li><strong>Voice</strong> — <em>clean:</em> the original output, its summary written normally.  <em>Defect:</em> the summary hand-rewritten into reader-addressed imperative ("Design and deploy… Translate… Drive…").  My notes: the voice issue is clear; besides that, the resume is actually pretty good.</li>
+<li><strong>Bolding</strong> — <em>clean:</em> the seventeen mid-sentence inline keyword bolds unwrapped, keeping the fourteen house-style bullet lead-in bolds.  <em>Defect:</em> the inline bolding left intact.  My notes: this is a highly technical JD, so the keyword emphasis is less out of place than it could be; the real absolute issues are bullets that lack consequence and under-claimed collaboration.</li>
+<li><strong>Pitch</strong> — <em>clean:</em> honest solo-developer/analyst framing.  My notes: wordy, with the posting's adaptability points under-addressed; the old "down-level" premise is withdrawn, and asserting it is a false positive.  <em>Defect:</em> three seniority inflations with the facts otherwise intact — "builds … as a solo developer" becomes "leads production AI application development", "supported … delivery" becomes "directed", and "worked with cloud operations and security teams" becomes "led" them.</li>
+<li><strong>Salience</strong> — <em>clean:</em> the human-validated high anchor; this exact resume got a phone screen, and my notes call it very good — automated reviewers that penalize its length are wrong to.  <em>Defect:</em> a pure permutation — summary sentences swapped so the AI-shipping clause is buried, and bullets reordered weakest-first within each role.  Identical words throughout; a reader that only queries content cannot distinguish the pair.</li>
+<li><strong>Grounding</strong> — <em>clean:</em> a lean resume against a sparse, 278-word posting.  My notes: the candidate clears the stated requirements with room to spare, so treating the sparsity as fatal is a false positive; OK to good, not great.  <em>Defect:</em> three injected fabrications — a blatant fake cloud certification, a 6% performance lift inflated to 16%, and a 15× speedup inflated to 40×.  Full credit means catching a subtle inflation, not just the fake credential.</li>
+</ul>
+<p>The sixteenth grid case, <strong>Truncated (floor check)</strong>, is an organic generation failure that cuts off partway through the professional summary — broken and unusable, though what's there reads fine.  It exists to confirm that hard failures floor the score.</p>
+<div class="observablehq observablehq--block"><!--:4dba01c4:--></div>
+<div class="observablehq observablehq--block"><!--:cdb0ce8f:--></div>
+<div class="observablehq observablehq--block"><!--:45415250:--></div>
+<h2 id="the-twin-pairs" tabindex="-1"><a class="observablehq-header-anchor" href="#the-twin-pairs">The twin pairs</a></h2>
+<p>The five pairs described above, compared side by side.  Because each pair differs by exactly one manipulation, the clean-versus-defect delta isolates whether a judge perceived that one thing.  Scores are shown on the human 0–2 rubric scale.</p>
+<div class="observablehq observablehq--block"><!--:ae1feafe:--></div>
+<div class="observablehq observablehq--block"><!--:54473a92:--></div>
+<div class="observablehq observablehq--block"><!--:f470933f:--></div>
+<div class="observablehq observablehq--block"><!--:9fefd2e4:--></div>
+<div class="observablehq observablehq--block"><!--:c600f53e:--></div>
+<div class="observablehq observablehq--block"><!--:87fc9222:--></div>
+<div class="observablehq observablehq--block"><!--:15b1d1b5:--></div>
+<div class="observablehq observablehq--block"><!--:c07005d6:--></div>
+<div class="observablehq observablehq--block"><!--:6a50f0f7:--></div>
+<div class="observablehq observablehq--block"><!--:3b59d87b:--></div>
+<div class="observablehq observablehq--block"><!--:af4a972a:--></div>
+<div class="observablehq observablehq--block"><!--:b454ff7e:--></div>
+<div class="observablehq observablehq--block"><!--:f5acfec1:--></div>
+<h2 id="the-roll-ups" tabindex="-1"><a class="observablehq-header-anchor" href="#the-roll-ups">The roll-ups</a></h2>
+<p>The second stage reads a single evaluator review and compiles it into source-cited findings.  Below is every roll-up from the full 240-review matrix.  A deterministic verifier checks each citation verbatim; roll-ups that failed that check (usually over a single bad quote) are shown anyway, recovered from the raw model output and marked unvalidated.  One Haiku call out of the 480 returned no text at all, and that cell stays empty.  Pick the synthesizer, get the overview of what it produced for every case, then drill into any single roll-up.</p>
+<div class="observablehq observablehq--block"><!--:a4384ee0:--></div>
+<div class="observablehq observablehq--block"><!--:bfb495f8:--></div>
+<div class="observablehq observablehq--block"><!--:29aab3cd:--></div>
+<div class="observablehq observablehq--block"><!--:0f9ba6cd:--></div>
+<div class="observablehq observablehq--block"><!--:37b05f9b:--></div>
+<div class="observablehq observablehq--block"><!--:94261be7:--></div>
+<div class="observablehq observablehq--block"><!--:0934ce59:--></div>
+<div class="observablehq observablehq--block"><!--:1625e7cc:--></div>
+<div class="observablehq observablehq--block"><!--:ff2c0a96:--></div>
+<div class="observablehq observablehq--block"><!--:80ebf9f9:--></div>
+<div class="observablehq observablehq--block"><!--:3b349f4b:--></div>
+<pre data-language="css"><code class="language-css"><span class="hljs-selector-class">.source-review</span>,
+<span class="hljs-selector-class">.output-card</span> {
+  <span class="hljs-attribute">border</span>: <span class="hljs-number">1px</span> solid <span class="hljs-built_in">color-mix</span>(in srgb, currentColor <span class="hljs-number">18%</span>, transparent);
+  <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">0.7rem</span>;
+  <span class="hljs-attribute">padding</span>: <span class="hljs-number">1rem</span> <span class="hljs-number">1.1rem</span>;
+  <span class="hljs-attribute">background</span>: <span class="hljs-built_in">color-mix</span>(in srgb, <span class="hljs-built_in">var</span>(--theme-background, white) <span class="hljs-number">97%</span>, currentColor);
+}
+<span class="hljs-selector-class">.source-review</span> &gt; <span class="hljs-selector-tag">header</span>,
+<span class="hljs-selector-class">.output-card</span> &gt; <span class="hljs-selector-tag">header</span> {
+  <span class="hljs-attribute">display</span>: flex;
+  <span class="hljs-attribute">justify-content</span>: space-between;
+  <span class="hljs-attribute">gap</span>: <span class="hljs-number">1rem</span>;
+  <span class="hljs-attribute">align-items</span>: baseline;
+  <span class="hljs-attribute">flex-wrap</span>: wrap;
+}
+<span class="hljs-selector-class">.source-review</span> <span class="hljs-selector-tag">section</span> {
+  <span class="hljs-attribute">border-top</span>: <span class="hljs-number">1px</span> solid <span class="hljs-built_in">color-mix</span>(in srgb, currentColor <span class="hljs-number">12%</span>, transparent);
+  <span class="hljs-attribute">padding-top</span>: <span class="hljs-number">0.5rem</span>;
+}
+<span class="hljs-selector-class">.source-review</span> <span class="hljs-selector-tag">h4</span>,
+<span class="hljs-selector-class">.finding</span> <span class="hljs-selector-tag">h4</span>,
+<span class="hljs-selector-class">.output-card</span> <span class="hljs-selector-tag">h3</span> {
+  <span class="hljs-attribute">margin</span>: <span class="hljs-number">0.5rem</span> <span class="hljs-number">0</span> <span class="hljs-number">0.3rem</span>;
+}
+<span class="hljs-selector-class">.output-grid</span> {
+  <span class="hljs-attribute">display</span>: grid;
+  <span class="hljs-attribute">grid-template-columns</span>: <span class="hljs-built_in">repeat</span>(auto-fit, <span class="hljs-built_in">minmax</span>(<span class="hljs-built_in">min</span>(<span class="hljs-number">100%</span>, <span class="hljs-number">28rem</span>), <span class="hljs-number">1</span>fr));
+  <span class="hljs-attribute">gap</span>: <span class="hljs-number">1rem</span>;
+  <span class="hljs-attribute">align-items</span>: start;
+}
+<span class="hljs-selector-class">.output-card</span><span class="hljs-selector-class">.invalid</span> { <span class="hljs-attribute">border-color</span>: <span class="hljs-number">#b91c1c</span>; }
+<span class="hljs-selector-class">.output-card</span><span class="hljs-selector-class">.valid</span> { <span class="hljs-attribute">border-color</span>: <span class="hljs-number">#15803d</span>; }
+<span class="hljs-selector-class">.output-card</span><span class="hljs-selector-class">.recovered</span> { <span class="hljs-attribute">border-color</span>: <span class="hljs-number">#b45309</span>; }
+<span class="hljs-selector-class">.status</span>,
+<span class="hljs-selector-class">.severity</span> {
+  <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">999px</span>;
+  <span class="hljs-attribute">padding</span>: <span class="hljs-number">0.15rem</span> <span class="hljs-number">0.5rem</span>;
+  <span class="hljs-attribute">font-size</span>: <span class="hljs-number">0.73rem</span>;
+  <span class="hljs-attribute">font-weight</span>: <span class="hljs-number">700</span>;
+  <span class="hljs-attribute">letter-spacing</span>: <span class="hljs-number">0.035em</span>;
+}
+<span class="hljs-selector-class">.output-card</span><span class="hljs-selector-class">.invalid</span> <span class="hljs-selector-class">.status</span> { <span class="hljs-attribute">background</span>: <span class="hljs-number">#b91c1c</span>; <span class="hljs-attribute">color</span>: white; }
+<span class="hljs-selector-class">.output-card</span><span class="hljs-selector-class">.valid</span> <span class="hljs-selector-class">.status</span> { <span class="hljs-attribute">background</span>: <span class="hljs-number">#15803d</span>; <span class="hljs-attribute">color</span>: white; }
+<span class="hljs-selector-class">.output-card</span><span class="hljs-selector-class">.recovered</span> <span class="hljs-selector-class">.status</span> { <span class="hljs-attribute">background</span>: <span class="hljs-number">#b45309</span>; <span class="hljs-attribute">color</span>: white; }
+<span class="hljs-selector-class">.severity-blocking</span> { <span class="hljs-attribute">background</span>: <span class="hljs-number">#b91c1c</span>; <span class="hljs-attribute">color</span>: white; }
+<span class="hljs-selector-class">.severity-important</span> { <span class="hljs-attribute">background</span>: <span class="hljs-number">#b45309</span>; <span class="hljs-attribute">color</span>: white; }
+<span class="hljs-selector-class">.severity-minor</span> { <span class="hljs-attribute">background</span>: <span class="hljs-number">#475569</span>; <span class="hljs-attribute">color</span>: white; }
+<span class="hljs-selector-class">.finding</span> {
+  <span class="hljs-attribute">border-top</span>: <span class="hljs-number">1px</span> solid <span class="hljs-built_in">color-mix</span>(in srgb, currentColor <span class="hljs-number">14%</span>, transparent);
+  <span class="hljs-attribute">margin-top</span>: <span class="hljs-number">0.9rem</span>;
+  <span class="hljs-attribute">padding-top</span>: <span class="hljs-number">0.8rem</span>;
+}
+<span class="hljs-selector-class">.finding</span> <span class="hljs-selector-tag">blockquote</span> { <span class="hljs-attribute">margin</span>: <span class="hljs-number">0.7rem</span> <span class="hljs-number">0</span>; }
+<span class="hljs-selector-class">.raw-output</span> {
+  <span class="hljs-attribute">max-height</span>: <span class="hljs-number">34rem</span>;
+  <span class="hljs-attribute">overflow</span>: auto;
+  <span class="hljs-attribute">white-space</span>: pre-wrap;
+}
+<span class="hljs-selector-class">.disagreements</span> &gt; <span class="hljs-selector-tag">h4</span> {
+  <span class="hljs-attribute">margin</span>: <span class="hljs-number">1.1rem</span> <span class="hljs-number">0</span> <span class="hljs-number">0</span>;
+  <span class="hljs-attribute">font-size</span>: <span class="hljs-number">0.78rem</span>;
+  <span class="hljs-attribute">font-weight</span>: <span class="hljs-number">700</span>;
+  <span class="hljs-attribute">letter-spacing</span>: <span class="hljs-number">0.06em</span>;
+  <span class="hljs-attribute">text-transform</span>: uppercase;
+  <span class="hljs-attribute">opacity</span>: <span class="hljs-number">0.75</span>;
+}
+<span class="hljs-selector-class">.plot-figure</span> {
+  <span class="hljs-attribute">margin</span>: <span class="hljs-number">1rem</span> <span class="hljs-number">0</span>;
+  <span class="hljs-attribute">max-width</span>: <span class="hljs-number">100%</span>;
+}
+<span class="hljs-selector-class">.scroll-x</span> {
+  <span class="hljs-attribute">overflow-x</span>: auto;
+}
+<span class="hljs-selector-class">.grid-caption</span> {
+  <span class="hljs-attribute">font-size</span>: <span class="hljs-number">0.82rem</span>;
+  <span class="hljs-attribute">opacity</span>: <span class="hljs-number">0.72</span>;
+  <span class="hljs-attribute">margin</span>: <span class="hljs-number">0.35rem</span> <span class="hljs-number">0</span> <span class="hljs-number">0</span>;
+}
+<span class="hljs-selector-class">.drill-source</span> {
+  <span class="hljs-attribute">margin-top</span>: <span class="hljs-number">1rem</span>;
+}
+<span class="hljs-selector-class">.drill-source</span> &gt; <span class="hljs-selector-tag">summary</span> {
+  <span class="hljs-attribute">cursor</span>: pointer;
+  <span class="hljs-attribute">font-weight</span>: <span class="hljs-number">600</span>;
+}
+</code></pre>
+</main>
+</div>
+</body>
+</html>

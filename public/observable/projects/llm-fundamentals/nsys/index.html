@@ -13,8 +13,8 @@
 <link rel="stylesheet" type="text/css" href="../../../_observablehq/stdlib/inputs.f7bf0e12.css">
 <script type="module">
 
-import {define} from "../../../_observablehq/client.812bb03c.js";
-import {registerFile} from "../../../_observablehq/stdlib.cf315cf5.js";
+import {define} from "../../../_observablehq/client.5d43dcff.js";
+import {registerFile} from "../../../_observablehq/stdlib.a50b4fda.js";
 
 registerFile("../../../data/raw/traces/bad_head_size_nsys.parquet", {"name":"../../../data/raw/traces/bad_head_size_nsys.parquet","path":"../../../_file/data/raw/traces/bad_head_size_nsys.0e5fcf94.parquet","lastModified":1771465633642,"size":699507});
 registerFile("../../../data/raw/traces/bandwidth_bound_nsys.parquet", {"name":"../../../data/raw/traces/bandwidth_bound_nsys.parquet","path":"../../../_file/data/raw/traces/bandwidth_bound_nsys.0570a4e8.parquet","lastModified":1771465633645,"size":526034});
@@ -28,7 +28,7 @@ registerFile("../../../data/raw/traces/vocab_bottleneck_nsys.parquet", {"name":"
 registerFile("../../../data/raw/traces/wide_ffn_nsys.parquet", {"name":"../../../data/raw/traces/wide_ffn_nsys.parquet","path":"../../../_file/data/raw/traces/wide_ffn_nsys.e3df5806.parquet","lastModified":1771465633667,"size":715444});
 
 define({id: "84daee19", outputs: ["loadTraceRows","aggregateSummary","aggregateTimeline","aggregateKernels","aggregateMemory","resourceEnvelopeRows","TRACE_NAMES","EVENT_TYPES","TRACE_RESOURCE_CONFIGS","renderNsys","formatMs","formatBytes","d3","Plot"], body: async () => {
-const [{loadTraceRows, aggregateSummary, aggregateTimeline, aggregateKernels, aggregateMemory, resourceEnvelopeRows, TRACE_NAMES, EVENT_TYPES, TRACE_RESOURCE_CONFIGS, renderNsys}, {formatMs, formatBytes}, d3, Plot] = await Promise.all([import("../../../_import/embed/nsys.70944749.js"), import("../../../_import/components/data-utils.e2caa41c.js"), import("../../../_npm/d3@7.9.0/080cf928.js"), import("../../../_import/components/echart-plot.624140b1.js")]);
+const [{loadTraceRows, aggregateSummary, aggregateTimeline, aggregateKernels, aggregateMemory, resourceEnvelopeRows, TRACE_NAMES, EVENT_TYPES, TRACE_RESOURCE_CONFIGS, renderNsys}, {formatMs, formatBytes}, d3, Plot] = await Promise.all([import("../../../_import/embed/nsys.2a2540ae.js"), import("../../../_import/components/data-utils.e2caa41c.js"), import("../../../_npm/d3@7.9.0/e324157d.js"), import("../../../_import/components/echart-plot.334353fc.js")]);
 
 return {loadTraceRows,aggregateSummary,aggregateTimeline,aggregateKernels,aggregateMemory,resourceEnvelopeRows,TRACE_NAMES,EVENT_TYPES,TRACE_RESOURCE_CONFIGS,renderNsys,formatMs,formatBytes,d3,Plot};
 }});

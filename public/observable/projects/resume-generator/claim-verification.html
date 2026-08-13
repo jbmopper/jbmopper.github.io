@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.4">
+<base href="/observable/projects/resume-generator/claim-verification.html">
+<title>The Resume Validator | juliusm.com</title>
+
+<link rel="preload" as="style" href="../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.87b41aae.css">
+<script type="module">
+
+import "../../_observablehq/client.5d43dcff.js";
+
+</script>
+<script src="/observable/_import/jay-standalone.js" defer></script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="../../">juliusm.com</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link"><a href="../">Projects</a></li>
+    <li class="observablehq-link"><a href="../llm-fundamentals/">LLM Fundamentals</a></li>
+    <li class="observablehq-link"><a href="./">Resume Generator</a></li>
+    <li class="observablehq-link"><a href="../data-playground/">Data Playground</a></li>
+    <li class="observablehq-link"><a href="../site-chatbot/">Site Design and RAG Chatbot Integration</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<header id="observablehq-header">
+<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><div class="portfolio-header-actions"><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="/consulting/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/consulting/');">Consulting</a><a class="portfolio-nav-link" href="/resume/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav><button class="portfolio-theme-control" type="button" data-theme-control="" data-theme-preference="system"><span class="portfolio-theme-control__icon" aria-hidden="true"></span><span data-theme-label="">System</span></button></div></div><script>(function(){
+        const storageKey = 'juliusm-theme';
+        const modes = ['system', 'dark', 'light'];
+        const labels = {system: 'System', dark: 'Dark', light: 'Light'};
+        const metaColors = {dark: '#0b1017', light: '#f5f7f3'};
+        const media = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+        const mount = window.location.pathname.startsWith('/observable') ? '/observable' : '';
+        const path = window.location.pathname.replace(/^\/observable(?=\/|$)/,'').replace(/\/index\.html$/,'/');
+        const normalized = path.endsWith('/') ? path : path + '/';
+        const slot = document.getElementById('portfolio-current-project-slot');
+
+        function readThemePreference(){
+          try {
+            const stored = window.localStorage.getItem(storageKey);
+            if (modes.includes(stored)) return stored;
+          } catch {
+            return 'system';
+          }
+          return 'system';
+        }
+
+        function resolveThemePreference(preference){
+          if (preference === 'light' || (preference === 'system' && media && media.matches)) return 'light';
+          return 'dark';
+        }
+
+        function nextThemePreference(preference){
+          return modes[(modes.indexOf(preference) + 1) % modes.length] || 'system';
+        }
+
+        function updateThemeControls(preference, resolved){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            const next = nextThemePreference(preference);
+            control.dataset.themePreference = preference;
+            control.dataset.themeResolved = resolved;
+            control.setAttribute('aria-label', 'Theme: ' + labels[preference] + '. Switch to ' + labels[next] + '.');
+            control.setAttribute('title', 'Theme: ' + labels[preference]);
+            const label = control.querySelector('[data-theme-label]');
+            if (label) label.textContent = labels[preference];
+          });
+        }
+
+        function applyThemePreference(preference, persist){
+          const normalizedPreference = modes.includes(preference) ? preference : 'system';
+          const resolved = resolveThemePreference(normalizedPreference);
+          document.documentElement.dataset.theme = normalizedPreference;
+          document.documentElement.dataset.themeResolved = resolved;
+          const meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', metaColors[resolved]);
+          if (persist) {
+            try {
+              window.localStorage.setItem(storageKey, normalizedPreference);
+            } catch {}
+          }
+          updateThemeControls(normalizedPreference, resolved);
+        }
+
+        function bindThemeControls(){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            if (control.dataset.themeBound === 'true') return;
+            control.dataset.themeBound = 'true';
+            control.addEventListener('click', function(){
+              applyThemePreference(nextThemePreference(readThemePreference()), true);
+            });
+          });
+          applyThemePreference(readThemePreference(), false);
+        }
+
+        applyThemePreference(readThemePreference(), false);
+        bindThemeControls();
+        if (media) media.addEventListener('change', function(){
+          if (readThemePreference() === 'system') applyThemePreference('system', false);
+        });
+        window.addEventListener('storage', function(event){
+          if (event.key === storageKey) applyThemePreference(readThemePreference(), false);
+        });
+
+        function navigate(target){
+          window.location.assign(window.location.origin + target);
+        }
+
+        function makeNavLink(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-nav-link';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        function makeBreadcrumbSeparator(){
+          const sep = document.createElement('span');
+          sep.className = 'portfolio-breadcrumb-separator';
+          sep.setAttribute('aria-hidden', 'true');
+          sep.textContent = '›';
+          return sep;
+        }
+
+        function makeProjectItem(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-project-item';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        if (slot) {
+          const projectMatch = normalized.match(/^\/projects\/([^/]+)\//);
+          if (projectMatch) {
+            const slug = projectMatch[1];
+            slot.appendChild(makeBreadcrumbSeparator());
+            if (slug === 'llm-fundamentals') {
+              const details = document.createElement('details');
+              details.id = 'portfolio-current-project-menu';
+              details.className = 'portfolio-project-menu';
+
+              const summary = document.createElement('summary');
+              summary.className = 'portfolio-nav-link portfolio-project-toggle';
+              summary.textContent = 'LLM Fundamentals';
+              details.appendChild(summary);
+
+              const dropdown = document.createElement('div');
+              dropdown.className = 'portfolio-project-dropdown';
+              const items = [
+                ['Introduction', '/projects/llm-fundamentals/'],
+                ['Architecture and Expected Performance Analysis', '/projects/llm-fundamentals/perf-expected/'],
+                ['Benchmarks and Empirical Performance Analysis', '/projects/llm-fundamentals/perf-empirical/'],
+                ['Nvidia CUDA Nsys Trace Analysis', '/projects/llm-fundamentals/nsys/'],
+                ['Nsys GPU Trace Viewer', '/projects/llm-fundamentals/nsys-viewer/'],
+                ['Learning Parameter Sweeps', '/projects/llm-fundamentals/optimizer-sweep/'],
+                ['Architectural Variations (Ablations)', '/projects/llm-fundamentals/ablations/']
+              ];
+              for (const [label, target] of items) {
+                dropdown.appendChild(makeProjectItem(label, mount + target));
+              }
+              details.appendChild(dropdown);
+              slot.appendChild(details);
+
+              document.addEventListener('click', function(event){
+                if (!details.hasAttribute('open')) return;
+                if (!details.contains(event.target)) details.removeAttribute('open');
+              });
+              document.addEventListener('keydown', function(event){
+                if (event.key === 'Escape') details.removeAttribute('open');
+              });
+            } else if (slug === 'resume-generator') {
+              slot.appendChild(makeNavLink('Resume Generator', mount + '/projects/resume-generator/'));
+            } else {
+              const labels = {
+                'resume-generator': 'Resume Generator',
+                'data-playground': 'Data Playground',
+                'site-chatbot': 'Site Design and RAG Chatbot Integration'
+              };
+              const fallback = slug
+                .split('-')
+                .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+                .join(' ');
+              slot.appendChild(makeNavLink(labels[slug] || fallback, mount + '/projects/' + slug + '/'));
+            }
+          }
+        }
+
+        for (const id of ['observablehq-sidebar-toggle', 'observablehq-sidebar-backdrop', 'observablehq-sidebar']) {
+          const node = document.getElementById(id);
+          if (node) node.remove();
+        }
+      })();</script>
+</header>
+<aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
+<nav>
+<div>Contents</div>
+<ol>
+<li class="observablehq-secondary-link"><a href="#the-problem">The problem</a></li>
+<li class="observablehq-secondary-link"><a href="#the-test-material">The test material</a></li>
+<li class="observablehq-secondary-link"><a href="#why-the-first-validator-lost">Why the first validator lost</a></li>
+<li class="observablehq-secondary-link"><a href="#the-design">The design</a></li>
+<li class="observablehq-secondary-link"><a href="#the-cheap-runs">The cheap runs</a></li>
+<li class="observablehq-secondary-link"><a href="#the-terra-run">The Terra run</a></li>
+<li class="observablehq-secondary-link"><a href="#what-this-shows-and-what-it-doesnt-yet">What this shows, and what it doesn&#x27;t yet</a></li>
+</ol>
+</nav>
+</aside>
+<main id="observablehq-main" class="observablehq">
+<h1 id="the-resume-validator" tabindex="-1"><a class="observablehq-header-anchor" href="#the-resume-validator">The Resume Validator</a></h1>
+<p><em>(draft — findings as of 2026-08-12; the experiment is ongoing)</em></p>
+<h2 id="the-problem" tabindex="-1"><a class="observablehq-header-anchor" href="#the-problem">The problem</a></h2>
+<p>Whatever else a generated resume gets wrong, grounding is the question that has to be answered correctly: does the document claim anything the candidate's record does not support?  A resume that reads beautifully and fabricates is worse than useless.  The <a href="./eval-calibration">calibration work</a> ended with an uncomfortable verdict on this front — no configuration of holistic judge could be trusted to gate or rank pipelines — so the grounding check was rebuilt on the opposite philosophy: stop asking judges holistic questions.  Break the resume into very small questions, ask each one separately, and fence every answer with a deterministic check.</p>
+<p>On its first real test the rebuilt validator went nine for nine.  Every known defect was caught with a verbatim citation, and every clean line was left alone.  This page covers the design, the failures on the way to it, and what the result does and does not establish.</p>
+<h2 id="the-test-material" tabindex="-1"><a class="observablehq-header-anchor" href="#the-test-material">The test material</a></h2>
+<p>The defects were not invented for the test; they are lines the real generation pipeline actually produced, each representing an organic failure mode of LLM resume writing:</p>
+<ul>
+<li><strong>Actor inflation</strong> — a bullet claiming <em>"Led end-to-end development of CLEAR"</em> where the source record grants product ownership of changes (writing requirements, grooming, validating) but not the build.</li>
+<li><strong>Category drift</strong> — a portal the source data calls a <em>"client-facing web portal"</em>, promoted by the resume to a <em>"SaaS portal"</em>.</li>
+<li><strong>Misattached structure</strong> — a custom MCP server attached to the wrong parent system.</li>
+<li><strong>Tense promotion</strong> — work the record says is <em>"being added"</em>, claimed as <em>"implemented"</em>.</li>
+</ul>
+<p>Each defective line is paired with a clean twin line to catch false alarms, giving nine scored lines across three resumes and one candidate record.</p>
+<h2 id="why-the-first-validator-lost" tabindex="-1"><a class="observablehq-header-anchor" href="#why-the-first-validator-lost">Why the first validator lost</a></h2>
+<p>The first attempt tried to make grounding checkable by <em>structuring</em> it: extract subject–predicate-style assertion tuples from both documents — actor, relation, scope, modality, each with its own evidence span — bind the entities, and compare with deterministic rules.  The appeal was that nothing subjective survived to the comparison step.  The cost was that everything subjective got pushed into extraction, where it failed quietly: one honest proposition would shatter into partial tuples whose axes disagreed, and a sentence copied nearly verbatim from the source could still read as an overstatement.  The comparator did exactly what it was told, with inputs that could not carry the meaning.</p>
+<p>The fact-verification literature had already been through this.  The designs that work — decompose-then-verify, in the FActScore lineage — do not ask models to emit schema.  They ask for atomic claims in plain language, then judge each claim alone against the full source, with the structure living in the judge's instructions rather than in the data format.  The validator is that design, plus one addition the literature underuses: every model output that <em>can</em> be checked by string matching, is.</p>
+<h2 id="the-design" tabindex="-1"><a class="observablehq-header-anchor" href="#the-design">The design</a></h2>
+<p>The pipeline has three stages.  Models make every judgment call; code checks every checkable artifact.</p>
+<ol>
+<li>
+<p><strong>Decompose</strong> <em>(model, fenced by code)</em>.  Each resume line is restated as self-contained declarative sentences, one fact each, preserving exactly the strength of the original: who acted, how far the work got, how much it covered, every hedge.  Each claim carries a verbatim quote from the line, and code verifies the quote character-for-character.  A claim whose quote is not actually in the resume is set aside visibly rather than silently trusted or dropped.</p>
+</li>
+<li>
+<p><strong>Verify</strong> <em>(model, fenced by code)</em>.  Each surviving claim is judged alone against the entire candidate record, with three verdicts that are not allowed to blur: <em>supported</em> (the record communicates it), <em>contradicted</em> (the record establishes something incompatible), and <em>unsupported</em> (the record is silent).  Silence is not conflict, and silence is not support.  Supported and contradicted verdicts must quote the record verbatim, which code again checks.  The axis discipline the old comparator tried to enforce in schema lives in the judge's rubric instead: actor, status, extent, lifecycle, attribution, identity, structure.</p>
+</li>
+<li>
+<p><strong>Score</strong> <em>(code)</em>.  A defect counts as caught only when a non-supported verdict lands on a claim quoting the defective span; being wrong loudly somewhere else on the line does not count.  A clean line is scored on whether it was accused at all.</p>
+</li>
+</ol>
+<p>The principle throughout is that judgment stays with the model, but lying gets hard.  A model cannot invent a quote, attach evidence to a verdict that should carry none, or quietly skip a line, without the fence turning the failure into a visible, classifiable artifact.</p>
+<h2 id="the-cheap-runs" tabindex="-1"><a class="observablehq-header-anchor" href="#the-cheap-runs">The cheap runs</a></h2>
+<p>The first two runs put Haiku 4.5 on both stages, at roughly sixty cents per full pass.  They scored 7/9 and 6/9, and the misses were worth more than the scores, because the fences said exactly where the losses were:</p>
+<ul>
+<li><strong>The judge's verdicts were mostly right; its paperwork was sloppy.</strong>  About a quarter of verdicts initially failed the evidence check — not because evidence was invented, but because the model stitched real quotes together with ellipses, or attached a "nearest miss" quote to verdicts that were supposed to carry none.  Loosening the checker to verify each stitched fragment verbatim recovered these; invention still blocks, and shape problems stay visible on the row.</li>
+<li><strong>Decomposition was the real bottleneck.</strong>  The SaaS-portal line was missed in both runs for the same reason: the category label got folded into a long claim about serving as a conduit between teams, so the category question was never put to the judge.  The clean modality line false-alarmed in both runs for the mirror-image reason: "being added <em>to enable</em> a governed flow" got strengthened into "the additions <em>enable</em>," and the judge then correctly contradicted a claim the resume never made.  Targeted prompt rules — a label used in passing is its own claim; purpose is not achievement — changed nothing on either line.</li>
+<li><strong>One judge miss was recall, not judgment.</strong>  A clean ownership line was accused because the judge reasoned carefully from the wrong part of the record, missing the sentence that settles the question.  The same claim passed in the other run, so single-chain verdicts at this model tier are noisy at the boundaries.</li>
+</ul>
+<h2 id="the-terra-run" tabindex="-1"><a class="observablehq-header-anchor" href="#the-terra-run">The Terra run</a></h2>
+<p>Swapping the decomposition model to GPT-5.6 Terra settled the prompt-versus-model question immediately: 511 claims from all 72 lines, zero quote violations, zero skipped lines, and both chronic decomposition failures gone.  The category claim finally exists as its own sentence (<em>"The SpectrumEnterprise.net portal is a SaaS portal"</em>), and the purpose clauses stay hedged (<em>"being added to enable a multi-step, governed flow"</em>).  This was the same prompt Haiku had been given.  The rules were fine; the model reading them wasn't.</p>
+<p>With Terra also judging its own claims, the scorecard filled in:</p>
+<table>
+<thead>
+<tr>
+<th>line</th>
+<th>defect present</th>
+<th>outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"led end-to-end development" (actor inflation)</td>
+<td>yes</td>
+<td>caught</td>
+</tr>
+<tr>
+<td>ownership line (clean twin)</td>
+<td>no</td>
+<td>clean</td>
+</tr>
+<tr>
+<td>SaaS portal, summary line (category drift)</td>
+<td>yes</td>
+<td>caught</td>
+</tr>
+<tr>
+<td>SaaS portal, bullet line (category drift)</td>
+<td>yes</td>
+<td>caught</td>
+</tr>
+<tr>
+<td>web portal (clean twin)</td>
+<td>no</td>
+<td>clean</td>
+</tr>
+<tr>
+<td>MCP server on the wrong system (misattachment)</td>
+<td>yes</td>
+<td>caught</td>
+</tr>
+<tr>
+<td>correctly attached component (clean twin)</td>
+<td>no</td>
+<td>clean</td>
+</tr>
+<tr>
+<td>"implemented" vs "being added" (tense promotion)</td>
+<td>yes</td>
+<td>caught</td>
+</tr>
+<tr>
+<td>"being added" (clean twin)</td>
+<td>no</td>
+<td>clean</td>
+</tr>
+</tbody>
+</table>
+<p>506 of 511 verdicts carried evidence that survived the verbatim check — about a one percent loss, versus four to seven percent under Haiku.  The catch that had been structurally impossible in every earlier run reads like this:</p>
+<blockquote>
+<p><strong>Claim:</strong> "The SpectrumEnterprise.net portal is a SaaS portal."
+<strong>Verdict:</strong> contradicted.  <strong>Evidence:</strong> "developing the SpectrumEnterprise.net client-facing web portal."  <em>The source explicitly categorizes SpectrumEnterprise.net as a client-facing web portal, not a SaaS portal.  The identity axis is incompatible with the claim's SaaS classification.</em></p>
+</blockquote>
+<p>That is the shape of answer the holistic judges never produced: a specific claim, a specific verdict, a verbatim receipt, and a stated reason on a named axis — every piece of which a program checked before a human saw it.</p>
+<h2 id="what-this-shows-and-what-it-doesnt-yet" tabindex="-1"><a class="observablehq-header-anchor" href="#what-this-shows-and-what-it-doesnt-yet">What this shows, and what it doesn't yet</a></h2>
+<p>The through-line from the calibration work holds up well.  The same class of model that reads well and scores badly when handed a whole resume performs decisively when the question shrinks to <em>is this one sentence supported by this one document</em> and the answer is fenced by string checks.  The judgment didn't get better; the questions got smaller and the lying got harder.</p>
+<p>What it does not yet show is behavior in the wild.  Nine known defects across three resumes is an instrument check, not a field trial.  The organic calibration cases — the mistargeted case and the rest of the set where the holistic judges died — have not been through this pipeline yet, and they are the real test.  Also open:</p>
+<ul>
+<li><strong>The cost floor.</strong>  Terra decomposition with a cheaper judge is untested.  The failure analysis suggests decomposition needs the stronger model more than judging does, though the judge's one recall miss argues for some care.</li>
+<li><strong>Multi-model chains.</strong>  Whether any/majority/unanimous verdict policies across models buy real precision, or just averaging.</li>
+</ul>
+<p>Findings will land here as the runs complete.</p>
+</main>
+</div>
+</body>
+</html>

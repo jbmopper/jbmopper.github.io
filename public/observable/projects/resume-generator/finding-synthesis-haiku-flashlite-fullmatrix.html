@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.4">
+<base href="/observable/projects/resume-generator/finding-synthesis-haiku-flashlite-fullmatrix.html">
+<title>Full-Matrix Finding Synthesis: Haiku vs Flash-Lite | juliusm.com</title>
+
+<link rel="preload" as="style" href="../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="preload" as="style" href="../../_observablehq/stdlib/inputs.f7bf0e12.css">
+<link rel="preload" as="style" href="../../_npm/katex@0.17.0/dist/katex.min.css">
+<link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="stylesheet" type="text/css" href="../../_observablehq/stdlib/inputs.f7bf0e12.css">
+<link rel="stylesheet" type="text/css" href="../../_npm/katex@0.17.0/dist/katex.min.css">
+<script type="module">
+
+import {define} from "../../_observablehq/client.5d43dcff.js";
+import {registerFile} from "../../_observablehq/stdlib.a50b4fda.js";
+
+registerFile("./finding-synthesis-haiku-flashlite-fullmatrix-data.json", {"name":"./finding-synthesis-haiku-flashlite-fullmatrix-data.json","mimeType":"application/json","path":"../../_file/projects/resume-generator/finding-synthesis-haiku-flashlite-fullmatrix-data.39b33421.json","lastModified":1786598247947,"size":4883031});
+
+define({id: "73c631f4", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`0.4637**. Haiku 4.5 with a manual 2,048-token thinking
+budget produced **183 valid reports (76.3%)** for **`
+))
+}});
+
+define({id: "5e50dd80", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`1/M input and`
+))
+}});
+
+define({id: "4dcbfd03", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`0.30/M input and `
+))
+}});
+
+define({id: "e6dfba39", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex`1.3316 and `
+))
+}});
+
+define({id: "7d3692d4", inputs: ["FileAttachment"], outputs: ["matrix","rows"], body: (FileAttachment) => {
+const matrix = FileAttachment("./finding-synthesis-haiku-flashlite-fullmatrix-data.json").json();
+const rows = matrix.rows;
+return {matrix,rows};
+}});
+
+define({id: "c4d812fa", outputs: ["caseNames","sourceNames","promptNames","caseName","sourceName","promptName"], body: () => {
+const caseNames = new Map([
+  ["mistargeted", "Mistargeted"],
+  ["skills-spam-trap", "Skills-spam trap"],
+  ["credential-trap", "Credential trap"],
+  ["long-and-spammy", "Long and spammy"],
+  ["hollow-history", "Hollow history"],
+  ["truncated", "Truncated (floor check)"],
+  ["voice-clean", "Voice · clean"],
+  ["voice-imperative", "Voice · imperative"],
+  ["bolding-clean", "Bolding · clean"],
+  ["bolding-spam", "Bolding · spam"],
+  ["salience-lead-first", "Salience · lead first"],
+  ["salience-buried-lead", "Salience · buried lead"],
+  ["grounding-clean", "Grounding · clean"],
+  ["grounding-fabricated", "Grounding · fabricated"],
+  ["pitch-calibrated", "Pitch · calibrated"],
+  ["pitch-inflated", "Pitch · inflated"]
+]);
+const sourceNames = new Map([
+  ["gpt-5.4-high", "GPT-5.4 high"],
+  ["anthropic-claude-opus-4-6-adaptive-medium", "Opus 4.6 adaptive medium"],
+  ["gemini-gemini-3.1-pro-preview-high", "Gemini 3.1 Pro high"]
+]);
+const promptNames = new Map([
+  ["anchored", "Control"],
+  ["anchored-mechanism", "Human-reading / mechanism"],
+  ["anchored-pressure", "Bias / anti-leniency"],
+  ["anchored-mixed", "Integrated neutral"],
+  ["anchored-negging", "Integrated harsh"]
+]);
+const caseName = (id) => caseNames.get(id) ?? id;
+const sourceName = (id) => sourceNames.get(id) ?? id;
+const promptName = (id) => promptNames.get(id) ?? id;
+return {caseNames,sourceNames,promptNames,caseName,sourceName,promptName};
+}});
+
+define({id: "dff2e4d6", inputs: ["view","Inputs","rows","caseName"], outputs: ["selectedCase"], body: (view,Inputs,rows,caseName) => {
+const selectedCase = view(Inputs.select(
+  [...new Set(rows.map((row) => row.source_case_id))].sort((a, b) => caseName(a).localeCompare(caseName(b))),
+  {value: "mistargeted", label: "Case", format: caseName}
+));
+return {selectedCase};
+}});
+
+define({id: "815fd6ee", inputs: ["view","Inputs","promptName"], outputs: ["selectedPrompt"], body: (view,Inputs,promptName) => {
+const selectedPrompt = view(Inputs.select(
+  ["anchored", "anchored-mechanism", "anchored-pressure", "anchored-mixed", "anchored-negging"],
+  {value: "anchored-mixed", label: "Evaluator treatment", format: promptName}
+));
+return {selectedPrompt};
+}});
+
+define({id: "9f7bd790", inputs: ["view","Inputs","sourceName","rows","selectedCase","selectedPrompt"], outputs: ["selectedSource","selected"], body: (view,Inputs,sourceName,rows,selectedCase,selectedPrompt) => {
+const selectedSource = view(Inputs.select(
+  ["gpt-5.4-high", "anthropic-claude-opus-4-6-adaptive-medium", "gemini-gemini-3.1-pro-preview-high"],
+  {value: "gpt-5.4-high", label: "Source judge", format: sourceName}
+));
+const selected = rows.find((row) =>
+  row.source_case_id === selectedCase &&
+  row.prompt_variant === selectedPrompt &&
+  row.source_model_key === selectedSource
+);
+return {selectedSource,selected};
+}});
+
+define({id: "e005e9a3", inputs: ["display","html","caseName","selected","promptName","sourceName"], body: (display,html,caseName,selected,promptName,sourceName) => {
+display(html`<article class="source-review">
+  <header>
+    <strong>${caseName(selected.source_case_id)}</strong>
+    <span>${promptName(selected.prompt_variant)} · ${sourceName(selected.source_model_key)}</span>
+  </header>
+  ${selected.fields.map((field) => html`<section>
+    <h4><code>${field.field}</code></h4>
+    <p>${field.text}</p>
+  </section>`)}
+  <details>
+    <summary>Original numeric telemetry (not aggregated)</summary>
+    <pre>${JSON.stringify(selected.scores, null, 2)}</pre>
+  </details>
+</article>`);
+}});
+
+define({id: "3e5df872", inputs: ["html","display","selected"], outputs: ["outputCard"], body: (html,display,selected) => {
+const outputCard = (label, output) => {
+  const valid = output.result.status === "COMPLETE";
+  const report = output.report;
+  return html`<article class=${`output-card ${valid ? "valid" : "invalid"}`}>
+    <header>
+      <h3>${label}</h3>
+      <span class="status">${valid ? "VALID" : "REJECTED"}</span>
+    </header>
+    ${valid ? html`
+      <p class="output-summary">${report.summary}</p>
+      <div class="finding-list">
+        ${report.findings.length === 0
+          ? html`<p>No substantive findings in the source review.</p>`
+          : report.findings.map((finding) => html`<section class="finding">
+              <div><span class=${`severity severity-${finding.severity}`}>${finding.severity}</span> <code>${finding.dimension}</code></div>
+              <h4>${finding.title}</h4>
+              <p>${finding.diagnosis}</p>
+              <details>
+                <summary>Exact source citations</summary>
+                ${finding.evaluator_sources.map((source) => html`<blockquote>
+                  <p>“${source.quote}”</p>
+                  <footer><code>${source.field}</code></footer>
+                </blockquote>`)}
+              </details>
+            </section>`)}
+      </div>`
+      : html`<p><strong>Validation error:</strong> ${output.result.error}</p>`}
+    <details>
+      <summary>Exact raw model output</summary>
+      <pre class="raw-output">${output.raw_output || "Provider returned no text block."}</pre>
+    </details>
+    <details>
+      <summary>Usage and cost</summary>
+      <pre>${JSON.stringify({usage: output.result.usage, cost_usd: output.result.cost_usd}, null, 2)}</pre>
+    </details>
+  </article>`;
+};
+
+display(html`<div class="output-grid">
+  ${outputCard("Haiku 4.5 — manual 2K thinking", selected.haiku)}
+  ${outputCard("Gemini 3.5 Flash-Lite — low", selected.flashlite)}
+</div>`);
+return {outputCard};
+}});
+
+</script>
+<script src="/observable/_import/jay-standalone.js" defer></script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="../../">juliusm.com</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link"><a href="../">Projects</a></li>
+    <li class="observablehq-link"><a href="../llm-fundamentals/">LLM Fundamentals</a></li>
+    <li class="observablehq-link"><a href="./">Resume Generator</a></li>
+    <li class="observablehq-link"><a href="../data-playground/">Data Playground</a></li>
+    <li class="observablehq-link"><a href="../site-chatbot/">Site Design and RAG Chatbot Integration</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<header id="observablehq-header">
+<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><div class="portfolio-header-actions"><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="/consulting/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/consulting/');">Consulting</a><a class="portfolio-nav-link" href="/resume/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav><button class="portfolio-theme-control" type="button" data-theme-control="" data-theme-preference="system"><span class="portfolio-theme-control__icon" aria-hidden="true"></span><span data-theme-label="">System</span></button></div></div><script>(function(){
+        const storageKey = 'juliusm-theme';
+        const modes = ['system', 'dark', 'light'];
+        const labels = {system: 'System', dark: 'Dark', light: 'Light'};
+        const metaColors = {dark: '#0b1017', light: '#f5f7f3'};
+        const media = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+        const mount = window.location.pathname.startsWith('/observable') ? '/observable' : '';
+        const path = window.location.pathname.replace(/^\/observable(?=\/|$)/,'').replace(/\/index\.html$/,'/');
+        const normalized = path.endsWith('/') ? path : path + '/';
+        const slot = document.getElementById('portfolio-current-project-slot');
+
+        function readThemePreference(){
+          try {
+            const stored = window.localStorage.getItem(storageKey);
+            if (modes.includes(stored)) return stored;
+          } catch {
+            return 'system';
+          }
+          return 'system';
+        }
+
+        function resolveThemePreference(preference){
+          if (preference === 'light' || (preference === 'system' && media && media.matches)) return 'light';
+          return 'dark';
+        }
+
+        function nextThemePreference(preference){
+          return modes[(modes.indexOf(preference) + 1) % modes.length] || 'system';
+        }
+
+        function updateThemeControls(preference, resolved){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            const next = nextThemePreference(preference);
+            control.dataset.themePreference = preference;
+            control.dataset.themeResolved = resolved;
+            control.setAttribute('aria-label', 'Theme: ' + labels[preference] + '. Switch to ' + labels[next] + '.');
+            control.setAttribute('title', 'Theme: ' + labels[preference]);
+            const label = control.querySelector('[data-theme-label]');
+            if (label) label.textContent = labels[preference];
+          });
+        }
+
+        function applyThemePreference(preference, persist){
+          const normalizedPreference = modes.includes(preference) ? preference : 'system';
+          const resolved = resolveThemePreference(normalizedPreference);
+          document.documentElement.dataset.theme = normalizedPreference;
+          document.documentElement.dataset.themeResolved = resolved;
+          const meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', metaColors[resolved]);
+          if (persist) {
+            try {
+              window.localStorage.setItem(storageKey, normalizedPreference);
+            } catch {}
+          }
+          updateThemeControls(normalizedPreference, resolved);
+        }
+
+        function bindThemeControls(){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            if (control.dataset.themeBound === 'true') return;
+            control.dataset.themeBound = 'true';
+            control.addEventListener('click', function(){
+              applyThemePreference(nextThemePreference(readThemePreference()), true);
+            });
+          });
+          applyThemePreference(readThemePreference(), false);
+        }
+
+        applyThemePreference(readThemePreference(), false);
+        bindThemeControls();
+        if (media) media.addEventListener('change', function(){
+          if (readThemePreference() === 'system') applyThemePreference('system', false);
+        });
+        window.addEventListener('storage', function(event){
+          if (event.key === storageKey) applyThemePreference(readThemePreference(), false);
+        });
+
+        function navigate(target){
+          window.location.assign(window.location.origin + target);
+        }
+
+        function makeNavLink(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-nav-link';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        function makeBreadcrumbSeparator(){
+          const sep = document.createElement('span');
+          sep.className = 'portfolio-breadcrumb-separator';
+          sep.setAttribute('aria-hidden', 'true');
+          sep.textContent = '›';
+          return sep;
+        }
+
+        function makeProjectItem(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-project-item';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        if (slot) {
+          const projectMatch = normalized.match(/^\/projects\/([^/]+)\//);
+          if (projectMatch) {
+            const slug = projectMatch[1];
+            slot.appendChild(makeBreadcrumbSeparator());
+            if (slug === 'llm-fundamentals') {
+              const details = document.createElement('details');
+              details.id = 'portfolio-current-project-menu';
+              details.className = 'portfolio-project-menu';
+
+              const summary = document.createElement('summary');
+              summary.className = 'portfolio-nav-link portfolio-project-toggle';
+              summary.textContent = 'LLM Fundamentals';
+              details.appendChild(summary);
+
+              const dropdown = document.createElement('div');
+              dropdown.className = 'portfolio-project-dropdown';
+              const items = [
+                ['Introduction', '/projects/llm-fundamentals/'],
+                ['Architecture and Expected Performance Analysis', '/projects/llm-fundamentals/perf-expected/'],
+                ['Benchmarks and Empirical Performance Analysis', '/projects/llm-fundamentals/perf-empirical/'],
+                ['Nvidia CUDA Nsys Trace Analysis', '/projects/llm-fundamentals/nsys/'],
+                ['Nsys GPU Trace Viewer', '/projects/llm-fundamentals/nsys-viewer/'],
+                ['Learning Parameter Sweeps', '/projects/llm-fundamentals/optimizer-sweep/'],
+                ['Architectural Variations (Ablations)', '/projects/llm-fundamentals/ablations/']
+              ];
+              for (const [label, target] of items) {
+                dropdown.appendChild(makeProjectItem(label, mount + target));
+              }
+              details.appendChild(dropdown);
+              slot.appendChild(details);
+
+              document.addEventListener('click', function(event){
+                if (!details.hasAttribute('open')) return;
+                if (!details.contains(event.target)) details.removeAttribute('open');
+              });
+              document.addEventListener('keydown', function(event){
+                if (event.key === 'Escape') details.removeAttribute('open');
+              });
+            } else if (slug === 'resume-generator') {
+              slot.appendChild(makeNavLink('Resume Generator', mount + '/projects/resume-generator/'));
+            } else {
+              const labels = {
+                'resume-generator': 'Resume Generator',
+                'data-playground': 'Data Playground',
+                'site-chatbot': 'Site Design and RAG Chatbot Integration'
+              };
+              const fallback = slug
+                .split('-')
+                .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+                .join(' ');
+              slot.appendChild(makeNavLink(labels[slug] || fallback, mount + '/projects/' + slug + '/'));
+            }
+          }
+        }
+
+        for (const id of ['observablehq-sidebar-toggle', 'observablehq-sidebar-backdrop', 'observablehq-sidebar']) {
+          const node = document.getElementById(id);
+          if (node) node.remove();
+        }
+      })();</script>
+</header>
+<aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
+<nav>
+<div>Contents</div>
+<ol>
+<li class="observablehq-secondary-link"><a href="#what-the-full-matrix-adds">What the full matrix adds</a></li>
+<li class="observablehq-secondary-link"><a href="#settings">Settings</a></li>
+<li class="observablehq-secondary-link"><a href="#exact-second-stage-prompt">Exact second-stage prompt</a></li>
+<li class="observablehq-secondary-link"><a href="#explore-all-240-source-reviews-and-480-outputs">Explore all 240 source reviews and 480 outputs</a></li>
+<li class="observablehq-secondary-link"><a href="#how-to-use-this">How to use this</a></li>
+</ol>
+</nav>
+</aside>
+<main id="observablehq-main" class="observablehq">
+<h1 id="full-matrix-finding-synthesis-haiku-vs-flash-lite" tabindex="-1"><a class="observablehq-header-anchor" href="#full-matrix-finding-synthesis-haiku-vs-flash-lite">Full-matrix finding synthesis: Haiku vs Flash-Lite</a></h1>
+<h2 id="result" tabindex="-1"><a class="observablehq-header-anchor" href="#result">Result</a></h2>
+<p>Gemini 3.5 Flash-Lite is the clear second-stage model for this pipeline. Across
+all 240 individual evaluator reviews, it produced <strong>230 valid source-linked
+reports (95.8%)</strong> for <strong><observablehq-loading></observablehq-loading><!--:73c631f4:-->2.6633</strong>.</p>
+<p>This is not another evaluator leaderboard. Each call reads one evaluator review
+and turns its prose into a compact, citeable issue list. It sees no resume, job
+description, or candidate data, and it does not average or vote on the original
+scores. The useful result is operational: Flash-Lite is a reliable, inexpensive
+reader of the reviews that already exist.</p>
+<table>
+<thead>
+<tr>
+<th>Measure</th>
+<th style="text-align:right">Haiku 4.5</th>
+<th style="text-align:right">Flash-Lite</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>First-pass valid</td>
+<td style="text-align:right">183/240 (76.3%)</td>
+<td style="text-align:right"><strong>230/240 (95.8%)</strong></td>
+</tr>
+<tr>
+<td>Input tokens</td>
+<td style="text-align:right">642,110</td>
+<td style="text-align:right">565,027</td>
+</tr>
+<tr>
+<td>Output tokens, including thinking</td>
+<td style="text-align:right">404,233</td>
+<td style="text-align:right">117,671</td>
+</tr>
+<tr>
+<td>Separately reported thinking</td>
+<td style="text-align:right">196,304</td>
+<td style="text-align:right">0</td>
+</tr>
+<tr>
+<td>Standard-price cost</td>
+<td style="text-align:right">$2.6633</td>
+<td style="text-align:right"><strong>$0.4637</strong></td>
+</tr>
+<tr>
+<td>Cost per valid artifact</td>
+<td style="text-align:right">$0.01455</td>
+<td style="text-align:right"><strong>$0.00202</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The source matrix is exactly five evaluator treatments × sixteen cases × three
+source judges. <code>anchored-combined</code> is excluded. Every one of the 480 synthesis
+calls was first-pass only; rejected quotations were preserved rather than
+repaired or retried.</p>
+<h2 id="what-the-full-matrix-adds" tabindex="-1"><a class="observablehq-header-anchor" href="#what-the-full-matrix-adds">What the full matrix adds</a></h2>
+<p>The small mistargeted-case pilot generalized. Flash-Lite validated at least 93.8% of every
+prompt-treatment slice and 92.5% or more for every source-judge slice. Haiku fell
+to 61.2% on the richer Opus reviews. Of its rejected outputs, 51 contain 78
+altered quotations; five cite score telemetry six times even though only prose
+fields are valid citation targets; and one consumed all 8,192 output tokens
+without returning text. The score citations expose an interface ambiguity in
+the experiment rather than an invented source: scores were visible as audit
+telemetry but were not valid evidence fields.</p>
+<p>The models are not secretly re-judging the resumes. Reviews from GPT-5.4 and
+Opus produce roughly two to four qualitative findings; the much more favorable
+Gemini reviews produce fewer than one. On the mistargeted case, both synthesizers
+return no findings for all five Gemini-source reviews while preserving the
+adoption, coaching, Microsoft-stack, self-directed-work, and architecture-first
+criticisms found in the GPT-5.4 and Opus prose.</p>
+<p>That fidelity also exposes the limit. The sharper diagnosis on the mistargeted
+case—an AI-engineer document aimed at an embedded business-partner role—appears
+explicitly in only two valid Haiku reports and one Flash-Lite report. The models
+cannot recover a whole-document percept that the source review did not express.
+Likewise, neither names the injected imperative voice, inline bolding, or buried
+lead in the linguistic controls. By contrast, every valid output for the
+grounding-fabricated resume preserves the unsupported-claim diagnosis.</p>
+<p>So the stage is doing what it should: making the evaluators' actual analysis
+legible, strengths and blind spots included. It is not adjudicating truth and it
+does not produce a graph score.</p>
+<h2 id="settings" tabindex="-1"><a class="observablehq-header-anchor" href="#settings">Settings</a></h2>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Haiku</th>
+<th>Flash-Lite</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Model</td>
+<td><code>claude-haiku-4-5-20251001</code></td>
+<td><code>gemini-3.5-flash-lite</code></td>
+</tr>
+<tr>
+<td>Thinking</td>
+<td>manual, 2,048-token budget</td>
+<td>low</td>
+</tr>
+<tr>
+<td>Maximum output</td>
+<td>8,192 tokens</td>
+<td>8,192 tokens</td>
+</tr>
+<tr>
+<td>Temperature</td>
+<td>omitted</td>
+<td>omitted by adapter</td>
+</tr>
+<tr>
+<td>Output</td>
+<td>strict JSON schema</td>
+<td>strict JSON schema</td>
+</tr>
+<tr>
+<td>Citation check</td>
+<td>exact review ID, field, and substring</td>
+<td>same</td>
+</tr>
+<tr>
+<td>Service used</td>
+<td>standard synchronous</td>
+<td>standard synchronous</td>
+</tr>
+<tr>
+<td>Retries</td>
+<td>none</td>
+<td>none</td>
+</tr>
+</tbody>
+</table>
+<p>The measured prices use the standard on-demand rates: Haiku at <observablehq-loading></observablehq-loading><!--:5e50dd80:-->5/M output; Flash-Lite at <observablehq-loading></observablehq-loading><!--:4dcbfd03:-->2.50/M output. A half-price batch
+run would have cost approximately <observablehq-loading></observablehq-loading><!--:e6dfba39:-->0.2318 respectively, but those are
+projections, not the service used here.</p>
+<h2 id="exact-second-stage-prompt" tabindex="-1"><a class="observablehq-header-anchor" href="#exact-second-stage-prompt">Exact second-stage prompt</a></h2>
+<pre data-language="text"><code class="language-text">You compile resume-evaluator outputs into a concise, actionable findings report.
+You are not evaluating the resume yourself. You receive only evaluator reviews,
+and every output claim must be traceable to those reviews.
+
+Rules:
+- Scan every supplied field, including summaries, rationales, evidence, and
+  comments. A high numeric score does not cancel a problem described in prose.
+- Preserve the union of substantive findings. Do not require majority agreement
+  and do not discard a finding because only one review instance mentions it.
+- Treat every review_id as a separate review instance. Instances may come from
+  the same model with different settings, repeated samples, or intentionally
+  perturbed inputs; do not assume they are independent providers.
+- Merge findings only when they diagnose the same underlying problem. Similar
+  subject matter is not enough. In particular, an omitted detail is not the
+  same diagnosis as a whole-document targeting failure.
+- Do not strengthen, repair, or reinterpret an evaluator's reasoning. If the
+  reviews mention only local omissions, do not upgrade them into a broader
+  strategic diagnosis.
+- Agreement is not severity. Judge severity only from how materially the source
+  reviews say the problem affects the resume.
+- Surface meaningful contradictions under disagreements.
+- Do not invent findings, evidence, recommendations, or source quotations.
+- For every finding and disagreement, cite one or more exact source locations.
+  `review_id` and `field` must match the input exactly, and `quote` must be a
+  verbatim substring of that field.
+
+Return JSON only in the required schema.
+</code></pre>
+<p>The response schema requires a summary, a list of findings with title,
+dimension, severity, diagnosis, and source citations, plus a disagreement list.
+The deterministic verifier rejects the entire response when a citation does not
+match the supplied review exactly.</p>
+<h2 id="explore-all-240-source-reviews-and-480-outputs" tabindex="-1"><a class="observablehq-header-anchor" href="#explore-all-240-source-reviews-and-480-outputs">Explore all 240 source reviews and 480 outputs</a></h2>
+<div class="observablehq observablehq--block"><!--:7d3692d4:--></div>
+<div class="observablehq observablehq--block"><!--:c4d812fa:--></div>
+<div class="observablehq observablehq--block"><!--:dff2e4d6:--></div>
+<div class="observablehq observablehq--block"><!--:815fd6ee:--></div>
+<div class="observablehq observablehq--block"><!--:9f7bd790:--></div>
+<h3 id="source-review" tabindex="-1"><a class="observablehq-header-anchor" href="#source-review">Source review</a></h3>
+<div class="observablehq observablehq--block"><!--:e005e9a3:--></div>
+<h3 id="second-stage-outputs" tabindex="-1"><a class="observablehq-header-anchor" href="#second-stage-outputs">Second-stage outputs</a></h3>
+<div class="observablehq observablehq--block"><!--:3e5df872:--></div>
+<h2 id="how-to-use-this" tabindex="-1"><a class="observablehq-header-anchor" href="#how-to-use-this">How to use this</a></h2>
+<p>Use the explorer to read source-review prose and the two normalized outputs side
+by side. A valid citation means the source evaluator actually said the quoted
+thing. It does not mean the complaint is true, in scope, or correctly prioritized.</p>
+<p>For generation-graph assessment, normalize the reviews with Flash-Lite, verify
+the resulting findings against the underlying artifacts, and compare graphs on
+the verified defects plus blinded same-input human preference. Do not count these
+findings or generated severities as a graph score.</p>
+<pre data-language="css"><code class="language-css"><span class="hljs-selector-class">.source-review</span>,
+<span class="hljs-selector-class">.output-card</span> {
+  <span class="hljs-attribute">border</span>: <span class="hljs-number">1px</span> solid <span class="hljs-built_in">color-mix</span>(in srgb, currentColor <span class="hljs-number">18%</span>, transparent);
+  <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">0.7rem</span>;
+  <span class="hljs-attribute">padding</span>: <span class="hljs-number">1rem</span> <span class="hljs-number">1.1rem</span>;
+  <span class="hljs-attribute">background</span>: <span class="hljs-built_in">color-mix</span>(in srgb, <span class="hljs-built_in">var</span>(--theme-background, white) <span class="hljs-number">97%</span>, currentColor);
+}
+<span class="hljs-selector-class">.source-review</span> &gt; <span class="hljs-selector-tag">header</span>,
+<span class="hljs-selector-class">.output-card</span> &gt; <span class="hljs-selector-tag">header</span> {
+  <span class="hljs-attribute">display</span>: flex;
+  <span class="hljs-attribute">justify-content</span>: space-between;
+  <span class="hljs-attribute">gap</span>: <span class="hljs-number">1rem</span>;
+  <span class="hljs-attribute">align-items</span>: baseline;
+  <span class="hljs-attribute">flex-wrap</span>: wrap;
+}
+<span class="hljs-selector-class">.source-review</span> <span class="hljs-selector-tag">section</span> {
+  <span class="hljs-attribute">border-top</span>: <span class="hljs-number">1px</span> solid <span class="hljs-built_in">color-mix</span>(in srgb, currentColor <span class="hljs-number">12%</span>, transparent);
+  <span class="hljs-attribute">padding-top</span>: <span class="hljs-number">0.5rem</span>;
+}
+<span class="hljs-selector-class">.source-review</span> <span class="hljs-selector-tag">h4</span>,
+<span class="hljs-selector-class">.finding</span> <span class="hljs-selector-tag">h4</span>,
+<span class="hljs-selector-class">.output-card</span> <span class="hljs-selector-tag">h3</span> {
+  <span class="hljs-attribute">margin</span>: <span class="hljs-number">0.5rem</span> <span class="hljs-number">0</span> <span class="hljs-number">0.3rem</span>;
+}
+<span class="hljs-selector-class">.output-grid</span> {
+  <span class="hljs-attribute">display</span>: grid;
+  <span class="hljs-attribute">grid-template-columns</span>: <span class="hljs-built_in">repeat</span>(auto-fit, <span class="hljs-built_in">minmax</span>(<span class="hljs-built_in">min</span>(<span class="hljs-number">100%</span>, <span class="hljs-number">28rem</span>), <span class="hljs-number">1</span>fr));
+  <span class="hljs-attribute">gap</span>: <span class="hljs-number">1rem</span>;
+  <span class="hljs-attribute">align-items</span>: start;
+}
+<span class="hljs-selector-class">.output-card</span><span class="hljs-selector-class">.invalid</span> { <span class="hljs-attribute">border-color</span>: <span class="hljs-number">#b91c1c</span>; }
+<span class="hljs-selector-class">.output-card</span><span class="hljs-selector-class">.valid</span> { <span class="hljs-attribute">border-color</span>: <span class="hljs-number">#15803d</span>; }
+<span class="hljs-selector-class">.status</span>,
+<span class="hljs-selector-class">.severity</span> {
+  <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">999px</span>;
+  <span class="hljs-attribute">padding</span>: <span class="hljs-number">0.15rem</span> <span class="hljs-number">0.5rem</span>;
+  <span class="hljs-attribute">font-size</span>: <span class="hljs-number">0.73rem</span>;
+  <span class="hljs-attribute">font-weight</span>: <span class="hljs-number">700</span>;
+  <span class="hljs-attribute">letter-spacing</span>: <span class="hljs-number">0.035em</span>;
+}
+<span class="hljs-selector-class">.output-card</span><span class="hljs-selector-class">.invalid</span> <span class="hljs-selector-class">.status</span> { <span class="hljs-attribute">background</span>: <span class="hljs-number">#b91c1c</span>; <span class="hljs-attribute">color</span>: white; }
+<span class="hljs-selector-class">.output-card</span><span class="hljs-selector-class">.valid</span> <span class="hljs-selector-class">.status</span> { <span class="hljs-attribute">background</span>: <span class="hljs-number">#15803d</span>; <span class="hljs-attribute">color</span>: white; }
+<span class="hljs-selector-class">.severity-blocking</span> { <span class="hljs-attribute">background</span>: <span class="hljs-number">#b91c1c</span>; <span class="hljs-attribute">color</span>: white; }
+<span class="hljs-selector-class">.severity-important</span> { <span class="hljs-attribute">background</span>: <span class="hljs-number">#b45309</span>; <span class="hljs-attribute">color</span>: white; }
+<span class="hljs-selector-class">.severity-minor</span> { <span class="hljs-attribute">background</span>: <span class="hljs-number">#475569</span>; <span class="hljs-attribute">color</span>: white; }
+<span class="hljs-selector-class">.finding</span> {
+  <span class="hljs-attribute">border-top</span>: <span class="hljs-number">1px</span> solid <span class="hljs-built_in">color-mix</span>(in srgb, currentColor <span class="hljs-number">14%</span>, transparent);
+  <span class="hljs-attribute">margin-top</span>: <span class="hljs-number">0.9rem</span>;
+  <span class="hljs-attribute">padding-top</span>: <span class="hljs-number">0.8rem</span>;
+}
+<span class="hljs-selector-class">.finding</span> <span class="hljs-selector-tag">blockquote</span> { <span class="hljs-attribute">margin</span>: <span class="hljs-number">0.7rem</span> <span class="hljs-number">0</span>; }
+<span class="hljs-selector-class">.raw-output</span> {
+  <span class="hljs-attribute">max-height</span>: <span class="hljs-number">34rem</span>;
+  <span class="hljs-attribute">overflow</span>: auto;
+  <span class="hljs-attribute">white-space</span>: pre-wrap;
+}
+</code></pre>
+</main>
+</div>
+</body>
+</html>
