@@ -1,4 +1,5 @@
 <script lang="ts">
+  import {onMount} from "svelte";
   import type {ChatMessage as ChatMsg, CurrentPage} from "./types.js";
   import {getConversationId, resetConversationId, loadUIState, saveUIState, getSessionToken, getSessionExpiresAt, saveSessionToken, clearSessionToken, loadMessages, saveMessages} from "./session.js";
   import {sendMessage, isLiveMode} from "./api-client.js";
@@ -45,6 +46,7 @@
   let inputRef: ChatInput | undefined = $state();
   let fabEl: HTMLButtonElement | undefined = $state();
   let conversationId = $state("");
+  let isHydrated = $state(false);
 
   let abortController: AbortController | null = $state(null);
   let sessionToken = $state("");
@@ -56,6 +58,10 @@
   let shouldRenderTurnstile = $state(needsVerification);
   let pendingRequest: PendingChatRequest | null = $state(null);
   let turnstileEl: HTMLDivElement | undefined = $state();
+
+  onMount(() => {
+    isHydrated = true;
+  });
 
   $effect(() => {
     conversationId = getConversationId();
@@ -393,7 +399,7 @@
     </div>
   {/if}
 
-  <button class="fab" bind:this={fabEl} onclick={toggle} aria-label={isOpen ? "Close AI helper" : "Open AI helper"}>
+  <button class="fab" bind:this={fabEl} onclick={toggle} disabled={!isHydrated} aria-label={isOpen ? "Close AI helper" : "Open AI helper"}>
     <img src={assistantPortraitSrc} alt="AI helper" class="fab-portrait" width="56" height="56" />
   </button>
 </div>

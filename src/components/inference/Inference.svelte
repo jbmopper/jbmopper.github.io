@@ -83,6 +83,7 @@
   let isVerifying = $state(false);
 
   let warmupRequestId = 0;
+  let inferenceRequestId = 0;
 
   let availableModels = $derived(models.length > 0 ? models : CANONICAL_MODEL_OPTIONS);
   let effectiveModel = $derived(lockedModel || selectedModel);
@@ -274,6 +275,7 @@
     inlineErrorMessage = "";
     errorMessage = "";
     step = "streaming";
+    const requestId = ++inferenceRequestId;
 
     try {
       await submitInference(
@@ -282,8 +284,16 @@
           prompt,
         },
         sessionToken,
-        handleInferenceEvent,
+        (event) => {
+          if (requestId === inferenceRequestId) {
+            handleInferenceEvent(event);
+          }
+        },
       );
+
+      if (requestId !== inferenceRequestId) {
+        return;
+      }
 
       if (step === "streaming") {
         completionMessage = outputText.trim()
@@ -292,6 +302,10 @@
         step = "complete";
       }
     } catch {
+      if (requestId !== inferenceRequestId) {
+        return;
+      }
+
       outputText = "";
       completionMessage = "";
       inlineErrorMessage = GENERIC_ERROR_MESSAGE;
@@ -341,6 +355,7 @@
   }
 
   function resetRound() {
+    inferenceRequestId += 1;
     promptText = "";
     outputText = "";
     completionMessage = "";
@@ -349,6 +364,7 @@
   }
 
   function changeModel() {
+    inferenceRequestId += 1;
     promptText = "";
     outputText = "";
     completionMessage = "";

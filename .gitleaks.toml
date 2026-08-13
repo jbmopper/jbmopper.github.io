@@ -3,9 +3,23 @@ title = "jbmopper.github.io gitleaks config"
 [extend]
 useDefault = true
 
-[allowlist]
+[[allowlists]]
 description = "Observable generated chart key false positives"
 stopwords = [
   "pct_survived_200",
   "pct_survived_600",
 ]
+
+[[allowlists]]
+description = "Resume generator model identifiers are public labels, not credentials"
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^public/observable/_file/projects/resume-generator/.*\.json$''']
+regexes = ['''^(anthropic-claude|gemini-gemini|gpt-[0-9])[a-z0-9._-]*$''']
+
+[[allowlists]]
+description = "Resume generator evaluation prose is public content, not a credential"
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^public/observable/_file/projects/resume-generator/.*\.json$''']
+stopwords = ["PCI/compliance"]
