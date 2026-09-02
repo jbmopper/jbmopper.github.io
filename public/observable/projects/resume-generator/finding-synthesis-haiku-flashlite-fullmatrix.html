@@ -90,24 +90,34 @@ return {caseNames,sourceNames,promptNames,caseName,sourceName,promptName};
 
 define({id: "dff2e4d6", inputs: ["view","Inputs","rows","caseName"], outputs: ["selectedCase"], body: (view,Inputs,rows,caseName) => {
 const selectedCase = view(Inputs.select(
-  [...new Set(rows.map((row) => row.source_case_id))].sort((a, b) => caseName(a).localeCompare(caseName(b))),
-  {value: "mistargeted", label: "Case", format: caseName}
+  new Map(
+    [...new Set(rows.map((row) => row.source_case_id))]
+      .sort((a, b) => caseName(a).localeCompare(caseName(b)))
+      .map((id) => [caseName(id), id])
+  ),
+  {value: "mistargeted", label: "Case"}
 ));
 return {selectedCase};
 }});
 
 define({id: "815fd6ee", inputs: ["view","Inputs","promptName"], outputs: ["selectedPrompt"], body: (view,Inputs,promptName) => {
 const selectedPrompt = view(Inputs.select(
-  ["anchored", "anchored-mechanism", "anchored-pressure", "anchored-mixed", "anchored-negging"],
-  {value: "anchored-mixed", label: "Evaluator treatment", format: promptName}
+  new Map(
+    ["anchored", "anchored-mechanism", "anchored-pressure", "anchored-mixed", "anchored-negging"]
+      .map((id) => [promptName(id), id])
+  ),
+  {value: "anchored-mixed", label: "Evaluator treatment"}
 ));
 return {selectedPrompt};
 }});
 
 define({id: "9f7bd790", inputs: ["view","Inputs","sourceName","rows","selectedCase","selectedPrompt"], outputs: ["selectedSource","selected"], body: (view,Inputs,sourceName,rows,selectedCase,selectedPrompt) => {
 const selectedSource = view(Inputs.select(
-  ["gpt-5.4-high", "anthropic-claude-opus-4-6-adaptive-medium", "gemini-gemini-3.1-pro-preview-high"],
-  {value: "gpt-5.4-high", label: "Source judge", format: sourceName}
+  new Map(
+    ["gpt-5.4-high", "anthropic-claude-opus-4-6-adaptive-medium", "gemini-gemini-3.1-pro-preview-high"]
+      .map((id) => [sourceName(id), id])
+  ),
+  {value: "gpt-5.4-high", label: "Source judge"}
 ));
 const selected = rows.find((row) =>
   row.source_case_id === selectedCase &&
