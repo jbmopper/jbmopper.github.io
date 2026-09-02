@@ -61,17 +61,15 @@ Inputs.table(
 ))
 }});
 
-define({id: "e5ce8316", inputs: ["view","Inputs","orderedReports","caseName","reports"], outputs: ["selectedCase","selectedReport"], body: (view,Inputs,orderedReports,caseName,reports) => {
-const selectedCase = view(Inputs.select(
-  orderedReports.map((report) => report.case_id),
+define({id: "e94635ec", inputs: ["view","Inputs","orderedReports","caseName","reports"], outputs: ["selectedReport"], body: (view,Inputs,orderedReports,caseName,reports) => {
+const selectedReport = view(Inputs.select(
+  new Map(orderedReports.map((report) => [caseName(report.case_id), report])),
   {
-    value: "mistargeted",
-    label: "Case",
-    format: caseName
+    value: reports.find((report) => report.case_id === "mistargeted"),
+    label: "Case"
   }
 ));
-const selectedReport = reports.find((report) => report.case_id === selectedCase);
-return {selectedCase,selectedReport};
+return {selectedReport};
 }});
 
 define({id: "50769bdc", inputs: ["display","html","caseName","selectedReport"], body: (display,html,caseName,selectedReport) => {
@@ -402,7 +400,7 @@ score telemetry.</p>
 <div class="observablehq observablehq--block"><!--:7809a9dc:--></div>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:cd622209:--></div>
 <h2 id="read-one-case" tabindex="-1"><a class="observablehq-header-anchor" href="#read-one-case">Read one case</a></h2>
-<div class="observablehq observablehq--block"><!--:e5ce8316:--></div>
+<div class="observablehq observablehq--block"><!--:e94635ec:--></div>
 <div class="observablehq observablehq--block"><!--:50769bdc:--></div>
 <h3 id="findings" tabindex="-1"><a class="observablehq-header-anchor" href="#findings">Findings</a></h3>
 <div class="observablehq observablehq--block"><!--:089e6d02:--></div>
