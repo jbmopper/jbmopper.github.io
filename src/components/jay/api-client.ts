@@ -40,6 +40,37 @@ async function mockSendMessage(conversationId: string): Promise<ChatResponse> {
 }
 
 const REQUEST_TIMEOUT_MS = 30_000;
+const WARMUP_TIMEOUT_MS = 8_000;
+const WARMUP_COOLDOWN_MS = 5 * 60_000;
+
+let warmupPromise: Promise<boolean> | null = null;
+let warmupSessionToken = "";
+let lastWarmupAt = 0;
+
+export function warmUpChat(sessionToken: string): Promise<boolean> {
+  if (!API_BASE || !sessionToken) return Promise.resolve(false);
+
+  const now = Date.now();
+  if (warmupPromise && warmupSessionToken === sessionToken) return warmupPromise;
+  if (warmupSessionToken === sessionToken && now - lastWarmupAt < WARMUP_COOLDOWN_MS) {
+    return Promise.resolve(true);
+  }
+
+  warmupSessionToken = sessionToken;
+  lastWarmupAt = now;
+  warmupPromise = fetch(`${API_BASE}/v1/chat/warmup`, {
+    method: "POST",
+    headers: {Authorization: `Bearer ${sessionToken}`},
+    signal: AbortSignal.timeout(WARMUP_TIMEOUT_MS),
+  })
+    .then((response) => response.ok)
+    .catch(() => false)
+    .finally(() => {
+      warmupPromise = null;
+    });
+
+  return warmupPromise;
+}
 
 async function liveSendMessage(
   req: ChatRequest,

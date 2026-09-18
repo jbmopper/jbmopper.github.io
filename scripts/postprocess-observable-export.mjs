@@ -8,6 +8,7 @@ const OBSERVABLE_ROOT = path.join(PROJECT_ROOT, "public/observable");
 const JAY_BUNDLE = path.join(OBSERVABLE_ROOT, "_import/jay-standalone.js");
 const INFERENCE_BUNDLE = path.join(OBSERVABLE_ROOT, "_import/inference-standalone.js");
 const INFERENCE_MOUNT_CLASS = "jm-inference-mount";
+const HEAVY_DATA_LOAD_THRESHOLD_BYTES = 2_000_000;
 const SENSITIVE_JSON_KEYS = new Set(["source_root", "source", "source_file"]);
 const SENSITIVE_SOURCE_REPOS = new Set(["Notebooks"]);
 const MACOS_METADATA_NAMES = new Set([".DS_Store", "__MACOSX"]);
@@ -154,6 +155,98 @@ function stripModulePreloads(html) {
   return html.replace(/^\s*<link rel="modulepreload"[^>]*>\n?/gm, "");
 }
 
+function getRegisteredDataBytes(html) {
+  const registeredFiles = new Map();
+  const registerFilePattern = /registerFile\([^;]*?"path":"([^"]+)"[^;]*?"size":(\d+)\}\);/g;
+
+  for (const match of html.matchAll(registerFilePattern)) {
+    registeredFiles.set(match[1], Number(match[2]));
+  }
+
+  return Array.from(registeredFiles.values()).reduce((total, size) => total + size, 0);
+}
+
+function deferHeavyObservableData(html) {
+  const registeredDataBytes = getRegisteredDataBytes(html);
+  if (registeredDataBytes < HEAVY_DATA_LOAD_THRESHOLD_BYTES || html.includes("data-heavy-observable-module")) {
+    return html;
+  }
+
+  const modulePattern = /<script type="module">/;
+  if (!modulePattern.test(html)) {
+    return html;
+  }
+
+  html = html.replace(modulePattern, '<script type="application/x-observable-module" data-heavy-observable-module>');
+  html = html.replace(/<html(\s[^>]*)?>/i, (tag) => tag.replace("<html", '<html class="observable-data-deferred"'));
+
+  const dataSize = `${(registeredDataBytes / 1_000_000).toFixed(1)} MB`;
+  const gate = `<aside class="observable-data-gate" data-observable-data-gate>
+  <strong>Interactive analysis is paused</strong>
+  <span>Load ${dataSize} of source data only when you want the charts and calculated values.</span>
+  <button type="button" data-observable-data-load>Load interactive analysis</button>
+  <span class="observable-data-gate__status" data-observable-data-status role="status" aria-live="polite"></span>
+</aside>`;
+  html = html.replace(/(<main\b[^>]*id="observablehq-main"[^>]*>)/i, `$1\n${gate}`);
+
+  const loader = `<style>
+.observable-data-gate{display:flex;flex-wrap:wrap;align-items:center;gap:.65rem 1rem;margin:0 0 1.5rem;padding:.9rem 1rem;border:1px solid var(--theme-foreground-faintest);border-radius:.45rem;background:var(--theme-background-alt)}
+.observable-data-gate strong{font-weight:700}.observable-data-gate span{flex:1 1 24rem}.observable-data-gate button{font:inherit;font-weight:650;padding:.5rem .8rem;border:1px solid currentColor;border-radius:.35rem;color:var(--theme-foreground);background:var(--theme-background);cursor:pointer}.observable-data-gate button:disabled{cursor:wait;opacity:.65}.observable-data-gate__status{flex-basis:100%;font-size:.9rem;color:var(--theme-foreground-muted)}
+.observable-data-deferred observablehq-loading{display:none!important}.observable-data-deferred .observablehq--block:has(>observablehq-loading:only-child){display:none}
+</style>
+<script>
+(() => {
+  const gate = document.querySelector("[data-observable-data-gate]");
+  const button = gate?.querySelector("[data-observable-data-load]");
+  const status = gate?.querySelector("[data-observable-data-status]");
+  const source = document.querySelector("script[data-heavy-observable-module]");
+  const main = document.querySelector("#observablehq-main");
+  if (!gate || !button || !status || !source || !main) return;
+
+  let finished = false;
+  const finish = (message, failed = false) => {
+    if (finished) return;
+    finished = true;
+    document.documentElement.classList.remove("observable-data-deferred");
+    main.removeAttribute("aria-busy");
+    status.textContent = message;
+    button.hidden = !failed;
+    if (failed) button.disabled = true;
+  };
+
+  button.addEventListener("click", () => {
+    button.disabled = true;
+    button.textContent = "Loading…";
+    status.textContent = "Downloading and preparing the interactive analysis.";
+    main.setAttribute("aria-busy", "true");
+
+    const module = document.createElement("script");
+    module.type = "module";
+    module.textContent = source.textContent;
+    module.addEventListener("error", () => finish("The interactive analysis could not be loaded. Reload the page to try again.", true), {once: true});
+    const startedAt = Date.now();
+    const check = () => {
+      const pending = document.querySelectorAll("observablehq-loading").length;
+      const errors = document.querySelectorAll(".observablehq--error").length;
+      if (errors > 0) {
+        finish("Some interactive elements could not be loaded. Reload the page to try again.", true);
+      } else if (pending === 0) {
+        finish("Interactive analysis loaded.");
+      } else if (Date.now() - startedAt > 120000) {
+        finish("The interactive analysis is taking longer than expected; completed elements are available below.");
+      } else {
+        window.setTimeout(check, 250);
+      }
+    };
+    document.head.appendChild(module);
+    check();
+  }, {once: true});
+})();
+<\/script>`;
+
+  return html.replace("</body>", `${loader}\n</body>`);
+}
+
 function normalizeInferenceMountPaths(html) {
   return html.replaceAll(
     'data-inference-warmup-path="/warmup"',
@@ -270,6 +363,7 @@ async function processHtmlFile(fullPath, injectJay, injectInference) {
   html = normalizeHeaderHomeLink(html);
   html = normalizeConsultingAndResumeLinks(html);
   html = stripModulePreloads(html);
+  html = deferHeavyObservableData(html);
   html = normalizeInferenceMountPaths(html);
   html = ensureConfiguredInferenceMounts(html, relativePath);
   if (injectJay) html = injectJayScript(html);

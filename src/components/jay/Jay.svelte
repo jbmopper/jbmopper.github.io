@@ -2,7 +2,7 @@
   import {onMount} from "svelte";
   import type {ChatMessage as ChatMsg, CurrentPage} from "./types.js";
   import {getConversationId, resetConversationId, loadUIState, saveUIState, getSessionToken, getSessionExpiresAt, saveSessionToken, clearSessionToken, loadMessages, saveMessages} from "./session.js";
-  import {sendMessage, isLiveMode} from "./api-client.js";
+  import {sendMessage, isLiveMode, warmUpChat} from "./api-client.js";
   import {loadTurnstileScript, renderTurnstile} from "../../lib/turnstile.js";
   import ChatMessage from "./ChatMessage.svelte";
   import ChatInput from "./ChatInput.svelte";
@@ -97,6 +97,12 @@
   $effect(() => {
     if (isOpen && verified && inputRef) {
       inputRef.focus();
+    }
+  });
+
+  $effect(() => {
+    if (isHydrated && needsVerification && hasActiveSession()) {
+      void warmUpChat(sessionToken);
     }
   });
 

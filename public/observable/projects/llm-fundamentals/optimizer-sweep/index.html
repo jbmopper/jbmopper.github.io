@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="observable-data-deferred">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -11,7 +11,7 @@
 <link rel="preload" as="style" href="../../../_npm/katex@0.17.0/dist/katex.min.css">
 <link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.87b41aae.css">
 <link rel="stylesheet" type="text/css" href="../../../_npm/katex@0.17.0/dist/katex.min.css">
-<script type="module">
+<script type="application/x-observable-module" data-heavy-observable-module>
 
 import {define} from "../../../_observablehq/client.5d43dcff.js";
 import {registerFile} from "../../../_observablehq/stdlib.a50b4fda.js";
@@ -580,6 +580,12 @@ await renderOptimizerSweepRunEvalLoss({runNumber: 148})
 </nav>
 </aside>
 <main id="observablehq-main" class="observablehq">
+<aside class="observable-data-gate" data-observable-data-gate>
+  <strong>Interactive analysis is paused</strong>
+  <span>Load 12.2 MB of source data only when you want the charts and calculated values.</span>
+  <button type="button" data-observable-data-load>Load interactive analysis</button>
+  <span class="observable-data-gate__status" data-observable-data-status role="status" aria-live="polite"></span>
+</aside>
 <div class="observablehq observablehq--block"><!--:b4e79e12:--></div>
 <h1 id="learning-rate-sweep-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#learning-rate-sweep-analysis">Learning Rate Sweep Analysis</a></h1>
 <h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
@@ -723,5 +729,58 @@ await renderOptimizerSweepLogisticTable()
 <p>These settings were used to train the model weights used for inference, to good effect.  Please continue to the discussion of <a href="../ablations/">ablations</a>.</p>
 </main>
 </div>
+<style>
+.observable-data-gate{display:flex;flex-wrap:wrap;align-items:center;gap:.65rem 1rem;margin:0 0 1.5rem;padding:.9rem 1rem;border:1px solid var(--theme-foreground-faintest);border-radius:.45rem;background:var(--theme-background-alt)}
+.observable-data-gate strong{font-weight:700}.observable-data-gate span{flex:1 1 24rem}.observable-data-gate button{font:inherit;font-weight:650;padding:.5rem .8rem;border:1px solid currentColor;border-radius:.35rem;color:var(--theme-foreground);background:var(--theme-background);cursor:pointer}.observable-data-gate button:disabled{cursor:wait;opacity:.65}.observable-data-gate__status{flex-basis:100%;font-size:.9rem;color:var(--theme-foreground-muted)}
+.observable-data-deferred observablehq-loading{display:none!important}.observable-data-deferred .observablehq--block:has(>observablehq-loading:only-child){display:none}
+</style>
+<script>
+(() => {
+  const gate = document.querySelector("[data-observable-data-gate]");
+  const button = gate?.querySelector("[data-observable-data-load]");
+  const status = gate?.querySelector("[data-observable-data-status]");
+  const source = document.querySelector("script[data-heavy-observable-module]");
+  const main = document.querySelector("#observablehq-main");
+  if (!gate || !button || !status || !source || !main) return;
+
+  const finish = (message, failed = false) => {
+    document.documentElement.classList.remove("observable-data-deferred");
+    main.removeAttribute("aria-busy");
+    status.textContent = message;
+    button.hidden = !failed;
+    if (failed) button.disabled = true;
+  };
+
+  button.addEventListener("click", () => {
+    button.disabled = true;
+    button.textContent = "Loading…";
+    status.textContent = "Downloading and preparing the interactive analysis.";
+    main.setAttribute("aria-busy", "true");
+
+    const module = document.createElement("script");
+    module.type = "module";
+    module.textContent = source.textContent;
+    module.addEventListener("error", () => finish("The interactive analysis could not be loaded. Reload the page to try again.", true), {once: true});
+    module.addEventListener("load", () => {
+      const startedAt = Date.now();
+      const check = () => {
+        const pending = document.querySelectorAll("observablehq-loading").length;
+        const errors = document.querySelectorAll(".observablehq--error").length;
+        if (errors > 0) {
+          finish("Some interactive elements could not be loaded. Reload the page to try again.", true);
+        } else if (pending === 0) {
+          finish("Interactive analysis loaded.");
+        } else if (Date.now() - startedAt > 120000) {
+          finish("The interactive analysis is taking longer than expected; completed elements are available below.");
+        } else {
+          window.setTimeout(check, 250);
+        }
+      };
+      check();
+    }, {once: true});
+    document.head.appendChild(module);
+  }, {once: true});
+})();
+</script>
 </body>
 </html>

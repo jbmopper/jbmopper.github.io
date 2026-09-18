@@ -181,6 +181,25 @@ test("observable notebook links render from canonical routes", async ({page}) =>
   expect(failures).toEqual([]);
 });
 
+test("heavy notebook data waits for an explicit load request", async ({page}) => {
+  await page.goto("/observable/projects/llm-fundamentals/ablations/");
+
+  const loadButton = page.locator("[data-observable-data-load]");
+  await expect(loadButton).toBeVisible();
+  await expect(loadButton).toHaveText("Load interactive analysis");
+  await expect(page.locator("html")).toHaveClass(/observable-data-deferred/);
+  await expect(page.locator("script[data-heavy-observable-module]")).toHaveAttribute(
+    "type",
+    "application/x-observable-module",
+  );
+
+  await loadButton.click();
+  await expect(loadButton).toBeDisabled();
+  await expect(loadButton).toHaveText("Loading…");
+  await expect(page.getByText("Downloading and preparing the interactive analysis.")).toBeVisible();
+  await expect(page.locator('script[type="module"]')).toHaveCount(1);
+});
+
 test("legacy astro hybrid route is unavailable", async ({page}) => {
   const response = await page.goto("/projects/deep-learning-fundamentals/", {waitUntil: "domcontentloaded"});
   expect(response?.status()).toBe(404);
