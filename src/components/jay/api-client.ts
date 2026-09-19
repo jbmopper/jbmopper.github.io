@@ -42,32 +42,42 @@ async function mockSendMessage(conversationId: string): Promise<ChatResponse> {
 const REQUEST_TIMEOUT_MS = 30_000;
 const WARMUP_TIMEOUT_MS = 8_000;
 const WARMUP_COOLDOWN_MS = 5 * 60_000;
+const WARMUP_STORAGE_KEY = "jay-chat-warmup-at";
 
 let warmupPromise: Promise<boolean> | null = null;
-let warmupSessionToken = "";
-let lastWarmupAt = 0;
 
-export function warmUpChat(sessionToken: string): Promise<boolean> {
-  if (!API_BASE || !sessionToken) return Promise.resolve(false);
+function readLastWarmupAt(): number {
+  try {
+    return Number(sessionStorage.getItem(WARMUP_STORAGE_KEY)) || 0;
+  } catch {
+    return 0;
+  }
+}
+
+function recordWarmupAt(at: number): void {
+  try {
+    sessionStorage.setItem(WARMUP_STORAGE_KEY, String(at));
+  } catch {
+    // Storage unavailable: fall back to one warmup per page load.
+  }
+}
+
+// Public, unauthenticated, and inference-free: it only starts the backend
+// instance so the visitor's first real (Turnstile-gated) message is fast.
+export function warmUpChat(): Promise<boolean> {
+  if (!API_BASE) return Promise.resolve(false);
+  if (warmupPromise) return warmupPromise;
 
   const now = Date.now();
-  if (warmupPromise && warmupSessionToken === sessionToken) return warmupPromise;
-  if (warmupSessionToken === sessionToken && now - lastWarmupAt < WARMUP_COOLDOWN_MS) {
-    return Promise.resolve(true);
-  }
+  if (now - readLastWarmupAt() < WARMUP_COOLDOWN_MS) return Promise.resolve(true);
+  recordWarmupAt(now);
 
-  warmupSessionToken = sessionToken;
-  lastWarmupAt = now;
   warmupPromise = fetch(`${API_BASE}/v1/chat/warmup`, {
     method: "POST",
-    headers: {Authorization: `Bearer ${sessionToken}`},
     signal: AbortSignal.timeout(WARMUP_TIMEOUT_MS),
   })
     .then((response) => response.ok)
-    .catch(() => false)
-    .finally(() => {
-      warmupPromise = null;
-    });
+    .catch(() => false);
 
   return warmupPromise;
 }
