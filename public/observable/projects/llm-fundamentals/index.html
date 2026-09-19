@@ -169,8 +169,6 @@ import "../../_observablehq/client.5d43dcff.js";
                 ['Introduction', '/projects/llm-fundamentals/'],
                 ['Architecture and Expected Performance Analysis', '/projects/llm-fundamentals/perf-expected/'],
                 ['Benchmarks and Empirical Performance Analysis', '/projects/llm-fundamentals/perf-empirical/'],
-                ['Nvidia CUDA Nsys Trace Analysis', '/projects/llm-fundamentals/nsys/'],
-                ['Nsys GPU Trace Viewer', '/projects/llm-fundamentals/nsys-viewer/'],
                 ['Learning Parameter Sweeps', '/projects/llm-fundamentals/optimizer-sweep/'],
                 ['Architectural Variations (Ablations)', '/projects/llm-fundamentals/ablations/']
               ];
@@ -233,12 +231,6 @@ import "../../_observablehq/client.5d43dcff.js";
 <li><a href="#project-overview">Project Overview and Discussion</a></li>
 <li><a href="./perf-expected/">Architecture and Expected Performance Analysis</a></li>
 <li><a href="./perf-empirical/">Benchmarks and Empirical Performance Analysis</a></li>
-<li><a href="./nsys/">Nvidia CUDA Nsys Trace Analysis</a></li>
-</ol>
- <!--
- 5. [Nsys GPU Trace Viewer](/projects/llm-fundamentals/nsys-viewer/)
- -->
-<ol start="5">
 <li><a href="./optimizer-sweep/">Learning Parameter Sweeps</a></li>
 <li><a href="./ablations/">Architectural Variations (Ablations)</a></li>
 </ol>
@@ -284,14 +276,9 @@ import "../../_observablehq/client.5d43dcff.js";
 <p>An in-depth documentation of the architecture and memory and compute accounting was conducted.  The goal was to experiment with and visualize model parameter combinations on both Apple Silicon/MPS and the RTX 4090 (Ada Lovelace) systems.  Both systems have 24GB of RAM (unified or VRAM) but differ considerably in actual model size and throughput as the 4090 has superior memory bandwidth and supports bfloat16 and automatic mixed precision, as well as CUDA and <code>torch.compile()</code> via inductor.</p>
 <h3 id="3-benchmarks-and-empirical-performance-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#3-benchmarks-and-empirical-performance-analysis">3. <a href="./perf-empirical/">Benchmarks and Empirical Performance Analysis</a></a></h3>
 <p>A multi-step empirical analysis of model training characteristics, including a large-scale grid search across model settings measured via the PyTorch Benchmark class <code>blocked_autorange</code> method, and detailed comparisons of resource utilization and training speed between MPS and CUDA backends.</p>
-<h3 id="4-nvidia-cuda-nsys-trace-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#4-nvidia-cuda-nsys-trace-analysis">4. <a href="./nsys/">Nvidia CUDA Nsys Trace Analysis</a></a></h3>
-<p><strong>In Progress.</strong> A detailed examination of Nvidia Nsys traces across different architecture settings, examining differences in memory and compute at the level of CUDA API calls and kernels.</p>
-<!--
-### 5. [Nsys GPU Trace Viewer](/projects/llm-fundamentals/nsys-viewer/)
--->
-<h3 id="5-optimizer-hyperparameter-sweep-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#5-optimizer-hyperparameter-sweep-analysis">5. <a href="./optimizer-sweep/">Optimizer Hyperparameter Sweep Analysis</a></a></h3>
+<h3 id="4-optimizer-hyperparameter-sweep-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#4-optimizer-hyperparameter-sweep-analysis">4. <a href="./optimizer-sweep/">Optimizer Hyperparameter Sweep Analysis</a></a></h3>
 <p>A robust and creative exploration of conducting hyperparameter sweeps using the <a href="https://wandb.ai" target="_blank" rel="noopener noreferrer">wandb</a> Bayesian sweep algorithm and Hyperband early-stopping algorithm.  <strong>A novel sweep metric is proposed and implemented</strong> in order to elicit preferred behavior from these systems, and its performance is assessed.  Optimal optimizer parameters are determined.</p>
-<h3 id="6-architectural-variations-ablation-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#6-architectural-variations-ablation-analysis">6. <a href="./ablations/">Architectural Variations (Ablation) Analysis</a></a></h3>
+<h3 id="5-architectural-variations-ablation-analysis" tabindex="-1"><a class="observablehq-header-anchor" href="#5-architectural-variations-ablation-analysis">5. <a href="./ablations/">Architectural Variations (Ablation) Analysis</a></a></h3>
 <p>Suggested ablation tests from the CS336 assignment are conducted, such as removing the positional encoder or changing normalization timing.  Their impact on model training is assessed and observations are interpreted based on the purpose of these architectural features within the model.</p>
 <h2 id="deployment" tabindex="-1"><a class="observablehq-header-anchor" href="#deployment"><a href="./deployment/">Deployment</a></a></h2>
 <p>To deploy trained models, ONNX snapshots were generated and the tokenizer and decoder were ported into a lambda.  In order to deliver streaming responses, a FastAPI app is run behind a modified AWS Linux image and site API gateway configs were updated.</p>

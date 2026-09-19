@@ -169,8 +169,6 @@ import "../../_observablehq/client.5d43dcff.js";
                 ['Introduction', '/projects/llm-fundamentals/'],
                 ['Architecture and Expected Performance Analysis', '/projects/llm-fundamentals/perf-expected/'],
                 ['Benchmarks and Empirical Performance Analysis', '/projects/llm-fundamentals/perf-empirical/'],
-                ['Nvidia CUDA Nsys Trace Analysis', '/projects/llm-fundamentals/nsys/'],
-                ['Nsys GPU Trace Viewer', '/projects/llm-fundamentals/nsys-viewer/'],
                 ['Learning Parameter Sweeps', '/projects/llm-fundamentals/optimizer-sweep/'],
                 ['Architectural Variations (Ablations)', '/projects/llm-fundamentals/ablations/']
               ];
@@ -237,6 +235,9 @@ import "../../_observablehq/client.5d43dcff.js";
 <li><a href="#evaluator">Creating the Evaluator</a>
 <ol>
 <li><a href="./eval-playground">Evaluation Playground</a> — twin-pair comparisons and the roll-up explorer</li>
+<li><a href="./finding-categories">What the Evaluators Flag</a> — finding categories by case, prompt, evaluator, and rollup model</li>
+<li><a href="./evaluator-scores">Evaluator Scores vs Human Labels</a> — numeric judgments alongside my recorded scores</li>
+<li><a href="./evaluator-summaries">Evaluator Summaries vs Human Summary</a> — the rollups' summary prose beside my own</li>
 <li><a href="#eval-reports">Detailed evaluation reports</a></li>
 </ol>
 </li>
@@ -272,6 +273,9 @@ import "../../_observablehq/client.5d43dcff.js";
 <p>The second round rebuilt the instrument properly: a unified 0–2 rubric, sixteen cases with human-ratified score bands and required findings, five defect-injected twin pairs, a controlled 2×2 experiment on reading-instruction prompt passages, and a small model cross-examining every review for what it actually said.  The results were uncomfortable but clarifying.  The <em>scoring</em> channel is close to inert: on the hardest case, a polished engineering resume mis-targeted at a hybrid, business-facing role, the eighteen judge configurations produced zero variance — each judge returned the same score under every prompt, and none of them reached the human's verdict.  The <em>reading</em> channel is live: the same instruction passages that leave the scores flat lift what the review prose correctly mentions by fifteen to twenty points, without purchasing that recall with false accusations.  The numbers cannot rank pipelines, but the prose contains most of what a human reviewer would flag; the union of two judges' reviews covered 73% of the required findings.</p>
 <p>That pushed the work toward <em>collection</em>: a second-stage model reads the evaluator reviews and compiles the prose into findings, each citing a verbatim quote that code re-checks against the source review.  A sweep of second-stage models found Gemini 3.5 Flash-Lite to be a reliable, inexpensive reader — 230 of 240 reviews compiled into valid source-cited reports for about 46 cents, versus 183 for $2.66 from Haiku 4.5 — and a follow-up label analysis confirmed the roll-ups mostly compress rather than distort.  The remaining failures are wiring rather than models: validation is all-or-nothing per report, and whole-document diagnoses have a tendency to get flattened into local ones on the way through.</p>
 <p>That is where the evaluator work presently stands: a lot of data, with the conclusions still being drawn — by hand, in the <a href="./eval-playground">evaluation playground</a>, which puts the twin-pair comparisons and every roll-up from the full 240-review matrix side by side for inspection.</p>
+<p>The <a href="./finding-categories">finding-category grid</a> compares what the single-review summaries flag: all sixteen cases, four prompt treatments, and a breakdown of grounding, writing, argument, and other findings, with evaluator and rollup-model selectors.</p>
+<p>The <a href="./evaluator-scores">score-comparison grid</a> puts the evaluator's six numeric judgments beside my recorded human labels for all sixteen cases and the same four prompts.</p>
+<p>The <a href="./evaluator-summaries">summary grid</a> sets the rollups' summary prose for those same sixteen cases and four prompts next to my own summary of each résumé.</p>
 <h3 id="detailed-evaluation-reports" tabindex="-1"><a class="observablehq-header-anchor" href="#detailed-evaluation-reports">Detailed evaluation reports <a id="eval-reports"></a></a></h3>
 <p>The detailed writeups, in rough chronological order:</p>
 <ul>

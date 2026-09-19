@@ -7,7 +7,6 @@ const PROJECT_ROOT = path.resolve(SCRIPT_DIR, "..");
 const requiredSharedArtifacts = [
   "public/.nojekyll",
   "public/observable/index.html",
-  "public/observable/embed/nsys.js",
   "public/observable/embed/ablations.js",
   "public/observable/embed/lr-sweep.js",
   "public/observable/embed/perf-empirical.js",
@@ -23,11 +22,17 @@ const requiredCanonicalRoutes = [
   "projects/llm-fundamentals",
   "projects/llm-fundamentals/perf-expected",
   "projects/llm-fundamentals/perf-empirical",
-  "projects/llm-fundamentals/nsys",
   "projects/llm-fundamentals/optimizer-sweep",
   "projects/llm-fundamentals/ablations",
   "projects/llm-fundamentals/deployment",
   "projects/data-playground"
+];
+// Draft pages in notes-reports (`draft: true`) must never reach the site.
+const forbiddenDraftArtifacts = [
+  "public/observable/projects/llm-fundamentals/nsys",
+  "public/observable/projects/llm-fundamentals/nsys-viewer",
+  "public/observable/embed/nsys.js",
+  "public/observable/embed/nsys-viewer.js"
 ];
 const expectedBaseHrefByPage = new Map([
   ["public/observable/index.html", "/observable/"],
@@ -36,7 +41,6 @@ const expectedBaseHrefByPage = new Map([
 ]);
 const deferredDataPages = [
   "public/observable/projects/llm-fundamentals/ablations/index.html",
-  "public/observable/projects/llm-fundamentals/nsys/index.html",
   "public/observable/projects/llm-fundamentals/optimizer-sweep/index.html",
   "public/observable/projects/llm-fundamentals/perf-empirical/index.html",
 ];
@@ -109,6 +113,16 @@ async function assertCanonicalRoutes() {
         "Re-export Observable pages or update scripts/verify-observable-export.mjs route expectations."
       ].join("\n")
     );
+  }
+}
+
+async function assertDraftsUnpublished() {
+  const published = [];
+  for (const relativePath of forbiddenDraftArtifacts) {
+    if (await pathExists(relativePath)) published.push(relativePath);
+  }
+  if (published.length > 0) {
+    throw new Error(`Draft Observable artifacts were exported:\n${published.map((item) => `  - ${item}`).join("\n")}`);
   }
 }
 
@@ -280,6 +294,7 @@ async function main() {
   }
   await assertSharedProjectCatalog();
   await assertCanonicalRoutes();
+  await assertDraftsUnpublished();
   await assertBaseHrefs();
   await assertHeavyDataDeferral();
   await assertKatexAssets();

@@ -217,8 +217,6 @@ await renderAblationSection({matchAny: ["no norm", "no_norm", "without norm"], s
                 ['Introduction', '/projects/llm-fundamentals/'],
                 ['Architecture and Expected Performance Analysis', '/projects/llm-fundamentals/perf-expected/'],
                 ['Benchmarks and Empirical Performance Analysis', '/projects/llm-fundamentals/perf-empirical/'],
-                ['Nvidia CUDA Nsys Trace Analysis', '/projects/llm-fundamentals/nsys/'],
-                ['Nsys GPU Trace Viewer', '/projects/llm-fundamentals/nsys-viewer/'],
                 ['Learning Parameter Sweeps', '/projects/llm-fundamentals/optimizer-sweep/'],
                 ['Architectural Variations (Ablations)', '/projects/llm-fundamentals/ablations/']
               ];
@@ -322,7 +320,10 @@ Add some sort of statistical significnce test or other analysis on the grad norm
   const main = document.querySelector("#observablehq-main");
   if (!gate || !button || !status || !source || !main) return;
 
+  let finished = false;
   const finish = (message, failed = false) => {
+    if (finished) return;
+    finished = true;
     document.documentElement.classList.remove("observable-data-deferred");
     main.removeAttribute("aria-busy");
     status.textContent = message;
@@ -340,24 +341,22 @@ Add some sort of statistical significnce test or other analysis on the grad norm
     module.type = "module";
     module.textContent = source.textContent;
     module.addEventListener("error", () => finish("The interactive analysis could not be loaded. Reload the page to try again.", true), {once: true});
-    module.addEventListener("load", () => {
-      const startedAt = Date.now();
-      const check = () => {
-        const pending = document.querySelectorAll("observablehq-loading").length;
-        const errors = document.querySelectorAll(".observablehq--error").length;
-        if (errors > 0) {
-          finish("Some interactive elements could not be loaded. Reload the page to try again.", true);
-        } else if (pending === 0) {
-          finish("Interactive analysis loaded.");
-        } else if (Date.now() - startedAt > 120000) {
-          finish("The interactive analysis is taking longer than expected; completed elements are available below.");
-        } else {
-          window.setTimeout(check, 250);
-        }
-      };
-      check();
-    }, {once: true});
+    const startedAt = Date.now();
+    const check = () => {
+      const pending = document.querySelectorAll("observablehq-loading").length;
+      const errors = document.querySelectorAll(".observablehq--error").length;
+      if (errors > 0) {
+        finish("Some interactive elements could not be loaded. Reload the page to try again.", true);
+      } else if (pending === 0) {
+        finish("Interactive analysis loaded.");
+      } else if (Date.now() - startedAt > 120000) {
+        finish("The interactive analysis is taking longer than expected; completed elements are available below.");
+      } else {
+        window.setTimeout(check, 250);
+      }
+    };
     document.head.appendChild(module);
+    check();
   }, {once: true});
 })();
 </script>

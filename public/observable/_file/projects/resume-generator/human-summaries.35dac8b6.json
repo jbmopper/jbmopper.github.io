@@ -1,0 +1,93 @@
+{
+  "description": "Julius's assessments of the 16 evaluator-calibration resumes, written in the style of the finding-synthesis `summary` field so they can sit beside the evaluator summaries in a grid. Keys match human-scores.json.",
+  "prepared": "2026-09-06",
+  "provenance_values": {
+    "organic": "generator output as evaluated",
+    "synthetic-fix": "manipulated copy that repairs the organic twin's defect",
+    "synthetic-control": "manipulated copy with only a styling change",
+    "synthetic-defect": "manipulated copy with an injected defect",
+    "retired": "excluded from active conclusions (source contamination, 2026-09-04)"
+  },
+  "cases": {
+    "mistargeted": {
+      "source_case_id": "consulting--jh-business-partner--cleanest",
+      "provenance": "organic",
+      "summary": "This is not a very good resume for the posting. It is technically focused and does not make a strong case for the candidate in the hybrid business-partner role; the job description calls for a lot of initiative road-mapping and cross-functional collaboration, both reachable inferences from the candidate's experience, and the resume never makes those connections. The writing has flaws (the \"Agent Architecture\" point is one clumsy example, not the whole problem) and the keywords are probably not too bad. Omitting the candidate's quantified adoption outcomes is a nice-to-have, since the JD says someone else will scale adoption after this person rotates out."
+    },
+    "credential-trap": {
+      "source_case_id": "pm--enigma-llm-analyst--irrelevant-credential",
+      "provenance": "organic",
+      "summary": "The resume is somewhat all over the place. It carries a lot of technical content such as cloud deployment and architecture design; the cloud material is not that off-base for an LLM-heavy analyst role, but implementation points such as the deep-learning bullet lack any discussion of the measurement and analysis side, which is what matters for this role. The writing is rather flat and the connections to the job's needs are not argued for. It also includes an irrelevant credential, the OHSU M.S., which is grounded in the candidate data but does not belong here."
+    },
+    "long-and-spammy": {
+      "source_case_id": "eng--axon-applied-ai--long-but-clean",
+      "provenance": "organic",
+      "summary": "Automated flags that this resume is long are correct, but it is not long-but-clean: the length produces a significant level of keyword spam and an unfocused feel to the writing. The targeting and the facts hold up; the problem is the prose itself, which is spammy and unfocused throughout."
+    },
+    "hollow-history": {
+      "source_case_id": "eng--enigma-ml-researcher--hollow-history",
+      "provenance": "organic",
+      "summary": "Technical keyword use is arguably appropriate for a research-heavy role, but the resume jams in questionably relevant details and keywords, and it collapsed two roles into a single line with no bullets, leaving the work history hollow. Some of the writing in the later sections is good, though it could still be more concise. The hollow history is a structural failure that puts the resume at the edge of needing to be redone even though the targeting and grounding are sound."
+    },
+    "truncated": {
+      "source_case_id": "eng--clifyx-gen-ai-dev--failed",
+      "provenance": "organic",
+      "summary": "The resume is truncated partway through the professional summary and contains no employment history. It is broken and unusable, although what is there looks fine."
+    },
+    "voice-imperative": {
+      "source_case_id": "arch--datadog-psa--voice-imperative",
+      "provenance": "organic",
+      "summary": "The summary is written in the second-person imperative, addressed at the reader (\"Design and deploy... Translate... Drive...\"). Research indicates this is technically correct grammar, but it reads badly, choppy and barking, because of the overall paragraph structure. Besides that the resume is actually pretty good, with some keyword stuffing and verbosity."
+    },
+    "voice-clean": {
+      "source_case_id": "arch--datadog-psa--voice-clean",
+      "provenance": "synthetic-fix",
+      "summary": "Setting aside the voice defect, which this synthetic copy fixes by rewriting the summary out of the imperative so that only that line differs from the original, the resume is actually pretty good, with some keyword stuffing and verbosity."
+    },
+    "bolding-spam": {
+      "source_case_id": "eng--figma-ml-se--bolded",
+      "provenance": "organic",
+      "summary": "The keyword spam and inline bolding are present, as expected from the earlier generation workflow, though this is a highly technical job so they are not as out of place as they could be. The separate projects section of this earlier-generation resume paradoxically forced the writing to be less wordy and keyword-laden. The main issues beyond the styling are a lack of consequence for points such as \"Data Pipelines in Go\", the failure to emphasize the cultural and collaboration contributions implicit in the BA role, and some points that are not that significant, such as cross-functional leadership. The \"gradient checkpointing\" claim goes beyond the candidate data's standard checkpointing."
+    },
+    "bolding-clean": {
+      "source_case_id": "eng--figma-ml-se--debolded",
+      "provenance": "synthetic-control",
+      "summary": "Control copy: the 17 inline bolds have been removed, a thin check on the effect of special characters; the assessment is otherwise that of the original. The keyword spam and inline bolding are present in the original, as expected from the earlier generation workflow, though this is a highly technical job so they are not as out of place as they could be. The separate projects section of this earlier-generation resume paradoxically forced the writing to be less wordy and keyword-laden. The main issues beyond the styling are a lack of consequence for points such as \"Data Pipelines in Go\", the failure to emphasize the cultural and collaboration contributions implicit in the BA role, and some points that are not that significant, such as cross-functional leadership. The \"gradient checkpointing\" claim goes beyond the candidate data's standard checkpointing."
+    },
+    "pitch-calibrated": {
+      "source_case_id": "eng--kpmg-associate--calibrated",
+      "provenance": "organic",
+      "summary": "The resume is wordy, with a lot of detail about what was done that detracts from the value of the accomplishments. Points from the job description about adaptability could have been addressed more robustly. The earlier premise that the role is below the candidate's level was withdrawn; this is an at-level application, not an over-qualification mismatch."
+    },
+    "pitch-inflated": {
+      "source_case_id": "eng--kpmg-associate--inflated",
+      "provenance": "synthetic-defect",
+      "summary": "The resume is wordy, with a lot of detail about what was done that detracts from the value of the accomplishments, and the job description's points about adaptability could have been addressed more robustly. In this copy three seniority inflations were injected: the solo-developer framing became \"Leads\", \"Supported\" became \"Directed\", and \"Worked with\" became \"Led\" the cloud and security teams. These inflations are not supportable from the candidate data and are a grounding failure serious enough to warrant a redo; the dirtying covers a crucial class of bug."
+    },
+    "salience-lead-first": {
+      "source_case_id": "eng--visa-staff-ai--lead-first",
+      "provenance": "organic",
+      "summary": "A very good resume and a fair positive anchor: automated reviewers flagged it as too long, but it actually got a phone screen, and the writing is good. There is maybe a little keyword stuffing, but it worked. The one nick is grounding: in-progress work (the LangGraph pipeline, prompt versioning, evals) is presented as done, and while who knows what counts as done, there is no reason to let up on grounding."
+    },
+    "salience-buried-lead": {
+      "source_case_id": "eng--visa-staff-ai--buried-lead",
+      "provenance": "synthetic-defect",
+      "summary": "A very good resume in content: automated reviewers flagged it as too long, but the original got a phone screen, the writing is good, and the little keyword stuffing worked; the one nick is in-progress work presented as done. In this copy the summary sentences were swapped and each role's bullets reordered weakest-first so the lead is buried; the words are identical, and the disarranged order is the defect."
+    },
+    "grounding-clean": {
+      "source_case_id": "pm--harvey-nash-dpo--grounded",
+      "provenance": "organic",
+      "summary": "OK to good, not great, and the limit is probably the sparsity of the 278-word job description. The candidate has 7+ years of product ownership against a JD asking for 2 to 4, which is not fatal. The brevity is nice and the choice to drop the independent work is sound; the summary is kind of long but says the right things. Some of the writing is awkward (\"surfaced blockers early enough...\", the \"hands-on execution\" bullet) and the bullet titles do not sparkle, but it is pretty good overall."
+    },
+    "grounding-fabricated": {
+      "source_case_id": "pm--harvey-nash-dpo--fabricated",
+      "provenance": "synthetic-defect",
+      "summary": "OK to good, not great, limited by the sparse job description; brevity is nice, dropping the independent work is sound, the summary runs long but says the right things, and some phrasing is awkward with bullet titles that do not sparkle. In this copy three fabrications were injected: an AWS Certified Solutions Architect credential absent from the candidate data, a 6% lift inflated to 16%, and a 15x speedup inflated to 40x."
+    },
+    "skills-spam-trap": {
+      "source_case_id": "pm--xcel-ipo--skills-spam",
+      "provenance": "retired",
+      "summary": "The \"skills spam\" verdict is not well supported and the writing is fine; the UX items in the skills section were grounded. The main issue is that the job description asked for user-experience research, it reached the resume's skills section, but it was never developed into a job bullet, even though it could have been claimed from the customer-facing portal work and the advanced degree in economics; that is questionable writing. The case looks like a source mismatch, since the resume may have been rerun after the agent was told about that work, and it was retired from the evals."
+    }
+  }
+}
