@@ -1,7 +1,0 @@
-/**
- * Bundled by jsDelivr using Rollup v2.79.2 and Terser v5.39.0.
- * Original file: /npm/zrender@5.6.1/lib/core/matrix.js
- *
- * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
- */
-function n(){return[1,0,0,1,0,0]}function r(n){return n[0]=1,n[1]=0,n[2]=0,n[3]=1,n[4]=0,n[5]=0,n}function t(n,r){return n[0]=r[0],n[1]=r[1],n[2]=r[2],n[3]=r[3],n[4]=r[4],n[5]=r[5],n}function u(n,r,t){var u=r[0]*t[0]+r[2]*t[1],o=r[1]*t[0]+r[3]*t[1],e=r[0]*t[2]+r[2]*t[3],i=r[1]*t[2]+r[3]*t[3],c=r[0]*t[4]+r[2]*t[5]+r[4],f=r[1]*t[4]+r[3]*t[5]+r[5];return n[0]=u,n[1]=o,n[2]=e,n[3]=i,n[4]=c,n[5]=f,n}function o(n,r,t){return n[0]=r[0],n[1]=r[1],n[2]=r[2],n[3]=r[3],n[4]=r[4]+t[0],n[5]=r[5]+t[1],n}function e(n,r,t,u){void 0===u&&(u=[0,0]);var o=r[0],e=r[2],i=r[4],c=r[1],f=r[3],a=r[5],v=Math.sin(t),l=Math.cos(t);return n[0]=o*l+c*v,n[1]=-o*v+c*l,n[2]=e*l+f*v,n[3]=-e*v+l*f,n[4]=l*(i-u[0])+v*(a-u[1])+u[0],n[5]=l*(a-u[1])-v*(i-u[0])+u[1],n}function i(n,r,t){var u=t[0],o=t[1];return n[0]=r[0]*u,n[1]=r[1]*o,n[2]=r[2]*u,n[3]=r[3]*o,n[4]=r[4]*u,n[5]=r[5]*o,n}function c(n,r){var t=r[0],u=r[2],o=r[4],e=r[1],i=r[3],c=r[5],f=t*i-e*u;return f?(f=1/f,n[0]=i*f,n[1]=-e*f,n[2]=-u*f,n[3]=t*f,n[4]=(u*c-i*o)*f,n[5]=(e*o-t*c)*f,n):null}function f(n){var r=[1,0,0,1,0,0];return t(r,n),r}export{f as clone,t as copy,n as create,r as identity,c as invert,u as mul,e as rotate,i as scale,o as translate};export default null;

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="observable-data-deferred">
+<html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -13,7 +13,7 @@
 <link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.87b41aae.css">
 <link rel="stylesheet" type="text/css" href="../../_observablehq/stdlib/inputs.f7bf0e12.css">
 <link rel="stylesheet" type="text/css" href="../../_npm/katex@0.17.0/dist/katex.min.css">
-<script type="application/x-observable-module" data-heavy-observable-module>
+<script type="module">
 
 import {define} from "../../_observablehq/client.5d43dcff.js";
 import {registerFile} from "../../_observablehq/stdlib.a50b4fda.js";
@@ -400,6 +400,54 @@ return {outputCard};
           const node = document.getElementById(id);
           if (node) node.remove();
         }
+      })();</script><script>(function(){
+        const pattern = /Failed to fetch dynamically imported module|Importing a module script failed|error loading dynamically imported module/;
+        const key = 'observable-module-reload:' + window.location.pathname;
+        const startedAt = Date.now();
+        let reloading = false;
+
+        function reloadedRecently(){
+          try {
+            const at = Number(window.sessionStorage.getItem(key));
+            return Boolean(at) && Date.now() - at < 60000;
+          } catch {
+            return true;
+          }
+        }
+
+        function offerReload(node){
+          node.dataset.moduleFailureHandled = 'true';
+          node.textContent = '';
+          node.style.cssText = 'display:flex;flex-wrap:wrap;align-items:center;gap:0.75rem;margin:0.5rem 0;padding:0.75rem;border:1px dashed var(--theme-foreground-faint);border-radius:8px;color:inherit;';
+          const text = document.createElement('span');
+          text.textContent = "Part of this page didn't load.";
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.textContent = 'Reload';
+          button.addEventListener('click', function(){ window.location.reload(); });
+          node.append(text, button);
+        }
+
+        function check(){
+          if (reloading) return;
+          const failed = Array.from(document.querySelectorAll('.observablehq--error'))
+            .filter(function(node){ return node.dataset.moduleFailureHandled !== 'true' && pattern.test(node.textContent || ''); });
+          if (failed.length === 0) return;
+          if (Date.now() - startedAt < 20000 && !reloadedRecently()) {
+            reloading = true;
+            try {
+              window.sessionStorage.setItem(key, String(Date.now()));
+            } catch {}
+            window.location.reload();
+            return;
+          }
+          failed.forEach(offerReload);
+        }
+
+        const observer = new MutationObserver(check);
+        observer.observe(document.documentElement, {childList: true, subtree: true});
+        // Module imports all happen while the page loads.
+        window.setTimeout(function(){ observer.disconnect(); check(); }, 60000);
       })();</script>
 </header>
 <aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
@@ -415,12 +463,6 @@ return {outputCard};
 </nav>
 </aside>
 <main id="observablehq-main" class="observablehq">
-<aside class="observable-data-gate" data-observable-data-gate>
-  <strong>Interactive analysis is paused</strong>
-  <span>Load 6.6 MB of source data only when you want the charts and calculated values.</span>
-  <button type="button" data-observable-data-load>Load interactive analysis</button>
-  <span class="observable-data-gate__status" data-observable-data-status role="status" aria-live="polite"></span>
-</aside>
 <h1 id="full-matrix-finding-synthesis-haiku-vs-flash-lite" tabindex="-1"><a class="observablehq-header-anchor" href="#full-matrix-finding-synthesis-haiku-vs-flash-lite">Full-matrix finding synthesis: Haiku vs Flash-Lite</a></h1>
 <h2 id="result" tabindex="-1"><a class="observablehq-header-anchor" href="#result">Result</a></h2>
 <p>Gemini 3.5 Flash-Lite is the clear second-stage model for this pipeline. Across
@@ -705,59 +747,5 @@ findings or generated severities as a graph score.</p>
 </code></pre>
 </main>
 </div>
-<style>
-.observable-data-gate{display:flex;flex-wrap:wrap;align-items:center;gap:.65rem 1rem;margin:0 0 1.5rem;padding:.9rem 1rem;border:1px solid var(--theme-foreground-faintest);border-radius:.45rem;background:var(--theme-background-alt)}
-.observable-data-gate strong{font-weight:700}.observable-data-gate span{flex:1 1 24rem}.observable-data-gate button{font:inherit;font-weight:650;padding:.5rem .8rem;border:1px solid currentColor;border-radius:.35rem;color:var(--theme-foreground);background:var(--theme-background);cursor:pointer}.observable-data-gate button:disabled{cursor:wait;opacity:.65}.observable-data-gate__status{flex-basis:100%;font-size:.9rem;color:var(--theme-foreground-muted)}
-.observable-data-deferred observablehq-loading{display:none!important}.observable-data-deferred .observablehq--block:has(>observablehq-loading:only-child){display:none}
-</style>
-<script>
-(() => {
-  const gate = document.querySelector("[data-observable-data-gate]");
-  const button = gate?.querySelector("[data-observable-data-load]");
-  const status = gate?.querySelector("[data-observable-data-status]");
-  const source = document.querySelector("script[data-heavy-observable-module]");
-  const main = document.querySelector("#observablehq-main");
-  if (!gate || !button || !status || !source || !main) return;
-
-  let finished = false;
-  const finish = (message, failed = false) => {
-    if (finished) return;
-    finished = true;
-    document.documentElement.classList.remove("observable-data-deferred");
-    main.removeAttribute("aria-busy");
-    status.textContent = message;
-    button.hidden = !failed;
-    if (failed) button.disabled = true;
-  };
-
-  button.addEventListener("click", () => {
-    button.disabled = true;
-    button.textContent = "Loading…";
-    status.textContent = "Downloading and preparing the interactive analysis.";
-    main.setAttribute("aria-busy", "true");
-
-    const module = document.createElement("script");
-    module.type = "module";
-    module.textContent = source.textContent;
-    module.addEventListener("error", () => finish("The interactive analysis could not be loaded. Reload the page to try again.", true), {once: true});
-    const startedAt = Date.now();
-    const check = () => {
-      const pending = document.querySelectorAll("observablehq-loading").length;
-      const errors = document.querySelectorAll(".observablehq--error").length;
-      if (errors > 0) {
-        finish("Some interactive elements could not be loaded. Reload the page to try again.", true);
-      } else if (pending === 0) {
-        finish("Interactive analysis loaded.");
-      } else if (Date.now() - startedAt > 120000) {
-        finish("The interactive analysis is taking longer than expected; completed elements are available below.");
-      } else {
-        window.setTimeout(check, 250);
-      }
-    };
-    document.head.appendChild(module);
-    check();
-  }, {once: true});
-})();
-</script>
 </body>
 </html>
