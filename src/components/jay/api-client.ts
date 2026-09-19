@@ -8,7 +8,7 @@ const MAX_HISTORY_MESSAGES = 40;
 const MOCK_REPLIES = [
   "This AI helper is grounded on Julius's project notes and can summarize the work on this site.",
   "Julius built a full transformer from scratch in PyTorch — training, inference, profiling, the works.",
-  "Want to know about the performance analysis pipeline? It includes Nsys GPU traces and custom ablation studies.",
+  "Want to know about the performance analysis pipeline? It includes MPS vs. CUDA benchmarks and custom ablation studies.",
   "The deep learning fundamentals project covers everything from attention mechanisms to learning rate sweeps.",
   "Julius's work focuses on applied AI, integration, and systems that hold up under real usage.",
   "The live version is backed by Vertex AI RAG, so it can pull up specific details from the site's content.",

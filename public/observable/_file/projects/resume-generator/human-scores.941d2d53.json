@@ -1,0 +1,512 @@
+{
+  "scale": 2,
+  "source_status": "owner-ratified-draft",
+  "source_sha256": "9df2d4e0be1682c335d5c6672b319aabe447edff65213d89e3bb8dd52659a11c",
+  "local_updates": "Explicit owner updates below take precedence over the imported source snapshot.",
+  "extrapolation": {
+    "date": "2026-09-06",
+    "status": "Owner-requested extrapolations, not new explicit owner scores",
+    "policy": "Fill missing dimensions only, using paired-case labels and human notes. Preserve ranges where the evidence does not select one score. Each extrapolated dimension records its rationale."
+  },
+  "cases": {
+    "voice-clean": {
+      "source_case_id": "arch--datadog-psa--voice-clean",
+      "scores": {
+        "basics": [
+          2,
+          2
+        ],
+        "writing": [
+          1,
+          1
+        ],
+        "argument": [
+          2,
+          2
+        ],
+        "grounding": [
+          2,
+          2
+        ],
+        "keywords": [
+          1,
+          1
+        ],
+        "overall": [
+          1,
+          1
+        ]
+      }
+    },
+    "voice-imperative": {
+      "source_case_id": "arch--datadog-psa--voice-imperative",
+      "scores": {
+        "basics": [
+          1,
+          1
+        ],
+        "writing": [
+          0,
+          1
+        ],
+        "argument": [
+          2,
+          2
+        ],
+        "grounding": [
+          2,
+          2
+        ],
+        "keywords": [
+          1,
+          1
+        ],
+        "overall": [
+          1,
+          1
+        ]
+      },
+      "owner_update": {
+        "date": "2026-09-06",
+        "status": "Owner updated writing to 0–1; other explicit scores unchanged."
+      }
+    },
+    "mistargeted": {
+      "source_case_id": "consulting--jh-business-partner--cleanest",
+      "scores": {
+        "basics": [
+          2,
+          2
+        ],
+        "writing": [
+          1,
+          1
+        ],
+        "argument": [
+          0,
+          0
+        ],
+        "grounding": [
+          2,
+          2
+        ],
+        "keywords": [
+          1,
+          1
+        ],
+        "overall": [
+          1,
+          1
+        ]
+      }
+    },
+    "long-and-spammy": {
+      "source_case_id": "eng--axon-applied-ai--long-but-clean",
+      "scores": {
+        "basics": [
+          1,
+          1
+        ],
+        "writing": [
+          0,
+          0
+        ],
+        "argument": [
+          2,
+          2
+        ],
+        "grounding": [
+          2,
+          2
+        ],
+        "keywords": [
+          0,
+          1
+        ],
+        "overall": [
+          1,
+          1
+        ]
+      }
+    },
+    "truncated": {
+      "source_case_id": "eng--clifyx-gen-ai-dev--failed",
+      "scores": {
+        "basics": [
+          0,
+          0
+        ],
+        "writing": [
+          0,
+          2
+        ],
+        "argument": [
+          0,
+          2
+        ],
+        "grounding": [
+          0,
+          2
+        ],
+        "keywords": [
+          0,
+          2
+        ],
+        "overall": [
+          0,
+          0
+        ]
+      },
+      "derived": [
+        "basics",
+        "overall"
+      ],
+      "unscored": [
+        "writing",
+        "argument",
+        "grounding",
+        "keywords"
+      ],
+      "note": "Writing, argument, grounding, and keywords couldn't be scored because the résumé was truncated. These dimensions are shown as 0–2*."
+    },
+    "hollow-history": {
+      "source_case_id": "eng--enigma-ml-researcher--hollow-history",
+      "scores": {
+        "basics": [
+          0,
+          0
+        ],
+        "writing": [
+          1,
+          2
+        ],
+        "argument": [
+          2,
+          2
+        ],
+        "grounding": [
+          2,
+          2
+        ],
+        "keywords": [
+          1,
+          1
+        ],
+        "overall": [
+          0,
+          1
+        ]
+      }
+    },
+    "bolding-spam": {
+      "source_case_id": "eng--figma-ml-se--bolded",
+      "scores": {
+        "basics": [
+          2,
+          2
+        ],
+        "writing": [
+          2,
+          2
+        ],
+        "argument": [
+          1,
+          1
+        ],
+        "grounding": [
+          1,
+          1
+        ],
+        "keywords": [
+          2,
+          2
+        ],
+        "overall": [
+          1,
+          2
+        ]
+      },
+      "owner_update": {
+        "date": "2026-09-06",
+        "status": "Owner confirmed identical scores for both bolding cases; only the visual styling changed."
+      }
+    },
+    "bolding-clean": {
+      "source_case_id": "eng--figma-ml-se--debolded",
+      "scores": {
+        "basics": [
+          2,
+          2
+        ],
+        "writing": [
+          2,
+          2
+        ],
+        "argument": [
+          1,
+          1
+        ],
+        "grounding": [
+          1,
+          1
+        ],
+        "keywords": [
+          2,
+          2
+        ],
+        "overall": [
+          1,
+          2
+        ]
+      }
+    },
+    "pitch-calibrated": {
+      "source_case_id": "eng--kpmg-associate--calibrated",
+      "scores": {
+        "basics": [
+          2,
+          2
+        ],
+        "writing": [
+          1,
+          1
+        ],
+        "argument": [
+          1,
+          1
+        ],
+        "grounding": [
+          2,
+          2
+        ],
+        "keywords": [
+          1,
+          2
+        ],
+        "overall": [
+          1,
+          2
+        ]
+      },
+      "owner_update": {
+        "date": "2026-09-06",
+        "status": "Owner accepted displayed labels and removed provisional annotations."
+      }
+    },
+    "pitch-inflated": {
+      "source_case_id": "eng--kpmg-associate--inflated",
+      "scores": {
+        "basics": [
+          2,
+          2
+        ],
+        "writing": [
+          1,
+          1
+        ],
+        "argument": [
+          1,
+          1
+        ],
+        "grounding": [
+          0,
+          0
+        ],
+        "keywords": [
+          1,
+          2
+        ],
+        "overall": [
+          0,
+          1
+        ]
+      }
+    },
+    "salience-buried-lead": {
+      "source_case_id": "eng--visa-staff-ai--buried-lead",
+      "scores": {
+        "basics": [
+          2,
+          2
+        ],
+        "writing": [
+          0,
+          1
+        ],
+        "argument": [
+          1,
+          2
+        ],
+        "grounding": [
+          1,
+          1
+        ],
+        "keywords": [
+          1,
+          2
+        ],
+        "overall": [
+          1,
+          2
+        ]
+      },
+      "owner_update": {
+        "date": "2026-09-06",
+        "status": "Owner accepted displayed labels and removed provisional annotations."
+      }
+    },
+    "salience-lead-first": {
+      "source_case_id": "eng--visa-staff-ai--lead-first",
+      "scores": {
+        "basics": [
+          2,
+          2
+        ],
+        "writing": [
+          2,
+          2
+        ],
+        "argument": [
+          2,
+          2
+        ],
+        "grounding": [
+          1,
+          1
+        ],
+        "keywords": [
+          1,
+          2
+        ],
+        "overall": [
+          2,
+          2
+        ]
+      }
+    },
+    "credential-trap": {
+      "source_case_id": "pm--enigma-llm-analyst--irrelevant-credential",
+      "scores": {
+        "basics": [
+          0,
+          1
+        ],
+        "writing": [
+          1,
+          1
+        ],
+        "argument": [
+          1,
+          1
+        ],
+        "grounding": [
+          2,
+          2
+        ],
+        "keywords": [
+          1,
+          1
+        ],
+        "overall": [
+          1,
+          1
+        ]
+      }
+    },
+    "grounding-fabricated": {
+      "source_case_id": "pm--harvey-nash-dpo--fabricated",
+      "scores": {
+        "basics": [
+          2,
+          2
+        ],
+        "writing": [
+          1,
+          1
+        ],
+        "argument": [
+          2,
+          2
+        ],
+        "grounding": [
+          0,
+          0
+        ],
+        "keywords": [
+          2,
+          2
+        ],
+        "overall": [
+          0,
+          0
+        ]
+      },
+      "owner_update": {
+        "date": "2026-09-06",
+        "status": "Owner accepted displayed labels and removed provisional annotations."
+      }
+    },
+    "grounding-clean": {
+      "source_case_id": "pm--harvey-nash-dpo--grounded",
+      "scores": {
+        "basics": [
+          2,
+          2
+        ],
+        "writing": [
+          1,
+          1
+        ],
+        "argument": [
+          2,
+          2
+        ],
+        "grounding": [
+          2,
+          2
+        ],
+        "keywords": [
+          2,
+          2
+        ],
+        "overall": [
+          1,
+          2
+        ]
+      }
+    },
+    "skills-spam-trap": {
+      "source_case_id": "pm--xcel-ipo--skills-spam",
+      "scores": {
+        "basics": [
+          2,
+          2
+        ],
+        "writing": [
+          1,
+          2
+        ],
+        "argument": [
+          1,
+          1
+        ],
+        "grounding": [
+          1,
+          1
+        ],
+        "keywords": [
+          1,
+          2
+        ],
+        "overall": [
+          1,
+          2
+        ]
+      },
+      "owner_update": {
+        "date": "2026-09-06",
+        "status": "Owner accepted displayed labels and removed provisional annotations."
+      }
+    }
+  }
+}

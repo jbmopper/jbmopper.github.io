@@ -16,7 +16,7 @@
 import {define} from "../../_observablehq/client.5d43dcff.js";
 import {registerFile} from "../../_observablehq/stdlib.a50b4fda.js";
 
-registerFile("./finding-synthesis-haiku-flashlite-fullmatrix-data.json", {"name":"./finding-synthesis-haiku-flashlite-fullmatrix-data.json","mimeType":"application/json","path":"../../_file/projects/resume-generator/finding-synthesis-haiku-flashlite-fullmatrix-data.39b33421.json","lastModified":1786598247947,"size":4883031});
+registerFile("./finding-synthesis-haiku-flashlite-fullmatrix-data.json", {"name":"./finding-synthesis-haiku-flashlite-fullmatrix-data.json","mimeType":"application/json","path":"../../_file/projects/resume-generator/finding-synthesis-haiku-flashlite-fullmatrix-data.45aa162b.json","lastModified":1786598932801,"size":6644701});
 
 define({id: "4dba01c4", inputs: ["FileAttachment"], outputs: ["matrix"], body: (FileAttachment) => {
 const matrix = FileAttachment("./finding-synthesis-haiku-flashlite-fullmatrix-data.json").json();
@@ -687,8 +687,6 @@ display(drillRow ? html`<details class="drill-source">
                 ['Introduction', '/projects/llm-fundamentals/'],
                 ['Architecture and Expected Performance Analysis', '/projects/llm-fundamentals/perf-expected/'],
                 ['Benchmarks and Empirical Performance Analysis', '/projects/llm-fundamentals/perf-empirical/'],
-                ['Nvidia CUDA Nsys Trace Analysis', '/projects/llm-fundamentals/nsys/'],
-                ['Nsys GPU Trace Viewer', '/projects/llm-fundamentals/nsys-viewer/'],
                 ['Learning Parameter Sweeps', '/projects/llm-fundamentals/optimizer-sweep/'],
                 ['Architectural Variations (Ablations)', '/projects/llm-fundamentals/ablations/']
               ];
@@ -741,7 +739,7 @@ display(drillRow ? html`<details class="drill-source">
 <main id="observablehq-main" class="observablehq">
 <aside class="observable-data-gate" data-observable-data-gate>
   <strong>Interactive analysis is paused</strong>
-  <span>Load 4.9 MB of source data only when you want the charts and calculated values.</span>
+  <span>Load 6.6 MB of source data only when you want the charts and calculated values.</span>
   <button type="button" data-observable-data-load>Load interactive analysis</button>
   <span class="observable-data-gate__status" data-observable-data-status role="status" aria-live="polite"></span>
 </aside>
@@ -901,7 +899,10 @@ display(drillRow ? html`<details class="drill-source">
   const main = document.querySelector("#observablehq-main");
   if (!gate || !button || !status || !source || !main) return;
 
+  let finished = false;
   const finish = (message, failed = false) => {
+    if (finished) return;
+    finished = true;
     document.documentElement.classList.remove("observable-data-deferred");
     main.removeAttribute("aria-busy");
     status.textContent = message;
@@ -919,24 +920,22 @@ display(drillRow ? html`<details class="drill-source">
     module.type = "module";
     module.textContent = source.textContent;
     module.addEventListener("error", () => finish("The interactive analysis could not be loaded. Reload the page to try again.", true), {once: true});
-    module.addEventListener("load", () => {
-      const startedAt = Date.now();
-      const check = () => {
-        const pending = document.querySelectorAll("observablehq-loading").length;
-        const errors = document.querySelectorAll(".observablehq--error").length;
-        if (errors > 0) {
-          finish("Some interactive elements could not be loaded. Reload the page to try again.", true);
-        } else if (pending === 0) {
-          finish("Interactive analysis loaded.");
-        } else if (Date.now() - startedAt > 120000) {
-          finish("The interactive analysis is taking longer than expected; completed elements are available below.");
-        } else {
-          window.setTimeout(check, 250);
-        }
-      };
-      check();
-    }, {once: true});
+    const startedAt = Date.now();
+    const check = () => {
+      const pending = document.querySelectorAll("observablehq-loading").length;
+      const errors = document.querySelectorAll(".observablehq--error").length;
+      if (errors > 0) {
+        finish("Some interactive elements could not be loaded. Reload the page to try again.", true);
+      } else if (pending === 0) {
+        finish("Interactive analysis loaded.");
+      } else if (Date.now() - startedAt > 120000) {
+        finish("The interactive analysis is taking longer than expected; completed elements are available below.");
+      } else {
+        window.setTimeout(check, 250);
+      }
+    };
     document.head.appendChild(module);
+    check();
   }, {once: true});
 })();
 </script>

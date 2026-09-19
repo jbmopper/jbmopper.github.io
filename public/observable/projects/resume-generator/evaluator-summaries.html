@@ -4,49 +4,82 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="generator" content="Observable Framework v1.13.4">
-<base href="/observable/projects/data-playground/">
-<title>Data Playground | juliusm.com</title>
+<base href="/observable/projects/resume-generator/evaluator-summaries.html">
+<title>Evaluator Summaries vs Human Summary | juliusm.com</title>
 
 <link rel="preload" as="style" href="../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="preload" as="style" href="../../_observablehq/stdlib/inputs.f7bf0e12.css">
 <link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="stylesheet" type="text/css" href="../../_observablehq/stdlib/inputs.f7bf0e12.css">
 <script type="application/x-observable-module" data-heavy-observable-module>
 
 import {define} from "../../_observablehq/client.5d43dcff.js";
 import {registerFile} from "../../_observablehq/stdlib.a50b4fda.js";
 
-registerFile("../../data/manifest.json", {"name":"../../data/manifest.json","mimeType":"application/json","path":"../../_file/data/manifest.d04279d7.json","lastModified":1771874136886,"size":13400});
-registerFile("../../data/raw/benchmarks/ablations_history.parquet", {"name":"../../data/raw/benchmarks/ablations_history.parquet","path":"../../_file/data/raw/benchmarks/ablations_history.c15e6588.parquet","lastModified":1771874136910,"size":2777049});
-registerFile("../../data/raw/benchmarks/ablations_main.parquet", {"name":"../../data/raw/benchmarks/ablations_main.parquet","path":"../../_file/data/raw/benchmarks/ablations_main.912ec8a5.parquet","lastModified":1771874136911,"size":26405});
-registerFile("../../data/raw/benchmarks/gpu_comp_history.parquet", {"name":"../../data/raw/benchmarks/gpu_comp_history.parquet","path":"../../_file/data/raw/benchmarks/gpu_comp_history.e18efbee.parquet","lastModified":1771874136917,"size":1389327});
-registerFile("../../data/raw/benchmarks/gpu_comp_main.parquet", {"name":"../../data/raw/benchmarks/gpu_comp_main.parquet","path":"../../_file/data/raw/benchmarks/gpu_comp_main.d82fa693.parquet","lastModified":1771874136918,"size":21863});
-registerFile("../../data/raw/benchmarks/lr_sweeps_history.parquet", {"name":"../../data/raw/benchmarks/lr_sweeps_history.parquet","path":"../../_file/data/raw/benchmarks/lr_sweeps_history.4f809053.parquet","lastModified":1771874136930,"size":3312658});
-registerFile("../../data/raw/benchmarks/lr_sweeps_main.parquet", {"name":"../../data/raw/benchmarks/lr_sweeps_main.parquet","path":"../../_file/data/raw/benchmarks/lr_sweeps_main.98e6db0c.parquet","lastModified":1771874136930,"size":15015});
-registerFile("../../data/raw/benchmarks/micro_benchmarks_20260126_130256.json", {"name":"../../data/raw/benchmarks/micro_benchmarks_20260126_130256.json","mimeType":"application/json","path":"../../_file/data/raw/benchmarks/micro_benchmarks_20260126_130256.0003d6fe.json","lastModified":1771465633680,"size":2403});
-registerFile("../../data/raw/benchmarks/mps_comp_history.parquet", {"name":"../../data/raw/benchmarks/mps_comp_history.parquet","path":"../../_file/data/raw/benchmarks/mps_comp_history.8ee202e9.parquet","lastModified":1771874136937,"size":1535334});
-registerFile("../../data/raw/benchmarks/mps_comp_main.parquet", {"name":"../../data/raw/benchmarks/mps_comp_main.parquet","path":"../../_file/data/raw/benchmarks/mps_comp_main.f7579557.parquet","lastModified":1771874136937,"size":21062});
-registerFile("../../data/raw/benchmarks/train_benchmark_20260127_092323.json", {"name":"../../data/raw/benchmarks/train_benchmark_20260127_092323.json","mimeType":"application/json","path":"../../_file/data/raw/benchmarks/train_benchmark_20260127_092323.e80aa474.json","lastModified":1771465633684,"size":1945563});
-registerFile("../../data/raw/traces/bad_head_size_nsys.parquet", {"name":"../../data/raw/traces/bad_head_size_nsys.parquet","path":"../../_file/data/raw/traces/bad_head_size_nsys.0e5fcf94.parquet","lastModified":1771465633642,"size":699507});
-registerFile("../../data/raw/traces/bandwidth_bound_nsys.parquet", {"name":"../../data/raw/traces/bandwidth_bound_nsys.parquet","path":"../../_file/data/raw/traces/bandwidth_bound_nsys.0570a4e8.parquet","lastModified":1771465633645,"size":526034});
-registerFile("../../data/raw/traces/compute_bound_nsys.parquet", {"name":"../../data/raw/traces/compute_bound_nsys.parquet","path":"../../_file/data/raw/traces/compute_bound_nsys.9be21553.parquet","lastModified":1771465633647,"size":1020491});
-registerFile("../../data/raw/traces/deep_sequential_nsys.parquet", {"name":"../../data/raw/traces/deep_sequential_nsys.parquet","path":"../../_file/data/raw/traces/deep_sequential_nsys.4ed702eb.parquet","lastModified":1771465633653,"size":3186034});
-registerFile("../../data/raw/traces/latency_bound_nsys.parquet", {"name":"../../data/raw/traces/latency_bound_nsys.parquet","path":"../../_file/data/raw/traces/latency_bound_nsys.5b9c4edd.parquet","lastModified":1771465633657,"size":1104236});
-registerFile("../../data/raw/traces/misaligned_dims_nsys.parquet", {"name":"../../data/raw/traces/misaligned_dims_nsys.parquet","path":"../../_file/data/raw/traces/misaligned_dims_nsys.accc5b6e.parquet","lastModified":1771874136944,"size":669386});
-registerFile("../../data/raw/traces/model_a_nsys.parquet", {"name":"../../data/raw/traces/model_a_nsys.parquet","path":"../../_file/data/raw/traces/model_a_nsys.7c95f1f4.parquet","lastModified":1771465633660,"size":294932});
-registerFile("../../data/raw/traces/model_b_nsys.parquet", {"name":"../../data/raw/traces/model_b_nsys.parquet","path":"../../_file/data/raw/traces/model_b_nsys.d909797c.parquet","lastModified":1771465633662,"size":1231233});
-registerFile("../../data/raw/traces/nsys_sqlite_table_inventory.md", {"name":"../../data/raw/traces/nsys_sqlite_table_inventory.md","mimeType":"text/markdown","path":"../../_file/data/raw/traces/nsys_sqlite_table_inventory.8a62282f.md","lastModified":1771465633668,"size":25493});
-registerFile("../../data/raw/traces/vocab_bottleneck_nsys.parquet", {"name":"../../data/raw/traces/vocab_bottleneck_nsys.parquet","path":"../../_file/data/raw/traces/vocab_bottleneck_nsys.c6e0b393.parquet","lastModified":1771465633665,"size":509294});
-registerFile("../../data/raw/traces/wide_ffn_nsys.parquet", {"name":"../../data/raw/traces/wide_ffn_nsys.parquet","path":"../../_file/data/raw/traces/wide_ffn_nsys.e3df5806.parquet","lastModified":1771465633667,"size":715444});
+registerFile("./finding-synthesis-haiku-flashlite-fullmatrix-data.json", {"name":"./finding-synthesis-haiku-flashlite-fullmatrix-data.json","mimeType":"application/json","path":"../../_file/projects/resume-generator/finding-synthesis-haiku-flashlite-fullmatrix-data.45aa162b.json","lastModified":1786598932801,"size":6644701});
+registerFile("./human-summaries.json", {"name":"./human-summaries.json","mimeType":"application/json","path":"../../_file/projects/resume-generator/human-summaries.35dac8b6.json","lastModified":1788755693091,"size":10566});
 
-define({id: "56bc7f43", outputs: ["renderDataPlayground"], body: async () => {
-const {renderDataPlayground} = await import("../../_import/embed/data-playground.41ee6a2f.js");
-
-return {renderDataPlayground};
+define({id: "54e6fe15", inputs: ["FileAttachment"], outputs: ["prompts","evaluators","sources","summaryGrid","matrix","humanSummaries"], body: async (FileAttachment) => {
+const [{prompts}, {evaluators}, {sources, summaryGrid}] = await Promise.all([import("../../_import/projects/resume-generator/finding-category-counts.d0e79f0a.js"), import("../../_import/projects/resume-generator/score-comparison.e8984c40.js"), import("../../_import/projects/resume-generator/summary-comparison.6fedf644.js")]);
+const matrix = FileAttachment("./finding-synthesis-haiku-flashlite-fullmatrix-data.json").json();
+const humanSummaries = FileAttachment("./human-summaries.json").json();
+return {prompts,evaluators,sources,summaryGrid,matrix,humanSummaries};
 }});
 
-define({id: "7f0eccc5", inputs: ["renderDataPlayground","display"], body: async (renderDataPlayground,display) => {
-display(await(
-await renderDataPlayground()
-))
+define({id: "0f0cf986", inputs: ["view","Inputs","evaluators","sources"], outputs: ["evaluator","source"], body: (view,Inputs,evaluators,sources) => {
+const evaluator = view(Inputs.select(new Map(evaluators.map(([id, label]) => [label, id])), {label: "Evaluator", value: "gpt-5.4-high"}));
+const source = view(Inputs.select(new Map(sources.map(([id, label]) => [label, id])), {label: "Summary source", value: "overall-evidence"}));
+return {evaluator,source};
+}});
+
+define({id: "32d56db1", inputs: ["summaryGrid","matrix","humanSummaries","evaluator","source","display","html"], outputs: ["grid","cells","availableCount","rescuedCount","noun"], body: (summaryGrid,matrix,humanSummaries,evaluator,source,display,html) => {
+const grid = summaryGrid(matrix.rows, humanSummaries.cases, evaluator, source);
+const cells = grid.flatMap((row) => row.cells);
+const availableCount = cells.filter((cell) => cell.available).length;
+const rescuedCount = cells.filter((cell) => cell.origin === "raw-output").length;
+const noun = source === "overall-evidence" ? "evaluator statements" : "summaries";
+display(html`<p class="summary-coverage" aria-live="polite">${availableCount} of 64 ${noun} available${rescuedCount === 0 ? "" : ` · ${rescuedCount} recovered from unvalidated output`}</p>`);
+display(html`<dl class="provenance-key" aria-label="Case provenance key">
+  ${Object.entries(humanSummaries.provenance_values).map(([value, description]) => html`<div>
+    <dt>${value}</dt><dd>${description}</dd>
+  </div>`)}
+</dl>`);
+return {grid,cells,availableCount,rescuedCount,noun};
+}});
+
+define({id: "75b11bcc", inputs: ["html","display","grid","humanSummaries","prompts"], outputs: ["summaryCell"], body: (html,display,grid,humanSummaries,prompts) => {
+const summaryCell = (cell, caseLabel) => !cell.available
+  ? html`<td class="summary-unavailable" title=${`${caseLabel}, ${cell.promptLabel}: nothing stored`}>—</td>`
+  : html`<td>
+      <p class="summary-text">${cell.summary}</p>
+      ${cell.origin !== "raw-output" ? "" : html`<small class="summary-unvalidated"
+        title="Recovered from the rollup's raw output; this report never passed citation validation">unvalidated</small>`}
+    </td>`;
+
+display(html`<div class="summaries-scroll" tabindex="0" role="region" aria-label="Summaries for each case, by prompt, with my labeled assessment in the top row">
+  <table class="summaries-grid" style=${`--case-count: ${grid.length}`}>
+    <caption class="summaries-sr-only">My labeled assessment, then four prompt rows, for each of sixteen cases running left to right.</caption>
+    <thead><tr>
+      <th scope="col">Prompt</th>
+      ${grid.map((row) => html`<th scope="col">
+        ${row.label}
+        ${!row.human.provenance ? "" : html`<small class="summary-provenance"
+          title=${humanSummaries.provenance_values[row.human.provenance] ?? ""}>${row.human.provenance}</small>`}
+      </th>`)}
+    </tr></thead>
+    <tbody class="human-summary"><tr>
+      <th scope="row">Labeled assessment<small class="summary-row-note">mine, not a prompt</small></th>
+      ${grid.map((row) => row.human.summary
+        ? html`<td><p class="summary-text">${row.human.summary}</p></td>`
+        : html`<td class="summary-unavailable">—</td>`)}
+    </tr></tbody>
+    <tbody>${prompts.map(([, promptLabel], index) => html`<tr>
+      <th scope="row">${promptLabel}</th>
+      ${grid.map((row) => summaryCell(row.cells[index], row.label))}
+    </tr>`)}</tbody>
+  </table>
+</div>`);
+return {summaryCell};
 }});
 
 </script>
@@ -63,8 +96,8 @@ await renderDataPlayground()
   <ol>
     <li class="observablehq-link"><a href="../">Projects</a></li>
     <li class="observablehq-link"><a href="../llm-fundamentals/">LLM Fundamentals</a></li>
-    <li class="observablehq-link"><a href="../resume-generator/">Resume Generator</a></li>
-    <li class="observablehq-link observablehq-link-active"><a href="./">Data Playground</a></li>
+    <li class="observablehq-link"><a href="./">Resume Generator</a></li>
+    <li class="observablehq-link"><a href="../data-playground/">Data Playground</a></li>
     <li class="observablehq-link"><a href="../site-chatbot/">Site Design and RAG Chatbot Integration</a></li>
   </ol>
 </nav>
@@ -247,13 +280,50 @@ await renderDataPlayground()
 <main id="observablehq-main" class="observablehq">
 <aside class="observable-data-gate" data-observable-data-gate>
   <strong>Interactive analysis is paused</strong>
-  <span>Load 21.0 MB of source data only when you want the charts and calculated values.</span>
+  <span>Load 6.7 MB of source data only when you want the charts and calculated values.</span>
   <button type="button" data-observable-data-load>Load interactive analysis</button>
   <span class="observable-data-gate__status" data-observable-data-status role="status" aria-live="polite"></span>
 </aside>
-<h1 id="data-playground" tabindex="-1"><a class="observablehq-header-anchor" href="#data-playground">Data Playground</a></h1>
-<div class="observablehq observablehq--block"><!--:56bc7f43:--></div>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:7f0eccc5:--></div>
+<p><a href="./">← Résumé generator</a> · <a href="./finding-categories">Finding categories</a> · <a href="./evaluator-scores">Evaluator scores vs human labels</a></p>
+<h1 id="evaluator-summaries-vs-human-summary" tabindex="-1"><a class="observablehq-header-anchor" href="#evaluator-summaries-vs-human-summary">Evaluator summaries vs human summary</a></h1>
+<p>One paragraph per case and prompt, beside my own summary of the same résumé. Select the evaluator, and whether the paragraph is the evaluator's own <code>overall.evidence</code> or a rollup model's summary of the same review.</p>
+<div class="observablehq observablehq--block"><!--:54e6fe15:--></div>
+<div class="observablehq observablehq--block"><!--:0f0cf986:--></div>
+<p>Cases run left to right; <strong>scroll the grid sideways</strong> to reach the rest. Each cell is prose only, with no findings, severities, scores, or verdicts. <strong>—</strong> means nothing was stored. The top row is my own labeled assessment of the résumé, shown as written; it is not one of the prompt treatments.</p>
+<div class="observablehq observablehq--block"><!--:32d56db1:--></div>
+<div class="observablehq observablehq--block"><!--:75b11bcc:--></div>
+<h2 id="about-the-summaries" tabindex="-1"><a class="observablehq-header-anchor" href="#about-the-summaries">About the summaries</a></h2>
+<p>The default source, <strong>Evaluator's own</strong>, is not a rollup: it is the <code>overall.evidence</code> text the evaluator itself wrote in the review, quoted from the stored record. The other two are rollups — a second-stage model read one evaluator review and wrote the <code>summary</code> field of its report, so the same review reads differently under Haiku and Flash-Lite, and both typically run longer than the evaluator's own line. The <a href="./evaluator-scores">scores</a> are the evaluator's own in every case and do not move when the source changes; the findings the rollups pulled out of the same reviews are counted on the <a href="./finding-categories">finding-category grid</a>.</p>
+<p>Where a rollup stored no report, the page falls back to the summary in that rollup's raw output, if that output parses, and tags it <strong>unvalidated</strong>; otherwise the cell shows <strong>—</strong>. A stored report can still have failed citation validation. This page does not distinguish those, because validation applies to a report's citations rather than to its summary prose; the finding-category grid marks them as having unverified citations. The evaluator's own evidence goes through no such step — it is read straight from the review.</p>
+<p>The <strong>labeled assessment</strong> row is mine, not a prompt treatment and not a model's output: my own reading of each résumé, written in the style of the rollups' <code>summary</code> field so it can sit in the same grid, and shown verbatim. These are assessments of the résumé, not of any review. The tag under each case name records where that résumé came from: organic generator output, one of the manipulated twins, or the retired case.</p>
+<p>All 16 historical cases are included, in the order used by the other two grids, including <strong>Skills-spam trap</strong> (Xcel), temporarily restored to this comparison and marked retired. The four rows are <strong>Base</strong> (<code>anchored</code>), <strong>Mechanism</strong> (<code>anchored-mechanism</code>, human-reading passage), <strong>Criticism</strong> (<code>anchored-pressure</code>, evaluator-bias passage), and <strong>Combined</strong> (<code>anchored-mixed</code>, the integrated passage). Source reviews remain available in the <a href="./eval-playground">evaluation playground</a>.</p>
+<style>
+.summary-coverage { color: var(--theme-foreground-muted); font-size: 0.9rem; }
+.provenance-key { display: grid; grid-template-columns: repeat(auto-fit, minmax(275px, 1fr)); gap: 0.3rem 1.25rem; margin-block: 0.75rem 0; font-size: 0.875rem; }
+.provenance-key div { display: flex; align-items: baseline; gap: 0.4rem; }
+.provenance-key dt { font-weight: 600; white-space: nowrap; }
+.provenance-key dd { margin: 0; color: var(--theme-foreground-muted); }
+.summaries-scroll { overflow-x: auto; max-width: 100%; margin-block: 1.5rem 2rem; }
+.summaries-scroll:focus-visible { outline: 2px solid var(--theme-foreground-focus); outline-offset: 3px; }
+.summaries-grid { --case-label-width: 11rem; --case-column-width: 23.5rem;
+  table-layout: fixed; width: calc(var(--case-label-width) + var(--case-count) * var(--case-column-width));
+  max-width: none; border-collapse: separate; border-spacing: 0; font-size: 0.875rem; }
+.summaries-grid th, .summaries-grid td { padding: 1rem; border-bottom: 1px solid var(--theme-foreground-faintest); vertical-align: top; text-align: left; }
+.summaries-grid thead th { background: var(--theme-background-alt); font-size: 1rem; border-bottom: 2px solid var(--theme-foreground-faint); }
+.summaries-grid th:first-child { position: sticky; left: 0; z-index: 1; width: var(--case-label-width); background: var(--theme-background); box-shadow: 1px 0 var(--theme-foreground-faintest); }
+.summaries-grid thead th:first-child { background: var(--theme-background-alt); }
+.summaries-grid td, .summaries-grid thead th:not(:first-child) { width: var(--case-column-width); border-left: 1px solid var(--theme-foreground-faintest); }
+.summaries-grid .human-summary th, .summaries-grid .human-summary td { border-bottom: 2px solid var(--theme-foreground-faint); }
+.summary-text { margin: 0; line-height: 1.55; overflow-wrap: break-word; }
+.summary-provenance, .summary-unvalidated, .summary-row-note { display: block; width: fit-content; font-size: 0.8rem; font-weight: 400; color: var(--theme-foreground-muted); margin-top: 0.4rem; }
+.summary-unvalidated { border-left: 2px solid #b88a24; padding-left: 0.4rem; }
+.summary-unavailable { color: var(--theme-foreground-muted); }
+.summaries-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (max-width: 640px) {
+  .summaries-grid { --case-label-width: 9rem; --case-column-width: 18rem; }
+  .summaries-grid th, .summaries-grid td { padding: 0.75rem; }
+}
+</style>
 </main>
 </div>
 <style>

@@ -4,49 +4,80 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="generator" content="Observable Framework v1.13.4">
-<base href="/observable/projects/data-playground/">
-<title>Data Playground | juliusm.com</title>
+<base href="/observable/projects/resume-generator/evaluator-scores.html">
+<title>Evaluator Scores vs Human Labels | juliusm.com</title>
 
 <link rel="preload" as="style" href="../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="preload" as="style" href="../../_observablehq/stdlib/inputs.f7bf0e12.css">
 <link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="stylesheet" type="text/css" href="../../_observablehq/stdlib/inputs.f7bf0e12.css">
 <script type="application/x-observable-module" data-heavy-observable-module>
 
 import {define} from "../../_observablehq/client.5d43dcff.js";
 import {registerFile} from "../../_observablehq/stdlib.a50b4fda.js";
 
-registerFile("../../data/manifest.json", {"name":"../../data/manifest.json","mimeType":"application/json","path":"../../_file/data/manifest.d04279d7.json","lastModified":1771874136886,"size":13400});
-registerFile("../../data/raw/benchmarks/ablations_history.parquet", {"name":"../../data/raw/benchmarks/ablations_history.parquet","path":"../../_file/data/raw/benchmarks/ablations_history.c15e6588.parquet","lastModified":1771874136910,"size":2777049});
-registerFile("../../data/raw/benchmarks/ablations_main.parquet", {"name":"../../data/raw/benchmarks/ablations_main.parquet","path":"../../_file/data/raw/benchmarks/ablations_main.912ec8a5.parquet","lastModified":1771874136911,"size":26405});
-registerFile("../../data/raw/benchmarks/gpu_comp_history.parquet", {"name":"../../data/raw/benchmarks/gpu_comp_history.parquet","path":"../../_file/data/raw/benchmarks/gpu_comp_history.e18efbee.parquet","lastModified":1771874136917,"size":1389327});
-registerFile("../../data/raw/benchmarks/gpu_comp_main.parquet", {"name":"../../data/raw/benchmarks/gpu_comp_main.parquet","path":"../../_file/data/raw/benchmarks/gpu_comp_main.d82fa693.parquet","lastModified":1771874136918,"size":21863});
-registerFile("../../data/raw/benchmarks/lr_sweeps_history.parquet", {"name":"../../data/raw/benchmarks/lr_sweeps_history.parquet","path":"../../_file/data/raw/benchmarks/lr_sweeps_history.4f809053.parquet","lastModified":1771874136930,"size":3312658});
-registerFile("../../data/raw/benchmarks/lr_sweeps_main.parquet", {"name":"../../data/raw/benchmarks/lr_sweeps_main.parquet","path":"../../_file/data/raw/benchmarks/lr_sweeps_main.98e6db0c.parquet","lastModified":1771874136930,"size":15015});
-registerFile("../../data/raw/benchmarks/micro_benchmarks_20260126_130256.json", {"name":"../../data/raw/benchmarks/micro_benchmarks_20260126_130256.json","mimeType":"application/json","path":"../../_file/data/raw/benchmarks/micro_benchmarks_20260126_130256.0003d6fe.json","lastModified":1771465633680,"size":2403});
-registerFile("../../data/raw/benchmarks/mps_comp_history.parquet", {"name":"../../data/raw/benchmarks/mps_comp_history.parquet","path":"../../_file/data/raw/benchmarks/mps_comp_history.8ee202e9.parquet","lastModified":1771874136937,"size":1535334});
-registerFile("../../data/raw/benchmarks/mps_comp_main.parquet", {"name":"../../data/raw/benchmarks/mps_comp_main.parquet","path":"../../_file/data/raw/benchmarks/mps_comp_main.f7579557.parquet","lastModified":1771874136937,"size":21062});
-registerFile("../../data/raw/benchmarks/train_benchmark_20260127_092323.json", {"name":"../../data/raw/benchmarks/train_benchmark_20260127_092323.json","mimeType":"application/json","path":"../../_file/data/raw/benchmarks/train_benchmark_20260127_092323.e80aa474.json","lastModified":1771465633684,"size":1945563});
-registerFile("../../data/raw/traces/bad_head_size_nsys.parquet", {"name":"../../data/raw/traces/bad_head_size_nsys.parquet","path":"../../_file/data/raw/traces/bad_head_size_nsys.0e5fcf94.parquet","lastModified":1771465633642,"size":699507});
-registerFile("../../data/raw/traces/bandwidth_bound_nsys.parquet", {"name":"../../data/raw/traces/bandwidth_bound_nsys.parquet","path":"../../_file/data/raw/traces/bandwidth_bound_nsys.0570a4e8.parquet","lastModified":1771465633645,"size":526034});
-registerFile("../../data/raw/traces/compute_bound_nsys.parquet", {"name":"../../data/raw/traces/compute_bound_nsys.parquet","path":"../../_file/data/raw/traces/compute_bound_nsys.9be21553.parquet","lastModified":1771465633647,"size":1020491});
-registerFile("../../data/raw/traces/deep_sequential_nsys.parquet", {"name":"../../data/raw/traces/deep_sequential_nsys.parquet","path":"../../_file/data/raw/traces/deep_sequential_nsys.4ed702eb.parquet","lastModified":1771465633653,"size":3186034});
-registerFile("../../data/raw/traces/latency_bound_nsys.parquet", {"name":"../../data/raw/traces/latency_bound_nsys.parquet","path":"../../_file/data/raw/traces/latency_bound_nsys.5b9c4edd.parquet","lastModified":1771465633657,"size":1104236});
-registerFile("../../data/raw/traces/misaligned_dims_nsys.parquet", {"name":"../../data/raw/traces/misaligned_dims_nsys.parquet","path":"../../_file/data/raw/traces/misaligned_dims_nsys.accc5b6e.parquet","lastModified":1771874136944,"size":669386});
-registerFile("../../data/raw/traces/model_a_nsys.parquet", {"name":"../../data/raw/traces/model_a_nsys.parquet","path":"../../_file/data/raw/traces/model_a_nsys.7c95f1f4.parquet","lastModified":1771465633660,"size":294932});
-registerFile("../../data/raw/traces/model_b_nsys.parquet", {"name":"../../data/raw/traces/model_b_nsys.parquet","path":"../../_file/data/raw/traces/model_b_nsys.d909797c.parquet","lastModified":1771465633662,"size":1231233});
-registerFile("../../data/raw/traces/nsys_sqlite_table_inventory.md", {"name":"../../data/raw/traces/nsys_sqlite_table_inventory.md","mimeType":"text/markdown","path":"../../_file/data/raw/traces/nsys_sqlite_table_inventory.8a62282f.md","lastModified":1771465633668,"size":25493});
-registerFile("../../data/raw/traces/vocab_bottleneck_nsys.parquet", {"name":"../../data/raw/traces/vocab_bottleneck_nsys.parquet","path":"../../_file/data/raw/traces/vocab_bottleneck_nsys.c6e0b393.parquet","lastModified":1771465633665,"size":509294});
-registerFile("../../data/raw/traces/wide_ffn_nsys.parquet", {"name":"../../data/raw/traces/wide_ffn_nsys.parquet","path":"../../_file/data/raw/traces/wide_ffn_nsys.e3df5806.parquet","lastModified":1771465633667,"size":715444});
+registerFile("./finding-synthesis-haiku-flashlite-fullmatrix-data.json", {"name":"./finding-synthesis-haiku-flashlite-fullmatrix-data.json","mimeType":"application/json","path":"../../_file/projects/resume-generator/finding-synthesis-haiku-flashlite-fullmatrix-data.45aa162b.json","lastModified":1786598932801,"size":6644701});
+registerFile("./human-scores.json", {"name":"./human-scores.json","mimeType":"application/json","path":"../../_file/projects/resume-generator/human-scores.941d2d53.json","lastModified":1788747721373,"size":5321});
 
-define({id: "56bc7f43", outputs: ["renderDataPlayground"], body: async () => {
-const {renderDataPlayground} = await import("../../_import/embed/data-playground.41ee6a2f.js");
-
-return {renderDataPlayground};
+define({id: "3e6da003", inputs: ["FileAttachment"], outputs: ["prompts","dimensions","evaluators","displayBand","scoreGrid","matrix","humanLabels"], body: async (FileAttachment) => {
+const [{prompts}, {dimensions, evaluators, displayBand, scoreGrid}] = await Promise.all([import("../../_import/projects/resume-generator/finding-category-counts.d0e79f0a.js"), import("../../_import/projects/resume-generator/score-comparison.e8984c40.js")]);
+const matrix = FileAttachment("./finding-synthesis-haiku-flashlite-fullmatrix-data.json").json();
+const humanLabels = FileAttachment("./human-scores.json").json();
+return {prompts,dimensions,evaluators,displayBand,scoreGrid,matrix,humanLabels};
 }});
 
-define({id: "7f0eccc5", inputs: ["renderDataPlayground","display"], body: async (renderDataPlayground,display) => {
-display(await(
-await renderDataPlayground()
-))
+define({id: "8f50d361", inputs: ["view","Inputs","evaluators"], outputs: ["evaluator"], body: (view,Inputs,evaluators) => {
+const evaluator = view(Inputs.select(new Map(evaluators.map(([id, label]) => [label, id])), {label: "Evaluator", value: "gpt-5.4-high"}));
+return {evaluator};
+}});
+
+define({id: "22ac6b7e", inputs: ["scoreGrid","matrix","humanLabels","evaluator","html","display","prompts","dimensions","displayBand"], outputs: ["grid","scoreClass","scoreCell"], body: (scoreGrid,matrix,humanLabels,evaluator,html,display,prompts,dimensions,displayBand) => {
+const grid = scoreGrid(matrix.rows, humanLabels.cases, evaluator);
+const scoreClass = (band) => !band ? "score-ungraded" : band[0] === band[1]
+  ? `score-value-${band[0]}` : `score-range-${band[0]}-${band[1]}`;
+const scoreCell = (cell, index) => {
+  const score = cell.scores[index];
+  return html`<td class=${scoreClass(score.value === null ? null : [score.value, score.value])}
+    title=${!cell.available ? "No evaluation" : score.comparison === "higher" ? "Above human label" :
+      score.comparison === "lower" ? "Below human label" :
+      score.comparison === "within" ? "Within human label" : "No human comparison available"}>
+    ${score.value ?? "—"}${score.comparison === "higher" ? html`<span class="score-direction" aria-label="above human label"> ↑</span>` :
+      score.comparison === "lower" ? html`<span class="score-direction" aria-label="below human label"> ↓</span>` : ""}
+  </td>`;
+};
+
+display(html`<div class="scores-scroll" tabindex="0" role="region" aria-label="Evaluator scores compared with human labels">
+  <table class="scores-grid">
+    <caption class="scores-sr-only">Six dimension scores for each of sixteen cases, under four prompts, alongside human labels.</caption>
+    <thead><tr>
+      <th scope="col">Case / dimension</th>
+      ${prompts.map(([, label]) => html`<th scope="col">${label}</th>`)}
+      <th scope="col" class="human-labels">Human labels</th>
+    </tr></thead>
+    ${grid.map((row) => html`<tbody aria-labelledby=${`case-${row.id}`}>
+      <tr class="score-case-heading"><th colspan="6" scope="rowgroup" id=${`case-${row.id}`}>
+        ${row.label}
+        ${row.human.note || row.human.extrapolated ? html`<details class="score-note"><summary>Label note</summary>
+          ${row.human.note ? html`<p>${row.human.note}</p>` : ""}
+          ${row.human.extrapolated ? html`<ul>${dimensions.filter(([key]) => row.human.extrapolated[key]).map(([key, label]) => html`
+            <li><strong>${label} ${displayBand(row.human.scores[key])}*:</strong> ${row.human.extrapolated[key]}</li>`)}
+          </ul>` : ""}
+        </details>` : ""}
+      </th></tr>
+      ${dimensions.map(([key, label], index) => html`<tr>
+        <th scope="row" class="score-dimension">${label}</th>
+        ${row.cells.map((cell) => scoreCell(cell, index))}
+        <td class=${`human-labels ${scoreClass(row.human.scores[key])}`}>
+          ${displayBand(row.human.scores[key])}${row.human.unscored?.includes(key) ? html`<sup title="Couldn't be scored because the résumé was truncated">*</sup>` :
+            row.human.extrapolated?.[key] ? html`<sup title=${`Extrapolated: ${row.human.extrapolated[key]}`}>*</sup>` :
+            row.human.derived?.includes(key) ? html`<sup title="Derived from human prose">†</sup>` :
+            row.human.shared?.includes(key) ? html`<sup title="Confirmed ruling shared across twin content">‡</sup>` : ""}
+        </td>
+      </tr>`)}
+    </tbody>`)}
+  </table>
+</div>`);
+return {grid,scoreClass,scoreCell};
 }});
 
 </script>
@@ -63,8 +94,8 @@ await renderDataPlayground()
   <ol>
     <li class="observablehq-link"><a href="../">Projects</a></li>
     <li class="observablehq-link"><a href="../llm-fundamentals/">LLM Fundamentals</a></li>
-    <li class="observablehq-link"><a href="../resume-generator/">Resume Generator</a></li>
-    <li class="observablehq-link observablehq-link-active"><a href="./">Data Playground</a></li>
+    <li class="observablehq-link"><a href="./">Resume Generator</a></li>
+    <li class="observablehq-link"><a href="../data-playground/">Data Playground</a></li>
     <li class="observablehq-link"><a href="../site-chatbot/">Site Design and RAG Chatbot Integration</a></li>
   </ol>
 </nav>
@@ -247,13 +278,53 @@ await renderDataPlayground()
 <main id="observablehq-main" class="observablehq">
 <aside class="observable-data-gate" data-observable-data-gate>
   <strong>Interactive analysis is paused</strong>
-  <span>Load 21.0 MB of source data only when you want the charts and calculated values.</span>
+  <span>Load 6.7 MB of source data only when you want the charts and calculated values.</span>
   <button type="button" data-observable-data-load>Load interactive analysis</button>
   <span class="observable-data-gate__status" data-observable-data-status role="status" aria-live="polite"></span>
 </aside>
-<h1 id="data-playground" tabindex="-1"><a class="observablehq-header-anchor" href="#data-playground">Data Playground</a></h1>
-<div class="observablehq observablehq--block"><!--:56bc7f43:--></div>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:7f0eccc5:--></div>
+<p><a href="./">← Résumé generator</a> · <a href="./finding-categories">Finding categories</a> · <a href="./evaluator-summaries">Evaluator summaries</a></p>
+<h1 id="evaluator-scores-vs-human-labels" tabindex="-1"><a class="observablehq-header-anchor" href="#evaluator-scores-vs-human-labels">Evaluator scores vs human labels</a></h1>
+<p>All 16 cases, four prompts, and my recorded human labels in the last column. Each case has six dimension rows on the <strong>0–2 scale</strong>.</p>
+<div class="observablehq observablehq--block"><!--:3e6da003:--></div>
+<div class="observablehq observablehq--block"><!--:8f50d361:--></div>
+<p><strong>↑ / ↓</strong> means above / below the reference score or band, not better / worse evaluation. <strong>—</strong> means unavailable. Human labels marked <strong>†</strong> were previously derived from my prose. <strong>*</strong> marks an unscorable dimension or a still-provisional extrapolation; the case's label note explains which.</p>
+<div class="score-legend" aria-label="Score color key"><span class="score-value-0">0 · Low</span><span class="score-value-1">1 · Adequate</span><span class="score-value-2">2 · High</span><span>Ranges use both endpoint colors.</span></div>
+<div class="observablehq observablehq--block"><!--:22ac6b7e:--></div>
+<h2 id="about-the-scores" tabindex="-1"><a class="observablehq-header-anchor" href="#about-the-scores">About the scores</a></h2>
+<p>These are the original evaluator judgments, not scores assigned by the summarizer. Changing the rollup model would not change them. The stored evaluator values are normalized to 0–1; this page restores their original 0–2 scale. Scores are shown individually, without averaging across dimensions or prompts.</p>
+<p>Human labels come from the recorded, owner-ratified v2 labels, with subsequent explicit updates and confirmations stored in this page's <code>human-scores.json</code>. Explicit rulings and inclusive ranges are preserved. Still-provisional extrapolations are marked * with their assumptions recorded per dimension. The truncated case also uses * for dimensions that couldn't be scored. A full 0–2 range is unconstrained and is not treated as evaluator agreement. Recognizing a specific defect is a different question from agreeing with an integer score.</p>
+<p>All sixteen historical cases are included, including the temporarily restored Skills-spam trap.</p>
+<p>The four prompts match the <a href="./finding-categories">finding-category grid</a>: Base (<code>anchored</code>), Mechanism (<code>anchored-mechanism</code>), Criticism (<code>anchored-pressure</code>), and my integrated Combined passage (<code>anchored-mixed</code>). Source reviews remain available in the <a href="./eval-playground">evaluation playground</a>.</p>
+<style>
+.scores-scroll { overflow-x: auto; max-width: 100%; margin-block: 1.5rem 2rem; }
+.scores-scroll:focus-visible { outline: 2px solid var(--theme-foreground-focus); outline-offset: 3px; }
+.scores-grid { width: 100%; min-width: 620px; max-width: none; border-collapse: separate; border-spacing: 0; font-size: 0.875rem; }
+.scores-grid th, .scores-grid td { padding: 0.35rem 0.65rem; border-bottom: 1px solid var(--theme-foreground-faintest); vertical-align: middle; }
+.scores-grid thead th { background: var(--theme-background-alt); padding-block: 0.75rem; text-align: center; border-bottom: 2px solid var(--theme-foreground-faint); }
+.scores-grid thead th:first-child { text-align: left; }
+.scores-grid td { width: 15%; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; border-left: 1px solid var(--theme-foreground-faintest); }
+.scores-grid .score-dimension { width: 25%; text-align: left; font-weight: 400; background: var(--theme-background); }
+.scores-grid .human-labels { border-left: 2px solid var(--theme-foreground-faint); }
+.scores-grid .score-case-heading th { text-align: left; padding-block: 0.8rem 0.5rem; background: var(--theme-background-alt); border-top: 2px solid var(--theme-foreground-faint); }
+.scores-grid, .score-legend { --score-low: color-mix(in srgb, #d45f59 22%, var(--theme-background)); --score-mid: color-mix(in srgb, #d9a62a 22%, var(--theme-background)); --score-high: color-mix(in srgb, #299d87 22%, var(--theme-background)); }
+.score-value-0 { background: var(--score-low); }
+.score-value-1 { background: var(--score-mid); }
+.score-value-2 { background: var(--score-high); }
+.score-range-0-1 { background: linear-gradient(110deg, var(--score-low) 50%, var(--score-mid) 50%); }
+.score-range-1-2 { background: linear-gradient(110deg, var(--score-mid) 50%, var(--score-high) 50%); }
+.score-range-0-2 { background: linear-gradient(110deg, var(--score-low) 50%, var(--score-high) 50%); }
+.score-ungraded { color: var(--theme-foreground-muted); background: var(--theme-background); }
+.score-direction { font-weight: 400; }
+.score-legend { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; font-size: 0.875rem; }
+.score-legend span { padding: 0.25rem 0.5rem; border-radius: 3px; }
+.score-note { display: inline-block; margin-left: 1rem; font-weight: 400; }
+.score-note summary { cursor: pointer; color: var(--theme-foreground-focus); }
+.score-note p { font-size: 0.875rem; line-height: 1.5; }
+.scores-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (max-width: 640px) {
+  .scores-grid th, .scores-grid td { padding-inline: 0.45rem; }
+}
+</style>
 </main>
 </div>
 <style>

@@ -18,7 +18,7 @@
 import {define} from "../../_observablehq/client.5d43dcff.js";
 import {registerFile} from "../../_observablehq/stdlib.a50b4fda.js";
 
-registerFile("./finding-synthesis-haiku-flashlite-fullmatrix-data.json", {"name":"./finding-synthesis-haiku-flashlite-fullmatrix-data.json","mimeType":"application/json","path":"../../_file/projects/resume-generator/finding-synthesis-haiku-flashlite-fullmatrix-data.39b33421.json","lastModified":1786598247947,"size":4883031});
+registerFile("./finding-synthesis-haiku-flashlite-fullmatrix-data.json", {"name":"./finding-synthesis-haiku-flashlite-fullmatrix-data.json","mimeType":"application/json","path":"../../_file/projects/resume-generator/finding-synthesis-haiku-flashlite-fullmatrix-data.45aa162b.json","lastModified":1786598932801,"size":6644701});
 
 define({id: "73c631f4", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
 display(await(
@@ -88,7 +88,7 @@ const promptName = (id) => promptNames.get(id) ?? id;
 return {caseNames,sourceNames,promptNames,caseName,sourceName,promptName};
 }});
 
-define({id: "dff2e4d6", inputs: ["view","Inputs","rows","caseName"], outputs: ["selectedCase"], body: (view,Inputs,rows,caseName) => {
+define({id: "626eebd4", inputs: ["view","Inputs","rows","caseName"], outputs: ["selectedCase"], body: (view,Inputs,rows,caseName) => {
 const selectedCase = view(Inputs.select(
   new Map(
     [...new Set(rows.map((row) => row.source_case_id))]
@@ -100,7 +100,7 @@ const selectedCase = view(Inputs.select(
 return {selectedCase};
 }});
 
-define({id: "815fd6ee", inputs: ["view","Inputs","promptName"], outputs: ["selectedPrompt"], body: (view,Inputs,promptName) => {
+define({id: "4fa5373c", inputs: ["view","Inputs","promptName"], outputs: ["selectedPrompt"], body: (view,Inputs,promptName) => {
 const selectedPrompt = view(Inputs.select(
   new Map(
     ["anchored", "anchored-mechanism", "anchored-pressure", "anchored-mixed", "anchored-negging"]
@@ -111,7 +111,7 @@ const selectedPrompt = view(Inputs.select(
 return {selectedPrompt};
 }});
 
-define({id: "9f7bd790", inputs: ["view","Inputs","sourceName","rows","selectedCase","selectedPrompt"], outputs: ["selectedSource","selected"], body: (view,Inputs,sourceName,rows,selectedCase,selectedPrompt) => {
+define({id: "71b5941e", inputs: ["view","Inputs","sourceName","rows","selectedCase","selectedPrompt"], outputs: ["selectedSource","selected"], body: (view,Inputs,sourceName,rows,selectedCase,selectedPrompt) => {
 const selectedSource = view(Inputs.select(
   new Map(
     ["gpt-5.4-high", "anthropic-claude-opus-4-6-adaptive-medium", "gemini-gemini-3.1-pro-preview-high"]
@@ -144,16 +144,33 @@ display(html`<article class="source-review">
 </article>`);
 }});
 
-define({id: "3e5df872", inputs: ["html","display","selected"], outputs: ["outputCard"], body: (html,display,selected) => {
+define({id: "e47b6596", inputs: ["html","display","selected"], outputs: ["outputCard"], body: (html,display,selected) => {
 const outputCard = (label, output) => {
-  const valid = output.result.status === "COMPLETE";
+  const accepted = output.acceptance.analytical_coverage;
+  const source = output.acceptance.source;
+  const citationValidated = output.acceptance.citation_status === "validated";
+  const status = source === "first-pass"
+    ? "FIRST-PASS VALID"
+    : source === "same-prompt-retry"
+    ? "SAME-PROMPT RETRY"
+    : "ANALYSIS ACCEPTED";
+  const style = source === "first-pass" ? "valid" : accepted ? "accepted" : "invalid";
   const report = output.report;
-  return html`<article class=${`output-card ${valid ? "valid" : "invalid"}`}>
+  const measured = output.accepted_result ?? output.result;
+  return html`<article class=${`output-card ${style}`}>
     <header>
       <h3>${label}</h3>
-      <span class="status">${valid ? "VALID" : "REJECTED"}</span>
+      <span class="status">${status}</span>
     </header>
-    ${valid ? html`
+    ${accepted ? html`
+      ${source === "first-pass-accepted" ? html`<p class="acceptance-note">
+        The JSON analysis is shown unchanged. Its citation validator rejected the
+        response: <code>${output.acceptance.accepted_issue}</code>.
+      </p>` : ""}
+      ${source === "same-prompt-retry" ? html`<p class="acceptance-note">
+        The first pass returned no text at the output limit. This is the validated
+        same-prompt, same-input recovery and is not counted as a first-pass success.
+      </p>` : ""}
       <p class="output-summary">${report.summary}</p>
       <div class="finding-list">
         ${report.findings.length === 0
@@ -163,7 +180,7 @@ const outputCard = (label, output) => {
               <h4>${finding.title}</h4>
               <p>${finding.diagnosis}</p>
               <details>
-                <summary>Exact source citations</summary>
+                <summary>${citationValidated ? "Validated exact citations" : "Model-supplied citations (validation failed)"}</summary>
                 ${finding.evaluator_sources.map((source) => html`<blockquote>
                   <p>“${source.quote}”</p>
                   <footer><code>${source.field}</code></footer>
@@ -173,12 +190,12 @@ const outputCard = (label, output) => {
       </div>`
       : html`<p><strong>Validation error:</strong> ${output.result.error}</p>`}
     <details>
-      <summary>Exact raw model output</summary>
+      <summary>${source === "same-prompt-retry" ? "Exact raw same-prompt retry output" : "Exact raw first-pass model output"}</summary>
       <pre class="raw-output">${output.raw_output || "Provider returned no text block."}</pre>
     </details>
     <details>
       <summary>Usage and cost</summary>
-      <pre>${JSON.stringify({usage: output.result.usage, cost_usd: output.result.cost_usd}, null, 2)}</pre>
+      <pre>${JSON.stringify({usage: measured.usage, cost_usd: measured.cost_usd}, null, 2)}</pre>
     </details>
   </article>`;
 };
@@ -346,8 +363,6 @@ return {outputCard};
                 ['Introduction', '/projects/llm-fundamentals/'],
                 ['Architecture and Expected Performance Analysis', '/projects/llm-fundamentals/perf-expected/'],
                 ['Benchmarks and Empirical Performance Analysis', '/projects/llm-fundamentals/perf-empirical/'],
-                ['Nvidia CUDA Nsys Trace Analysis', '/projects/llm-fundamentals/nsys/'],
-                ['Nsys GPU Trace Viewer', '/projects/llm-fundamentals/nsys-viewer/'],
                 ['Learning Parameter Sweeps', '/projects/llm-fundamentals/optimizer-sweep/'],
                 ['Architectural Variations (Ablations)', '/projects/llm-fundamentals/ablations/']
               ];
@@ -402,7 +417,7 @@ return {outputCard};
 <main id="observablehq-main" class="observablehq">
 <aside class="observable-data-gate" data-observable-data-gate>
   <strong>Interactive analysis is paused</strong>
-  <span>Load 4.9 MB of source data only when you want the charts and calculated values.</span>
+  <span>Load 6.6 MB of source data only when you want the charts and calculated values.</span>
   <button type="button" data-observable-data-load>Load interactive analysis</button>
   <span class="observable-data-gate__status" data-observable-data-status role="status" aria-live="polite"></span>
 </aside>
@@ -411,6 +426,13 @@ return {outputCard};
 <p>Gemini 3.5 Flash-Lite is the clear second-stage model for this pipeline. Across
 all 240 individual evaluator reviews, it produced <strong>230 valid source-linked
 reports (95.8%)</strong> for <strong><observablehq-loading></observablehq-loading><!--:73c631f4:-->2.6633</strong>.</p>
+<p>Those figures are strict first-pass citation-validation rates, not analytical
+coverage. Reading the retained provider outputs gives <strong>240/240 usable analyses
+for each model</strong> without changing the prompt or rewriting model content. The
+coverage view accepts 66 complete JSON responses that failed only citation
+validation. The sole remaining Haiku row returned no text at the output limit;
+its accepted analysis comes from a later run with byte-identical prompt and
+input and is labeled as a same-prompt retry.</p>
 <p>This is not another evaluator leaderboard. Each call reads one evaluator review
 and turns its prose into a compact, citeable issue list. It sees no resume, job
 description, or candidate data, and it does not average or vote on the original
@@ -429,6 +451,21 @@ reader of the reviews that already exist.</p>
 <td>First-pass valid</td>
 <td style="text-align:right">183/240 (76.3%)</td>
 <td style="text-align:right"><strong>230/240 (95.8%)</strong></td>
+</tr>
+<tr>
+<td>Complete first-pass JSON accepted despite citation rejection</td>
+<td style="text-align:right">56</td>
+<td style="text-align:right">10</td>
+</tr>
+<tr>
+<td>Same-prompt retry used for coverage</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">0</td>
+</tr>
+<tr>
+<td>Analytical coverage</td>
+<td style="text-align:right"><strong>240/240</strong></td>
+<td style="text-align:right"><strong>240/240</strong></td>
 </tr>
 <tr>
 <td>Input tokens</td>
@@ -460,7 +497,10 @@ reader of the reviews that already exist.</p>
 <p>The source matrix is exactly five evaluator treatments × sixteen cases × three
 source judges. <code>anchored-combined</code> is excluded. Every one of the 480 synthesis
 calls was first-pass only; rejected quotations were preserved rather than
-repaired or retried.</p>
+repaired or retried. The first-pass statistics remain frozen. The separate
+coverage view accepts the retained model analysis while exposing its citation
+status, and uses one explicitly labeled same-prompt retry where the first pass
+contained no analysis at all.</p>
 <h2 id="what-the-full-matrix-adds" tabindex="-1"><a class="observablehq-header-anchor" href="#what-the-full-matrix-adds">What the full matrix adds</a></h2>
 <p>The small mistargeted-case pilot generalized. Flash-Lite validated at least 93.8% of every
 prompt-treatment slice and 92.5% or more for every source-judge slice. Haiku fell
@@ -532,8 +572,13 @@ does not produce a graph score.</p>
 <td>standard synchronous</td>
 </tr>
 <tr>
-<td>Retries</td>
+<td>Retries in first-pass experiment</td>
 <td>none</td>
+<td>none</td>
+</tr>
+<tr>
+<td>Additional output used for analytical coverage</td>
+<td>one same-prompt retry</td>
 <td>none</td>
 </tr>
 </tbody>
@@ -577,17 +622,20 @@ match the supplied review exactly.</p>
 <h2 id="explore-all-240-source-reviews-and-480-outputs" tabindex="-1"><a class="observablehq-header-anchor" href="#explore-all-240-source-reviews-and-480-outputs">Explore all 240 source reviews and 480 outputs</a></h2>
 <div class="observablehq observablehq--block"><!--:7d3692d4:--></div>
 <div class="observablehq observablehq--block"><!--:c4d812fa:--></div>
-<div class="observablehq observablehq--block"><!--:dff2e4d6:--></div>
-<div class="observablehq observablehq--block"><!--:815fd6ee:--></div>
-<div class="observablehq observablehq--block"><!--:9f7bd790:--></div>
+<div class="observablehq observablehq--block"><!--:626eebd4:--></div>
+<div class="observablehq observablehq--block"><!--:4fa5373c:--></div>
+<div class="observablehq observablehq--block"><!--:71b5941e:--></div>
 <h3 id="source-review" tabindex="-1"><a class="observablehq-header-anchor" href="#source-review">Source review</a></h3>
 <div class="observablehq observablehq--block"><!--:e005e9a3:--></div>
 <h3 id="second-stage-outputs" tabindex="-1"><a class="observablehq-header-anchor" href="#second-stage-outputs">Second-stage outputs</a></h3>
-<div class="observablehq observablehq--block"><!--:3e5df872:--></div>
+<div class="observablehq observablehq--block"><!--:e47b6596:--></div>
 <h2 id="how-to-use-this" tabindex="-1"><a class="observablehq-header-anchor" href="#how-to-use-this">How to use this</a></h2>
 <p>Use the explorer to read source-review prose and the two normalized outputs side
-by side. A valid citation means the source evaluator actually said the quoted
-thing. It does not mean the complaint is true, in scope, or correctly prioritized.</p>
+by side. Green outputs passed strict citation validation. Amber outputs contain
+usable analysis but either failed citation validation or came from the labeled
+same-prompt retry. Nothing in the accepted first-pass JSON is rewritten. Even a
+validated citation does not mean the complaint is true, in scope, or correctly
+prioritized.</p>
 <p>For generation-graph assessment, normalize the reviews with Flash-Lite, verify
 the resulting findings against the underlying artifacts, and compare graphs on
 the verified defects plus blinded same-input human preference. Do not count these
@@ -624,6 +672,7 @@ findings or generated severities as a graph score.</p>
 }
 <span class="hljs-selector-class">.output-card</span><span class="hljs-selector-class">.invalid</span> { <span class="hljs-attribute">border-color</span>: <span class="hljs-number">#b91c1c</span>; }
 <span class="hljs-selector-class">.output-card</span><span class="hljs-selector-class">.valid</span> { <span class="hljs-attribute">border-color</span>: <span class="hljs-number">#15803d</span>; }
+<span class="hljs-selector-class">.output-card</span><span class="hljs-selector-class">.accepted</span> { <span class="hljs-attribute">border-color</span>: <span class="hljs-number">#a16207</span>; }
 <span class="hljs-selector-class">.status</span>,
 <span class="hljs-selector-class">.severity</span> {
   <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">999px</span>;
@@ -634,6 +683,11 @@ findings or generated severities as a graph score.</p>
 }
 <span class="hljs-selector-class">.output-card</span><span class="hljs-selector-class">.invalid</span> <span class="hljs-selector-class">.status</span> { <span class="hljs-attribute">background</span>: <span class="hljs-number">#b91c1c</span>; <span class="hljs-attribute">color</span>: white; }
 <span class="hljs-selector-class">.output-card</span><span class="hljs-selector-class">.valid</span> <span class="hljs-selector-class">.status</span> { <span class="hljs-attribute">background</span>: <span class="hljs-number">#15803d</span>; <span class="hljs-attribute">color</span>: white; }
+<span class="hljs-selector-class">.output-card</span><span class="hljs-selector-class">.accepted</span> <span class="hljs-selector-class">.status</span> { <span class="hljs-attribute">background</span>: <span class="hljs-number">#a16207</span>; <span class="hljs-attribute">color</span>: white; }
+<span class="hljs-selector-class">.acceptance-note</span> {
+  <span class="hljs-attribute">border-left</span>: <span class="hljs-number">0.25rem</span> solid <span class="hljs-number">#a16207</span>;
+  <span class="hljs-attribute">padding-left</span>: <span class="hljs-number">0.8rem</span>;
+}
 <span class="hljs-selector-class">.severity-blocking</span> { <span class="hljs-attribute">background</span>: <span class="hljs-number">#b91c1c</span>; <span class="hljs-attribute">color</span>: white; }
 <span class="hljs-selector-class">.severity-important</span> { <span class="hljs-attribute">background</span>: <span class="hljs-number">#b45309</span>; <span class="hljs-attribute">color</span>: white; }
 <span class="hljs-selector-class">.severity-minor</span> { <span class="hljs-attribute">background</span>: <span class="hljs-number">#475569</span>; <span class="hljs-attribute">color</span>: white; }
@@ -665,7 +719,10 @@ findings or generated severities as a graph score.</p>
   const main = document.querySelector("#observablehq-main");
   if (!gate || !button || !status || !source || !main) return;
 
+  let finished = false;
   const finish = (message, failed = false) => {
+    if (finished) return;
+    finished = true;
     document.documentElement.classList.remove("observable-data-deferred");
     main.removeAttribute("aria-busy");
     status.textContent = message;
@@ -683,24 +740,22 @@ findings or generated severities as a graph score.</p>
     module.type = "module";
     module.textContent = source.textContent;
     module.addEventListener("error", () => finish("The interactive analysis could not be loaded. Reload the page to try again.", true), {once: true});
-    module.addEventListener("load", () => {
-      const startedAt = Date.now();
-      const check = () => {
-        const pending = document.querySelectorAll("observablehq-loading").length;
-        const errors = document.querySelectorAll(".observablehq--error").length;
-        if (errors > 0) {
-          finish("Some interactive elements could not be loaded. Reload the page to try again.", true);
-        } else if (pending === 0) {
-          finish("Interactive analysis loaded.");
-        } else if (Date.now() - startedAt > 120000) {
-          finish("The interactive analysis is taking longer than expected; completed elements are available below.");
-        } else {
-          window.setTimeout(check, 250);
-        }
-      };
-      check();
-    }, {once: true});
+    const startedAt = Date.now();
+    const check = () => {
+      const pending = document.querySelectorAll("observablehq-loading").length;
+      const errors = document.querySelectorAll(".observablehq--error").length;
+      if (errors > 0) {
+        finish("Some interactive elements could not be loaded. Reload the page to try again.", true);
+      } else if (pending === 0) {
+        finish("Interactive analysis loaded.");
+      } else if (Date.now() - startedAt > 120000) {
+        finish("The interactive analysis is taking longer than expected; completed elements are available below.");
+      } else {
+        window.setTimeout(check, 250);
+      }
+    };
     document.head.appendChild(module);
+    check();
   }, {once: true});
 })();
 </script>
