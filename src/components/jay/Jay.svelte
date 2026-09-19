@@ -61,6 +61,7 @@
 
   onMount(() => {
     isHydrated = true;
+    void warmUpChat();
   });
 
   $effect(() => {
@@ -97,12 +98,6 @@
   $effect(() => {
     if (isOpen && verified && inputRef) {
       inputRef.focus();
-    }
-  });
-
-  $effect(() => {
-    if (isHydrated && needsVerification && hasActiveSession()) {
-      void warmUpChat(sessionToken);
     }
   });
 
