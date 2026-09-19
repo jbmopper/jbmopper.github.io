@@ -63,21 +63,27 @@ function recordWarmupAt(at: number): void {
 }
 
 // Public, unauthenticated, and inference-free: it only starts the backend
-// instance so the visitor's first real (Turnstile-gated) message is fast.
-export function warmUpChat(): Promise<boolean> {
-  if (!API_BASE) return Promise.resolve(false);
+// instance so the visitor's first real (Turnstile-gated) message is fast. The
+// cooldown is recorded only after a successful warmup, so a failed one (offline,
+// cold-start timeout) is retried on the next page load. Never throws.
+export function warmUpChat(apiBase: string | undefined = API_BASE): Promise<boolean> {
+  if (!apiBase) return Promise.resolve(false);
   if (warmupPromise) return warmupPromise;
+  if (Date.now() - readLastWarmupAt() < WARMUP_COOLDOWN_MS) return Promise.resolve(true);
 
-  const now = Date.now();
-  if (now - readLastWarmupAt() < WARMUP_COOLDOWN_MS) return Promise.resolve(true);
-  recordWarmupAt(now);
-
-  warmupPromise = fetch(`${API_BASE}/v1/chat/warmup`, {
-    method: "POST",
-    signal: AbortSignal.timeout(WARMUP_TIMEOUT_MS),
-  })
-    .then((response) => response.ok)
-    .catch(() => false);
+  warmupPromise = (async () => {
+    try {
+      const response = await fetch(`${apiBase}/v1/chat/warmup`, {
+        method: "POST",
+        // AbortSignal.timeout is missing before Safari 16 / Chrome 103.
+        signal: typeof AbortSignal.timeout === "function" ? AbortSignal.timeout(WARMUP_TIMEOUT_MS) : undefined,
+      });
+      if (response.ok) recordWarmupAt(Date.now());
+      return response.ok;
+    } catch {
+      return false;
+    }
+  })();
 
   return warmupPromise;
 }
