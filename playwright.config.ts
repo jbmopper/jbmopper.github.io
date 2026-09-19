@@ -7,7 +7,7 @@ export default defineConfig({
     baseURL: "http://127.0.0.1:4321"
   },
   webServer: {
-    command: "npm run verify:observable && npm run build && python3 -m http.server 4321 --directory dist",
+    command: "npm run verify:observable && npm run build && python3 scripts/serve-dist.py 4321",
     url: "http://127.0.0.1:4321",
     reuseExistingServer: !process.env.CI,
     timeout: 240_000
