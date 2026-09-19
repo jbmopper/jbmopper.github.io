@@ -39,11 +39,6 @@ const expectedBaseHrefByPage = new Map([
   ["public/observable/projects/index.html", "/observable/projects/"],
   ["public/observable/projects/llm-fundamentals/perf-expected/index.html", "/observable/projects/llm-fundamentals/perf-expected/"]
 ]);
-const deferredDataPages = [
-  "public/observable/projects/llm-fundamentals/ablations/index.html",
-  "public/observable/projects/llm-fundamentals/optimizer-sweep/index.html",
-  "public/observable/projects/llm-fundamentals/perf-empirical/index.html",
-];
 const forbiddenPublicArtifactPatterns = [
   "/Users/juliusmopper",
   "/Users/juliusmopper/Dev/Notebooks",
@@ -133,15 +128,6 @@ async function assertBaseHrefs() {
 
     if (!html.includes(`<base href="${expectedBaseHref}">`)) {
       throw new Error(`Missing expected <base> tag in ${relativeHtmlPath}: <base href="${expectedBaseHref}">`);
-    }
-  }
-}
-
-async function assertHeavyDataDeferral() {
-  for (const relativeHtmlPath of deferredDataPages) {
-    const html = await readFile(path.join(PROJECT_ROOT, relativeHtmlPath), "utf8");
-    if (!html.includes("data-heavy-observable-module") || !html.includes("data-observable-data-load")) {
-      throw new Error(`Heavy Observable page is not load-gated: ${relativeHtmlPath}`);
     }
   }
 }
@@ -296,7 +282,6 @@ async function main() {
   await assertCanonicalRoutes();
   await assertDraftsUnpublished();
   await assertBaseHrefs();
-  await assertHeavyDataDeferral();
   await assertKatexAssets();
   await assertEchartsRuntimeAsset();
   await assertInferenceMountsAreWired();

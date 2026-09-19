@@ -229,7 +229,7 @@ tex.block`\mathcal{l} = -\frac{1}{b s} \sum_{b=1}^{b} \sum_{s=1}^{s}\log p_\thet
 }});
 
 define({id: "42f595d0", outputs: ["renderPerfExpected"], body: async () => {
-const {renderPerfExpected} = await import("../../../_import/embed/perf-expected.3a146105.js");
+const {renderPerfExpected} = await import("../../../_import/embed/perf-expected.cc515b0b.js");
 
 return {renderPerfExpected};
 }});
@@ -433,6 +433,54 @@ await renderPerfExpected()
           const node = document.getElementById(id);
           if (node) node.remove();
         }
+      })();</script><script>(function(){
+        const pattern = /Failed to fetch dynamically imported module|Importing a module script failed|error loading dynamically imported module/;
+        const key = 'observable-module-reload:' + window.location.pathname;
+        const startedAt = Date.now();
+        let reloading = false;
+
+        function reloadedRecently(){
+          try {
+            const at = Number(window.sessionStorage.getItem(key));
+            return Boolean(at) && Date.now() - at < 60000;
+          } catch {
+            return true;
+          }
+        }
+
+        function offerReload(node){
+          node.dataset.moduleFailureHandled = 'true';
+          node.textContent = '';
+          node.style.cssText = 'display:flex;flex-wrap:wrap;align-items:center;gap:0.75rem;margin:0.5rem 0;padding:0.75rem;border:1px dashed var(--theme-foreground-faint);border-radius:8px;color:inherit;';
+          const text = document.createElement('span');
+          text.textContent = "Part of this page didn't load.";
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.textContent = 'Reload';
+          button.addEventListener('click', function(){ window.location.reload(); });
+          node.append(text, button);
+        }
+
+        function check(){
+          if (reloading) return;
+          const failed = Array.from(document.querySelectorAll('.observablehq--error'))
+            .filter(function(node){ return node.dataset.moduleFailureHandled !== 'true' && pattern.test(node.textContent || ''); });
+          if (failed.length === 0) return;
+          if (Date.now() - startedAt < 20000 && !reloadedRecently()) {
+            reloading = true;
+            try {
+              window.sessionStorage.setItem(key, String(Date.now()));
+            } catch {}
+            window.location.reload();
+            return;
+          }
+          failed.forEach(offerReload);
+        }
+
+        const observer = new MutationObserver(check);
+        observer.observe(document.documentElement, {childList: true, subtree: true});
+        // Module imports all happen while the page loads.
+        window.setTimeout(function(){ observer.disconnect(); check(); }, 60000);
       })();</script>
 </header>
 <aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
