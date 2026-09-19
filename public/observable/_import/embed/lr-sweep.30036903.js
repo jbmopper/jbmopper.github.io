@@ -1,7 +1,7 @@
-import {FileAttachment} from "../../_observablehq/stdlib.a50b4fda.js";
-import * as Plot from "../components/echart-plot.2c2cf4e8.js";
+import {FileAttachment} from "../../_observablehq/stdlib.4cc9274d.js";
+import * as Plot from "../components/echart-plot.c7a44d50.js";
 import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
-import {readParquet} from "../components/parquet.fd4d5fef.js";
+import {readParquet} from "../components/parquet.741d5545.js";
 import {
   clearNode,
   emptyState,
@@ -14,7 +14,7 @@ import {
   rangeControl,
   debounce,
   resilientRender
-} from "../components/dom-utils.d63ac7bb.js";
+} from "../components/dom-utils.5970679c.js";
 
 const ATTACHMENTS = {
   main: FileAttachment({"name":"../../data/raw/benchmarks/lr_sweeps_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/lr_sweeps_main.98e6db0c.parquet","lastModified":1771874136930,"size":15015}, import.meta.url),
@@ -331,13 +331,7 @@ export const renderOptimizerSweepPaths = resilientRender("renderOptimizerSweepPa
   root.style.display = "grid";
   root.style.gap = "1rem";
 
-  let data;
-  try {
-    data = await loadOptimizerSweepData();
-  } catch (error) {
-    root.appendChild(emptyState(`Failed to load optimizer sweep parquet snapshots: ${error.message}`));
-    return root;
-  }
+  const data = await loadOptimizerSweepData();
 
   const {mainRows, historyRows} = data;
 
@@ -1129,13 +1123,7 @@ export const renderOptimizerSweepClusters = resilientRender("renderOptimizerSwee
   root.style.display = "grid";
   root.style.gap = "1rem";
 
-  let data;
-  try {
-    data = await loadOptimizerSweepData();
-  } catch (error) {
-    root.appendChild(emptyState(`Failed to load optimizer sweep parquet snapshots: ${error.message}`));
-    return root;
-  }
+  const data = await loadOptimizerSweepData();
 
   const {mainRows, historyRows} = data;
   const runSummaryByName = new Map();
@@ -1834,18 +1822,10 @@ export const renderOptimizerSweepClusters = resilientRender("renderOptimizerSwee
 // Build the analysis once and hand each cell its section, rendering a section
 // only when a cell asks for it (some cells are commented out of the page).
 async function buildOptimizerSweepEvalLoss() {
-  let data;
-  try {
-    data = await loadOptimizerSweepData();
-  } catch (error) {
-    return {failure: `Failed to load optimizer sweep parquet snapshots: ${error.message}`};
-  }
-
+  const data = await loadOptimizerSweepData();
   // The loader already filters to finite steps and sorts by run and step.
   const rows = data.historyRows;
-  if (rows.length === 0) {
-    return {failure: "No optimizer sweep history rows available."};
-  }
+  if (rows.length === 0) throw new Error("No optimizer sweep history rows available.");
 
   const runNames = Array.from(new Set(rows.map((row) => row.run_name))).sort();
   const runIndexByName = new Map(runNames.map((runName, idx) => [runName, idx + 1]));
@@ -2909,6 +2889,7 @@ async function buildOptimizerSweepEvalLoss() {
   gradSummaryHost.textContent = summaryText;
 
   function renderEvalChart() {
+    clearNode(evalHost);
     if (evalRows.length === 0) {
       evalHost.appendChild(emptyState("No eval-loss points remain after current filters."));
     } else {
@@ -2947,6 +2928,7 @@ async function buildOptimizerSweepEvalLoss() {
   }
 
   function renderGradChart() {
+    clearNode(gradHost);
     if (gradRows.length === 0) {
       gradHost.appendChild(emptyState("No unclipped-grad-norm points remain after current filters."));
     } else {
@@ -3006,8 +2988,9 @@ async function buildOptimizerSweepEvalLoss() {
       if (!entry) return null;
       const [node, render] = entry;
       if (!rendered.has(name)) {
-        rendered.add(name);
+        // Marked only on success, so a Retry after a throw renders again.
         render();
+        rendered.add(name);
       }
       return node;
     }
@@ -3020,17 +3003,15 @@ function optimizerEvalLoss() {
   if (!sharedOptimizerEvalLoss) {
     const build = buildOptimizerSweepEvalLoss();
     sharedOptimizerEvalLoss = build;
-    const reset = () => {
+    build.catch(() => {
       if (sharedOptimizerEvalLoss === build) sharedOptimizerEvalLoss = null;
-    };
-    build.then((result) => result.failure && reset(), reset);
+    });
   }
   return sharedOptimizerEvalLoss;
 }
 
 async function optimizerSection(name, missingMessage) {
   const build = await optimizerEvalLoss();
-  if (build.failure) return emptyState(build.failure);
   return build.section(name) || emptyState(missingMessage);
 }
 
@@ -3040,16 +3021,12 @@ export const renderOptimizerSweepEvalLoss = resilientRender("renderOptimizerSwee
   root.style.display = "grid";
   root.style.gap = "1rem";
   const build = await buildOptimizerSweepEvalLoss();
-  if (build.failure) {
-    root.appendChild(emptyState(build.failure));
-    return root;
-  }
   for (const name of build.names) root.appendChild(build.section(name));
   return root;
 });
 
 export const renderOptimizerSweepSubsetClusters = resilientRender("renderOptimizerSweepSubsetClusters", async function renderOptimizerSweepSubsetClusters(options = {}) {
-  const root = await renderOptimizerSweepClusters(options);
+  const root = await renderOptimizerSweepClusters.unwrapped(options);
   for (const selector of [
     "[data-section='optimizer-main-clusters-controls']",
     "[data-section='optimizer-main-clusters-chart']",
@@ -3100,13 +3077,7 @@ export const renderOptimizerSweepRunEvalLoss = resilientRender("renderOptimizerS
   root.style.display = "grid";
   root.style.gap = "0.75rem";
 
-  let data;
-  try {
-    data = await loadOptimizerSweepData();
-  } catch (error) {
-    root.appendChild(emptyState(`Failed to load optimizer sweep parquet snapshots: ${error.message}`));
-    return root;
-  }
+  const data = await loadOptimizerSweepData();
 
   const runNumberTarget = Number.isFinite(Number(options.runNumber)) ? Math.round(Number(options.runNumber)) : 148;
   const runNameTarget = options.runName == null ? "" : String(options.runName).trim();
@@ -3175,13 +3146,7 @@ export const renderLrSweepLrGradScatter = resilientRender("renderLrSweepLrGradSc
   root.style.display = "grid";
   root.style.gap = "1rem";
 
-  let data;
-  try {
-    data = await loadSweepData();
-  } catch (error) {
-    root.appendChild(emptyState(`Failed to load LR sweep data: ${error.message}`));
-    return root;
-  }
+  const data = await loadSweepData();
 
   const {historyRows} = data;
   const basePoints = historyRows
@@ -3273,13 +3238,7 @@ export const renderLrSweepLrClipHistogram = resilientRender("renderLrSweepLrClip
   root.style.display = "grid";
   root.style.gap = "1rem";
 
-  let data;
-  try {
-    data = await loadSweepData();
-  } catch (error) {
-    root.appendChild(emptyState(`Failed to load LR sweep data: ${error.message}`));
-    return root;
-  }
+  const data = await loadSweepData();
 
   const {historyRows} = data;
   const clipRows = historyRows
@@ -3386,13 +3345,7 @@ export const renderLrSweepSummaryTable = resilientRender("renderLrSweepSummaryTa
   root.style.display = "grid";
   root.style.gap = "1rem";
 
-  let data;
-  try {
-    data = await loadSweepData();
-  } catch (error) {
-    root.appendChild(emptyState(`Failed to load LR sweep parquet snapshots: ${error.message}`));
-    return root;
-  }
+  const data = await loadSweepData();
 
   const {mainRows, historyRows} = data;
   if (mainRows.length === 0) {
@@ -3598,14 +3551,7 @@ export const renderLrSweep = resilientRender("renderLrSweep", async function ren
   root.style.display = "grid";
   root.style.gap = "1rem";
 
-  try {
-    root.append(
-      el("h2", "Sweep Summary"),
-      await renderLrSweepSummaryTable(options)
-    );
-  } catch (error) {
-    root.appendChild(emptyState(`Failed to render LR sweep sections: ${error.message}`));
-  }
+  root.append(el("h2", "Sweep Summary"), await renderLrSweepSummaryTable(options));
 
   return root;
 });

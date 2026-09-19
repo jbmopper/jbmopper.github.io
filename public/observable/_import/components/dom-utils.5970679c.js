@@ -478,7 +478,7 @@ function renderFailureCard(message, retry) {
  * failing chart doesn't take the page's other charts with it.
  */
 export function resilientRender(label, render) {
-  return async function renderResiliently(...args) {
+  async function renderResiliently(...args) {
     try {
       return await withTimeout(Promise.resolve().then(() => render(...args)), RENDER_TIMEOUT_MS);
     } catch (error) {
@@ -489,5 +489,9 @@ export function resilientRender(label, render) {
           : "This chart couldn't load.";
       return renderFailureCard(message, () => renderResiliently(...args));
     }
-  };
+  }
+  // For composing renders: call the inner function so its failures reach the
+  // caller's own wrapper (and its Retry re-runs the whole composition).
+  renderResiliently.unwrapped = render;
+  return renderResiliently;
 }

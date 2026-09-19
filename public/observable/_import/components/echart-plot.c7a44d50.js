@@ -547,7 +547,8 @@ const MARK_RENDERERS = {
       const r = Number(getValue(row, options.r));
       return Number.isFinite(r) ? r : 6;
     };
-    if (options.large === true && dense) {
+    // Opt-in large mode kicks in at ECharts' own default threshold.
+    if (options.large === true && rows.length > 2000) {
       // Large mode draws a whole series in one style and ignores per-point
       // itemStyle, so group points by their resolved colour. Points are compact
       // [x, y, rowIdx] tuples instead of per-point objects. The radius must be

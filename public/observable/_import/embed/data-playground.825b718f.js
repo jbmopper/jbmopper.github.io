@@ -1,7 +1,7 @@
-import {FileAttachment} from "../../_observablehq/stdlib.a50b4fda.js";
-import * as Plot from "../components/echart-plot.2c2cf4e8.js";
+import {FileAttachment} from "../../_observablehq/stdlib.4cc9274d.js";
+import * as Plot from "../components/echart-plot.c7a44d50.js";
 import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
-import {readParquet} from "../components/parquet.fd4d5fef.js";
+import {readParquet} from "../components/parquet.741d5545.js";
 import {formatBytes} from "../components/data-utils.e2caa41c.js";
 import {
   clearNode,
@@ -12,7 +12,7 @@ import {
   selectControl,
   rangeControl,
   resilientRender
-} from "../components/dom-utils.d63ac7bb.js";
+} from "../components/dom-utils.5970679c.js";
 
 const MANIFEST_ATTACHMENT = FileAttachment({"name":"../../data/manifest.json","mimeType":"application/json","path":"../../_file/data/manifest.d04279d7.json","lastModified":1771874136886,"size":13400}, import.meta.url);
 

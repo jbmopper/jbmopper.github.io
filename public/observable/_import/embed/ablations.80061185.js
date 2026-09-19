@@ -1,7 +1,7 @@
-import {FileAttachment} from "../../_observablehq/stdlib.a50b4fda.js";
-import * as Plot from "../components/echart-plot.2c2cf4e8.js";
+import {FileAttachment} from "../../_observablehq/stdlib.4cc9274d.js";
+import * as Plot from "../components/echart-plot.c7a44d50.js";
 import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
-import {readParquet} from "../components/parquet.fd4d5fef.js";
+import {readParquet} from "../components/parquet.741d5545.js";
 import {formatMs} from "../components/data-utils.e2caa41c.js";
 import {
   clearNode,
@@ -14,7 +14,7 @@ import {
   rangeControl,
   debounce,
   resilientRender
-} from "../components/dom-utils.d63ac7bb.js";
+} from "../components/dom-utils.5970679c.js";
 
 const ATTACHMENTS = {
   main: FileAttachment({"name":"../../data/raw/benchmarks/ablations_main.parquet","mimeType":undefined,"path":"../../_file/data/raw/benchmarks/ablations_main.912ec8a5.parquet","lastModified":1771874136911,"size":26405}, import.meta.url),
@@ -702,13 +702,7 @@ export const renderAblationsByRun = resilientRender("renderAblationsByRun", asyn
   const showPerRun = options.showPerRun !== false;
   const includeBaselineComparison = options.includeBaselineComparison !== false;
 
-  let data;
-  try {
-    data = await loadAblationData();
-  } catch (error) {
-    root.appendChild(emptyState(`Failed to load ablations parquet snapshots: ${error.message}`));
-    return root;
-  }
+  const data = await loadAblationData();
 
   const {mainRows, historyRows} = data;
   if (historyRows.length === 0) {
