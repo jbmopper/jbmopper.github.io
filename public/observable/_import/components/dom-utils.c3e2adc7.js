@@ -337,6 +337,13 @@ export function renderSimpleTable(rows, columns) {
   table.appendChild(thead);
 
   const tbody = document.createElement("tbody");
+  appendTableRows(tbody, rows, columns);
+  table.appendChild(tbody);
+
+  return table;
+}
+
+function appendTableRows(tbody, rows, columns) {
   for (const row of rows) {
     const trBody = document.createElement("tr");
     for (const column of columns) {
@@ -357,9 +364,37 @@ export function renderSimpleTable(rows, columns) {
     }
     tbody.appendChild(trBody);
   }
-  table.appendChild(tbody);
+}
 
-  return table;
+/**
+ * renderSimpleTable for long row sets: renders `pageSize` rows at a time behind a
+ * "Show more" button, so a 20k-row table costs a few thousand elements until asked.
+ */
+export function renderPagedTable(rows, columns, {pageSize = 500} = {}) {
+  const host = document.createElement("div");
+  const note = document.createElement("p");
+  note.style.margin = "0";
+  const table = renderSimpleTable(rows.slice(0, pageSize), columns);
+  const tbody = table.lastChild;
+  let shown = Math.min(pageSize, rows.length);
+
+  const more = document.createElement("button");
+  more.type = "button";
+  more.style.marginTop = "0.5rem";
+  const update = () => {
+    note.textContent = shown >= rows.length ? `Showing all ${rows.length} row(s).` : `Showing ${shown} of ${rows.length} row(s).`;
+    more.hidden = shown >= rows.length;
+    more.textContent = `Show ${Math.min(pageSize, rows.length - shown)} more`;
+  };
+  more.addEventListener("click", () => {
+    appendTableRows(tbody, rows.slice(shown, shown + pageSize), columns);
+    shown = Math.min(shown + pageSize, rows.length);
+    update();
+  });
+
+  update();
+  host.append(note, table, more);
+  return host;
 }
 
 export function collapsible(summaryText) {
@@ -370,6 +405,34 @@ export function collapsible(summaryText) {
   summary.textContent = summaryText;
   details.appendChild(summary);
   return details;
+}
+
+/**
+ * A collapsible whose content is built only when it is opened. Returns a factory:
+ * each call makes a fresh <details> for `build`, opened and built right away if the
+ * reader left the previous one open, so re-rendering on a filter change keeps an
+ * open table open and a closed one free.
+ */
+export function lazyCollapsible(summaryText) {
+  let open = false;
+  return (build) => {
+    const details = collapsible(summaryText);
+    let built = false;
+    const fill = () => {
+      if (built) return;
+      built = true;
+      details.append(...[build()].flat());
+    };
+    details.addEventListener("toggle", () => {
+      open = details.open;
+      if (open) fill();
+    });
+    if (open) {
+      fill();
+      details.open = true;
+    }
+    return details;
+  };
 }
 
 export function el(tag, text) {

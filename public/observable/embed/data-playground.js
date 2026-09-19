@@ -1,7 +1,7 @@
 import "../_import/components/echart-plot.c7a44d50.js";
 import "../_import/components/parquet.741d5545.js";
 import "../_import/components/data-utils.e2caa41c.js";
-import "../_import/components/dom-utils.5970679c.js";
+import "../_import/components/dom-utils.c3e2adc7.js";
 import "../_import/components/echart.5e9eb6de.js";
 import "../_import/components/echart-theme.ac72768d.js";
 import "../_observablehq/stdlib.4cc9274d.js";
@@ -44,4 +44,4 @@ import "../_npm/flatbuffers@25.9.23/c82700c2.js";
 import "../_npm/internmap@2.0.3/e08981d9.js";
 import "../_npm/delaunator@5.0.1/02d43215.js";
 import "../_npm/robust-predicates@3.0.2/aa00730b.js";
-export * from "../_import/embed/data-playground.825b718f.js";
+export * from "../_import/embed/data-playground.53516029.js";
