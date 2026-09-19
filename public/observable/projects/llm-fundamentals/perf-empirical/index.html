@@ -8,13 +8,13 @@
 <title>Empirical Performance | juliusm.com</title>
 
 <link rel="preload" as="style" href="../../../_import/astro-bridge-theme.87b41aae.css">
-<link rel="preload" as="style" href="../../../_npm/katex@0.17.0/dist/katex.min.css">
+<link rel="preload" as="style" href="../../../_npm/katex@0.18.7/dist/katex.min.css">
 <link rel="stylesheet" type="text/css" href="../../../_import/astro-bridge-theme.87b41aae.css">
-<link rel="stylesheet" type="text/css" href="../../../_npm/katex@0.17.0/dist/katex.min.css">
+<link rel="stylesheet" type="text/css" href="../../../_npm/katex@0.18.7/dist/katex.min.css">
 <script type="module">
 
-import {define} from "../../../_observablehq/client.15d8f900.js";
-import {registerFile} from "../../../_observablehq/stdlib.4cc9274d.js";
+import {define} from "../../../_observablehq/client.4ef4a7f4.js";
+import {registerFile} from "../../../_observablehq/stdlib.88957eba.js";
 
 registerFile("../../../data/raw/benchmarks/gpu_comp_history.parquet", {"name":"../../../data/raw/benchmarks/gpu_comp_history.parquet","path":"../../../_file/data/raw/benchmarks/gpu_comp_history.e18efbee.parquet","lastModified":1771874136917,"size":1389327});
 registerFile("../../../data/raw/benchmarks/gpu_comp_main.parquet", {"name":"../../../data/raw/benchmarks/gpu_comp_main.parquet","path":"../../../_file/data/raw/benchmarks/gpu_comp_main.d82fa693.parquet","lastModified":1771874136918,"size":21863});
@@ -73,7 +73,7 @@ tex`d_{ff}`
 }});
 
 define({id: "009ce9a3", outputs: ["renderPerfEmpiricalTrainBenchmark","renderPerfEmpiricalExpectedVsActual","renderPerfEmpiricalDeviceComparison","renderPerfEmpiricalModelSelection","renderPerfEmpiricalTrainingCurves"], body: async () => {
-const {renderPerfEmpiricalTrainBenchmark, renderPerfEmpiricalExpectedVsActual, renderPerfEmpiricalDeviceComparison, renderPerfEmpiricalModelSelection, renderPerfEmpiricalTrainingCurves} = await import("../../../_import/embed/perf-empirical.783708ab.js");
+const {renderPerfEmpiricalTrainBenchmark, renderPerfEmpiricalExpectedVsActual, renderPerfEmpiricalDeviceComparison, renderPerfEmpiricalModelSelection, renderPerfEmpiricalTrainingCurves} = await import("../../../_import/embed/perf-empirical.c05c2005.js");
 
 return {renderPerfEmpiricalTrainBenchmark,renderPerfEmpiricalExpectedVsActual,renderPerfEmpiricalDeviceComparison,renderPerfEmpiricalModelSelection,renderPerfEmpiricalTrainingCurves};
 }});
