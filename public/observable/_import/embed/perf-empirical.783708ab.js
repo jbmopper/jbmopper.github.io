@@ -6,14 +6,16 @@ import {formatMs, normalizeRunLabel} from "../components/data-utils.e2caa41c.js"
 import {
   clearNode,
   emptyState,
+  renderPagedTable,
   renderSimpleTable,
+  lazyCollapsible,
   sectionHeading,
   multiSelectControl,
   el,
   card,
   debounce,
   resilientRender
-} from "../components/dom-utils.5970679c.js";
+} from "../components/dom-utils.c3e2adc7.js";
 import {calculateForwardFlops, calculateMemoryAccounting, calculateModelParams, calculateTrainingStepFlops} from "../components/perf-estimates.d771a94d.js";
 
 const ATTACHMENTS = {
@@ -364,25 +366,6 @@ function metricValid(metric, value) {
   return true;
 }
 
-function collapsible(summaryText) {
-  const details = el("details");
-  const summary = el("summary", summaryText);
-  summary.style.cursor = "pointer";
-  summary.style.fontWeight = "600";
-  details.appendChild(summary);
-  return details;
-}
-
-function rowLimitNote(displayed, total) {
-  const text =
-    displayed >= total
-      ? `Showing all ${total} row(s).`
-      : `Showing ${displayed} of ${total} row(s).`;
-  const note = el("p", text);
-  note.style.margin = "0";
-  return note;
-}
-
 function asNumericSet(values) {
   const numbers = values.map((value) => Number(value)).filter((value) => Number.isFinite(value));
   return new Set(numbers);
@@ -489,6 +472,7 @@ function renderTrainGridSection(data, options = {}) {
   const tableHost = card();
   host.append(controls, chartHost, tableHost);
 
+  const observationsTable = lazyCollapsible("expand to view table of individual observations");
   const refresh = () => {
     const batchSet = asNumericSet(batchControl.getSelected());
     const seqSet = asNumericSet(seqControl.getSelected());
@@ -575,10 +559,8 @@ function renderTrainGridSection(data, options = {}) {
     const tableRows = [...plotted]
       .sort((a, b) => d3.descending(a.tokens_per_sec, b.tokens_per_sec) || d3.ascending(a.est_memory_gb, b.est_memory_gb));
 
-    const details = collapsible("expand to view table of individual observations");
-    details.append(
-      rowLimitNote(tableRows.length, plotted.length),
-      renderSimpleTable(tableRows, [
+    const details = observationsTable(() =>
+      renderPagedTable(tableRows, [
         {key: "batch_size", label: "Batch", align: "right"},
         {key: "seq_len", label: "Seq", align: "right"},
         {key: "d_model", label: "d_model", align: "right"},
@@ -884,6 +866,7 @@ function renderExpectedVsActualSection(data, options = {}) {
     );
   }
 
+  const evaTable = lazyCollapsible("expand to view expected-vs-observed table");
   const refresh = () => {
     const selectedBatch = asNumericSet(batchControl.getSelected());
     const selectedSeq = asNumericSet(seqControl.getSelected());
@@ -942,9 +925,8 @@ function renderExpectedVsActualSection(data, options = {}) {
 
     clearNode(tableHost);
     if (evaRows.length > 0) {
-      const details = collapsible("expand to view expected-vs-observed table");
-      details.append(
-        renderSimpleTable(evaRows, [
+      const details = evaTable(() =>
+        renderPagedTable(evaRows, [
           {key: "batch_size", label: "B", align: "right"},
           {key: "seq_len", label: "S", align: "right"},
           {key: "d_model", label: "d_model", align: "right"},
@@ -1067,6 +1049,7 @@ function renderDeviceComparisonSection(data, options = {}) {
     );
   };
 
+  const comparisonTable = lazyCollapsible("expand to view comparison table");
   const refresh = () => {
     const scaleType = throughputScaleControl.select.value;
     renderMetricBarChart(throughputHost, "Tokens / sec by model and device", "Tokens / sec", "tokens_per_sec", scaleType);
@@ -1194,9 +1177,8 @@ function renderDeviceComparisonSection(data, options = {}) {
     if (tableRows.length === 0) {
       tableHost.appendChild(emptyState("No comparison rows to tabulate."));
     } else {
-      const details = collapsible("expand to view comparison table");
-      details.append(
-        renderSimpleTable(tableRows, [
+      const details = comparisonTable(() =>
+        renderPagedTable(tableRows, [
           {key: "model_label", label: "Model"},
           {key: "mps_tokens_per_sec", label: "MPS tok/s", align: "right", format: (v) => Number(v).toFixed(1)},
           {key: "cuda_tokens_per_sec", label: "CUDA tok/s", align: "right", format: (v) => Number(v).toFixed(1)},
@@ -1487,6 +1469,7 @@ function renderTrainingCurvesSection(data, options = {}) {
     return output.sort((a, b) => d3.ascending(a.step, b.step));
   }
 
+  const trendTable = lazyCollapsible("expand to view training/eval trend data");
   const refresh = () => {
     const selectedSeries = new Set(seriesControl.getSelected());
     const curveMetric = curveMetricControl.select.value;
@@ -1551,11 +1534,8 @@ function renderTrainingCurvesSection(data, options = {}) {
         })
       );
 
-      const limited = mainRows;
-      const details = collapsible("expand to view training/eval trend data");
-      details.append(
-        rowLimitNote(limited.length, mainRows.length),
-        renderSimpleTable(limited, [
+      const details = trendTable(() =>
+        renderPagedTable(mainRows, [
           {key: "series_verbose", label: "Series"},
           {key: "curve_channel", label: "Channel"},
           {key: "run_name", label: "Run"},
