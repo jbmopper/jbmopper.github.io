@@ -1,7 +1,7 @@
-import {FileAttachment} from "../../_observablehq/stdlib.a50b4fda.js";
-import * as Plot from "../components/echart-plot.2c2cf4e8.js";
+import {FileAttachment} from "../../_observablehq/stdlib.4cc9274d.js";
+import * as Plot from "../components/echart-plot.c7a44d50.js";
 import * as d3 from "../../_npm/d3@7.9.0/e324157d.js";
-import {readParquet} from "../components/parquet.fd4d5fef.js";
+import {readParquet} from "../components/parquet.741d5545.js";
 import {formatMs, normalizeRunLabel} from "../components/data-utils.e2caa41c.js";
 import {
   clearNode,
@@ -13,7 +13,7 @@ import {
   card,
   debounce,
   resilientRender
-} from "../components/dom-utils.d63ac7bb.js";
+} from "../components/dom-utils.5970679c.js";
 import {calculateForwardFlops, calculateMemoryAccounting, calculateModelParams, calculateTrainingStepFlops} from "../components/perf-estimates.d771a94d.js";
 
 const ATTACHMENTS = {
@@ -362,11 +362,6 @@ function metricValid(metric, value) {
   if (metric === "Throughput/Tokens per sec") return value > 0;
   if (metric === "Time/Total step") return value > 0;
   return true;
-}
-
-function renderLoadError(host, error) {
-  clearNode(host);
-  host.append(sectionHeading("Load Error"), emptyState(`Failed to load empirical benchmark data: ${error.message}`));
 }
 
 function collapsible(summaryText) {
@@ -1648,13 +1643,7 @@ async function renderSection(builder, options = {}) {
   root.style.display = "grid";
   root.style.gap = "1rem";
 
-  let data;
-  try {
-    data = await loadEmpiricalData();
-  } catch (error) {
-    renderLoadError(root, error);
-    return root;
-  }
+  const data = await loadEmpiricalData();
 
   root.appendChild(builder(data, options));
   return root;
@@ -1692,13 +1681,7 @@ export const renderPerfEmpiricalModelSelection = resilientRender("renderPerfEmpi
   root.style.display = "grid";
   root.style.gap = "1.2rem";
 
-  let catalog;
-  try {
-    catalog = await ATTACHMENTS.catalog.json();
-  } catch (err) {
-    root.appendChild(emptyState(`Failed to load model catalog: ${err.message}`));
-    return root;
-  }
+  const catalog = await ATTACHMENTS.catalog.json();
 
   const configs = COMPARISON_MODEL_IDS.map((id) => catalog.named_configs.find((c) => c.id === id)).filter(Boolean);
   if (configs.length === 0) {
@@ -1781,13 +1764,7 @@ export const renderPerfEmpirical = resilientRender("renderPerfEmpirical", async 
   status.style.margin = "0";
   root.append(title, subtitle, status);
 
-  let data;
-  try {
-    data = await loadEmpiricalData();
-  } catch (error) {
-    renderLoadError(root, error);
-    return root;
-  }
+  const data = await loadEmpiricalData();
 
   const mode = options.mode || "full";
   const includeTrain = mode !== "summary" || Boolean(options.includeGrid);
