@@ -13,7 +13,17 @@ function init() {
 
 function scheduleInit() {
   const run = () => {
-    if (document.visibilityState === "hidden") return;
+    if (document.visibilityState === "hidden") {
+      // Opened in a background tab: mount when the tab is first shown.
+      document.addEventListener(
+        "visibilitychange",
+        () => {
+          if (document.visibilityState !== "hidden") init();
+        },
+        {once: true}
+      );
+      return;
+    }
     init();
   };
 

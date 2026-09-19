@@ -13,8 +13,9 @@
     "preview": "astro preview",
     "postprocess:observable": "node scripts/postprocess-observable-export.mjs",
     "verify:observable": "npm run prepare:observable && node scripts/verify-observable-export.mjs",
+    "test:unit": "node --test \"tests/unit/*.test.ts\"",
     "test:e2e": "playwright test",
-    "test:ci": "npm run verify:observable && npm run build && npm run test:e2e"
+    "test:ci": "npm run test:unit && npm run verify:observable && npm run build && npm run test:e2e"
   },
   "dependencies": {
     "@astrojs/svelte": "^8.1.0",
