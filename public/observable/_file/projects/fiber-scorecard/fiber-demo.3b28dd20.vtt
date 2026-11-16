@@ -1,0 +1,830 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:08.320
+All right. This is a demonstration presentation of a workflow, an agentic workflow
+
+00:00:08.320 --> 00:00:15.450
+created with Microsoft Copilot Studio. The idea here is that we're simulating a question
+
+00:00:15.450 --> 00:00:18.140
+that comes up in telecom.
+
+00:00:18.140 --> 00:00:26.460
+So the simulation is that we have projects for fiber, fiber install, and things like that,
+
+00:00:26.460 --> 00:00:33.120
+and we're not sure exactly what's going on with the different vendors.
+
+00:00:33.440 --> 00:00:39.810
+So we're starting with some synthetic data. This is data that was created based on some
+
+00:00:39.810 --> 00:00:45.440
+research into kind of what the systems are actually like and what may happen.
+
+00:00:45.640 --> 00:00:53.170
+It was generated somewhat deterministically, but it also has a lot of intentionally
+
+00:00:53.170 --> 00:00:55.120
+created mess in it.
+
+00:00:55.120 --> 00:01:03.080
+You have different work order numbers, different date formats, a variety of things like
+
+00:01:03.080 --> 00:01:06.320
+that, and they have these notes.
+
+00:01:07.340 --> 00:01:17.410
+So these notes are from the project tracker, something like site tracker, that have these
+
+00:01:17.410 --> 00:01:22.240
+notes that are more what the project manager puts in,
+
+00:01:22.240 --> 00:01:34.420
+and a bit more loose language, abbreviations, and things that are just a bit more human
+
+00:01:34.420 --> 00:01:35.480
+and messy.
+
+00:01:36.860 --> 00:01:43.550
+The other thing, the other source of data we created was a project log, something like
+
+00:01:43.550 --> 00:01:44.200
+SAP.
+
+00:01:44.200 --> 00:01:54.280
+And these have the change order log, these have the change order requests, and these tend
+
+00:01:54.280 --> 00:02:02.380
+to be nice and well written.
+
+00:02:02.380 --> 00:02:09.180
+And one of the constraints we set up to kind of simplify this is to have all these, you
+
+00:02:09.180 --> 00:02:11.100
+know, the contractors are always saying,
+
+00:02:11.260 --> 00:02:12.820
+it's not us, it's not us.
+
+00:02:13.460 --> 00:02:23.540
+And, you know, maybe in real life there's some level of, you know, may or cult was
+
+00:02:23.540 --> 00:02:24.500
+happening.
+
+00:02:24.500 --> 00:02:31.950
+But for this, for this one, we're treating it as the contractors are saying, it was the
+
+00:02:31.950 --> 00:02:33.940
+city or what have you.
+
+00:02:33.940 --> 00:02:41.530
+So the question becomes, digging through this pile of data, how do we actually get some
+
+00:02:41.530 --> 00:02:44.940
+actual accountability and analysis?
+
+00:02:44.940 --> 00:02:48.960
+And this is a great application of LLMs, right?
+
+00:02:48.960 --> 00:02:57.230
+Here we can take these various kinds of loose notes, match them up with the other inputs
+
+00:02:57.230 --> 00:02:59.420
+into the system,
+
+00:03:00.160 --> 00:03:06.530
+these change order justifications, and hopefully, at the end of the day, get a good
+
+00:03:06.530 --> 00:03:11.640
+analysis of what, you know, what's actually going on with these.
+
+00:03:11.640 --> 00:03:19.540
+Now, the nice thing about this synthetic data is that we can go back and check to see how
+
+00:03:19.540 --> 00:03:21.200
+well it worked,
+
+00:03:21.700 --> 00:03:31.950
+given the problems, supposed problems with the digs, are known to us when we're creating
+
+00:03:31.950 --> 00:03:33.000
+the data.
+
+00:03:33.680 --> 00:03:39.980
+The data is created from a plan, we simulate different things that are happening,
+
+00:03:40.380 --> 00:03:47.770
+and we know what the assistant should be bringing out from the data, and we can therefore
+
+00:03:47.770 --> 00:03:48.700
+validate it.
+
+00:03:50.300 --> 00:04:02.680
+So we start, we ingested the data offline, and so we have it into our tables in Dataverse.
+
+00:04:06.100 --> 00:04:10.340
+So there's the change order table, a jobs table, and then this labels table, that's the
+
+00:04:10.340 --> 00:04:12.540
+output of our system.
+
+00:04:12.640 --> 00:04:13.760
+We're not going to look at that yet.
+
+00:04:14.040 --> 00:04:18.920
+So we can start by adding a new change order, so that we can go and look through the flow.
+
+00:04:19.420 --> 00:04:25.800
+The flow is here, and we're going to step through it with a new row.
+
+00:04:26.440 --> 00:04:32.920
+So let me just double-check that, yes, we do have the correct filter there.
+
+00:04:41.080 --> 00:04:45.460
+So we can paste the information in.
+
+00:04:48.320 --> 00:04:51.040
+And review our suggestions.
+
+00:04:59.220 --> 00:04:59.820
+Okay.
+
+00:05:00.560 --> 00:05:03.420
+And then we can paste in our justification.
+
+00:05:10.260 --> 00:05:12.080
+So this is for the change orders.
+
+00:05:16.400 --> 00:05:17.660
+And we can save it.
+
+00:05:24.700 --> 00:05:25.140
+Okay.
+
+00:05:25.140 --> 00:05:25.180
+Okay.
+
+00:05:25.180 --> 00:05:25.980
+Okay.
+
+00:05:25.180 --> 00:05:25.340
+Okay.
+
+00:05:40.260 --> 00:05:49.760
+So now, we've already published this, so we can just run it.
+
+00:05:52.900 --> 00:05:54.760
+So actually, let's look at the labels.
+
+00:05:56.020 --> 00:05:58.560
+So we get from the, because this does take a second to run.
+
+00:06:02.560 --> 00:06:04.320
+Well, we can go through this, actually.
+
+00:06:04.920 --> 00:06:06.100
+So we start here.
+
+00:06:09.540 --> 00:06:12.880
+We have a lot of different rows, because Microsoft likes adding that.
+
+00:06:15.460 --> 00:06:16.880
+We listed some rows.
+
+00:06:19.020 --> 00:06:20.760
+And we're going through the rows again.
+
+00:06:22.180 --> 00:06:23.540
+And we label the job.
+
+00:06:25.740 --> 00:06:28.780
+And so here's the prompt for the job.
+
+00:06:30.380 --> 00:06:32.280
+We explain what's going on.
+
+00:06:37.900 --> 00:06:40.960
+This basic setup, where the change orders are from the vendors.
+
+00:06:41.260 --> 00:06:46.620
+The reason on the change orders from the project manager.
+
+00:06:47.260 --> 00:06:50.340
+The tracker notes have the project manager's observations.
+
+00:06:54.140 --> 00:07:02.520
+So we want it to start processing the different information and pulling it together.
+
+00:07:04.460 --> 00:07:06.380
+And then it starts assigning codes.
+
+00:07:10.820 --> 00:07:13.140
+And it outputs some nice JSON.
+
+00:07:19.660 --> 00:07:21.500
+And then we save the information.
+
+00:07:24.140 --> 00:07:26.500
+We only had three rows this time.
+
+00:07:27.160 --> 00:07:28.760
+So we saved our three rows.
+
+00:07:29.640 --> 00:07:30.780
+And we save a summary.
+
+00:07:36.720 --> 00:07:37.740
+So if we look.
+
+00:07:41.020 --> 00:07:41.460
+Let's.
+
+00:07:46.060 --> 00:07:47.200
+Let's look over here.
+
+00:07:47.420 --> 00:07:48.360
+It's a little easier to see.
+
+00:07:48.360 --> 00:07:48.380
+Let's look over here.
+
+00:07:48.380 --> 00:07:48.400
+It's a little easier to see.
+
+00:07:52.540 --> 00:08:10.980
+All right.
+
+00:08:10.980 --> 00:08:11.780
+All right.
+
+00:08:17.620 --> 00:08:19.220
+So we can see the.
+
+00:08:20.500 --> 00:08:21.820
+Rows we created here.
+
+00:08:25.260 --> 00:08:26.460
+So it pulled out.
+
+00:08:27.280 --> 00:08:27.800
+The.
+
+00:08:29.160 --> 00:08:29.960
+The reason.
+
+00:08:30.940 --> 00:08:32.620
+From this live run we just did.
+
+00:08:33.480 --> 00:08:35.340
+These are ones from the previous.
+
+00:08:41.740 --> 00:08:43.080
+So it's saying that.
+
+00:08:43.080 --> 00:08:43.880
+So it's saying that.
+
+00:08:43.080 --> 00:08:46.320
+You have high confidence that this.
+
+00:08:46.960 --> 00:08:50.460
+This part of it was caused by a materials delay.
+
+00:08:52.740 --> 00:08:54.920
+Citing the project manager.
+
+00:08:55.480 --> 00:08:56.600
+Directly assigning.
+
+00:08:57.880 --> 00:08:59.420
+Directly assigning the delay.
+
+00:09:00.760 --> 00:09:02.580
+To owner furnished material.
+
+00:09:04.800 --> 00:09:06.500
+So the fault party is the owner.
+
+00:09:07.460 --> 00:09:07.700
+Here.
+
+00:09:10.640 --> 00:09:11.200
+And none.
+
+00:09:11.960 --> 00:09:15.580
+So this is just based on the existing.
+
+00:09:24.660 --> 00:09:26.680
+Information from that entry.
+
+00:09:26.680 --> 00:09:32.320
+So these are the vendors label.
+
+00:09:32.840 --> 00:09:33.540
+The vendors.
+
+00:09:35.040 --> 00:09:35.600
+Justification.
+
+00:09:36.600 --> 00:09:36.780
+Okay.
+
+00:09:36.900 --> 00:09:38.180
+So the next step.
+
+00:09:43.520 --> 00:09:45.700
+Is to simulate this change.
+
+00:09:48.640 --> 00:09:49.680
+To the data.
+
+00:09:51.520 --> 00:09:52.980
+I'm pulling out of the other.
+
+00:09:54.640 --> 00:09:55.360
+There we go.
+
+00:09:59.200 --> 00:10:00.280
+So on this job.
+
+00:10:00.360 --> 00:10:01.240
+We already have notes.
+
+00:10:02.160 --> 00:10:03.780
+But let's say that the.
+
+00:10:04.640 --> 00:10:06.200
+Project manager actually.
+
+00:10:06.660 --> 00:10:07.760
+Put some new notes in.
+
+00:10:16.640 --> 00:10:17.520
+Save this.
+
+00:10:19.200 --> 00:10:20.420
+Go back to our workflow.
+
+00:10:20.580 --> 00:10:21.080
+And rerun it.
+
+00:10:21.140 --> 00:10:21.420
+Okay.
+
+00:10:21.420 --> 00:10:22.420
+So.
+
+00:10:51.420 --> 00:11:05.320
+All right.
+
+00:11:10.100 --> 00:11:11.820
+So now we can go back to the table.
+
+00:11:15.100 --> 00:11:15.540
+Refresh.
+
+00:11:15.540 --> 00:11:31.080
+So now these have been updated.
+
+00:11:37.220 --> 00:11:40.420
+And we have some things that are still being assigned to the vendor.
+
+00:11:40.600 --> 00:11:41.160
+To the owner.
+
+00:11:41.500 --> 00:11:42.140
+But now.
+
+00:11:43.140 --> 00:11:44.520
+Some of these are being.
+
+00:11:45.540 --> 00:11:47.380
+Reassigned.
+
+00:11:47.720 --> 00:11:48.580
+To the vendor.
+
+00:11:48.860 --> 00:11:50.500
+As new information has come in.
+
+00:11:51.380 --> 00:11:53.100
+So the system does a good job.
+
+00:11:53.520 --> 00:11:54.740
+Of mashing things up.
+
+00:11:54.800 --> 00:11:55.420
+And this is.
+
+00:11:55.580 --> 00:11:55.720
+You know.
+
+00:11:55.800 --> 00:11:56.120
+If we.
+
+00:11:56.220 --> 00:11:58.400
+If we look back at the note that we added.
+
+00:11:58.680 --> 00:11:59.340
+It was saying.
+
+00:12:01.720 --> 00:12:02.760
+It was saying.
+
+00:12:03.220 --> 00:12:03.480
+You know.
+
+00:12:03.580 --> 00:12:03.700
+This.
+
+00:12:03.900 --> 00:12:04.760
+That one's on vendor.
+
+00:12:04.860 --> 00:12:05.880
+So very explicitly.
+
+00:12:07.720 --> 00:12:09.060
+Assigned the blame to the vendor.
+
+00:12:09.480 --> 00:12:10.240
+And the system.
+
+00:12:10.640 --> 00:12:11.640
+Did pick it up.
+
+00:12:11.880 --> 00:12:12.960
+And integrated it correctly.
+
+00:12:14.200 --> 00:12:14.520
+So.
+
+00:12:14.520 --> 00:12:16.720
+The data we got from this.
+
+00:12:20.980 --> 00:12:22.980
+The simulated data we had.
+
+00:12:24.500 --> 00:12:26.200
+It has a story in it.
+
+00:12:27.180 --> 00:12:28.320
+So we have our.
+
+00:12:28.320 --> 00:12:30.540
+Our non-existent vendors.
+
+00:12:32.880 --> 00:12:35.000
+To whom some blame is being assigned.
+
+00:12:35.180 --> 00:12:35.400
+Which.
+
+00:12:36.060 --> 00:12:36.340
+Of course.
+
+00:12:36.400 --> 00:12:37.340
+We wouldn't do that to.
+
+00:12:38.020 --> 00:12:38.880
+Actual folks.
+
+00:12:40.440 --> 00:12:42.720
+So I really hope that these aren't real folks.
+
+00:12:43.140 --> 00:12:46.360
+I asked the assistant to generate some of these names.
+
+00:12:46.560 --> 00:12:46.740
+So.
+
+00:12:47.200 --> 00:12:49.120
+But what we see is that we have this Redfern.
+
+00:12:50.440 --> 00:12:52.920
+And this looks like the most problematic vendor.
+
+00:12:53.480 --> 00:12:55.580
+They have the highest percentage overrun.
+
+00:12:56.800 --> 00:12:58.080
+And Kestrel Ridge.
+
+00:12:58.680 --> 00:13:00.180
+Here has the lowest.
+
+00:13:02.660 --> 00:13:06.240
+So this is just looking at the raw invoice overrun.
+
+00:13:06.320 --> 00:13:09.220
+This is not the data that has emerged.
+
+00:13:09.220 --> 00:13:14.000
+The information that has emerged from looking at the actual writing.
+
+00:13:14.680 --> 00:13:18.820
+Doing this large language model based analysis of the notes.
+
+00:13:19.400 --> 00:13:26.140
+And pulling out the information in order to get real information about who's actually a
+
+00:13:26.140 --> 00:13:27.260
+problem child here.
+
+00:13:28.060 --> 00:13:28.480
+So.
+
+00:13:29.800 --> 00:13:30.920
+When we do that.
+
+00:13:31.860 --> 00:13:34.340
+We can see that it's actually Kestrel Ridge.
+
+00:13:34.420 --> 00:13:35.560
+And this is in dollars.
+
+00:13:35.740 --> 00:13:36.780
+But this is also.
+
+00:13:36.960 --> 00:13:39.620
+They were also worse in terms of percentages as well.
+
+00:13:41.400 --> 00:13:44.160
+So we see that here is actually Kestrel Ridge.
+
+00:13:45.840 --> 00:13:47.680
+And that's the information you get.
+
+00:13:47.680 --> 00:13:49.300
+The first run of the data.
+
+00:13:49.660 --> 00:13:50.580
+Just looking at it.
+
+00:13:50.660 --> 00:13:52.220
+Trying to look at a basic spreadsheet.
+
+00:13:52.540 --> 00:13:53.960
+And sum things up.
+
+00:13:54.460 --> 00:13:56.140
+Might not give us what we want.
+
+00:13:56.480 --> 00:13:57.880
+But by using these tools.
+
+00:13:58.060 --> 00:14:02.180
+We can get that visibility into the actual issues going on.
+
+00:14:03.120 --> 00:14:09.100
+And we can see that actually we did have this vendor that was more of a problem.
+
+00:14:09.640 --> 00:14:12.040
+So then we can go and drill down even more.
+
+00:14:12.280 --> 00:14:12.460
+Right?
+
+00:14:12.560 --> 00:14:15.680
+Because we simulated this with these eight vendors.
+
+00:14:15.680 --> 00:14:17.100
+We also have five markets.
+
+00:14:17.460 --> 00:14:20.520
+And I think something over 350 jobs.
+
+00:14:22.640 --> 00:14:25.880
+And we can see that it's not just Kestrel Ridge in general.
+
+00:14:26.180 --> 00:14:28.540
+That it's actually this one metro area.
+
+00:14:28.820 --> 00:14:31.460
+Where there's something unusually bad happening.
+
+00:14:32.720 --> 00:14:40.460
+So this is, you know, this is more combining the new techniques for pulling information
+
+00:14:40.460 --> 00:14:46.750
+out with the more traditional techniques of, you know, creating a table and a heat map on
+
+00:14:46.750 --> 00:14:47.200
+it.
+
+00:14:47.240 --> 00:14:53.780
+So, again, we built this data from a design.
+
+00:14:54.300 --> 00:14:57.100
+And so we have an accuracy score.
+
+00:14:57.640 --> 00:15:00.900
+Overall, we had 91.1%.
+
+00:15:00.900 --> 00:15:08.190
+But for a lot of these, you know, if it's somebody else's issue, usually we're not really
+
+00:15:08.190 --> 00:15:14.140
+going to be generating a lot of conflicting messages in the data.
+
+00:15:14.360 --> 00:15:20.170
+So for here, for the vendor, which is kind of the big questionable thing, we did only
+
+00:15:20.170 --> 00:15:21.940
+have 68.9%.
+
+00:15:21.940 --> 00:15:29.230
+And this highlights the importance of treating this both as a statistical process, but
+
+00:15:29.230 --> 00:15:36.690
+also creating, you know, tests like this, where we can take in, you know, the baseline
+
+00:15:36.690 --> 00:15:42.950
+information, perhaps even synthesize based on it, and then pull out and then create a
+
+00:15:42.950 --> 00:15:45.640
+system that will be measurable.
+
+00:15:45.640 --> 00:15:49.960
+So that we can get a good understanding of where these problems are.
+
+00:15:53.260 --> 00:15:58.910
+So, you know, we see that here we have a breakdown of some of the cases where the true
+
+00:15:58.910 --> 00:16:01.640
+fault was the vendor.
+
+00:16:01.940 --> 00:16:03.220
+We were listing the owner.
+
+00:16:03.980 --> 00:16:06.140
+It says hit a rock and bore path.
+
+00:16:06.220 --> 00:16:10.080
+So this is the reason that the LLM gave in its output.
+
+00:16:12.340 --> 00:16:19.030
+So, you know, here it's saying that there was a rock, but it wasn't actually, you know,
+
+00:16:19.030 --> 00:16:23.320
+the owner's fault that the rock was there.
+
+00:16:23.480 --> 00:16:29.100
+This is something that the rock, for whatever reason, the vendor should have found it.
+
+00:16:30.060 --> 00:16:34.060
+And so the system actually was generous to the vendor.
+
+00:16:36.180 --> 00:16:42.880
+So we also can increase our visibility into the data by setting up an agent to run on top
+
+00:16:42.880 --> 00:16:43.820
+of it.
+
+00:16:45.660 --> 00:16:47.660
+So here we created an agent.
+
+00:16:49.000 --> 00:16:51.660
+This case is running on Opus 4.8.
+
+00:16:51.800 --> 00:16:55.600
+And we can see the prompt here.
+
+00:16:57.040 --> 00:17:02.070
+And this is just in the test zone because this seems to spin up the connection to Dataverse
+
+00:17:02.070 --> 00:17:03.940
+a little bit faster.
+
+00:17:04.100 --> 00:17:07.640
+So this is going to those tables in Dataverse that we were looking at.
+
+00:17:08.160 --> 00:17:10.060
+And we can ask it questions.
+
+00:17:11.280 --> 00:17:16.480
+You know, so it says red, high, or costing us means vendor fault dollars.
+
+00:17:16.660 --> 00:17:24.840
+So we can ask it, why is Kestrel red in Denver?
+
+00:17:38.120 --> 00:17:45.120
+So this is looking for the vendor fault labels based on the, based on the prompt.
+
+00:17:49.060 --> 00:17:51.300
+And it's trying to pull that information in.
+
+00:18:08.100 --> 00:18:37.400
+So this sometimes does take a little while.
+
+00:18:38.100 --> 00:18:52.040
+Um, the tables, I think, are, uh, 15, 1500 rows here, 129 and 350.
+
+00:18:52.580 --> 00:18:54.400
+But, you know.
+
+00:19:01.940 --> 00:19:05.080
+Let's see if it's come through.
+
+00:19:05.700 --> 00:19:07.100
+It's searching more.
+
+00:19:19.980 --> 00:19:21.300
+Not sure what the rationale.
+
+00:19:21.660 --> 00:19:22.240
+Here it is.
+
+00:19:26.180 --> 00:19:26.680
+Okay.
+
+00:19:56.180 --> 00:20:14.260
+So it seems to be repeating this a few times, which is questionable.
+
+00:20:26.180 --> 00:20:44.180
+Okay, so it's managed to actually get through it here.
+
+00:20:44.180 --> 00:20:51.560
+Kestrel Denver Red is driven by quality rework, primarily a marked line utility strike
+
+00:20:51.560 --> 00:20:51.740
+and
+
+00:20:51.740 --> 00:20:57.260
+restoration rework, all labeled vendor fault, mostly from PM notes, and in two cases, the
+
+00:20:57.260 --> 00:21:02.540
+vendors change order blamed outside causes, the PM notes contradict.
+
+00:21:02.540 --> 00:21:12.640
+And here we have the examples that it's pulled out with citations, which is good.
+
+00:21:12.640 --> 00:21:18.990
+And it tells us that the fault labels are AI assigned, and a reviewer spot checks a
+
+00:21:18.990 --> 00:21:19.800
+sample.
+
+00:21:19.800 --> 00:21:28.560
+So yes, that is part of actually rolling a system like this out, is to have a human in
+
+00:21:28.560 --> 00:21:30.600
+the loop, at least for some spot checking.
+
+00:21:30.600 --> 00:21:42.360
+A representative sample afterwards that we can do a risk limiting audit, so to speak, on
+
+00:21:42.360 --> 00:21:43.160
+it.
+
+00:21:42.360 --> 00:21:47.710
+And of course, you know, a real system would require the real data sources and possibly
+
+00:21:47.710 --> 00:21:48.320
+integrating
+
+00:21:48.320 --> 00:21:53.360
+them with an MCP or something.
+
+00:21:53.360 --> 00:22:00.120
+And so, you know, a strength of this is that we are quoting evidence when we are driving,
+
+00:22:00.120 --> 00:22:05.080
+when we are determining, you know, fault here.
+
+00:22:05.080 --> 00:22:14.800
+We are citing evidence in from the notes so that, you know, these are not exactly, you
+
+00:22:14.800 --> 00:22:15.120
+know,
+
+00:22:15.120 --> 00:22:16.880
+a super-firm thing.
+
+00:22:16.880 --> 00:22:24.210
+The point is to put it out as a reliable statistical analysis that gives us the broad
+
+00:22:24.210 --> 00:22:25.880
+strokes, a scorecard,
+
+00:22:25.880 --> 00:22:29.880
+general analytics, and that can be validated.
+
+00:22:29.880 --> 00:22:37.880
+The risks can be contained, and this can, I think, give us a strong, strong view into
+
+00:22:37.880 --> 00:22:39.800
+where vendors
+
+00:22:39.800 --> 00:22:46.560
+might actually be experiencing problems, and help us work with them better to really
+
+00:22:46.560 --> 00:22:48.760
+deliver, you know,
+
+00:22:48.760 --> 00:22:51.360
+deliver performance.
+
+00:22:51.360 --> 00:22:52.680
+Thank you.
+

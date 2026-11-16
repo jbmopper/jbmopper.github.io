@@ -52,10 +52,10 @@ test("mobile layout keeps navigation, theme control, and project art within the 
 
   await page.goto("/");
   const projectImages = page.locator("#projects .project-card__art img");
-  await expect(projectImages).toHaveCount(3);
+  await expect(projectImages).toHaveCount(5);
   await expectImagesLoaded(projectImages);
 
-  for (let index = 0; index < 3; index += 1) {
+  for (let index = 0; index < 5; index += 1) {
     const box = await projectImages.nth(index).boundingBox();
     expect(box?.width ?? 0).toBeGreaterThan(300);
     expect(box?.height ?? 0).toBeGreaterThan(150);
@@ -63,6 +63,6 @@ test("mobile layout keeps navigation, theme control, and project art within the 
 
   await page.goto("/observable/projects/");
   const observableProjectImages = page.locator(".project-card__art img");
-  await expect(observableProjectImages).toHaveCount(3);
+  await expect(observableProjectImages).toHaveCount(5);
   await expectImagesLoaded(observableProjectImages);
 });

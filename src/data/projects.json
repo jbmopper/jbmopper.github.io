@@ -30,6 +30,26 @@
     "status": "published"
   },
   {
+    "slug": "admt-compliance",
+    "title": "The Regulatory Frontier: Colorado's ADMT Rules",
+    "description": "A review of Colorado's ADMT Act and draft rules, with the written comment filed in the Attorney General's rulemaking.",
+    "art": {
+      "src": "/images/projects/admt-compliance.jpg",
+      "alt": "Illuminated glass records and a public comment in a concrete archive with a Colorado mountain relief."
+    },
+    "status": "published"
+  },
+  {
+    "slug": "fiber-scorecard",
+    "title": "Copilot Studio and Microsoft Stack Demo",
+    "description": "A Power Platform demo that reads project managers' free-text notes and change-order justifications to assign cause and fault for cost overruns, graded at 91.1% against a synthetic ground truth.",
+    "art": {
+      "src": "/images/projects/fiber-scorecard.jpg",
+      "alt": "Glowing strands rise from a fiber conduit trench to link handwritten field notes, a change-order ledger, and a bar chart."
+    },
+    "status": "published"
+  },
+  {
     "slug": "data-playground",
     "title": "Data Playground",
     "description": "Interactive data exploration and visualization sandbox.",

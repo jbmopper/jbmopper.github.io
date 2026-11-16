@@ -14,7 +14,9 @@
 import {define} from "../_observablehq/client.4ef4a7f4.js";
 import {registerFile} from "../_observablehq/stdlib.88957eba.js";
 
-registerFile("../data/projects.json", {"name":"../data/projects.json","mimeType":"application/json","path":"../_file/data/projects.7bee6882.json","lastModified":1783651624331,"size":1723});
+registerFile("../data/projects.json", {"name":"../data/projects.json","mimeType":"application/json","path":"../_file/data/projects.035c7cad.json","lastModified":1794794125333,"size":2730});
+registerFile("../images/projects/admt-compliance.jpg", {"name":"../images/projects/admt-compliance.jpg","mimeType":"image/jpeg","path":"../_file/images/projects/admt-compliance.0940e820.jpg","lastModified":1794794125335,"size":381547});
+registerFile("../images/projects/fiber-scorecard.jpg", {"name":"../images/projects/fiber-scorecard.jpg","mimeType":"image/jpeg","path":"../_file/images/projects/fiber-scorecard.783c4802.jpg","lastModified":1794794125336,"size":439789});
 registerFile("../images/projects/llm-fundamentals.jpg", {"name":"../images/projects/llm-fundamentals.jpg","mimeType":"image/jpeg","path":"../_file/images/projects/llm-fundamentals.668a223f.jpg","lastModified":1783651624331,"size":469998});
 registerFile("../images/projects/resume-generator.jpg", {"name":"../images/projects/resume-generator.jpg","mimeType":"image/jpeg","path":"../_file/images/projects/resume-generator.2bfcbddf.jpg","lastModified":1783651624332,"size":367343});
 registerFile("../images/projects/site-chatbot.jpg", {"name":"../images/projects/site-chatbot.jpg","mimeType":"image/jpeg","path":"../_file/images/projects/site-chatbot.41010793.jpg","lastModified":1783651624333,"size":434053});
@@ -29,11 +31,13 @@ const published = projects.filter((p) => p.status === "published");
 return {published};
 }});
 
-define({id: "cb94664e", inputs: ["FileAttachment"], outputs: ["projectArtUrls"], body: async (FileAttachment) => {
+define({id: "492b0d6c", inputs: ["FileAttachment"], outputs: ["projectArtUrls"], body: async (FileAttachment) => {
 const projectArtUrls = new Map(await Promise.all([
   ["llm-fundamentals", FileAttachment("../images/projects/llm-fundamentals.jpg").url()],
   ["resume-generator", FileAttachment("../images/projects/resume-generator.jpg").url()],
-  ["site-chatbot", FileAttachment("../images/projects/site-chatbot.jpg").url()]
+  ["site-chatbot", FileAttachment("../images/projects/site-chatbot.jpg").url()],
+  ["admt-compliance", FileAttachment("../images/projects/admt-compliance.jpg").url()],
+  ["fiber-scorecard", FileAttachment("../images/projects/fiber-scorecard.jpg").url()]
 ].map(async ([slug, url]) => [slug, await url])));
 return {projectArtUrls};
 }});
@@ -71,6 +75,8 @@ html`<div class="project-list">
     <li class="observablehq-link"><a href="./resume-generator/">Resume Generator</a></li>
     <li class="observablehq-link"><a href="./data-playground/">Data Playground</a></li>
     <li class="observablehq-link"><a href="./site-chatbot/">Site Design and RAG Chatbot Integration</a></li>
+    <li class="observablehq-link"><a href="./admt-compliance/">The Regulatory Frontier: Colorado&#x27;s ADMT Rules</a></li>
+    <li class="observablehq-link"><a href="./fiber-scorecard/">Copilot Studio and Microsoft Stack Demo</a></li>
   </ol>
 </nav>
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
@@ -232,7 +238,9 @@ html`<div class="project-list">
               const labels = {
                 'resume-generator': 'Resume Generator',
                 'data-playground': 'Data Playground',
-                'site-chatbot': 'Site Design and RAG Chatbot Integration'
+                'site-chatbot': 'Site Design and RAG Chatbot Integration',
+                'admt-compliance': "The Regulatory Frontier: Colorado's ADMT Rules",
+                'fiber-scorecard': 'Copilot Studio and Microsoft Stack Demo'
               };
               const fallback = slug
                 .split('-')
@@ -301,7 +309,7 @@ html`<div class="project-list">
 <h1 id="projects" tabindex="-1"><a class="observablehq-header-anchor" href="#projects">Projects</a></h1>
 <div class="observablehq observablehq--block"><!--:f9f2e3a0:--></div>
 <div class="observablehq observablehq--block"><!--:b7f2fceb:--></div>
-<div class="observablehq observablehq--block"><!--:cb94664e:--></div>
+<div class="observablehq observablehq--block"><!--:492b0d6c:--></div>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:d048b7ba:--></div>
 <!--
 

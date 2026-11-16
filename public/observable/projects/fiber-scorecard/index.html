@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.4">
+<base href="/observable/projects/fiber-scorecard/">
+<title>Copilot Studio and Microsoft Stack Demo | juliusm.com</title>
+
+<link rel="preload" as="style" href="../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.87b41aae.css">
+<script type="module">
+
+import {define} from "../../_observablehq/client.4ef4a7f4.js";
+import {registerFile} from "../../_observablehq/stdlib.88957eba.js";
+
+registerFile("./fiber-demo-poster.jpg", {"name":"./fiber-demo-poster.jpg","mimeType":"image/jpeg","path":"../../_file/projects/fiber-scorecard/fiber-demo-poster.ae3db085.jpg","lastModified":1794794125338,"size":118082});
+registerFile("./fiber-demo.mp4", {"name":"./fiber-demo.mp4","mimeType":"video/mp4","path":"../../_file/projects/fiber-scorecard/fiber-demo.a5507a6c.mp4","lastModified":1794794125555,"size":45543047});
+registerFile("./fiber-demo.vtt", {"name":"./fiber-demo.vtt","mimeType":"text/vtt","path":"../../_file/projects/fiber-scorecard/fiber-demo.3b28dd20.vtt","lastModified":1794794125557,"size":19565});
+
+define({id: "eaee6430", inputs: ["FileAttachment"], outputs: ["demoVideo","demoCaptions","demoPoster"], body: async (FileAttachment) => {
+const demoVideo = await FileAttachment("./fiber-demo.mp4").url();
+const demoCaptions = await FileAttachment("./fiber-demo.vtt").url();
+const demoPoster = await FileAttachment("./fiber-demo-poster.jpg").url();
+return {demoVideo,demoCaptions,demoPoster};
+}});
+
+define({id: "b6e0c1da", inputs: ["html","demoPoster","demoVideo","demoCaptions","display"], body: async (html,demoPoster,demoVideo,demoCaptions,display) => {
+display(await(
+html`<figure class="demo-video">
+  <video controls preload="metadata" playsinline poster=${demoPoster}>
+    <source src=${demoVideo} type="video/mp4">
+    <track kind="captions" src=${demoCaptions} srclang="en" label="English" default>
+    Your browser does not support embedded video.
+    <a href=${demoVideo}>Download the demo recording</a>.
+  </video>
+  <figcaption>Full walkthrough, about 23 minutes. All data shown is synthetic.</figcaption>
+</figure>`
+))
+}});
+
+</script>
+<script src="/observable/_import/jay-standalone.js" defer></script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="../../">juliusm.com</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link"><a href="../">Projects</a></li>
+    <li class="observablehq-link"><a href="../llm-fundamentals/">LLM Fundamentals</a></li>
+    <li class="observablehq-link"><a href="../resume-generator/">Resume Generator</a></li>
+    <li class="observablehq-link"><a href="../data-playground/">Data Playground</a></li>
+    <li class="observablehq-link"><a href="../site-chatbot/">Site Design and RAG Chatbot Integration</a></li>
+    <li class="observablehq-link"><a href="../admt-compliance/">The Regulatory Frontier: Colorado&#x27;s ADMT Rules</a></li>
+    <li class="observablehq-link observablehq-link-active"><a href="./">Copilot Studio and Microsoft Stack Demo</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<header id="observablehq-header">
+<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><div class="portfolio-header-actions"><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="/consulting/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/consulting/');">Consulting</a><a class="portfolio-nav-link" href="/resume/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav><button class="portfolio-theme-control" type="button" data-theme-control="" data-theme-preference="system"><span class="portfolio-theme-control__icon" aria-hidden="true"></span><span data-theme-label="">System</span></button></div></div><script>(function(){
+        const storageKey = 'juliusm-theme';
+        const modes = ['system', 'dark', 'light'];
+        const labels = {system: 'System', dark: 'Dark', light: 'Light'};
+        const metaColors = {dark: '#0b1017', light: '#f5f7f3'};
+        const media = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+        const mount = window.location.pathname.startsWith('/observable') ? '/observable' : '';
+        const path = window.location.pathname.replace(/^\/observable(?=\/|$)/,'').replace(/\/index\.html$/,'/');
+        const normalized = path.endsWith('/') ? path : path + '/';
+        const slot = document.getElementById('portfolio-current-project-slot');
+
+        function readThemePreference(){
+          try {
+            const stored = window.localStorage.getItem(storageKey);
+            if (modes.includes(stored)) return stored;
+          } catch {
+            return 'system';
+          }
+          return 'system';
+        }
+
+        function resolveThemePreference(preference){
+          if (preference === 'light' || (preference === 'system' && media && media.matches)) return 'light';
+          return 'dark';
+        }
+
+        function nextThemePreference(preference){
+          return modes[(modes.indexOf(preference) + 1) % modes.length] || 'system';
+        }
+
+        function updateThemeControls(preference, resolved){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            const next = nextThemePreference(preference);
+            control.dataset.themePreference = preference;
+            control.dataset.themeResolved = resolved;
+            control.setAttribute('aria-label', 'Theme: ' + labels[preference] + '. Switch to ' + labels[next] + '.');
+            control.setAttribute('title', 'Theme: ' + labels[preference]);
+            const label = control.querySelector('[data-theme-label]');
+            if (label) label.textContent = labels[preference];
+          });
+        }
+
+        function applyThemePreference(preference, persist){
+          const normalizedPreference = modes.includes(preference) ? preference : 'system';
+          const resolved = resolveThemePreference(normalizedPreference);
+          document.documentElement.dataset.theme = normalizedPreference;
+          document.documentElement.dataset.themeResolved = resolved;
+          const meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', metaColors[resolved]);
+          if (persist) {
+            try {
+              window.localStorage.setItem(storageKey, normalizedPreference);
+            } catch {}
+          }
+          updateThemeControls(normalizedPreference, resolved);
+        }
+
+        function bindThemeControls(){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            if (control.dataset.themeBound === 'true') return;
+            control.dataset.themeBound = 'true';
+            control.addEventListener('click', function(){
+              applyThemePreference(nextThemePreference(readThemePreference()), true);
+            });
+          });
+          applyThemePreference(readThemePreference(), false);
+        }
+
+        applyThemePreference(readThemePreference(), false);
+        bindThemeControls();
+        if (media) media.addEventListener('change', function(){
+          if (readThemePreference() === 'system') applyThemePreference('system', false);
+        });
+        window.addEventListener('storage', function(event){
+          if (event.key === storageKey) applyThemePreference(readThemePreference(), false);
+        });
+
+        function navigate(target){
+          window.location.assign(window.location.origin + target);
+        }
+
+        function makeNavLink(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-nav-link';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        function makeBreadcrumbSeparator(){
+          const sep = document.createElement('span');
+          sep.className = 'portfolio-breadcrumb-separator';
+          sep.setAttribute('aria-hidden', 'true');
+          sep.textContent = '›';
+          return sep;
+        }
+
+        function makeProjectItem(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-project-item';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        if (slot) {
+          const projectMatch = normalized.match(/^\/projects\/([^/]+)\//);
+          if (projectMatch) {
+            const slug = projectMatch[1];
+            slot.appendChild(makeBreadcrumbSeparator());
+            if (slug === 'llm-fundamentals') {
+              const details = document.createElement('details');
+              details.id = 'portfolio-current-project-menu';
+              details.className = 'portfolio-project-menu';
+
+              const summary = document.createElement('summary');
+              summary.className = 'portfolio-nav-link portfolio-project-toggle';
+              summary.textContent = 'LLM Fundamentals';
+              details.appendChild(summary);
+
+              const dropdown = document.createElement('div');
+              dropdown.className = 'portfolio-project-dropdown';
+              const items = [
+                ['Introduction', '/projects/llm-fundamentals/'],
+                ['Architecture and Expected Performance Analysis', '/projects/llm-fundamentals/perf-expected/'],
+                ['Benchmarks and Empirical Performance Analysis', '/projects/llm-fundamentals/perf-empirical/'],
+                ['Learning Parameter Sweeps', '/projects/llm-fundamentals/optimizer-sweep/'],
+                ['Architectural Variations (Ablations)', '/projects/llm-fundamentals/ablations/']
+              ];
+              for (const [label, target] of items) {
+                dropdown.appendChild(makeProjectItem(label, mount + target));
+              }
+              details.appendChild(dropdown);
+              slot.appendChild(details);
+
+              document.addEventListener('click', function(event){
+                if (!details.hasAttribute('open')) return;
+                if (!details.contains(event.target)) details.removeAttribute('open');
+              });
+              document.addEventListener('keydown', function(event){
+                if (event.key === 'Escape') details.removeAttribute('open');
+              });
+            } else if (slug === 'resume-generator') {
+              slot.appendChild(makeNavLink('Resume Generator', mount + '/projects/resume-generator/'));
+            } else {
+              const labels = {
+                'resume-generator': 'Resume Generator',
+                'data-playground': 'Data Playground',
+                'site-chatbot': 'Site Design and RAG Chatbot Integration',
+                'admt-compliance': "The Regulatory Frontier: Colorado's ADMT Rules",
+                'fiber-scorecard': 'Copilot Studio and Microsoft Stack Demo'
+              };
+              const fallback = slug
+                .split('-')
+                .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+                .join(' ');
+              slot.appendChild(makeNavLink(labels[slug] || fallback, mount + '/projects/' + slug + '/'));
+            }
+          }
+        }
+
+        for (const id of ['observablehq-sidebar-toggle', 'observablehq-sidebar-backdrop', 'observablehq-sidebar']) {
+          const node = document.getElementById(id);
+          if (node) node.remove();
+        }
+      })();</script><script>(function(){
+        const pattern = /Failed to fetch dynamically imported module|Importing a module script failed|error loading dynamically imported module/;
+        const key = 'observable-module-reload:' + window.location.pathname;
+        const startedAt = Date.now();
+        let reloading = false;
+
+        function reloadedRecently(){
+          try {
+            const at = Number(window.sessionStorage.getItem(key));
+            return Boolean(at) && Date.now() - at < 60000;
+          } catch {
+            return true;
+          }
+        }
+
+        function offerReload(node){
+          node.dataset.moduleFailureHandled = 'true';
+          node.textContent = '';
+          node.style.cssText = 'display:flex;flex-wrap:wrap;align-items:center;gap:0.75rem;margin:0.5rem 0;padding:0.75rem;border:1px dashed var(--theme-foreground-faint);border-radius:8px;color:inherit;';
+          const text = document.createElement('span');
+          text.textContent = "Part of this page didn't load.";
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.textContent = 'Reload';
+          button.addEventListener('click', function(){ window.location.reload(); });
+          node.append(text, button);
+        }
+
+        function check(){
+          if (reloading) return;
+          const failed = Array.from(document.querySelectorAll('.observablehq--error'))
+            .filter(function(node){ return node.dataset.moduleFailureHandled !== 'true' && pattern.test(node.textContent || ''); });
+          if (failed.length === 0) return;
+          if (Date.now() - startedAt < 20000 && !reloadedRecently()) {
+            reloading = true;
+            try {
+              window.sessionStorage.setItem(key, String(Date.now()));
+            } catch {}
+            window.location.reload();
+            return;
+          }
+          failed.forEach(offerReload);
+        }
+
+        const observer = new MutationObserver(check);
+        observer.observe(document.documentElement, {childList: true, subtree: true});
+        // Module imports all happen while the page loads.
+        window.setTimeout(function(){ observer.disconnect(); check(); }, 60000);
+      })();</script>
+</header>
+<aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
+<nav>
+<div>Contents</div>
+<ol>
+<li class="observablehq-secondary-link"><a href="#introduction">Introduction</a></li>
+<li class="observablehq-secondary-link"><a href="#implementation">Implementation</a></li>
+<li class="observablehq-secondary-link"><a href="#the-demo">The demo</a></li>
+<li class="observablehq-secondary-link"><a href="#conclusion-and-loose-ends">Conclusion and Loose Ends</a></li>
+</ol>
+</nav>
+</aside>
+<main id="observablehq-main" class="observablehq">
+<h1 id="copilot-studio-and-microsoft-stack-demo" tabindex="-1"><a class="observablehq-header-anchor" href="#copilot-studio-and-microsoft-stack-demo">Copilot Studio and Microsoft Stack Demo</a></h1>
+<h2 id="table-of-contents" tabindex="-1"><a class="observablehq-header-anchor" href="#table-of-contents">Table of Contents</a></h2>
+<ol>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#implementation">Implementation</a></li>
+<li><a href="#the-demo">The demo</a></li>
+<li><a href="#conclusion-and-loose-ends">Conclusion and Loose Ends</a></li>
+</ol>
+<h2 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h2>
+<p>This project is a simple demonstration of a workflow created in Copilot Studio, Microsoft's low-code platform.  The system uses the natural language power of LLMs to compare simulated human notes from different stakeholders and reach conclusions about responsibilities for cost overruns.  Your author chose to build the demo around the fiber construction domain, and the <a href="https://github.com/jbmopper/ai-sdlc" target="_blank" rel="noopener noreferrer">"AI SDLC"</a> system was used to help guide domain research and create specifications for generating synthetic data, as well as the overall plan for the demonstration.</p>
+<p>In a nutshell, two source systems were simulated: a project management system with the project manager's build notes, and an ERP with change order justifications.  The change order justifications are supplied by simulated vendors who, per the setup, don't take responsibility when they cause an overrun, so the messy project manager notes have to be examined.  The business problem being solved in this demo is the time-consuming and tedious task of correlating the project manager notes with the change order justification and drawing the conclusion about fault.  The benefit of simulated data is that the "true" fault used to generate the text is known and the system's performance can be assessed against that ground truth.</p>
+<h2 id="implementation" tabindex="-1"><a class="observablehq-header-anchor" href="#implementation">Implementation</a></h2>
+<p>The project management system and ERP change order table are represented as two "messified" spreadsheets which are ingested into Microsoft Dataverse tables via generated Power Query routines within Power Apps dataflows.  A Copilot Studio workflow was created to pull the project manager notes and vendor change order justifications for the simulated jobs from these tables.  The workflow goes job by job, compares the change order justifications with the project manager's notes, and assigns blame.  This analysis produces a structured output which is saved to a third Dataverse table.</p>
+<p>A Power BI dashboard was created on this output data in order to visualize the results.  On invoices alone, the simulated vendor Kestrel Ridge Networks has the lowest overrun in the data (7.3%) and Redfern Underground the highest (16.2%).  Once fault is assigned, the two swap: about $951k of overrun is attributed to Kestrel's own fault, the most of any vendor, against about $141k for Redfern.</p>
+<p>In addition, a Copilot Studio agent was created with links to the Dataverse tables.  This agent provides a conversational interface to drill down into the data.</p>
+<p>Measured against the ground truth, the system assigned the correct fault party on 91.1% of items (834 of 915) and the correct cause code on 96.4%.  The system is effective at performing the analysis and answering questions about the data, showing how Copilot Studio and the Microsoft platform can be used to efficiently create AI-based workflows that make difficult business problems easily solvable.</p>
+<h2 id="the-demo" tabindex="-1"><a class="observablehq-header-anchor" href="#the-demo">The demo</a></h2>
+<p>This video is a walk-through of the system in action.  Captions are machine-generated from the narration.</p>
+<div class="observablehq observablehq--block"><!--:eaee6430:--></div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:b6e0c1da:--></div>
+<h2 id="conclusion-and-loose-ends" tabindex="-1"><a class="observablehq-header-anchor" href="#conclusion-and-loose-ends">Conclusion and Loose Ends</a></h2>
+<p>The main loose end is the slowness of the drill-down agent.  It was observed to perform repeated queries on the data, indicating it was cross-referencing rows internally.  The solution may be to add additional columns to the labels table in order to eliminate this extra processing.</p>
+<p>But overall, this demonstration shows that Copilot Studio is an able platform for building accessible tools that can solve complex business workflow problems.  The analysis simulated in this demonstration would be very time-consuming if done manually, and the accuracy figures above indicate the system, even after a single iteration, is capable of delivering output good enough to be useful.</p>
+<style>
+.demo-video {
+  margin: var(--bridge-space-4) 0;
+}
+.demo-video video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--theme-foreground-faintest);
+  border-radius: var(--bridge-radius);
+  background: var(--surface-2);
+}
+.demo-video figcaption {
+  margin-top: var(--bridge-space-2);
+  color: var(--theme-foreground-muted);
+  font-size: 0.88rem;
+}
+</style>
+</main>
+</div>
+</body>
+</html>

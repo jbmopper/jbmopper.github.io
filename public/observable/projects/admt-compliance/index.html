@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.4">
+<base href="/observable/projects/admt-compliance/">
+<title>The Regulatory Frontier: Colorado&#x27;s ADMT Rules | juliusm.com</title>
+
+<link rel="preload" as="style" href="../../_import/astro-bridge-theme.87b41aae.css">
+<link rel="stylesheet" type="text/css" href="../../_import/astro-bridge-theme.87b41aae.css">
+<script type="module">
+
+import "../../_observablehq/client.4ef4a7f4.js";
+
+</script>
+<script src="/observable/_import/jay-standalone.js" defer></script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="../../">juliusm.com</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link"><a href="../">Projects</a></li>
+    <li class="observablehq-link"><a href="../llm-fundamentals/">LLM Fundamentals</a></li>
+    <li class="observablehq-link"><a href="../resume-generator/">Resume Generator</a></li>
+    <li class="observablehq-link"><a href="../data-playground/">Data Playground</a></li>
+    <li class="observablehq-link"><a href="../site-chatbot/">Site Design and RAG Chatbot Integration</a></li>
+    <li class="observablehq-link observablehq-link-active"><a href="./">The Regulatory Frontier: Colorado&#x27;s ADMT Rules</a></li>
+    <li class="observablehq-link"><a href="../fiber-scorecard/">Copilot Studio and Microsoft Stack Demo</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<header id="observablehq-header">
+<div class="portfolio-header-row"><div class="portfolio-header-left"><a class="portfolio-brand" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/');">juliusm.com</a><span id="portfolio-current-project-slot" class="portfolio-breadcrumb"></span></div><div class="portfolio-header-actions"><nav class="portfolio-top-links"><a class="portfolio-nav-link" href="../../" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/#welcome');">Welcome</a><a class="portfolio-nav-link" href="../" onclick="event.preventDefault(); const mount = window.location.pathname.startsWith('/observable') ? '/observable' : ''; window.location.assign(window.location.origin + mount + '/projects/');">Projects</a><a class="portfolio-nav-link" href="/consulting/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/consulting/');">Consulting</a><a class="portfolio-nav-link" href="/resume/" onclick="event.preventDefault(); window.location.assign(window.location.origin + '/resume/');">Resume</a><a class="portfolio-nav-link" href="https://linkedin.com/in/jbmopper" target="_blank" rel="noreferrer">LinkedIn</a><a class="portfolio-nav-link" href="https://github.com/jbmopper" target="_blank" rel="noreferrer">GitHub</a></nav><button class="portfolio-theme-control" type="button" data-theme-control="" data-theme-preference="system"><span class="portfolio-theme-control__icon" aria-hidden="true"></span><span data-theme-label="">System</span></button></div></div><script>(function(){
+        const storageKey = 'juliusm-theme';
+        const modes = ['system', 'dark', 'light'];
+        const labels = {system: 'System', dark: 'Dark', light: 'Light'};
+        const metaColors = {dark: '#0b1017', light: '#f5f7f3'};
+        const media = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
+        const mount = window.location.pathname.startsWith('/observable') ? '/observable' : '';
+        const path = window.location.pathname.replace(/^\/observable(?=\/|$)/,'').replace(/\/index\.html$/,'/');
+        const normalized = path.endsWith('/') ? path : path + '/';
+        const slot = document.getElementById('portfolio-current-project-slot');
+
+        function readThemePreference(){
+          try {
+            const stored = window.localStorage.getItem(storageKey);
+            if (modes.includes(stored)) return stored;
+          } catch {
+            return 'system';
+          }
+          return 'system';
+        }
+
+        function resolveThemePreference(preference){
+          if (preference === 'light' || (preference === 'system' && media && media.matches)) return 'light';
+          return 'dark';
+        }
+
+        function nextThemePreference(preference){
+          return modes[(modes.indexOf(preference) + 1) % modes.length] || 'system';
+        }
+
+        function updateThemeControls(preference, resolved){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            const next = nextThemePreference(preference);
+            control.dataset.themePreference = preference;
+            control.dataset.themeResolved = resolved;
+            control.setAttribute('aria-label', 'Theme: ' + labels[preference] + '. Switch to ' + labels[next] + '.');
+            control.setAttribute('title', 'Theme: ' + labels[preference]);
+            const label = control.querySelector('[data-theme-label]');
+            if (label) label.textContent = labels[preference];
+          });
+        }
+
+        function applyThemePreference(preference, persist){
+          const normalizedPreference = modes.includes(preference) ? preference : 'system';
+          const resolved = resolveThemePreference(normalizedPreference);
+          document.documentElement.dataset.theme = normalizedPreference;
+          document.documentElement.dataset.themeResolved = resolved;
+          const meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', metaColors[resolved]);
+          if (persist) {
+            try {
+              window.localStorage.setItem(storageKey, normalizedPreference);
+            } catch {}
+          }
+          updateThemeControls(normalizedPreference, resolved);
+        }
+
+        function bindThemeControls(){
+          document.querySelectorAll('[data-theme-control]').forEach(function(control){
+            if (control.dataset.themeBound === 'true') return;
+            control.dataset.themeBound = 'true';
+            control.addEventListener('click', function(){
+              applyThemePreference(nextThemePreference(readThemePreference()), true);
+            });
+          });
+          applyThemePreference(readThemePreference(), false);
+        }
+
+        applyThemePreference(readThemePreference(), false);
+        bindThemeControls();
+        if (media) media.addEventListener('change', function(){
+          if (readThemePreference() === 'system') applyThemePreference('system', false);
+        });
+        window.addEventListener('storage', function(event){
+          if (event.key === storageKey) applyThemePreference(readThemePreference(), false);
+        });
+
+        function navigate(target){
+          window.location.assign(window.location.origin + target);
+        }
+
+        function makeNavLink(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-nav-link';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        function makeBreadcrumbSeparator(){
+          const sep = document.createElement('span');
+          sep.className = 'portfolio-breadcrumb-separator';
+          sep.setAttribute('aria-hidden', 'true');
+          sep.textContent = '›';
+          return sep;
+        }
+
+        function makeProjectItem(label, target){
+          const link = document.createElement('a');
+          link.className = 'portfolio-project-item';
+          link.href = target;
+          link.textContent = label;
+          link.addEventListener('click', function(event){
+            event.preventDefault();
+            navigate(target);
+          });
+          return link;
+        }
+
+        if (slot) {
+          const projectMatch = normalized.match(/^\/projects\/([^/]+)\//);
+          if (projectMatch) {
+            const slug = projectMatch[1];
+            slot.appendChild(makeBreadcrumbSeparator());
+            if (slug === 'llm-fundamentals') {
+              const details = document.createElement('details');
+              details.id = 'portfolio-current-project-menu';
+              details.className = 'portfolio-project-menu';
+
+              const summary = document.createElement('summary');
+              summary.className = 'portfolio-nav-link portfolio-project-toggle';
+              summary.textContent = 'LLM Fundamentals';
+              details.appendChild(summary);
+
+              const dropdown = document.createElement('div');
+              dropdown.className = 'portfolio-project-dropdown';
+              const items = [
+                ['Introduction', '/projects/llm-fundamentals/'],
+                ['Architecture and Expected Performance Analysis', '/projects/llm-fundamentals/perf-expected/'],
+                ['Benchmarks and Empirical Performance Analysis', '/projects/llm-fundamentals/perf-empirical/'],
+                ['Learning Parameter Sweeps', '/projects/llm-fundamentals/optimizer-sweep/'],
+                ['Architectural Variations (Ablations)', '/projects/llm-fundamentals/ablations/']
+              ];
+              for (const [label, target] of items) {
+                dropdown.appendChild(makeProjectItem(label, mount + target));
+              }
+              details.appendChild(dropdown);
+              slot.appendChild(details);
+
+              document.addEventListener('click', function(event){
+                if (!details.hasAttribute('open')) return;
+                if (!details.contains(event.target)) details.removeAttribute('open');
+              });
+              document.addEventListener('keydown', function(event){
+                if (event.key === 'Escape') details.removeAttribute('open');
+              });
+            } else if (slug === 'resume-generator') {
+              slot.appendChild(makeNavLink('Resume Generator', mount + '/projects/resume-generator/'));
+            } else {
+              const labels = {
+                'resume-generator': 'Resume Generator',
+                'data-playground': 'Data Playground',
+                'site-chatbot': 'Site Design and RAG Chatbot Integration',
+                'admt-compliance': "The Regulatory Frontier: Colorado's ADMT Rules",
+                'fiber-scorecard': 'Copilot Studio and Microsoft Stack Demo'
+              };
+              const fallback = slug
+                .split('-')
+                .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+                .join(' ');
+              slot.appendChild(makeNavLink(labels[slug] || fallback, mount + '/projects/' + slug + '/'));
+            }
+          }
+        }
+
+        for (const id of ['observablehq-sidebar-toggle', 'observablehq-sidebar-backdrop', 'observablehq-sidebar']) {
+          const node = document.getElementById(id);
+          if (node) node.remove();
+        }
+      })();</script><script>(function(){
+        const pattern = /Failed to fetch dynamically imported module|Importing a module script failed|error loading dynamically imported module/;
+        const key = 'observable-module-reload:' + window.location.pathname;
+        const startedAt = Date.now();
+        let reloading = false;
+
+        function reloadedRecently(){
+          try {
+            const at = Number(window.sessionStorage.getItem(key));
+            return Boolean(at) && Date.now() - at < 60000;
+          } catch {
+            return true;
+          }
+        }
+
+        function offerReload(node){
+          node.dataset.moduleFailureHandled = 'true';
+          node.textContent = '';
+          node.style.cssText = 'display:flex;flex-wrap:wrap;align-items:center;gap:0.75rem;margin:0.5rem 0;padding:0.75rem;border:1px dashed var(--theme-foreground-faint);border-radius:8px;color:inherit;';
+          const text = document.createElement('span');
+          text.textContent = "Part of this page didn't load.";
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.textContent = 'Reload';
+          button.addEventListener('click', function(){ window.location.reload(); });
+          node.append(text, button);
+        }
+
+        function check(){
+          if (reloading) return;
+          const failed = Array.from(document.querySelectorAll('.observablehq--error'))
+            .filter(function(node){ return node.dataset.moduleFailureHandled !== 'true' && pattern.test(node.textContent || ''); });
+          if (failed.length === 0) return;
+          if (Date.now() - startedAt < 20000 && !reloadedRecently()) {
+            reloading = true;
+            try {
+              window.sessionStorage.setItem(key, String(Date.now()));
+            } catch {}
+            window.location.reload();
+            return;
+          }
+          failed.forEach(offerReload);
+        }
+
+        const observer = new MutationObserver(check);
+        observer.observe(document.documentElement, {childList: true, subtree: true});
+        // Module imports all happen while the page loads.
+        window.setTimeout(function(){ observer.disconnect(); check(); }, 60000);
+      })();</script>
+</header>
+<aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
+<nav>
+<div>Contents</div>
+<ol>
+<li class="observablehq-secondary-link"><a href="#table-of-contents">Table of Contents</a></li>
+<li class="observablehq-secondary-link"><a href="#the-statute-and-the-rules">The statute and the rules</a></li>
+<li class="observablehq-secondary-link"><a href="#example-domains-and-scope">Example domains and scope</a></li>
+<li class="observablehq-secondary-link"><a href="#the-comment">The comment</a></li>
+<li class="observablehq-secondary-link"><a href="#conclusion">Conclusion</a></li>
+</ol>
+</nav>
+</aside>
+<main id="observablehq-main" class="observablehq">
+<h1 id="the-regulatory-frontier-colorados-admt-rules" tabindex="-1"><a class="observablehq-header-anchor" href="#the-regulatory-frontier-colorados-admt-rules">The Regulatory Frontier: Colorado's ADMT Rules</a></h1>
+<p>Colorado is a frontier state in AI regulation, in a process that has been marked by conflict and confusion.  The state legislature passed a broad AI regulation law in 2024 which quickly drew significant pushback.  A superseding law was passed in 2026 with a significantly narrower scope.  Nonetheless, the law is substantial, targeting multiple domains where AI tools may be used for "Automated Decision-Making", such as ranking job candidates, selecting medical patients for financial assistance, or setting deposit amounts for renters.  Coverage is uneven, with substantial carve-outs for insurance and healthcare, for example.</p>
+<p>These automated decision-making technology rules (ADMT rules) are being formulated over the latter half of 2026, with enforcement through the Attorney General's office having a statutory start date of January 2027.  Ongoing litigation has resulted in a standstill order on the law, pushing the AG's ability to enforce out, likely by a few months, though the ADMT rules will technically apply during that window.</p>
+<p>Since I have deep expertise in consumer data and AI systems, and a public-minded orientation, I have reviewed the laws and proposed rules, and submitted my suggestions to the Colorado Attorney General in writing and at the October 26, 2026 public comment session.  Below is a discussion of the law and proposed rules, examples of domains and scope of the law and rules, and the comments I provided from my perspective as someone who has to implement the rules.</p>
+<p>These comments focus on balancing the desire to enable businesses with these powerful new technologies and the public concern to make implementations sensitive to the experience of individuals ("consumers") touched by them.  While most comments filed by public interest groups and industry focus on expanding or limiting the scope of implementation, my comments focus on thinking about the rules as an integrated system that synthesizes and harmonizes the needs of all stakeholders.</p>
+<p>For reference, the submitted comment may be found <a href="https://comments.coag.gov/s/comment/a0kcs000020oe2rAAA/comment-0000000800" target="_blank" rel="noopener noreferrer">here</a>.</p>
+<h2 id="table-of-contents" tabindex="-1"><a class="observablehq-header-anchor" href="#table-of-contents">Table of Contents</a></h2>
+<ol>
+<li><a href="#the-statute-and-the-rules">The statute and the rules</a> (generated)
+<ol>
+<li>Statutory requirements</li>
+<li>Draft rules (Based on October 6th draft)</li>
+</ol>
+</li>
+<li><a href="#example-domains-and-scope">Example domains and scope</a> (generated)</li>
+<li><a href="#the-comment">The comment</a>
+<ol>
+<li>Introduction</li>
+<li>Comment text</li>
+</ol>
+</li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ol>
+<h2 id="the-statute-and-the-rules" tabindex="-1"><a class="observablehq-header-anchor" href="#the-statute-and-the-rules">The statute and the rules</a></h2>
+<p><em>This section was generated with Claude from the session law (SB 26-189) and the October 6, 2026 interim draft rules, and checked against both.  Section numbers are to C.R.S. Title 6, Article 1; rule numbers are to the draft 4 CCR 904-6.</em></p>
+<h3 id="statutory-requirements" tabindex="-1"><a class="observablehq-header-anchor" href="#statutory-requirements">Statutory requirements</a></h3>
+<p>SB 26-189, approved May 14, 2026, repeals the 2024 act and re-enacts Part 17 as §§ 6-1-1701 to -1709.  It applies to consequential decisions made on or after January 1, 2027.</p>
+<p><strong>What is covered.</strong>  The statute is built from a chain of definitions, each narrowing the last (§ 1701):</p>
+<ul>
+<li><strong>ADMT</strong> is technology that processes personal data and computes an output (a prediction, recommendation, classification, ranking, score, or other information) used to make, guide, or assist a decision about an individual.  Ordinary infrastructure (databases, spreadsheets without machine learning, spam filters and the like) is excluded, as is a tool used solely to summarize, organize, translate, draft, route, or present information for human review.  A general-purpose chatbot is excluded only if nobody contracts, markets, configures, or intends it for consequential decisions <em>and</em> its acceptable use policy forbids that use.</li>
+<li>A <strong>consequential decision</strong> is one about a consumer's access to, eligibility for, selection for, or compensation for a <strong>covered domain</strong>: education, employment, the lease or purchase of residential real estate in Colorado, financial or lending services, insurance, health-care services, and essential government services and public benefits.  Decisions about differentiated prices or terms count when they materially limit access.  Routine scheduling, triage and workflow, advertising and search, fraud prevention, anti-money-laundering, sanctions screening, and cybersecurity are excluded.</li>
+<li><strong>Covered ADMT</strong> is ADMT used to <strong>materially influence</strong> a consequential decision, meaning its output is a non-de minimis factor in the decision and affects the outcome.  Incidental, trivial, or clerical uses do not count.</li>
+<li>An <strong>adverse outcome</strong> is a decision that denies, terminates, revokes, or materially reduces access to an opportunity or service, or imposes materially less favorable terms than similarly situated consumers receive.</li>
+<li>A <strong>consumer</strong> is a Colorado Privacy Act consumer (a Colorado resident acting in an individual or household context), plus employees, Colorado-resident job applicants, and anyone evaluated for an opportunity in Colorado by a business there.</li>
+<li>The <strong>deployer</strong> is the business doing business in Colorado that uses covered ADMT; the <strong>developer</strong> is the one that builds, sells, or licenses it, builds a component marketed for it, or modifies an ADMT into one.  Purely internal and research uses are excluded from "developer."</li>
+<li><strong>Meaningful human review</strong> is review by an individual the deployer designates, with authority to approve, modify, or override the decision, who considers relevant available primary evidence, is trained for the review, does not default to the system output, and has enough information to understand the output's intended use, limitations, input categories, and principal factors (trade secrets excepted).</li>
+</ul>
+<p><strong>Who owes what.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Party</th>
+<th>Duty</th>
+<th>Section</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Developer</td>
+<td>Give each deployer: intended and known harmful uses; categories of training data; known limitations and risks; instructions for use, monitoring, and human review; and whatever the deployer needs to make its own disclosures.  Tell the deployer if anything is withheld.  Applies only where the ADMT was marketed, configured, contracted, or licensed for consequential decisions</td>
+<td>§ 1702(1), (3)</td>
+</tr>
+<tr>
+<td>Developer</td>
+<td>Notify deployers of material updates, substantial modifications, and changes to intended use, limitations, or mitigations, within a reasonable time (public release notes suffice with direct notice)</td>
+<td>§ 1702(2)</td>
+</tr>
+<tr>
+<td>Developer</td>
+<td>Keep compliance records, including version identifiers and changelogs, for three years</td>
+<td>§ 1702(4)</td>
+</tr>
+<tr>
+<td>Deployer</td>
+<td>Keep records reasonably necessary to show compliance for three years after each decision</td>
+<td>§ 1703</td>
+</tr>
+<tr>
+<td>Deployer</td>
+<td>Before use: a clear and conspicuous notice that covered ADMT is or will be used, and how to get more information.  A prominent public notice near the point of interaction satisfies this</td>
+<td>§ 1704(1)-(2)</td>
+</tr>
+<tr>
+<td>Deployer</td>
+<td>Within 30 days of an adverse outcome: a plain-language description of the decision and the ADMT's role; a simple process to request more information (the ADMT's name, version, and developer, and the types, categories, and sources of personal data, to the extent the developer supplied them); and an explanation of the § 1705 rights and how to use them</td>
+<td>§ 1704(3)</td>
+</tr>
+<tr>
+<td>Deployer</td>
+<td>Notify the consumer when trade secrets or legally protected information are withheld; make all notices accessible to consumers with disabilities and limited English proficiency</td>
+<td>§ 1704(5), (8)</td>
+</tr>
+<tr>
+<td>Deployer</td>
+<td>On request after an adverse outcome: instructions for requesting personal data and correcting "factually incorrect or materially inaccurate" personal data, consistent with the Colorado Privacy Act (§ 1306); and "an opportunity for meaningful human review and reconsideration of the consequential decision, to the extent commercially reasonable"</td>
+<td>§ 1705(1)(a)</td>
+</tr>
+</tbody>
+</table>
+<p>Three qualifications on the consumer rights matter later.  The correction right reaches employment-context consumers and employment, utility, and public-entity data that the Privacy Act otherwise excludes (§ 1705(1)(b)), but the access right does not.  Opinions, predictions, scores, and protected evaluations need not be corrected (§ 1705(1)(c)).  And "reconsideration" is not defined.</p>
+<p><strong>Other laws.</strong>  A creditor's ECOA or FCRA adverse action notice can serve as the disclosure if it also covers the statute's content (§ 1704(6)); FERPA-covered schools can use their existing notice and records-amendment channels (§§ 1704(9), 1705(2)).  Insurers already subject to § 10-3-1104.9 are deemed compliant for the practice of insurance.  HIPAA covered entities and their business associates are exempt except for employment decisions, though a health-care provider gets the exemption only if it operates from a location within Colorado.  Exempt entities still owe patients a general notice that they use advanced technologies, and a separate, lighter disclosure when covered ADMT determines eligibility for financial assistance.  FDA-regulated devices are exempt, and nothing requires disclosures that would violate Gramm-Leach-Bliley (§ 1708).</p>
+<p><strong>Enforcement.</strong>  The Attorney General enforces the Act exclusively, as a deceptive trade practice under the Colorado Consumer Protection Act, and there is no private right of action (§§ 1706, 1709).  Until 2030, the AG must give a notice of violation and 60 days to cure where it judges a cure possible, unless the violation was knowing or repeated.  The AG must adopt rules on the adverse-outcome disclosure and the consumer rights by January 1, 2027 (§§ 1704(4), 1705(3)), and may adopt rules on "materially influence," including presumptions (§ 1706(5)(b)).</p>
+<p><strong>Liability.</strong>  In discrimination claims under state law arising from decisions covered ADMT materially influenced, fault is allocated between deployers and developers by relative fault, with no new joint and several liability; a developer is liable only for uses it intended or contracted for, and contract terms indemnifying a party for its own discriminatory acts are void (§ 1707).</p>
+<h3 id="draft-rules-october-6-2026-interim-draft" tabindex="-1"><a class="observablehq-header-anchor" href="#draft-rules-october-6-2026-interim-draft">Draft rules (October 6, 2026 interim draft)</a></h3>
+<p>The draft, 4 CCR 904-6, also implements the separate Chatbot Safety Act in Rules 9 to 14; those are not covered here.  The ADMT portion runs from Rule 2 to Rule 8.</p>
+<p><strong>Definitions and communications (Rules 2-3).</strong>  A <em>De Minimis Factor</em> is one that is not a substantial factor in the decision, judged by considerations such as whether the decision-maker reviewed the output, reviewed other evidence independently, had the expertise and authority to decide without it, was directed by policy or training to treat the output as authoritative, or could have reviewed the same data in the time available.  <em>Deploy</em> includes running covered ADMT through a third party.  All consumer communications must be plain-language, accessible (WCAG 2.2 for online content), in the languages the business normally uses, readable on mobile, and not misleading.</p>
+<p><strong>Multiparty arrangements (Rule 4).</strong>  A developer that builds on another developer's covered ADMT must pass the upstream documentation down along with its own, and may rely on upstream information absent actual knowledge it is wrong.  Where a third party runs covered ADMT for a deployer (a staffing firm narrowing an applicant pool, for example), the deployer keeps every deployer obligation but may contract for the third party's help.</p>
+<p><strong>Developer documentation (Rule 5).</strong>  Developer disclosures must give deployers accurate expectations of limitations and risks, describe intended and inappropriate decision types, explain how to monitor the system and work out the principal factors behind a specific output, and say whether training data includes sensitive or biometric data.  Information may be withheld only as a trade secret or under other legal protection, with the authority cited and a summary given in its place.</p>
+<p><strong>Material influence (Rule 6).</strong>  An output is <em>presumed</em> to materially influence a decision if it constrains an option set, sets a threshold, or produces a rank, score, classification, recommendation, prediction, or other inference that pertains to the person, is reviewed by the decision-maker (or screens what the decision-maker sees), and is consistent with the outcome.  The deployer can rebut the presumption with evidence that the output was de minimis: it was not consulted; a published hard cutoff was applied consistently; the decision-maker independently reviewed substantial other information and had the authority and expertise to decide on it; or the decision went against the output.  Rule 6.2 works through examples in education, employment, housing, and lending.</p>
+<p><strong>The adverse-outcome disclosure (Rule 7).</strong></p>
+<ul>
+<li><strong>Form and delivery (7.2-7.3).</strong>  In writing, through every channel the deployer normally uses with the consumer, in at least 12-point type on paper.</li>
+<li><strong>Content (7.4).</strong>  The disclosure says what was decided ("Credit Union ABS has denied your loan application") and, for terminations or reductions, the effective date.  It describes the ADMT's role <em>specifically</em>: "an automated review of your personal data" is not enough, while "an automated review of credit report information and employment verification information" is.  It includes the role of any human reviewers and other systems, says so if a factor was an automatic denial, and says so if the outcome turned on insufficient or incomplete information.  If the developer has not supplied the needed information, the deployer gives as much as it has.</li>
+<li><strong>Requesting more information (7.4(C), 7.6).</strong>  At least one method must be an online link, available at any hour.  The deployer answers within 15 days with the ADMT's name, version, and developer, and the types, categories, and sources of personal data, including any profiles or inferences the ADMT generated.  Sources must be named (specific data brokers, courts, social media companies, schools, employers), including original sources and intermediaries, when known.  The deployer is presumed to know the sources of data it receives directly, data its vendor uses on its behalf, and sources the developer names.</li>
+<li><strong>Explaining the rights (7.4(D)).</strong>  The disclosure explains that the consumer may request instructions to obtain and correct their data, and an opportunity for meaningful human review and reconsideration "to the extent Commercially Reasonable," through one unified method.</li>
+<li><strong>Other laws (7.7).</strong>  An ECOA or FCRA notice satisfies the disclosure if it, or a supplement sent with it, carries the § 1704(3)(b)-(c) content within 30 days.  FERPA channels suffice for schools.</li>
+<li><strong>Other provisions (7.8).</strong>  No retaliation against consumers who exercise their rights.  Deployers may add context, such as the distribution of outputs across consumers.</li>
+</ul>
+<p><strong>Consumer rights (Rule 8).</strong></p>
+<ul>
+<li><strong>The rights webpage (8.2).</strong>  The disclosure links to a page offering (1) instructions for requesting and correcting personal data and (2) reconsideration, or meaningful human review and reconsideration.  The request method must use the channels the consumer already uses, be monitored by someone able to act on it, require minimal steps, and not require a new account.</li>
+<li><strong>Access (8.3).</strong>  For data the deployer holds, it provides "all the specific pieces of Personal Data" within 45 days, expressly including the final rank, score, classification, recommendation, or inference and all inputs about the person, in intelligible form.  For data held elsewhere, it lists the third parties, the categories each holds, and how to request the data from them under § 1306, within 15 days.</li>
+<li><strong>Correction (8.4).</strong>  For data the deployer holds, it corrects within 45 days and tells the consumer.  It may ask for documentation (and must explain why), may use that documentation only to assess accuracy, and may decline if it reasonably determines the data is more likely than not accurate, documenting why.  Where neither side has documentation and the data came from a third party, it may refer the consumer to that source.  For data held elsewhere, the same 15-day list of third parties applies.  Opinions, predictions, scores, and protected evaluations need not be corrected.</li>
+<li><strong>Authentication and responses (8.5-8.6).</strong>  Authentication must be commercially reasonable, free, and not unduly burdensome, and is not required for a request for information about the ADMT.  Responses on access and correction are due within 45 days; a denial must state its grounds and explain how to appeal under § 1306(3).</li>
+<li><strong>Reconsideration (8.7(A)-(B)).</strong>  The consumer can explain the request, identify contested information, and submit evidence.  After a correction, the consumer may request reconsideration on the corrected data, and reconsideration "means that the decision-making process must be re-performed using the Consumer's correct Personal Data, if Commercially Reasonable."  If the deployer does not re-run the decision, it must say so and why.</li>
+<li><strong>Reviewer standards (8.7(C)).</strong>  The reviewer may be internal or an insulated external contractor, must have subject-matter understanding proportionate to the stakes and training on accuracy, objectivity, and the ADMT's inputs and factors, and must be shielded from management steering and retaliation.  "ADMT may not assist in the Meaningful Human Review," though non-ADMT tools that only summarize or organize may.</li>
+<li><strong>Types of review (8.7(D)).</strong>  A review is meaningful if it could change the outcome.  Where the ADMT was the wrong tool or lacked important information, review means considering primary evidence and the consumer's evidence.  Where it malfunctioned, review can mean fixing the configuration and re-running the decision, or reviewing the evidence directly.  A full reversal may indicate a meaningful review took place.</li>
+<li><strong>Commercial reasonableness (8.7(E)).</strong>  Weighed together: the type of review, the magnitude of harm (including deprivation of food, shelter, or medical care), reversibility, the value of reviewing primary evidence, the deployer's size and capacity, and the marginal cost, feasibility, and reviewer availability.  The deployer bears the burden of showing, with specific evidence, that review is <em>not</em> commercially reasonable.  The worked examples are a lease non-renewal (once with inaccurate violation records, once with accurate data and a misconfigured model) and a store credit card denial.</li>
+<li><strong>Response, timing, and records (8.7(F)-(H)).</strong>  The response states the decision, the type of review, the factors considered, and the specific reasons (not the ADMT's general logic), or why review was not commercially reasonable.  Receipt is confirmed within 10 days and the review completed within 45.  The deployer keeps a record of the reviewer, timestamps, evidence, access to information about the ADMT, the result, and a written justification.</li>
+</ul>
+<p><strong>What changed from August.</strong>  The August 11, 2026 draft would have stayed an adverse outcome, where possible, pending correction or human review, and presumed human review commercially reasonable for a "severe and irreversible denial of a basic human need."  The October 6 draft removed both.</p>
+<p><strong>The clock, end to end.</strong>  Taken together, the statute and draft rules set the following timeline for a consumer contesting a decision.</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Deadline</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Adverse-outcome disclosure</td>
+<td>30 days after the decision</td>
+<td>§ 1704(3); Rule 7.4(A)</td>
+</tr>
+<tr>
+<td>Information about the ADMT and its data sources</td>
+<td>15 days after the request</td>
+<td>Rule 7.6(A)(1)</td>
+</tr>
+<tr>
+<td>List of third parties holding the data, with instructions</td>
+<td>15 days after the request</td>
+<td>Rules 8.3(C), 8.4(C)</td>
+</tr>
+<tr>
+<td>Access to, or correction of, data the deployer holds</td>
+<td>45 days after the request</td>
+<td>Rules 8.3(B), 8.4(B), 8.6(A)</td>
+</tr>
+<tr>
+<td>Appeal of a refused access or correction request</td>
+<td>Under § 1306(3)</td>
+<td>Rule 8.6(E)</td>
+</tr>
+<tr>
+<td>Human review: acknowledgment, then completion</td>
+<td>10 days, then 45 days after the request</td>
+<td>Rule 8.7(G)</td>
+</tr>
+<tr>
+<td>Correction through a third party</td>
+<td>Under § 1306 or other applicable law</td>
+<td>Rules 8.3(C), 8.4(C)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="example-domains-and-scope" tabindex="-1"><a class="observablehq-header-anchor" href="#example-domains-and-scope">Example domains and scope</a></h2>
+<p><em>This section was generated with Claude from the statute, the October 6 draft rules and the Attorney General's cover letter for that draft, and from earlier research notes on systems in use.  Rule examples are cited by number.  Descriptions of systems are of types in common use, not of particular products, and readings of the text that the statute and rules do not state outright are marked as such.</em></p>
+<p>The seven covered domains read broadly, but each is narrowed in practice by the consequential-decision exclusions (§ 1701(3)(b)), by the carve-outs for other regulated sectors (§ 1708), and by the Attorney General's position that the Act does not apply to governments.  The result is uneven: employment and housing are covered almost in full, while insurance and health care are mostly out.</p>
+<table>
+<thead>
+<tr>
+<th>Domain</th>
+<th>What remains covered</th>
+<th>Typical systems</th>
+<th>Examples in the draft rules</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Employment</td>
+<td>Hiring, promotion, discipline, and termination by private employers and staffing firms</td>
+<td>Applicant grading and matching, ranked shortlists, online assessments, chat-based knock-out screening, productivity monitoring</td>
+<td>Promotion scoring and ranking (6.2(C)); staffing-firm shortlist (4.3(B)); interview selection with a background check (7.5(E)(1)); promotion denial (7.5(E)(2))</td>
+</tr>
+<tr>
+<td>Housing</td>
+<td>Tenant screening, unit assignment, security deposits, lease renewals, purchase assistance</td>
+<td>Screening scores and accept/decline recommendations, applicant summaries, leasing chatbots</td>
+<td>"Positive/negative" summaries vs. a sorted list (6.2(D)); deposit pricing (7.5(C)(1)); closing-cost grants (7.5(C)(2)); lease non-renewal (8.7(E)(4)-(5))</td>
+</tr>
+<tr>
+<td>Lending and financial services</td>
+<td>Credit, deposit and checking accounts, installment plans, collections</td>
+<td>Underwriting scores, automated underwriting, deposit-account screening, cash-flow underwriting, collections prioritization</td>
+<td>Risk-score cutoff (6.2(E)); collections referral (7.5(D)(1)); loan denial with an ECOA notice (7.5(D)(2)); store card denial (8.7(E)(6))</td>
+</tr>
+<tr>
+<td>Insurance</td>
+<td>An insurer's own hiring; non-insurers touching insurance, such as self-insured employers</td>
+<td>Claims triage and estimating, often run by administrators</td>
+<td>None in the October draft</td>
+</tr>
+<tr>
+<td>Health care</td>
+<td>Financial-assistance eligibility at HIPAA entities; access decisions by non-HIPAA actors</td>
+<td>Charity-care screening, assisted-living care-level assessments, telehealth intake questionnaires</td>
+<td>The diagnostic-lab example, which concludes no one has duties (4.3(C)(1))</td>
+</tr>
+<tr>
+<td>Education</td>
+<td>Private schools and colleges; public institutions only if the AG's position does not hold</td>
+<td>Admissions scoring, automated essay scoring, financial-aid modeling, AI-writing detection</td>
+<td>Advanced-program admission (6.2(B)); scholarship award (7.5(B)(1)); admission using social-media inferences (7.5(B)(2))</td>
+</tr>
+<tr>
+<td>Government services and benefits</td>
+<td>Private administrators of public benefits</td>
+<td>Eligibility engines, fraud holds, benefit-assistance programs run by utilities or nonprofits</td>
+<td>Utility-payment subsidy (7.4(B)(1)); closing-cost grants (7.5(C)(2))</td>
+</tr>
+</tbody>
+</table>
+<h3 id="employment" tabindex="-1"><a class="observablehq-header-anchor" href="#employment">Employment</a></h3>
+<p>Employment is the largest covered area.  The domain reaches any opportunity that "creates or may create an employer-employee relationship," and "consumer" expressly includes employees and Colorado-resident applicants, so the Act covers not only screening but promotion, discipline, and termination.  A typical hiring stack has several automated layers, often from different vendors: the applicant tracking system where knock-out questions live, a matching layer that grades or ranks each applicant against the job, assessments sent after a first screen, and a conversational front end for high-volume hourly hiring.  The employer configures each layer and makes the decision, so it is the deployer, including when a staffing firm runs the tools (Rule 4.3(B)).</p>
+<p>The draft's examples show where the presumption of material influence lands.  A promotion score seen by the hiring manager is presumed material even when the manager also reviewed the underlying records and interviewed everyone; the manager can rebut it only with evidence, such as interview notes, that the score was de minimis (Rule 6.2(C)(1)-(2)).  An ordering from "strongest" to "weakest" with no number attached is treated the same way, because ranking is a "non-objective conclusion" about the applicant (Rule 6.2(C)(3)).</p>
+<p>Outside hiring, productivity systems that compute rates and idle time and trigger escalating discipline are a plausible covered case: termination "materially reduces" an opportunity, and a rate flag that triggers it fits the presumption.  For a worker, the 30-day disclosure and the correction right may be the first state-law route to seeing the underlying data (an inference from the text).</p>
+<h3 id="housing" tabindex="-1"><a class="observablehq-header-anchor" href="#housing">Housing</a></h3>
+<p>Rental screening usually has two layers.  A consumer reporting agency assembles credit, eviction-court, and criminal records and often computes a score; the landlord sets acceptance criteria and makes the decision.  Many products merge the two into an automatic accept, conditional, or decline recommendation delivered inside the landlord's property-management software.  The screening company is the developer, the landlord the deployer, and that recommendation is the kind of output Rule 6.1 presumes to be material.</p>
+<p>The draft's matched pair draws the line on summaries (Rule 6.2(D)).  A tool that sorts applicants by unit size requested and application date is not ADMT at all.  A tool that "summarizes" applicant data into positive and negative categories is covered, because labeling a fact as negative is an opinion about the applicant.  The deposit example (Rule 7.5(C)(1)) shows a decision that needs its own Colorado disclosure: the deposit was set from information the applicant supplied, so no FCRA adverse action notice applies to carry it.  The lease non-renewal examples in Rule 8.7(E) are where the draft works through human review, and are the examples the comment below builds on.</p>
+<h3 id="lending-and-financial-services" tabindex="-1"><a class="observablehq-header-anchor" href="#lending-and-financial-services">Lending and financial services</a></h3>
+<p>The draft defines the domain as "the extension of credit or a loan, transmitting or exchanging funds, the provision of deposit or checking accounts, check cashing, or installment payment plans" (Rule 2.2), and the AG's cover letter says that definition is still open.  Two features shape the domain more than any other.  A creditor's ECOA adverse action notice satisfies the Colorado disclosure if it carries the Colorado content (§ 1704(6); Rule 7.7), so most credit denials will need one letter rather than two.  And the fraud, identity-verification, anti-money-laundering, and sanctions exclusions remove much of the automation in a bank, which matters because the line between a fraud hold and an account denial is not always clear.</p>
+<p>The collections example (Rule 7.5(D)(1)) is where a standalone disclosure is required: a bank's model refers a delinquent card to collections, no ECOA notice applies, and the referral is treated as an adverse outcome.  Cash-flow underwriting, which scores applicants from bank-account transaction data, raises the correction question most sharply, because whether the data provider is a consumer reporting agency decides whether FCRA dispute rights apply or the consumer can correct only the lender's copy.</p>
+<h3 id="insurance" tabindex="-1"><a class="observablehq-header-anchor" href="#insurance">Insurance</a></h3>
+<p>Insurance is mostly carved out.  Insurers subject to the Division of Insurance's regime under § 10-3-1104.9 are deemed compliant "in the practice of insurance" (§ 1708(1)), and under Rule 4.3(C) a vendor or claims administrator running ADMT for an exempt insurer has no deployer duties of its own.  What remains is an insurer's own hiring (§ 1708(2)), and decisions by non-insurers that touch insurance, chiefly self-insured employers whose claims are run by third-party administrators.  The August draft had an example of an administrator denying a home-insurance claim by ADMT; the October draft removed it along with every other insurance example.  Whether an insurer is "subject to" § 10-3-1104.9 for a line of business the Division has not yet regulated is a question the text leaves open.</p>
+<h3 id="health-care" tabindex="-1"><a class="observablehq-header-anchor" href="#health-care">Health care</a></h3>
+<p>HIPAA covered entities and their business associates are exempt except for employment decisions, and FDA-regulated devices are exempt (§ 1708(3)-(4)), so most clinical AI is out.  Two limits apply.  A health-care provider is exempt only if it is "operating from a location within Colorado" (§ 1708(3)(b)), so a telehealth provider serving Colorado patients from another state does not get the exemption.  And an exempt entity must still give patients a general notice of its use of advanced technologies, including covered ADMT, which may be folded into its other patient-rights notices (§ 1708(3)(c)).  The draft's diagnostic-lab example makes the point: an AI-assisted test leads a HIPAA-covered physician to withhold a treatment, the physician is the deployer and is exempt, and so the lab owes nothing either (Rule 4.3(C)(1)).</p>
+<p>Two areas survive.  The first is financial assistance: a covered entity that uses covered ADMT to decide a patient's eligibility for financial assistance, including Colorado's discounted-care program, must disclose the decision, the ADMT's role, the information relied on, and how to seek correction and review (§ 1708(3)(d)).  Whether a lower discount tier, rather than a denial, is an adverse outcome is not settled.  The second is decisions about access to care made by actors outside HIPAA.  Assisted-living care-level assessments, which set price and staffing and are often private-pay, and online intake questionnaires that screen patients out before any clinician sees them are plausible covered cases (an inference that depends on each operator's HIPAA status).</p>
+<h3 id="education" tabindex="-1"><a class="observablehq-header-anchor" href="#education">Education</a></h3>
+<p>The domain covers "an education enrollment or an education opportunity" but excludes routine academic administration and classroom personalization.  FERPA-bound institutions may route notices, correction, and review through their existing FERPA processes.  The AG's position on governments would remove public K-12 districts and public universities as deployers, and under Rule 4.3(C) their vendors would then owe nothing either, leaving private schools and colleges as the main covered deployers.  FERPA protects the records of enrolled students, so its channels do not obviously help a private college respond to applicants who never enrolled.</p>
+<p>The draft's three examples are an advanced-program admission where an essay-grading tool's opinion was seen by the administrator (Rule 6.2(B)(1)), contrasted with a denial based on a published GPA cutoff the administrator applied without looking at the output (Rule 6.2(B)(2)), and two disclosure examples: a partial scholarship (Rule 7.5(B)(1)) and an admission denial using inferences from social media (Rule 7.5(B)(2)).  The scholarship example points at a larger category.  Colleges that model each admitted student's likelihood of enrolling and set individual aid awards to maximize net tuition are making "differentiated price" decisions, and a lower-than-possible award can be an adverse outcome.  AI-writing detectors are another plausible case: a suspension that rests on a detector score affects an education opportunity, and the vendor's own caution against using the score as the sole basis is the kind of "known limitation" a developer must pass to deployers (§ 1702(1)(c)).</p>
+<h3 id="government-services-and-public-benefits" tabindex="-1"><a class="observablehq-header-anchor" href="#government-services-and-public-benefits">Government services and public benefits</a></h3>
+<p>The domain names "essential government services and public benefits, including eligibility and renewal determinations."  But the AG's cover letter to the draft states that, based on the definitions of "deployer" and "person," "the ADMT Law does not apply to governments," while encouraging governments to comply voluntarily for services such as Medicaid.  That is the agency's stated position rather than a settled question; the domain's own wording, and § 1705(1)(b)'s waiver of the Privacy Act exemption for public-entity data, cut the other way.</p>
+<p>What survives in any case is private administration of public benefits.  The draft's examples include a utility-payment subsidy (Rule 7.4(B)(1)) and a closing-cost grant run by an "organization" (Rule 7.5(C)(2)).  Utilities running low-income bill-assistance programs, nonprofits administering housing grants, and contractors making eligibility determinations are all persons doing business in Colorado, and if they make the decision they are the deployer.</p>
+<h3 id="questions-that-cut-across-domains" tabindex="-1"><a class="observablehq-header-anchor" href="#questions-that-cut-across-domains">Questions that cut across domains</a></h3>
+<p><strong>Summaries that are rankings.</strong>  The rules settle most of the line between organizing information and judging it: an ordered shortlist or a positive/negative summary is covered, and a neutral sort is not.  In practice the deciding fact is often the presentation, meaning which column, sort order, or highlight the decision-maker actually saw, since the presumption keys on what was "reviewed by the decision-maker."</p>
+<p><strong>Thresholds.</strong>  Rule 6.1(B)(2) lets a deployer rebut the presumption by showing it applied a hard cutoff consistently, but the credit-union example (Rule 6.2(E)) treats a cutoff applied to the ADMT's own risk score as covered.  Read together, the rebuttal appears to cover a cutoff applied to other information, like the published GPA minimum in Rule 6.2(B)(2), not one applied to the model's output.  That distinction matters a great deal for knock-out screening in hiring and leasing.</p>
+<p><strong>Products built on foundation models.</strong>  A general-purpose model stays outside the definition of ADMT only while it is not marketed or configured for consequential decisions and its usage policy forbids that use (§ 1701(2)(b)(III)).  A vendor that builds a hiring or admissions product on such a model is the developer of its own product (Rule 4.2), and when the underlying model changes, the vendor may owe deployers notice of a material update (an inference from § 1702(2)).</p>
+<p><strong>Conversational intake.</strong>  A chatbot or voice agent that tells someone, mid-conversation, that they do not qualify is making a threshold decision.  Applying a fixed, published rule to an objective answer is plausibly rebuttable as a consistent cutoff; interpreting free text is not (an inference from Rule 6.1(B)(2)).</p>
+<h2 id="the-comment" tabindex="-1"><a class="observablehq-header-anchor" href="#the-comment">The comment</a></h2>
+<h3 id="introduction" tabindex="-1"><a class="observablehq-header-anchor" href="#introduction">Introduction</a></h3>
+<p>As discussed above, this comment is intended to look at the statutes and industry practices, and provide suggestions for the final rules that balance the needs of consumers and industry.  That means thinking about what the basic requirements are, and how rules can push implementations into an efficient and consumer-friendly shape.</p>
+<p>The comment suggests two places for this: the adverse outcome notification contents, and the prioritizing of information correction and rerunning of decisions as a way to broaden access to meaningful review.</p>
+<h3 id="comment-text" tabindex="-1"><a class="observablehq-header-anchor" href="#comment-text">Comment text</a></h3>
+<p><strong>To:</strong> Colorado Department of Law, Consumer Protection Section<br>
+<strong>Re:</strong> Proposed rules, 4 CCR 904-6 (ADMT and Chatbot Safety Rules), October 6, 2026 interim draft<br>
+<strong>From:</strong> Julius Mopper, Lone Tree, Colorado<br>
+<strong>Date:</strong> October 26, 2026</p>
+<h4 id="about-me-and-my-interest" tabindex="-1"><a class="observablehq-header-anchor" href="#about-me-and-my-interest">About me and my interest</a></h4>
+<p>I'm an AI engineer. I've built consumer segmentation models on retail transaction data, integrated enterprise systems at a Fortune 100 telecommunications company, and I now build AI systems. I want these systems in production, and I want the people affected by them to feel safe. Rules that stay close to the statute can do both: smooth near-term deployment, and give consumers a rational experience that supports long-term adoption of AI.</p>
+<p>This comment expands on my verbal testimony at the October 26 hearing. It covers two parts of the statute that build on each other: the post-adverse-outcome disclosure (§ 6-1-1704(3)) and the consumer's right to correction, meaningful human review and reconsideration (§ 6-1-1705(1)). It makes two requests.</p>
+<h4 id="summary-of-requests" tabindex="-1"><a class="observablehq-header-anchor" href="#summary-of-requests">Summary of requests</a></h4>
+<ol>
+<li><strong>Rule 7.4(D) should require the notice to say which § 6-1-1705 rights are actually available for this decision, and what using them involves.</strong></li>
+<li><strong>Rule 8.7 should presume that re-running the decision on corrected data is Commercially Reasonable wherever the deployer can correct or verify the data at issue and a re-run is technically feasible, even where Meaningful Human Review is not, with Meaningful Human Review on top where it is Commercially Reasonable.</strong></li>
+</ol>
+<h4 id="1-the-notice-should-say-which-rights-are-actually-available-and-what-using-them-involves" tabindex="-1"><a class="observablehq-header-anchor" href="#1-the-notice-should-say-which-rights-are-actually-available-and-what-using-them-involves">1. The notice should say which rights are actually available, and what using them involves</a></h4>
+<p><strong>The statute.</strong> Section 6-1-1704(3)(c) requires "an explanation of the consumer rights described in section 6-1-1705 and how to exercise them." The General Assembly intends rules to ensure "that consumers receive meaningful and understandable information about consequential decisions" (§ 6-1-1704(4)(a)), and directs the Attorney General to "clarify and implement" subsection (3), and authorizes guidance on how the disclosure interacts with other state and federal laws (§ 6-1-1704(4)(b), (4)(b)(IV)).</p>
+<p><strong>The draft.</strong> Rule 7.4(D)(1) has the notice state that the consumer is entitled to request instructions to obtain and correct their data, and to an opportunity for Meaningful Human Review and reconsideration "to the extent Commercially Reasonable." That repeats the statute. It tells the consumer the rights exist, but not what they can do about this decision.</p>
+<p><strong>Why this matters.</strong> Deployers have to know this information to comply anyway, so they can use it to give the consumer a positive experience. "Positive" doesn't mean the consumer gets whatever outcome they want. Many of these rights will be fragmentary in practice:</p>
+<ul>
+<li>Developer information may be incomplete (Rule 7.4(B)(5) already contemplates this).</li>
+<li>Parts of the decision may fall under other laws. For example, credit-report data is outside the Colorado Privacy Act (§ 6-1-1304(2)(i)) and is corrected through a Fair Credit Reporting Act dispute, while data a bank holds under the Gramm-Leach-Bliley Act is outside the CPA (§ 6-1-1304(2)(j)(II), (2)(q)), and may have no correction route at all. Section 6-1-1705(1)(b) lifts, for ADMT correction, only the exclusion from "consumer" of people acting in a commercial or employment context or as job applicants (§ 6-1-1303(6)(b)) and the exemptions for employment records, public-utility data and public-entity data (§ 6-1-1304(2)(k), (n), (o)). The credit-reporting and financial-institution exemptions still apply.</li>
+<li>Some inputs need not be corrected at all: the statute does not require correction of "opinions, predictions, scores, or protected evaluations" (§ 6-1-1705(1)(c)).</li>
+<li>Human review may not be Commercially Reasonable.</li>
+</ul>
+<p>But the deployer knows whether review is available, knows its data, knows when a request has to go to a third party, and, if nothing else, knows what it doesn't know. So it can give clear instructions in the notice. Much of this the draft already requires, just later and only on request: each data source by name, including intermediaries, when known (Rule 7.6(A)(5)), and the third parties that hold the consumer's data (Rules 8.3(C), 8.4(C)), each within 15 days of a request. The notice should summarize it up front.</p>
+<p>Without that, the consumer can't tell a two-week fix from a dead end until the time is spent. A correction of data in the deployer's control can take up to 45 days (Rule 8.4(B)(1)); a correction that has to go through a third party can take longer. With it, the consumer can see where the rabbit hole goes: how much work a correction would take, and whether the timelines make it worth it. They get some visibility instead of feeling caught in an opaque, Kafkaesque machine. That matters for AI's long-term credibility.</p>
+<p><strong>Proposed language.</strong> Add to Rule 7.4(D):</p>
+<blockquote>
+<ol start="3">
+<li>
+<p>The explanation includes a summary, by category of Personal Data used in the Consequential Decision, of how the ADMT Consumer Rights can be exercised, drawing on information the Deployer must provide under Rules 7.6(A)(5), 8.3(C), and 8.4(C), and to the extent known to the Deployer:</p>
+<p>a. Whether the Deployer can correct the category or must refer the Consumer to a third party, and the persons through whom a correction must pass, in order;</p>
+<p>b. The law under which access or correction is available, including section 6-1-1306, C.R.S., or, where that section does not apply, the Fair Credit Reporting Act, 15 U.S.C. § 1681 et seq., or other applicable law, or that none is available;</p>
+<p>c. The time periods that apply to access, correction, and any appeal;</p>
+<p>d. Whether Meaningful Human Review is offered, and whether and when the Deployer will reconsider the Consequential Decision on corrected Personal Data; and</p>
+<p>e. Where the Deployer does not have this information, a statement that it does not.</p>
+</li>
+</ol>
+<p>The summary may be provided on the webpage required by Rule 8.2(D), if the disclosure links to it directly.</p>
+</blockquote>
+<p>The rule sets the content; the deployer decides how to work it out.</p>
+<p><strong>Conforming change.</strong> Rules 8.3(C) and 8.4(C) direct the consumer only to "their right under section 6-1-1306, C.R.S." For data outside that section, such as credit-report data, that points to a right that does not apply. In both rules, "their right under section 6-1-1306, C.R.S. to access [correct] their Personal Data" would read "their right under section 6-1-1306, C.R.S., or other applicable law, to access [correct] their Personal Data."</p>
+<h4 id="2-re-running-on-corrected-data-should-be-presumed-commercially-reasonable-even-where-full-human-review-is-not" tabindex="-1"><a class="observablehq-header-anchor" href="#2-re-running-on-corrected-data-should-be-presumed-commercially-reasonable-even-where-full-human-review-is-not">2. Re-running on corrected data should be presumed Commercially Reasonable, even where full human review is not</a></h4>
+<p><strong>The statute.</strong> Section 6-1-1705(1)(a)(II) grants "an opportunity for meaningful human review and reconsideration of the consequential decision, to the extent commercially reasonable." The statute does not define reconsideration, and § 6-1-1705(3) directs the Attorney General to clarify and implement the section.</p>
+<p><strong>The draft.</strong> The draft already defines reconsideration well. Rule 8.7(B)(2) says "the decision-making process must be re-performed using the Consumer's correct Personal Data, if Commercially Reasonable," and Rule 8.7(D)(2)(b)(1) lists re-configuring a malfunctioning ADMT and re-performing the decision as one form of Meaningful Human Review. The draft also treats reconsideration on corrected data as a right of its own: it follows a correction (Rule 8.7(B)(1)), the rights webpage offers "reconsideration or Meaningful Human Review and reconsideration" (Rule 8.2(D)), and a deployer that does not re-perform the decision must explain why (Rule 8.7(B)(3)(a)).</p>
+<p>The gap is in the test. Rule 8.7(B)(2) allows the re-run only "if Commercially Reasonable," but the factors and burden in Rule 8.7(E) address only Meaningful Human Review. The draft never says how a re-run is judged. A deployer that finds full Meaningful Human Review not Commercially Reasonable could decline the re-run on the same grounds, even though a re-run usually costs far less.</p>
+<p><strong>Why this matters.</strong> Human review is the statute's gold standard, but often it won't be Commercially Reasonable. Reconsideration on corrected data often still can be. The knowledge the deployer uses to write the notice also tells it where a correction is easy to make and check:</p>
+<ul>
+<li>where the deployer already knows the data was incomplete, which the second Rule 7.4(B)(2)(d) requires the notice to disclose (the draft letters two paragraphs of Rule 7.4(B)(2) as (d); this comment means the second, on insufficient or incomplete information); or</li>
+<li>where the deployer, or a vendor acting for it, can correct the data at issue or verify the corrected value the consumer supplies.</li>
+</ul>
+<p>In those cases the deployer can reconsider efficiently by re-running the decision on corrected data. The consumer's appeal gets a real answer, and the deployer resolves it within the decision process it already runs. Where full human review is not Commercially Reasonable, this is a workable middle ground. The consumer still gets a decision on correct data, and the deployer avoids the cost of what full review requires: a trained reviewer who has authority over the outcome and is shielded from steering (Rule 8.7(C)). Where human review is Commercially Reasonable, the re-run makes it easier, because the reviewer starts from a corrected result instead of reconstructing the decision by hand.</p>
+<p><strong>Illustration.</strong> In the draft's lease-renewal example (Rule 8.7(E)(4)), the tenant shows that some recorded rental violations were investigated and the tenant was found not at fault. The draft concludes that reviewing the ADMT "would not be meaningful because the Covered ADMT would still not have the information needed," so a Meaningful Human Review would instead consider the tenant's evidence. But the property manager likely keeps the violation records itself. It can mark the cleared violations, re-run the decision, and give the tenant an answer quickly, without staffing a full review. When the outcome is urgent, like a move-out date, that speed matters.</p>
+<p><strong>Proposed language.</strong> Add to Rule 8.7(B):</p>
+<blockquote>
+<ol start="4">
+<li>
+<p>Re-performing the decision-making process on the Consumer's corrected or completed Personal Data is presumed to be Commercially Reasonable where the Deployer can use the corrected or completed Personal Data in the re-performance by any of the following means:</p>
+<p>a. Correcting Personal Data in its possession or control under Rule 8.4(B);</p>
+<p>b. Having a third party that acts on its behalf or at its direction, including a third party that runs the Covered ADMT under Rule 4.3, correct the Personal Data; or</p>
+<p>c. Using a corrected or completed value whose accuracy the Deployer has determined, including from documentation the Consumer provides, even if the source record is held by a third party. Notwithstanding Rule 8.4(B)(2)(b), the Deployer may use the Consumer's documentation for this purpose.</p>
+<p>The Deployer may rebut the presumption only by showing, using specific evidence, that re-performance is not technically feasible. The presumption applies whether or not Meaningful Human Review is Commercially Reasonable for the Consequential Decision, and does not limit the Consumer's right to Meaningful Human Review where it is.</p>
+</li>
+<li>
+<p>Where re-performance on the Consumer's corrected or completed Personal Data reverses the Adverse Outcome, the Deployer has satisfied the Consumer's request for Meaningful Human Review and reconsideration of that Consequential Decision. Where it changes the Adverse Outcome only in part, the Consumer may request Meaningful Human Review of the remaining Adverse Outcome, to the extent Commercially Reasonable.</p>
+</li>
+</ol>
+</blockquote>
+<p>The presumption covers only the decision being reconsidered. Where the source record is held by a third party, correcting that record still runs through the third party under Rule 8.4(C) or other applicable law, so the error does not return in the next decision.</p>
+<p>Proposed Rule 8.7(B)(5) builds on Rules 8.7(D)(1) and (D)(3): a review is meaningful because it could change the Adverse Outcome, and a full reversal may indicate that Meaningful Human Review was performed. A re-run that fully reverses the outcome leaves nothing for further review to change.</p>
+<p>The presumption helps only where the dispute is about the inputs. If the consumer accepts the data and disputes the logic, re-running on the same inputs changes nothing; that is what Meaningful Human Review under Rule 8.7(D)(2) is for.</p>
+<p><strong>How this differs from the August presumption.</strong> The August 11 draft presumed Meaningful Human Review Commercially Reasonable for any "severe and irreversible denial of a basic human need," rebuttable by evidence that the review was technically or financially impossible or could not change the Adverse Outcome. The October draft struck it. This presumption is narrower. It applies only where the deployer can correct or verify the data at issue, which is exactly where reconsideration is cheapest to provide. It covers the re-run, not full human review. And it rests on the draft's own definition of reconsideration in Rule 8.7(B)(2). The rebuttal is narrower too: the deployer must show, with specific evidence, that a re-run is not technically feasible. That is the same evidentiary burden Rule 8.7(E)(3) places on deployers for Meaningful Human Review. Cost is not a ground for rebuttal here; it remains one of the Rule 8.7(E)(2) factors for Meaningful Human Review.</p>
+<p><strong>Conforming clarification.</strong> Rule 8.7(C)(5) says "ADMT may not assist in the Meaningful Human Review." But Rules 8.7(B)(2) and 8.7(D)(2)(b)(1) both contemplate re-performing the decision, which means running the ADMT again. Read together, Rule 8.7(C)(5) could be taken to bar a reviewer from using the re-run. Ambrosia Biosciences (comment c0643) asked for a similar clarification. One sentence would resolve it:</p>
+<blockquote>
+<p>Re-performing the decision-making process under Rule 8.7(B)(2), or as part of a Meaningful Human Review under Rule 8.7(D)(2)(b)(1), does not constitute ADMT assisting in the Meaningful Human Review, provided that where a reviewer is involved, the reviewer decides on the result and does not default to the system output (§ 6-1-1701(15)(c)).</p>
+</blockquote>
+<p><strong>Conforming change to the second Rule 7.4(B)(2)(d).</strong> That rule says the deployer "need not accept any additional information provided by the Consumer unless and until the Consumer requests Meaningful Human Review." A re-run on completed data needs that information, and Rule 8.7(A)(2) already lets a consumer requesting reconsideration "provide additional relevant evidence if necessary." Completing data also fits the statute: a record missing a material fact, like a violation history that omits findings that the tenant was not at fault, can be "materially inaccurate" (§ 6-1-1705(1)(a)(I)). To align the two rules, add "or reconsideration" after "requests Meaningful Human Review" in the second Rule 7.4(B)(2)(d).</p>
+<h4 id="conclusion-of-the-comment" tabindex="-1"><a class="observablehq-header-anchor" href="#conclusion-of-the-comment">Conclusion of the comment</a></h4>
+<p>Clear notices and reconsideration on corrected data fit together. The deployer's knowledge of its own system tells the consumer what their rights can do, and shows where an efficient re-run can deliver them. That reassures consumers and keeps compliance efficient for deployers, without going beyond the statute.</p>
+<p>The presumption also sets the right incentive. If re-running on corrected data is the easiest way to comply, deployers have a reason to build systems whose inputs are traceable, correctable and re-runnable. Consumers would get reconsideration more often, and correcting data would get easier, because compliance rewards it. The presumption does not work in reverse: it makes compliance easier where a re-run is feasible, but it excuses nothing where it is not. A deployer whose system cannot be re-run remains subject to the Rule 8.7(E)(2) factors and bears the burden under Rule 8.7(E)(3) of showing that Meaningful Human Review is not Commercially Reasonable.</p>
+<p>Thank you for the opportunity to comment.</p>
+<p>Julius Mopper<br>
+Lone Tree, Colorado</p>
+<h2 id="conclusion" tabindex="-1"><a class="observablehq-header-anchor" href="#conclusion">Conclusion</a></h2>
+<p>An automated review of the legal outlook around these rules suggests enforcement is unlikely to begin before spring 2027.  To prepare, developers can start putting together their required documentation, and begin scoping out system updates to produce change notices and retain records.  Deployers may begin by inventorying which tools produce scores, rankings, or labeled summaries, mapping out which data they can correct themselves versus what is third-party, and determining which decisions can be re-run.</p>
+<p>As discussed in my comment, traceable, correctable, and re-runnable inputs are the cheapest route to compliance.  While I hope that the Attorney General will incorporate my input into the final rules, in any case there are substantial new requirements being placed on these systems, and preparing these comments has been useful for understanding what these changes will entail.</p>
+<p>We're shooting at a moving target here; final rules and litigation are still pending, and some provisions of the draft rules, especially those relating to data disclosures, may not survive.  So watch this space: content here will be updated as things progress, and tooling to help businesses comply with these rules is in the works.</p>
+</main>
+</div>
+</body>
+</html>
